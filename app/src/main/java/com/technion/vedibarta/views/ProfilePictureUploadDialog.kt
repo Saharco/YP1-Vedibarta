@@ -16,8 +16,8 @@ class ProfilePictureUploadDialog : DialogFragment() {
     private lateinit var listener: ProfilePictureUploadDialogListener
 
     interface ProfilePictureUploadDialogListener {
-        fun onCameraUpload(dialog: DialogFragment)
-        fun onGalleryUpload(dialog: DialogFragment)
+        fun onCameraUploadClicked(dialog: DialogFragment)
+        fun onGalleryUploadClicked(dialog: DialogFragment)
     }
 
     override fun onCreateView(
@@ -43,12 +43,12 @@ class ProfilePictureUploadDialog : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         cameraUploadButton.setOnClickListener {
-            listener.onCameraUpload(this)
+            listener.onCameraUploadClicked(this)
             dismiss()
         }
 
         galleryUploadButton.setOnClickListener {
-            listener.onGalleryUpload(this)
+            listener.onGalleryUploadClicked(this)
             dismiss()
         }
 

@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 
 /**
- * This is an abstract activity with no GUI
+ * This is a helper activity with no GUI
  */
 @SuppressLint("Registered")
-class VedibartaActivity : AppCompatActivity() {
-
-}
+open class VedibartaActivity : AppCompatActivity()

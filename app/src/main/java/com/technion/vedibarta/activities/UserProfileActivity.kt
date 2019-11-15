@@ -1,5 +1,6 @@
 package com.technion.vedibarta.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -19,10 +20,13 @@ import android.net.Uri
 import android.util.Log
 import java.io.File
 import android.app.Activity
+import android.content.pm.PackageManager
 
 import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.technion.vedibarta.utilities.RotateBitmap
@@ -30,9 +34,12 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 
-class UserProfileActivity : AppCompatActivity(),
+class UserProfileActivity : VedibartaActivity(),
     ProfilePictureUploadDialog.ProfilePictureUploadDialogListener {
 
+    private val TAG = "UserProfileActivity"
+
+    private val APP_PERMISSION_REQUEST_CAMERA = 100
     private val REQUEST_CAMERA = 1
     private val SELECT_IMAGE = 2
 
@@ -42,6 +49,7 @@ class UserProfileActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
+        Log.d(TAG, "created UserProfileActivity")
         initWidgets()
     }
 
@@ -114,22 +122,36 @@ class UserProfileActivity : AppCompatActivity(),
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    override fun onCameraUpload(dialog: DialogFragment) {
+    override fun onCameraUploadClicked(dialog: DialogFragment) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.CAMERA),
+                APP_PERMISSION_REQUEST_CAMERA)
+        } else {
+            startCameraActivity()
+        }
+    }
+
+    private fun startCameraActivity() {
+        Log.d(TAG, "entered startCameraActivity")
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         selectedImageFile = File(
             externalCacheDir,
             System.currentTimeMillis().toString() + ".jpg"
         )
+        Log.d(TAG, "fetched image file: $selectedImageFile")
         selectedImage = FileProvider.getUriForFile(
-            this@UserProfileActivity,
+            this,
             "$packageName.provider", selectedImageFile!!
         )
+        Log.d(TAG, "fetched selected image: $selectedImage")
         intent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImage)
-        Log.d(this.localClassName, "Activating camera")
+        Log.d(TAG, "Activating camera")
         startActivityForResult(intent, REQUEST_CAMERA)
     }
 
-    override fun onGalleryUpload(dialog: DialogFragment) {
+    override fun onGalleryUploadClicked(dialog: DialogFragment) {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
         startActivityForResult(intent, SELECT_IMAGE)
@@ -137,6 +159,7 @@ class UserProfileActivity : AppCompatActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "got result from upload activity")
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUEST_CAMERA -> if (selectedImage != null) {
@@ -174,17 +197,17 @@ class UserProfileActivity : AppCompatActivity(),
                 val bitmap =
                     rotateBitmap.handleSamplingAndRotationBitmap(this@UserProfileActivity, uris[0])
                 Log.d(
-                    "UserProfileActivity",
+                    TAG,
                     "doInBackground: MBs before compression: " + bitmap!!.byteCount.toDouble() / 1e6
                 )
                 val bytes = getBytesFromBitmap(bitmap, 80)
                 Log.d(
-                    "UserProfileActivity",
+                    TAG,
                     "doInBackground: MBs after compression: " + bytes.size.toDouble() / 1e6
                 )
                 return bytes
             } catch (e: IOException) {
-                Log.d("UserProfileActivity", "doInBackground: exception: $e")
+                Log.d(TAG, "doInBackground: exception: $e")
                 return null
             }
 
