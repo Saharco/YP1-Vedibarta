@@ -1,14 +1,11 @@
 package com.technion.vedibarta
 
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import kotlinx.android.synthetic.main.activity_user_profile.*
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.*
-import android.widget.LinearLayout
 import android.widget.TableLayout
 
 
@@ -23,6 +20,9 @@ class UserProfileActivity : AppCompatActivity() {
     private fun initWidgets() {
         initToolbar()
         populateTable()
+
+        titlePicture.bringToFront()
+        profilePicture.bringToFront()
     }
 
     private fun populateTable() {
