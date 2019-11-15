@@ -1,4 +1,4 @@
-package com.technion.vedibarta
+package com.technion.vedibarta.activities
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity

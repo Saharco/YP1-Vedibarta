@@ -1,12 +1,16 @@
-package com.technion.vedibarta
+package com.technion.vedibarta.activities
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import kotlinx.android.synthetic.main.activity_user_profile.*
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.*
 import android.widget.TableLayout
+import com.technion.vedibarta.R
+import com.technion.vedibarta.views.ProfilePictureUploadDialog
 
 
 class UserProfileActivity : AppCompatActivity() {
@@ -23,8 +27,13 @@ class UserProfileActivity : AppCompatActivity() {
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()
+
+        profilePicture.setOnClickListener {
+            ProfilePictureUploadDialog().show(supportFragmentManager, "UploadProfilePictureFragment")
+        }
     }
 
+    @SuppressLint("InflateParams")
     private fun populateTable() {
 
         //TODO: when the data is fetched from the database, change this dummy list
