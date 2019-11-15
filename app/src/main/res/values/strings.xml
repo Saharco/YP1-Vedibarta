@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Vedibarta</string>
+
+    <!--    UserProfile attribute   -->
+    <string name="user_profile_title">פרופיל משתמש</string>
+    <string name="user_title_picture_overlay">תמונת נושא</string>
+    <string name="user_profile_picture_overlay">תמונת פרופיל</string>
 </resources>
