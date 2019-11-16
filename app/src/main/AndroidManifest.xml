@@ -43,6 +43,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <activity android:name=".userProfile.UserProfileActivity">
+
+        </activity>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+        <activity android:name=".chatRoom.ChatRoomActivity">
         <activity android:name=".userProfile.UserProfileActivity" />
 
         <meta-data
@@ -65,6 +72,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
     </application>
 
