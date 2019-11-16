@@ -41,7 +41,9 @@
         android:gravity="center"
         android:text="בחר תוכן ראוי בלבד\nתוכן לא ראוי יימחק"
         android:textColor="@color/textSecondary"
-        android:textSize="12sp"
+        app:autoSizeMaxTextSize="12sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alertTitle" />
@@ -111,13 +113,14 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dismissButton"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="48dp"
         android:text="ביטול"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:strokeColor="#00AF2424" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

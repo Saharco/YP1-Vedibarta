@@ -8,5 +8,7 @@
     <string name="vertical_ellipsis">&#8942;</string>
     <string name="reportAbuse">דווח על הטרדה</string>
     <string name="generateQuestion">מחולל השאלות</string>
+    <string name="user_profile_hobbies">התחביבים שלי</string>
+    <string name="user_profile_characteristics">אני מזדהה בתור</string>
 
 </resources>

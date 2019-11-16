@@ -101,7 +101,8 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun loadUserData() {
-        populateTable()
+        populateCharacteristicsTable()
+        populateHobbiesTable()
         populateProfilePicture()
         populateUsername()
         populateUserRegion()
@@ -179,7 +180,7 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     @SuppressLint("InflateParams")
-    private fun populateTable() {
+    private fun populateCharacteristicsTable() {
 
         val tableRowParams = TableLayout.LayoutParams(
             TableLayout.LayoutParams.MATCH_PARENT,
@@ -224,6 +225,55 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun handleNoCharacteristics() {
+        //TODO: add some behavior for the scenario where the user has no characteristics
+    }
+
+    @SuppressLint("InflateParams")
+    private fun populateHobbiesTable() {
+
+        val tableRowParams = TableLayout.LayoutParams(
+            TableLayout.LayoutParams.MATCH_PARENT,
+            TableLayout.LayoutParams.WRAP_CONTENT
+        )
+        tableRowParams.setMargins(40, 40, 40, 40)
+
+        val bubbleParams =
+            TableRow.LayoutParams(
+                TableRow.LayoutParams.WRAP_CONTENT,
+                TableRow.LayoutParams.WRAP_CONTENT
+            )
+
+        if (student == null || student!!.hobbies.isEmpty()) {
+            handleNoHobbies()
+            return
+        }
+
+        (student!!.hobbies.indices step 3).forEach { i ->
+            val tableRow = TableRow(this)
+            tableRow.layoutParams = tableRowParams
+            tableRow.gravity = Gravity.CENTER_HORIZONTAL
+
+            for (j in 0 until 3) {
+                if (i + j >= student!!.hobbies.size)
+                    break
+
+                val bubbleFrame = LayoutInflater.from(this).inflate(
+                    R.layout.user_profile_bubble_orange,
+                    null
+                ) as FrameLayout
+
+                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
+                bubble.text = student!!.hobbies[i + j]
+                bubbleFrame.layoutParams = bubbleParams
+
+                tableRow.addView(bubbleFrame)
+            }
+
+            hobbiesTable.addView(tableRow)
+        }
+    }
+
+    private fun handleNoHobbies() {
         //TODO: add some behavior for the scenario where the user has no characteristics
     }
 
@@ -287,7 +337,6 @@ class UserProfileActivity : VedibartaActivity(),
             return
         }
 
-        Log.d(TAG, "1")
 
         // If there's an animation in progress, cancel it
         // immediately and proceed with this one.
@@ -295,7 +344,6 @@ class UserProfileActivity : VedibartaActivity(),
             mCurrentAnimator!!.cancel()
         }
 
-        Log.d(TAG, "2")
 
         fullscreenImage.visibility = View.VISIBLE
         fullscreenImageContainer.visibility = View.VISIBLE
@@ -304,7 +352,6 @@ class UserProfileActivity : VedibartaActivity(),
         titlePicture.visibility = View.GONE
         changeProfilePictureButton.visibility = View.GONE
 
-        Log.d(TAG, "3")
 
         Glide.with(applicationContext)
             .asBitmap()
@@ -317,8 +364,6 @@ class UserProfileActivity : VedibartaActivity(),
                     fullscreenImage.setImageBitmap(resource)
                 }
             })
-
-        Log.d(TAG, "4")
 
         isImageFullscreen = true
         toggleToolbars()

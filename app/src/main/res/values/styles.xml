@@ -38,7 +38,19 @@
         <item name="android:gravity">center</item>
         <item name="android:maxLines">3</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/round_textview</item>
+        <item name="android:background">@drawable/circle</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="UserProfileBubbleOrange">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/circle_orange</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
