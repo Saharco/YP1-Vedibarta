@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.UserProfileActivity">
@@ -57,10 +57,10 @@
         android:layout_marginStart="24dp"
         android:clickable="true"
         android:focusable="true"
-        app:srcCompat="@drawable/ic_camera_plus_white"
         app:layout_constraintBottom_toBottomOf="@+id/profilePicture"
         app:layout_constraintEnd_toEndOf="@+id/profilePicture"
-        app:layout_constraintStart_toEndOf="@+id/profilePicturePB" />
+        app:layout_constraintStart_toEndOf="@+id/profilePicturePB"
+        app:srcCompat="@drawable/ic_camera_plus_white" />
 
     <ProgressBar
         android:id="@+id/profilePicturePB"
@@ -118,6 +118,19 @@
         </LinearLayout>
     </ScrollView>
 
+    <RelativeLayout
+        android:id="@+id/fullscreenImageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.ortiz.touchview.TouchImageView
+            android:id="@+id/fullscreenImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/enlargedToolbarLayout"
@@ -135,22 +148,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="#960b040b"
             android:visibility="gone"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/fullscreenImageContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.ortiz.touchview.TouchImageView
-            android:id="@+id/fullscreenImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
