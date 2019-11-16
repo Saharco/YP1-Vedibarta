@@ -350,6 +350,7 @@ class UserProfileActivity : VedibartaActivity(),
         root.setBackgroundColor(resources.getColor(android.R.color.black))
         scrollView.visibility = View.GONE
         titlePicture.visibility = View.GONE
+        divider1.visibility = View.GONE
         changeProfilePictureButton.visibility = View.GONE
 
 
@@ -510,6 +511,7 @@ class UserProfileActivity : VedibartaActivity(),
                     fullscreenImageContainer.visibility = View.GONE
                     scrollView.visibility = View.VISIBLE
                     titlePicture.visibility = View.VISIBLE
+                    divider1.visibility = View.VISIBLE
                     changeProfilePictureButton.visibility = View.VISIBLE
                     root.setBackgroundColor(resources.getColor(android.R.color.white))
                     mCurrentAnimator = null
@@ -521,6 +523,7 @@ class UserProfileActivity : VedibartaActivity(),
                     fullscreenImageContainer.visibility = View.GONE
                     scrollView.visibility = View.VISIBLE
                     titlePicture.visibility = View.VISIBLE
+                    divider1.visibility = View.VISIBLE
                     changeProfilePictureButton.visibility = View.VISIBLE
                     root.setBackgroundColor(resources.getColor(android.R.color.white))
                     mCurrentAnimator = null
