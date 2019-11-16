@@ -86,7 +86,7 @@ class UserProfileActivity : VedibartaActivity(),
         changeProfilePictureButton.bringToFront()
 
         changeProfilePictureButton.setOnClickListener {
-            ProfilePictureUploadDialog().show(
+            ProfilePictureUploadDialog.newInstance(student!!.name).show(
                 supportFragmentManager,
                 "UploadProfilePictureFragment"
             )

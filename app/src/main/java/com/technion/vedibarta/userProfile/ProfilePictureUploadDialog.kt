@@ -11,13 +11,29 @@ import androidx.fragment.app.DialogFragment
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.profile_picture_dialog.*
 
-class ProfilePictureUploadDialog : DialogFragment() {
+class ProfilePictureUploadDialog private constructor() : DialogFragment() {
 
     private lateinit var listener: ProfilePictureUploadDialogListener
+    private lateinit var userName: String
 
     interface ProfilePictureUploadDialogListener {
         fun onCameraUploadClicked(dialog: DialogFragment)
         fun onGalleryUploadClicked(dialog: DialogFragment)
+    }
+
+    companion object {
+        fun newInstance(name: String): ProfilePictureUploadDialog {
+            val fragment = ProfilePictureUploadDialog()
+            val args = Bundle()
+            args.putString("name", name.substringBefore(' '))
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        userName = arguments!!.getString("name")!!
     }
 
     override fun onCreateView(
@@ -41,6 +57,7 @@ class ProfilePictureUploadDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        alertTitle.text = "$userName${alertTitle.text}"
 
         cameraUploadButton.setOnClickListener {
             listener.onCameraUploadClicked(this)
