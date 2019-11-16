@@ -29,7 +29,7 @@
     <ImageView
         android:id="@+id/titlePicture"
         android:layout_width="match_parent"
-        android:layout_height="88dp"
+        android:layout_height="96dp"
         android:contentDescription="@string/user_title_picture_overlay"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,8 +40,8 @@
     <!-- change android:src to app:srcCompat with support library !-->
     <ImageView
         android:id="@+id/profilePicture"
-        android:layout_width="88dp"
-        android:layout_height="88dp"
+        android:layout_width="144dp"
+        android:layout_height="144dp"
         android:contentDescription="@string/user_profile_picture_overlay"
         app:layout_constraintBottom_toBottomOf="@+id/titlePicture"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,7 @@
                 android:id="@+id/userName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="88dp"
                 android:gravity="center"
                 android:text="זמני"
                 android:textColor="@color/textPrimary"
