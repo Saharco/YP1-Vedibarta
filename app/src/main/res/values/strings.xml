@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Vedibarta</string>
+
+    <!--    UserProfile attribute   -->
+    <string name="user_profile_title">הפרופיל שלי</string>
+    <string name="user_title_picture_overlay">תמונת נושא</string>
+    <string name="user_profile_picture_overlay">תמונת פרופיל</string>
     <string name="vertical_ellipsis">&#8942;</string>
-    <string name="reportAbuse">Report Abuse</string>
-    <string name="generateQuestion">Generate Question</string>
+    <string name="reportAbuse">דווח על הטרדה</string>
+    <string name="generateQuestion">מחולל השאלות</string>
+
 </resources>
