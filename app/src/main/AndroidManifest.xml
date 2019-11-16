@@ -36,16 +36,18 @@
         </provider>
 
         <activity android:name=".userProfile.UserProfileActivity">
+
+        </activity>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+        <activity android:name=".chatRoom.ChatRoomActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-        <activity android:name=".chatRoom.ChatRoomActivity"></activity>
     </application>
 
 </manifest>

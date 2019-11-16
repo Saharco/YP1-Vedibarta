@@ -8,5 +8,6 @@
     <string name="vertical_ellipsis">&#8942;</string>
     <string name="reportAbuse">דווח על הטרדה</string>
     <string name="generateQuestion">מחולל השאלות</string>
+    <string name="enterMessage">כתוב הודעה</string>
 
 </resources>

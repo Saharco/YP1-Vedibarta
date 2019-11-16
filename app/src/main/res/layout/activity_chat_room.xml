@@ -5,51 +5,82 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/photo_temp_chat_background"
     tools:context=".chatRoom.ChatRoomActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/chatToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
-                >
+                android:layout_height="match_parent">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/profilePhoto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:srcCompat="@mipmap/ic_launcher_round"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/userName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="NameHolder"
-                    android:textSize="20dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/profilePhoto"
-                    android:textColor="@color/lightPrimary"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/popupMenu"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:srcCompat="@drawable/ic_overflow_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/toolbarProfileImage"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:srcCompat="@drawable/ic_photo_default_profile_girl"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/toolbarUserName"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_width="20dp"
-                    android:gravity="center"
-                    android:text="@string/vertical_ellipsis"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="left"
+                    android:maxLines="1"
+                    android:textAlignment="gravity"
+                    android:text="זמני"
                     android:textColor="@color/lightPrimary"
-                    android:textSize="30dp"
-                    android:layout_marginEnd="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:autoSizeMaxTextSize="20sp"
+                    app:autoSizeMinTextSize="12sp"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/toolbarProfileImage"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"/>
+                    tools:ignore="RtlHardcoded" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -59,49 +90,46 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/toolBarLayout"/>
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="#dfdfdf"
-        app:layout_constraintBottom_toTopOf="@+id/chatBoxLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
     <LinearLayout
         android:id="@+id/chatBoxLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:orientation="horizontal"
         android:minHeight="48dp"
-        android:background="#ffffff"
+        android:background="#00ffffff"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
         <EditText
             android:id="@+id/chatBox"
-            android:hint="Enter message"
-            android:background="@android:color/transparent"
+            android:hint="@string/enterMessage"
+            android:background="@drawable/round_chat_box"
             android:layout_gravity="center"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="8dp"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLength="256"
             android:maxLines="6"
-            android:maxLength="25"/>
+            android:padding="10dp"
+            android:scrollbars="vertical"/>
 
-        <Button
-            android:id="@+id/button_chatbox_send"
-            android:text="SEND"
-            android:textSize="12dp"
-            android:background="?attr/selectableItemBackground"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonChatBoxSend"
+            android:background="@color/colorPrimary"
             android:clickable="true"
+            android:focusable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_gravity="bottom"/>
+            android:layout_marginEnd="8dp"
+            app:fabCustomSize="40dp"
+            android:src="@drawable/ic_send_white"/>
 
     </LinearLayout>
 
