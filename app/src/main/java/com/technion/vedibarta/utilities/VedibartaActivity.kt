@@ -25,7 +25,7 @@ open class VedibartaActivity : AppCompatActivity() {
         Gender.MALE,
         Timestamp(System.currentTimeMillis()),
         arrayOf("חילוני", "קרניבור", "דפוקר", "ישראלי"),
-        arrayOf("הוראה", "משחקי מחשב", "להיות דפוקר", "מערבולות יוטיוב", "מכות עם לטאות", "משהו ארוךךךךךךךךךךךךךךך", "לתכנת")
+        arrayOf("הוראה", "משחקי מחשב", "להיות דפוקר", "מערבולות יוטיוב", "מכות עם לטאות", "משהו ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך", "לתכנת")
     )
 
     protected val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS: Int = 90
