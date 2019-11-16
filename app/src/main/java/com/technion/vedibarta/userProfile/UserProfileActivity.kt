@@ -1,4 +1,4 @@
-package com.technion.vedibarta.activities
+package com.technion.vedibarta.userProfile
 
 import android.Manifest
 import android.animation.Animator
@@ -17,7 +17,6 @@ import android.widget.TableLayout
 
 import androidx.fragment.app.DialogFragment
 import com.technion.vedibarta.R
-import com.technion.vedibarta.views.ProfilePictureUploadDialog
 import androidx.core.content.FileProvider
 import android.net.Uri
 import android.util.Log
@@ -40,6 +39,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.technion.vedibarta.utilities.RotateBitmap
+import com.technion.vedibarta.utilities.VedibartaActivity
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 

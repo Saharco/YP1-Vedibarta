@@ -1,4 +1,4 @@
-package com.technion.vedibarta.activities
+package com.technion.vedibarta.utilities
 
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
@@ -7,13 +7,24 @@ import android.view.WindowManager
 import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.technion.vedibarta.POJOs.Student
 
 
 /**
- * This is a helper activity with no GUI
+ * This is a utility activity with no GUI
  */
 @SuppressLint("Registered")
 open class VedibartaActivity : AppCompatActivity() {
+
+    protected var student: Student? = null
+
+    override fun onStart() {
+        super.onStart()
+        if (student == null) {
+            //TODO: redirect to LoginActivity
+        }
+    }
+
     /**
      * Changes the status bar's color (only works on API 21+)
      *

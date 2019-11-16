@@ -1,4 +1,4 @@
-package com.technion.vedibarta.views
+package com.technion.vedibarta.userProfile
 
 import android.content.Context
 import android.os.Bundle
