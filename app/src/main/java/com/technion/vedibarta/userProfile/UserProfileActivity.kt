@@ -35,9 +35,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
+import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import java.io.ByteArrayOutputStream
@@ -56,9 +61,9 @@ class UserProfileActivity : VedibartaActivity(),
     private var selectedImageFile: File? = null
     private var selectedImage: Uri? = null
 
-    //TODO: fetch this information from User class!
-    private var userPhotoURL: String? =
-        "https://firebasestorage.googleapis.com/v0/b/takecare-81dab.appspot.com/o/userProfilePictures%2FSms3oQVx6VOflY63Dl81qffkCOU2?alt=media&token=911deffc-9c57-46fb-987d-6ccf605b9f31"
+    //TODO: fetch this information from User class!!! change this to null later
+    private var userPhotoURL: String? = student!!.photo
+
     private var mCurrentAnimator: Animator? = null
     private var mShortAnimationDuration: Long? = null
     private var isImageFullscreen = false
@@ -74,7 +79,7 @@ class UserProfileActivity : VedibartaActivity(),
 
     private fun initWidgets() {
         setToolbar(toolbar)
-        populateTable()
+        loadUserData()
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()
@@ -95,16 +100,86 @@ class UserProfileActivity : VedibartaActivity(),
             resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
     }
 
-    @SuppressLint("InflateParams")
-    private fun populateTable() {
+    private fun loadUserData() {
+        populateTable()
+        populateProfilePicture()
+        populateUsername()
+        populateUserRegion()
+    }
 
-        //TODO: when the data is fetched from the database, change this dummy list
-        val characteristics: MutableList<String> = mutableListOf()
-        for (i in 0..16) {
-            characteristics.add(i, "זמני $i")
+    private fun populateUserRegion() {
+        userName.text = student!!.name
+    }
+
+    private fun populateUsername() {
+        userDescription.text = student!!.region
+    }
+
+    private fun populateProfilePicture() {
+        if (student!!.photo == null) {
+            loadDefaultUserProfilePicture()
+            return
         }
 
-        val characteristicsAmount = characteristics.size
+        Glide.with(applicationContext)
+            .asBitmap()
+            .load(userPhotoURL)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    fullscreenImage.setImageBitmap(resource)
+                }
+            })
+
+
+        Glide.with(applicationContext)
+            .asBitmap()
+            .load(userPhotoURL)
+            .apply(RequestOptions.circleCropTransform())
+            .listener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    loadDefaultUserProfilePicture()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    displayUserProfilePicture()
+                    return false
+                }
+
+            })
+            .into(profilePicture)
+    }
+
+    private fun displayUserProfilePicture() {
+        profilePicture.visibility = View.VISIBLE
+        changeProfilePictureButton.visibility = View.VISIBLE
+        profilePicturePB.visibility = View.GONE
+    }
+
+    private fun loadDefaultUserProfilePicture() {
+        if (student!!.gender == Gender.MALE)
+            profilePicture.setImageResource(R.drawable.ic_photo_default_profile_man)
+        else
+            profilePicture.setImageResource(R.drawable.ic_photo_default_profile_girl)
+        displayUserProfilePicture()
+    }
+
+    @SuppressLint("InflateParams")
+    private fun populateTable() {
 
         val tableRowParams = TableLayout.LayoutParams(
             TableLayout.LayoutParams.MATCH_PARENT,
@@ -118,13 +193,18 @@ class UserProfileActivity : VedibartaActivity(),
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        for (i in 0 until characteristicsAmount step 3) {
+        if (student == null || student!!.characteristics.isEmpty()) {
+            handleNoCharacteristics()
+            return
+        }
+
+        (student!!.characteristics.indices step 3).forEach { i ->
             val tableRow = TableRow(this)
             tableRow.layoutParams = tableRowParams
             tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
             for (j in 0 until 3) {
-                if (i + j >= characteristicsAmount)
+                if (i + j >= student!!.characteristics.size)
                     break
 
                 val bubbleFrame = LayoutInflater.from(this).inflate(
@@ -133,7 +213,7 @@ class UserProfileActivity : VedibartaActivity(),
                 ) as FrameLayout
 
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = characteristics[i + j]
+                bubble.text = student!!.characteristics[i + j]
                 bubbleFrame.layoutParams = bubbleParams
 
                 tableRow.addView(bubbleFrame)
@@ -141,6 +221,10 @@ class UserProfileActivity : VedibartaActivity(),
 
             characteristicsTable.addView(tableRow)
         }
+    }
+
+    private fun handleNoCharacteristics() {
+        //TODO: add some behavior for the scenario where the user has no characteristics
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -474,10 +558,17 @@ class UserProfileActivity : VedibartaActivity(),
         resize.execute(imagePath)
     }
 
+    private fun setNewUserProfilePic(bytes: ByteArray) {
+        updateServerUserProfilePic(bytes)
+        //populateProfilePicture() TODO: uncomment this when the Student class has the new information
+    }
+
     /**
-     * Updates the user profile picture *IN THE DATABASE!*
+     * Updates the user profile picture *IN THE DATABASE!*,
+     * updates the local Student class after the server update
      */
-    private fun setUserProfilePic(bytes: ByteArray) {
+    private fun updateServerUserProfilePic(bytes: ByteArray) {
+        //TODO: push profile pic change to the server and update Student with the new picture URL
     }
 
     private inner class ImageCompressTask : AsyncTask<Uri, Int, ByteArray>() {
@@ -496,7 +587,7 @@ class UserProfileActivity : VedibartaActivity(),
                     TAG,
                     "doInBackground: MBs before compression: " + bitmap!!.byteCount.toDouble() / 1e6
                 )
-                val bytes = getBytesFromBitmap(bitmap, 80)
+                val bytes = getBytesFromBitmap(bitmap, IMAGE_COMPRESSION_QUALITY_IN_PERCENTS)
                 Log.d(
                     TAG,
                     "doInBackground: MBs after compression: " + bytes.size.toDouble() / 1e6
@@ -518,7 +609,7 @@ class UserProfileActivity : VedibartaActivity(),
                 .into(profilePicture)
             profilePicturePB.visibility = View.GONE
             profilePicture.visibility = View.VISIBLE
-            setUserProfilePic(bytes)
+            setNewUserProfilePic(bytes)
         }
 
         private fun getBytesFromBitmap(bitmap: Bitmap, quality: Int): ByteArray {

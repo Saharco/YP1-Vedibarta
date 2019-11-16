@@ -44,6 +44,7 @@
         android:layout_width="144dp"
         android:layout_height="144dp"
         android:contentDescription="@string/user_profile_picture_overlay"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/titlePicture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,6 +58,7 @@
         android:layout_marginStart="24dp"
         android:clickable="true"
         android:focusable="true"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/profilePicture"
         app:layout_constraintEnd_toEndOf="@+id/profilePicture"
         app:layout_constraintStart_toEndOf="@+id/profilePicturePB"
@@ -67,7 +69,6 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/titlePicture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +97,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="88dp"
                 android:gravity="center"
-                android:text="זמני"
                 android:textColor="@color/textPrimary"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -106,7 +106,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="זמני, זמני, זמני"
                 android:textColor="@color/textSecondary"
                 android:textSize="18sp" />
 
