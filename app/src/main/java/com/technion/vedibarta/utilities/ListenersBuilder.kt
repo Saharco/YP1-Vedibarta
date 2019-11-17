@@ -3,10 +3,8 @@ package com.technion.vedibarta.utilities
 import android.content.Context
 import android.view.View
 
-class ListenersBuilder
-{
-    fun addListener(v: View, f: (View) -> Unit): ListenersBuilder
-    {
+class ListenersBuilder {
+    fun addListener(v: View, f: (View) -> Unit): ListenersBuilder {
         val clickListener = View.OnClickListener { view ->
             f(view)
         }
@@ -14,10 +12,4 @@ class ListenersBuilder
 
         return this
     }
-
-    fun build()
-    {
-       return
-    }
-
 }
