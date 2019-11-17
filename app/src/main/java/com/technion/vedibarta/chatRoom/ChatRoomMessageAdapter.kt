@@ -1,6 +1,5 @@
 package com.technion.vedibarta.chatRoom
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,7 +50,7 @@ class ChatRoomMessageAdapter(private val messages: ArrayList<Message>,
         fun bind(message: Message)
         {
             itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.timestamp
+            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.timeStamp
         }
     }
 
@@ -61,7 +60,7 @@ class ChatRoomMessageAdapter(private val messages: ArrayList<Message>,
         fun bind(message: Message)
         {
             itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.timestamp
+            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.timeStamp
         }
     }
 }
