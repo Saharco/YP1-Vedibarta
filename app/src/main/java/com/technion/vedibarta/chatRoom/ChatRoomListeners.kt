@@ -14,9 +14,8 @@ class ChatRoomListeners(private val context: Context) {
         val popupMenu = (context as Activity).findViewById<View>(R.id.popupMenu)
         val sendButton = (context as Activity).findViewById<View>(R.id.buttonChatBoxSend)
         val lb = ListenersBuilder()
-        lb.addListener(popupMenu, this::showPopup).
-            addListener(sendButton,this::sendMessage).
-            build()
+        lb.addListener(popupMenu, this::showPopup)
+        lb.addListener(sendButton,this::sendMessage)
     }
 
     private fun showPopup(view: View) {
