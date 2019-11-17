@@ -1,10 +1,9 @@
 package com.technion.vedibarta.utilities
 
-import android.content.Context
 import android.view.View
 
-class ListenersBuilder {
-    fun addListener(v: View, f: (View) -> Unit): ListenersBuilder {
+class ListenersSetter {
+    fun setListener(v: View, f: (View) -> Unit): ListenersSetter {
         val clickListener = View.OnClickListener { view ->
             f(view)
         }
