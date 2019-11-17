@@ -7,8 +7,9 @@ class Message
 {
     var userId: Int = 0
     var text: String? = null
+    private val fullTimeStamp = Date(System.currentTimeMillis())
     private val formatter = SimpleDateFormat("HH:mma")
-    var timestamp = formatter.format(Date(System.currentTimeMillis()))
+    var timestamp = formatter.format(fullTimeStamp)
 
     constructor() //empty for firebase
 
