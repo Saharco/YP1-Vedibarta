@@ -7,18 +7,16 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.ListenersBuilder
 
 class ChatRoomListeners(private val context: Context) {
     fun configureListeners() {
         val popupMenu = (context as Activity).findViewById<View>(R.id.popupMenu)
-        setListener(popupMenu) { v: View -> showPopup(v) }
-    }
-
-    private fun setListener(v: View, f: (View) -> Unit) {
-        val clickListener = View.OnClickListener { view ->
-            f(view)
-        }
-        v.setOnClickListener(clickListener)
+        val sendButton = (context as Activity).findViewById<View>(R.id.buttonChatBoxSend)
+        val lb = ListenersBuilder()
+        lb.addListener(popupMenu, this::showPopup).
+            addListener(sendButton,this::sendMessage).
+            build()
     }
 
     private fun showPopup(view: View) {
@@ -39,6 +37,11 @@ class ChatRoomListeners(private val context: Context) {
             true
         }
         popup.show()
+    }
+
+    private fun sendMessage(v: View)
+    {
+        Toast.makeText(context, "Message Sent", Toast.LENGTH_SHORT).show()
     }
 
 }
