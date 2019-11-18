@@ -13,7 +13,9 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 
-class ChatRoomActivity : VedibartaActivity(), ChatRoomQuestionGeneratorDialog.ChatRoomDialogListener
+class ChatRoomActivity : VedibartaActivity()
+    ,ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
+    ,ChatRoomAbuseReportDialog.AbuseReportDialogListener
 {
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -72,5 +74,10 @@ class ChatRoomActivity : VedibartaActivity(), ChatRoomQuestionGeneratorDialog.Ch
         {
             Log.d("QuestionGenerator", e.toString())
         }
+    }
+
+    override fun onAbuseTypeClick(dialog: DialogFragment)
+    {
+        Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
     }
 }

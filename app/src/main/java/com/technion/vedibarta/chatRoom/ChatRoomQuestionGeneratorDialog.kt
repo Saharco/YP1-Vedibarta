@@ -9,16 +9,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.technion.vedibarta.R
-import com.technion.vedibarta.userProfile.ProfilePictureUploadDialog
-import kotlinx.android.synthetic.main.profile_picture_dialog.*
 import kotlinx.android.synthetic.main.profile_picture_dialog.dismissButton
 import kotlinx.android.synthetic.main.question_generator_dialog.*
 
 class ChatRoomQuestionGeneratorDialog : DialogFragment() {
 
-    private lateinit var listener: ChatRoomDialogListener
+    private lateinit var listener: QuestionGeneratorDialogListener
 
-    interface ChatRoomDialogListener
+    interface QuestionGeneratorDialogListener
     {
         fun onQuestionclick(dialog: DialogFragment, v: View)
     }
@@ -36,9 +34,9 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            listener = context as ChatRoomDialogListener
+            listener = context as QuestionGeneratorDialogListener
         } catch (e: ClassCastException) {
-            Log.d("UploadDialog", e.toString())
+            Log.d("questionGeneratorDialog", e.toString())
         }
     }
 
@@ -60,7 +58,7 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
             dismiss()
         }
 
-        dismissButton.setOnClickListener {
+        questionGeneratorDismissButton.setOnClickListener {
             Toast.makeText(context, "dismiss", Toast.LENGTH_SHORT).show()
             dismiss()
         }

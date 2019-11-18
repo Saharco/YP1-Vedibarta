@@ -26,7 +26,7 @@
         android:layout_marginTop="16dp"
         android:textSize="24sp"
         android:textColor="@color/textPrimary"
-        android:text="מחולל השאלות הזמני"
+        android:text="דיווח על הטרדה זמני"
         android:maxLines="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,54 +39,56 @@
         android:layout_marginTop="16dp"
         android:fontFamily="cursive"
         android:gravity="center"
-        android:text="ג'ונסון גם אוהב כדורגל משחקי מחשב וסדרות ישראליות\nנסה לשאול אותו את אחת מהשאלות הבאות:"
+        android:text="סמן את הסיבות שביגללן את/ה מדווח על התלמיד"
         android:textColor="@color/textSecondary"
         android:textSize="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alertTitle" />
 
-    <TextView
-        android:id="@+id/questionExample1"
-        android:layout_width="wrap_content"
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:id="@+id/abuse1"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="cursive"
-        android:gravity="center"
-        android:text="איזו קבוצה אתה אוהד?"
+        android:layout_width="120dp"
+        android:text="אלימות מילולית"
         android:textColor="@color/colorAccent"
         android:textSize="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alertDescription" />
 
-    <TextView
-        android:id="@+id/questionExample2"
-        android:layout_width="wrap_content"
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:id="@+id/abuse2"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="cursive"
-        android:gravity="center"
-        android:text="מה אתה משחק עכשיו בזמן הפנוי שלך?"
+        android:layout_width="120dp"
+        android:text="הטרדה מינית"
         android:textColor="@color/colorAccent"
         android:textSize="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/questionExample1" />
+        app:layout_constraintTop_toBottomOf="@+id/abuse1" />
 
-    <TextView
-        android:id="@+id/questionExample3"
-        android:layout_width="wrap_content"
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:id="@+id/abuse3"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="cursive"
-        android:gravity="center"
-        android:text="האם אתה מעדיף סדרות עכשויות או קלאסיות?"
+        android:layout_width="120dp"
+        android:text="תוכן פוגעני"
         android:textColor="@color/colorAccent"
         android:textSize="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/questionExample2" />
+        app:layout_constraintTop_toBottomOf="@+id/abuse2"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/reportButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="דווח"
+        android:textSize="24sp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/abuse3"/>
 
     <View
         android:id="@+id/divider"
@@ -96,10 +98,10 @@
         android:background="@color/colorDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/questionExample3" />
+        app:layout_constraintTop_toBottomOf="@+id/reportButton" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/questionGeneratorDismissButton"
+        android:id="@+id/reportAbuseDismissButton"
         android:layout_height="56dp"
         android:layout_width="match_parent"
         android:text="בחזרה"
