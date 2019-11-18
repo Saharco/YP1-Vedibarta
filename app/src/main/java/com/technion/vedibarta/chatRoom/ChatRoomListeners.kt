@@ -33,7 +33,10 @@ class ChatRoomListeners(private val chatRoom: Activity, private val supportFragm
                         )
                 }
                 R.id.reportAbuse -> {
-                    Toast.makeText(chatRoom, item.title, Toast.LENGTH_SHORT).show()
+                    ChatRoomAbuseReportDialog().show(
+                        supportFragmentManager,
+                        "ReportAbuseDialog"
+                    )
                 }
             }
 
