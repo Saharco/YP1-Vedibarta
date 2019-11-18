@@ -5,10 +5,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.FragmentManager
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.ListenersSetter
 
-class ChatRoomListeners(private val chatRoom: Activity) {
+class ChatRoomListeners(private val chatRoom: Activity, private val supportFragmentManager: FragmentManager) {
 
     fun configureListeners() {
         val popupMenu = chatRoom.findViewById<View>(R.id.popupMenu)
@@ -26,7 +27,10 @@ class ChatRoomListeners(private val chatRoom: Activity) {
 
             when (item!!.itemId) {
                 R.id.generateQuestion -> {
-                    Toast.makeText(chatRoom, item.title, Toast.LENGTH_SHORT).show()
+                        ChatRoomQuestionGeneratorDialog().show(
+                            supportFragmentManager,
+                            "QuestionGeneratorFragment"
+                        )
                 }
                 R.id.reportAbuse -> {
                     Toast.makeText(chatRoom, item.title, Toast.LENGTH_SHORT).show()
