@@ -6,31 +6,33 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Bundle
-import android.provider.MediaStore
-import kotlinx.android.synthetic.main.activity_user_profile.*
-import android.widget.*
-import android.widget.TableLayout
-
-import androidx.fragment.app.DialogFragment
-import com.technion.vedibarta.R
-import androidx.core.content.FileProvider
-import android.net.Uri
-import android.util.Log
-import java.io.File
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
-
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
+import android.net.Uri
 import android.os.AsyncTask
-import android.view.*
+import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.view.get
+import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -39,17 +41,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
+import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
+import kotlin.math.log
 
-
-class UserProfileActivity : VedibartaActivity(),
+class ProfileEditActivity : VedibartaActivity(),
     ProfilePictureUploadDialog.ProfilePictureUploadDialogListener {
 
-    private val TAG = "UserProfileActivity"
+    private val TAG = "ProfileEditActivity"
 
     private val APP_PERMISSION_REQUEST_CAMERA = 100
     private val REQUEST_CAMERA = 1
@@ -70,51 +75,9 @@ class UserProfileActivity : VedibartaActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
-        Log.d(TAG, "created UserProfileActivity")
+        Log.d(TAG, "created ProfileEditActivity")
         initWidgets()
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.user_profile_menu, menu)
-//        toolbar.menu.findItem(R.id.action_change_display)
-//            .setIcon(R.drawable.ic_item_appbar)
-//        toolbar.getMenu().findItem(R.id.action_change_display)
-//            .setTitle(R.string.action_switch_to_list)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, "onOptionsItemSelected started")
-        when (item.itemId) {
-            android.R.id.home ->
-            if (isImageFullscreen) {
-                Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
-                if (!minimizeFullscreenImage()) {
-                    super.onBackPressed()
-                }
-            } else {
-                Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
-                super.onBackPressed()
-            }
-            R.id.actionEditProfile ->
-//                val intentNext = Intent(this, ProfileEditActivity.class)
-                    Log.d(TAG, "hello")
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-        if (isImageFullscreen) {
-            Log.d(TAG, "onBackPressed: closing fullscreen image")
-            if (!minimizeFullscreenImage()) {
-                super.onBackPressed()
-            }
-        } else {
-            Log.d(TAG, "onBackPressed: finishing activity")
-            super.onBackPressed()
-        }
-    }
-
 
     private fun initWidgets() {
         setToolbar(toolbar)
@@ -234,35 +197,57 @@ class UserProfileActivity : VedibartaActivity(),
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        if (student == null || student!!.characteristics.isEmpty()) {
+        if (student == null || characteristics.isEmpty()) {
             handleNoCharacteristics()
             return
         }
 
-        (student!!.characteristics.indices step 3).forEach { i ->
+        (characteristics.indices step 3).forEach { i ->
             val tableRow = TableRow(this)
+            tableRow.id = i
             tableRow.layoutParams = tableRowParams
             tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
             for (j in 0 until 3) {
-                if (i + j >= student!!.characteristics.size)
+                if (i + j >= characteristics.size)
                     break
-
-                val bubbleFrame = LayoutInflater.from(this).inflate(
-                    R.layout.user_profile_bubble,
-                    null
-                ) as FrameLayout
-
+                val bubbleFrame = if (student!!.characteristics.contains(characteristics[i + j])) {
+                    LayoutInflater.from(this).inflate(
+                        R.layout.user_profile_bubble_selected,
+                        null
+                    ) as FrameLayout
+                } else {
+                    LayoutInflater.from(this).inflate(
+                        R.layout.user_profile_bubble,
+                        null
+                    ) as FrameLayout
+                }
+                bubbleFrame.id = i + j
+                bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = student!!.characteristics[i + j]
+                bubble.text = characteristics[i + j]
                 bubbleFrame.layoutParams = bubbleParams
-
                 tableRow.addView(bubbleFrame)
             }
 
             characteristicsTable.addView(tableRow)
         }
     }
+
+    fun characteristicsItemClickHandler(view: View) {
+        Log.d(TAG, "OnClick ${view.id}")
+        val row = view.id / 3
+        Log.d(TAG, "Row: $row")
+        val tableRow = characteristicsTable[row] as TableRow
+        Log.d(TAG, "Attempting remove at Row: $row Index: ${view.id % 3}")
+        val bubbleFrame = LayoutInflater.from(this).inflate(
+            R.layout.user_profile_bubble,
+            null
+        ) as FrameLayout
+        Log.d(TAG, "Removed View")
+
+    }
+
 
     private fun handleNoCharacteristics() {
         //TODO: add some behavior for the scenario where the user has no characteristics
@@ -283,27 +268,33 @@ class UserProfileActivity : VedibartaActivity(),
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        if (student == null || student!!.hobbies.isEmpty()) {
+        if (student == null || hobbies.isEmpty()) {
             handleNoHobbies()
             return
         }
 
-        (student!!.hobbies.indices step 3).forEach { i ->
+        (hobbies.indices step 3).forEach { i ->
             val tableRow = TableRow(this)
             tableRow.layoutParams = tableRowParams
             tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
             for (j in 0 until 3) {
-                if (i + j >= student!!.hobbies.size)
+                if (i + j >= hobbies.size)
                     break
-
-                val bubbleFrame = LayoutInflater.from(this).inflate(
-                    R.layout.user_profile_bubble_orange,
-                    null
-                ) as FrameLayout
+                val bubbleFrame = if (student!!.hobbies.contains(hobbies[i + j])) {
+                    LayoutInflater.from(this).inflate(
+                        R.layout.user_profile_bubble_orange_selected,
+                        null
+                    ) as FrameLayout
+                } else {
+                    LayoutInflater.from(this).inflate(
+                        R.layout.user_profile_bubble_orange,
+                        null
+                    ) as FrameLayout
+                }
 
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = student!!.hobbies[i + j]
+                bubble.text = hobbies[i + j]
                 bubbleFrame.layoutParams = bubbleParams
 
                 tableRow.addView(bubbleFrame)
@@ -337,6 +328,32 @@ class UserProfileActivity : VedibartaActivity(),
             enlargedToolbar.visibility = View.VISIBLE
             setToolbar(enlargedToolbar)
             changeStatusBarColor(resources.getColor(android.R.color.black))
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, "onOptionsItemSelected started")
+        if (isImageFullscreen) {
+            Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
+            if (!minimizeFullscreenImage()) {
+                super.onBackPressed()
+            }
+        } else {
+            Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
+            super.onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (isImageFullscreen) {
+            Log.d(TAG, "onBackPressed: closing fullscreen image")
+            if (!minimizeFullscreenImage()) {
+                super.onBackPressed()
+            }
+        } else {
+            Log.d(TAG, "onBackPressed: finishing activity")
+            super.onBackPressed()
         }
     }
 
@@ -644,7 +661,7 @@ class UserProfileActivity : VedibartaActivity(),
             try {
                 val rotateBitmap = RotateBitmap()
                 val bitmap =
-                    rotateBitmap.handleSamplingAndRotationBitmap(this@UserProfileActivity, uris[0])
+                    rotateBitmap.handleSamplingAndRotationBitmap(this@ProfileEditActivity, uris[0])
                 Log.d(
                     TAG,
                     "doInBackground: MBs before compression: " + bitmap!!.byteCount.toDouble() / 1e6
@@ -680,4 +697,6 @@ class UserProfileActivity : VedibartaActivity(),
             return stream.toByteArray()
         }
     }
+
 }
+
