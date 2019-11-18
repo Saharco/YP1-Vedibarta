@@ -1,21 +1,26 @@
 package com.technion.vedibarta.chatRoom
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 
-class ChatRoomActivity : VedibartaActivity() {
-
+class ChatRoomActivity : VedibartaActivity(), ChatRoomQuestionGeneratorDialog.ChatRoomDialogListener
+{
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_room)
 
-        val chatRoomListeners = ChatRoomListeners(this@ChatRoomActivity)
+        val chatRoomListeners = ChatRoomListeners(this@ChatRoomActivity, supportFragmentManager)
 
         setToolbar(chatToolbar)
         chatRoomListeners.configureListeners()
@@ -54,5 +59,18 @@ class ChatRoomActivity : VedibartaActivity() {
             else -> TODO()
         }
         return true
+    }
+
+    override fun onQuestionclick(dialog: DialogFragment, v: View)
+    {
+        try
+        {
+            val question = (v as TextView).text
+            Toast.makeText(this, question, Toast.LENGTH_SHORT).show()
+        }
+        catch (e: ClassCastException)
+        {
+            Log.d("QuestionGenerator", e.toString())
+        }
     }
 }
