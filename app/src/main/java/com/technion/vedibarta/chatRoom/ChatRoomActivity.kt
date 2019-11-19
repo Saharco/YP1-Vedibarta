@@ -78,6 +78,6 @@ class ChatRoomActivity : VedibartaActivity()
 
     override fun onAbuseTypeClick(dialog: DialogFragment)
     {
-        Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
     }
 }
