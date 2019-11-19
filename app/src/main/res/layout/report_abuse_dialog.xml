@@ -39,42 +39,48 @@
         android:layout_marginTop="16dp"
         android:fontFamily="cursive"
         android:gravity="center"
-        android:text="סמן את הסיבות שביגללן את/ה מדווח על התלמיד"
+        android:text="סמן את הסיבות שביגללן את/ה מדווח/ת על התלמיד/ה"
         android:textColor="@color/textSecondary"
         android:textSize="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alertTitle" />
 
-    <com.google.android.material.radiobutton.MaterialRadioButton
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/abuse1"
         android:layout_height="wrap_content"
         android:layout_width="120dp"
         android:text="אלימות מילולית"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/textSecondary"
         android:textSize="12dp"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/alertDescription" />
 
-    <com.google.android.material.radiobutton.MaterialRadioButton
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/abuse2"
         android:layout_height="wrap_content"
         android:layout_width="120dp"
         android:text="הטרדה מינית"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/textSecondary"
         android:textSize="12dp"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/abuse1" />
 
-    <com.google.android.material.radiobutton.MaterialRadioButton
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/abuse3"
         android:layout_height="wrap_content"
         android:layout_width="120dp"
         android:text="תוכן פוגעני"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/textSecondary"
         android:textSize="12dp"
+        android:button="@null"
+        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/abuse2"/>

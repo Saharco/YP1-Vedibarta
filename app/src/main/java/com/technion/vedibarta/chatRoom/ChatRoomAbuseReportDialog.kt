@@ -42,19 +42,24 @@ class ChatRoomAbuseReportDialog: DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        abuse1RadioButton.setOnClickListener{
+        abuse1.setOnClickListener{
             listener.onAbuseTypeClick(this)
             Toast.makeText(context, "abuse1", Toast.LENGTH_SHORT).show()
         }
 
-        abuse2RadioButton.setOnClickListener{
+        abuse2.setOnClickListener{
             listener.onAbuseTypeClick(this)
             Toast.makeText(context, "abuse2", Toast.LENGTH_SHORT).show()
         }
 
-        abuse3RadioButton.setOnClickListener{
+        abuse3.setOnClickListener{
             listener.onAbuseTypeClick(this)
             Toast.makeText(context, "abuse3", Toast.LENGTH_SHORT).show()
+        }
+
+        reportButton.setOnClickListener{
+            Toast.makeText(context, "Report", Toast.LENGTH_SHORT).show()
+            dismiss()
         }
 
         reportAbuseDismissButton.setOnClickListener {
