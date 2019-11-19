@@ -1,57 +1,24 @@
 package com.technion.vedibarta.userProfile
 
-import android.Manifest
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Point
-import android.graphics.Rect
-import android.net.Uri
-import android.os.AsyncTask
+import android.opengl.Visibility
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.view.get
-import androidx.fragment.app.DialogFragment
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.Transition
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.Gender
-import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_profile_edit.*
-import kotlinx.android.synthetic.main.activity_user_profile.*
-import org.w3c.dom.Text
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
-import kotlin.math.log
+import kotlinx.android.synthetic.main.fragment_profile_edit_characteristics.*
+import kotlinx.android.synthetic.main.fragment_profile_edit_hobbies.*
 
 class ProfileEditActivity : VedibartaActivity() {
 
@@ -76,6 +43,7 @@ class ProfileEditActivity : VedibartaActivity() {
         populateCharacteristicsTable()
         populateHobbiesTable()
     }
+
 
     @SuppressLint("InflateParams")
     private fun populateCharacteristicsTable() {
@@ -103,7 +71,7 @@ class ProfileEditActivity : VedibartaActivity() {
             tableRow.layoutParams = tableRowParams
             tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
-            var bubbleFrame :  FrameLayout
+            var bubbleFrame: FrameLayout
 
             for (j in 0 until 3) {
                 if (i + j >= characteristics.size)
@@ -136,12 +104,12 @@ class ProfileEditActivity : VedibartaActivity() {
     private fun characteristicsItemClickHandler(view: View) {
         val row = view.id / 3
         val tableRow = characteristicsTable_edit_profile[row] as TableRow
-        val bubbleFrame : FrameLayout
-        val viewPos = view.id%3
+        val bubbleFrame: FrameLayout
+        val viewPos = view.id % 3
 
-        Log.d(TAG,"row: $row, View: ${view.id}")
+        Log.d(TAG, "row: $row, View: ${view.id}")
 
-        if (tableRow[view.id%3].tag == NON_SELECTED_BUBBLE) {
+        if (tableRow[view.id % 3].tag == NON_SELECTED_BUBBLE) {
             bubbleFrame = LayoutInflater.from(this).inflate(
                 R.layout.user_profile_bubble_selected,
                 null
@@ -162,42 +130,6 @@ class ProfileEditActivity : VedibartaActivity() {
 
         val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
         bubble.text = characteristics[view.id]
-        bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
-
-        tableRow.removeViewAt(viewPos)
-        tableRow.addView(bubbleFrame, viewPos)
-
-    }
-
-    private fun hobbiesItemClickHandler(view: View) {
-        val row = view.id / 3
-        val tableRow = hobbiesTable_edit_profile[row] as TableRow
-        val bubbleFrame : FrameLayout
-        val viewPos = view.id%3
-
-        Log.d(TAG,"row: $row, View: ${view.id}")
-
-        if (tableRow[view.id%3].tag == NON_SELECTED_BUBBLE) {
-            bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_orange_selected,
-                null
-            ) as FrameLayout
-            bubbleFrame.tag = SELECTED_BUBBLE
-        } else {
-            bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_orange,
-                null
-            ) as FrameLayout
-            bubbleFrame.tag = NON_SELECTED_BUBBLE
-        }
-
-        bubbleFrame.id = view.id
-        bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it) }
-
-        Log.d(TAG, "Copying Text ${hobbies[view.id]}, View Id: ${view.id}, Row: $row")
-
-        val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
-        bubble.text = hobbies[view.id]
         bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
 
         tableRow.removeViewAt(viewPos)
@@ -234,23 +166,23 @@ class ProfileEditActivity : VedibartaActivity() {
             val tableRow = TableRow(this)
             tableRow.layoutParams = tableRowParams
             tableRow.gravity = Gravity.CENTER_HORIZONTAL
-            var bubbleFrame : FrameLayout
+            var bubbleFrame: FrameLayout
 
             for (j in 0 until 3) {
                 if (i + j >= hobbies.size)
                     break
-                 if (student!!.hobbies.contains(hobbies[i + j])) {
+                if (student!!.hobbies.contains(hobbies[i + j])) {
                     bubbleFrame = LayoutInflater.from(this).inflate(
                         R.layout.user_profile_bubble_orange_selected,
                         null
                     ) as FrameLayout
-                     bubbleFrame.tag = SELECTED_BUBBLE
+                    bubbleFrame.tag = SELECTED_BUBBLE
                 } else {
                     bubbleFrame = LayoutInflater.from(this).inflate(
                         R.layout.user_profile_bubble_orange,
                         null
                     ) as FrameLayout
-                     bubbleFrame.tag = NON_SELECTED_BUBBLE
+                    bubbleFrame.tag = NON_SELECTED_BUBBLE
                 }
                 bubbleFrame.id = i + j
                 bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it) }
@@ -264,6 +196,42 @@ class ProfileEditActivity : VedibartaActivity() {
 
             hobbiesTable_edit_profile.addView(tableRow)
         }
+    }
+
+    private fun hobbiesItemClickHandler(view: View) {
+        val row = view.id / 3
+        val tableRow = hobbiesTable_edit_profile[row] as TableRow
+        val bubbleFrame: FrameLayout
+        val viewPos = view.id % 3
+
+        Log.d(TAG, "row: $row, View: ${view.id}")
+
+        if (tableRow[view.id % 3].tag == NON_SELECTED_BUBBLE) {
+            bubbleFrame = LayoutInflater.from(this).inflate(
+                R.layout.user_profile_bubble_orange_selected,
+                null
+            ) as FrameLayout
+            bubbleFrame.tag = SELECTED_BUBBLE
+        } else {
+            bubbleFrame = LayoutInflater.from(this).inflate(
+                R.layout.user_profile_bubble_orange,
+                null
+            ) as FrameLayout
+            bubbleFrame.tag = NON_SELECTED_BUBBLE
+        }
+
+        bubbleFrame.id = view.id
+        bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it) }
+
+        Log.d(TAG, "Copying Text ${hobbies[view.id]}, View Id: ${view.id}, Row: $row")
+
+        val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
+        bubble.text = hobbies[view.id]
+        bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
+
+        tableRow.removeViewAt(viewPos)
+        tableRow.addView(bubbleFrame, viewPos)
+
     }
 
     private fun handleNoHobbies() {
@@ -281,6 +249,22 @@ class ProfileEditActivity : VedibartaActivity() {
         Log.d(TAG, "onOptionsItemSelected started")
         super.onBackPressed()
         return super.onOptionsItemSelected(item)
+    }
+
+    fun onClickNexrButton(view: View) {
+        characteristicsTable_edit_profile.visibility = View.GONE
+        hobbiesTable_edit_profile.visibility = View.VISIBLE
+        toolbar_edit_profile_title.text = "בחירת תחביבים"
+        view.visibility = View.GONE
+        button2.visibility = View.VISIBLE
+    }
+
+    fun onClickNexrButton2(view: View) {
+        characteristicsTable_edit_profile.visibility = View.VISIBLE
+        hobbiesTable_edit_profile.visibility = View.GONE
+        toolbar_edit_profile_title.text = resources.getString(R.string.profile_edit_characteristics_title)
+        view.visibility = View.GONE
+        button.visibility = View.VISIBLE
     }
 
 

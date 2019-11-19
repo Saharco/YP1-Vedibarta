@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.app.Activity
 import android.view.WindowManager
 import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.technion.vedibarta.POJOs.Student
+import com.technion.vedibarta.R
 import java.sql.Timestamp
 
 /**
@@ -24,48 +26,28 @@ open class VedibartaActivity : AppCompatActivity() {
         "טכניון",
         Gender.MALE,
         Timestamp(System.currentTimeMillis()),
-        arrayOf("חילוני", "מזרחי", "גבר", "צבר", "אשכנזי"),
+        arrayOf("חילוני", "מזרחי", "צבר", "אשכנזי"),
         arrayOf(
             "הוראה",
             "טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך",
-            "להיות עצלן",
+            "מדע",
             "מתמטיקה",
             "משחקי מחשב",
             "לתכנת"
         )
     )
 
-    protected val characteristics = arrayOf(
-        "אשכנזי",
-        "צבר",
-        "מזרחי",
-        "חילוני",
-        "דתי",
-        "שומר כשרות",
-        "מסורתי",
-        "מוסלמי",
-        "נוצרי",
-        "גבר",
-        "אישה",
-        "יהודי"
-    )
+    protected lateinit var characteristics: Array<String>
 
-    protected val hobbies = arrayOf(
-        "הוראה",
-        "טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך",
-        "להיות עצלן",
-        "מתמטיקה",
-        "משחקי מחשב",
-        "לתכנת",
-        "כדורגל",
-        "כדורסל",
-        "טניס",
-        "לראות סרט",
-        "ספרים",
-        "ציור"
-    )
+    protected lateinit var hobbies: Array<String>
 
     protected val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS: Int = 90
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        hobbies = resources.getStringArray(R.array.hobbiesMale_hebrew)
+    }
 
     override fun onStart() {
         super.onStart()

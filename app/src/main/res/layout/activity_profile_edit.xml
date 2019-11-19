@@ -23,7 +23,7 @@
             style="@style/ToolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="בחירת תכונות" />
+            android:text="@string/profile_edit_characteristics_title" />
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
@@ -43,16 +43,20 @@
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
 
-            <TableLayout
-                android:id="@+id/characteristicsTable_edit_profile"
+            <fragment
+                android:name="com.technion.vedibarta.userProfile.ProfileEditCharacteristics"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:id="@+id/characteristicsEdit">
+
+            </fragment>
 
             <View
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/colorDivider" />
+                android:background="@color/colorDivider"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/hobbiesTitle"
@@ -63,16 +67,40 @@
                 android:gravity="center"
                 android:text="@string/user_profile_hobbies"
                 android:textColor="@color/textSecondary"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone"/>
 
-
-            <TableLayout
-                android:id="@+id/hobbiesTable_edit_profile"
+            <fragment
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:name="com.technion.vedibarta.userProfile.ProfileEditHobbies"
+                android:id="@+id/hobbiesEdit">
+
+            </fragment>
 
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="onClickNexrButton"/>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:onClick="onClickNexrButton2"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

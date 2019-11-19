@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="hobbiesMale_hebrew">
+        <item>הוראה</item>
+        <item>טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך</item>
+        <item>משחקי מחשב</item>
+        <item>תכנות</item>
+        <item>כדורגל</item>
+        <item>כדורסל</item>
+        <item>טניס</item>
+        <item>סרטים</item>
+        <item>ספרים</item>
+        <item>ציור</item>
+        <item>אומנות</item>
+        <item>מוסיקה</item>
+        <item>צילום</item>
+        <item>שופינג</item>
+        <item>רובוטיקה</item>
+        <item>טיולים</item>
+        <item>מדע</item>
+        <item>ספורט</item>
+        <item>ריקוד</item>
+        <item>כושר</item>
+        <item>מתמטיקה</item>
+    </array>
+    <array name="hobbiesFemale_hebrew">
+
+    </array>
+</resources>
