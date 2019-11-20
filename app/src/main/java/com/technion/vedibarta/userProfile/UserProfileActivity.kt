@@ -97,8 +97,7 @@ class UserProfileActivity : VedibartaActivity(),
                 super.onBackPressed()
             }
             R.id.actionEditProfile ->
-//                val intentNext = Intent(this, ProfileEditActivity.class)
-                    Log.d(TAG, "hello")
+                startActivity(Intent(this, ProfileEditActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
     }
