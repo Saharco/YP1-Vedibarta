@@ -38,7 +38,7 @@
         <item name="android:gravity">center</item>
         <item name="android:maxLines">3</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/circle</item>
+        <item name="android:background">@drawable/circle_blue</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

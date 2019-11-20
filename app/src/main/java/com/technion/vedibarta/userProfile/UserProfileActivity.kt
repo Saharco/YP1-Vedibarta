@@ -249,7 +249,7 @@ class UserProfileActivity : VedibartaActivity(),
                     break
 
                 val bubbleFrame = LayoutInflater.from(this).inflate(
-                    R.layout.user_profile_bubble,
+                    R.layout.user_profile_bubble_blue,
                     null
                 ) as FrameLayout
 

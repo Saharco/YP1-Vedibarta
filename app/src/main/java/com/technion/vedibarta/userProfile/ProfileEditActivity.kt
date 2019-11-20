@@ -1,7 +1,6 @@
 package com.technion.vedibarta.userProfile
 
 import android.annotation.SuppressLint
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -78,15 +77,17 @@ class ProfileEditActivity : VedibartaActivity() {
                     break
                 if (student!!.characteristics.contains(characteristics[i + j])) {
                     bubbleFrame = LayoutInflater.from(this).inflate(
-                        R.layout.user_profile_bubble_selected,
+                        R.layout.user_profile_bubble_blue,
                         null
                     ) as FrameLayout
+                    bubbleFrame.alpha = 1f
                     bubbleFrame.tag = SELECTED_BUBBLE
                 } else {
                     bubbleFrame = LayoutInflater.from(this).inflate(
-                        R.layout.user_profile_bubble,
+                        R.layout.user_profile_bubble_blue_selected,
                         null
                     ) as FrameLayout
+                    bubbleFrame.alpha = 0.6f
                     bubbleFrame.tag = NON_SELECTED_BUBBLE
                 }
                 bubbleFrame.id = i + j
@@ -111,13 +112,13 @@ class ProfileEditActivity : VedibartaActivity() {
 
         if (tableRow[view.id % 3].tag == NON_SELECTED_BUBBLE) {
             bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_selected,
+                R.layout.user_profile_bubble_blue,
                 null
             ) as FrameLayout
             bubbleFrame.tag = SELECTED_BUBBLE
         } else {
             bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble,
+                R.layout.user_profile_bubble_blue_selected,
                 null
             ) as FrameLayout
             bubbleFrame.tag = NON_SELECTED_BUBBLE
@@ -173,15 +174,17 @@ class ProfileEditActivity : VedibartaActivity() {
                     break
                 if (student!!.hobbies.contains(hobbies[i + j])) {
                     bubbleFrame = LayoutInflater.from(this).inflate(
-                        R.layout.user_profile_bubble_orange_selected,
-                        null
-                    ) as FrameLayout
-                    bubbleFrame.tag = SELECTED_BUBBLE
-                } else {
-                    bubbleFrame = LayoutInflater.from(this).inflate(
                         R.layout.user_profile_bubble_orange,
                         null
                     ) as FrameLayout
+                    bubbleFrame.alpha = 1f
+                    bubbleFrame.tag = SELECTED_BUBBLE
+                } else {
+                    bubbleFrame = LayoutInflater.from(this).inflate(
+                        R.layout.user_profile_bubble_orange_selected,
+                        null
+                    ) as FrameLayout
+                    bubbleFrame.alpha = 0.6f
                     bubbleFrame.tag = NON_SELECTED_BUBBLE
                 }
                 bubbleFrame.id = i + j
@@ -208,13 +211,13 @@ class ProfileEditActivity : VedibartaActivity() {
 
         if (tableRow[view.id % 3].tag == NON_SELECTED_BUBBLE) {
             bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_orange_selected,
+                R.layout.user_profile_bubble_orange,
                 null
             ) as FrameLayout
             bubbleFrame.tag = SELECTED_BUBBLE
         } else {
             bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_orange,
+                R.layout.user_profile_bubble_orange_selected,
                 null
             ) as FrameLayout
             bubbleFrame.tag = NON_SELECTED_BUBBLE
