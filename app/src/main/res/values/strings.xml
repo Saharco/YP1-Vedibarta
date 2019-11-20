@@ -11,9 +11,12 @@
     <string name="user_profile_hobbies">התחביבים שלי</string>
     <string name="user_profile_characteristics">אני מזדהה בתור</string>
     <string name="action_edit_profile_title">ערוך פרופיל</string>
+    <string name="action_save_profile_edit">שמור שינויים</string>
+    <string name="edit_discard_changes_title">ביטול שינויים</string>
+    <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="profile_edit_characteristics_title">בחירת תכונות</string>
+    <string name="profile_edit_title">עריכת פרופיל</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

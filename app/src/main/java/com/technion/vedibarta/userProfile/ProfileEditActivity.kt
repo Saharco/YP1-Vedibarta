@@ -1,244 +1,42 @@
 package com.technion.vedibarta.userProfile
 
-import android.annotation.SuppressLint
+import android.content.DialogInterface
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
+import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.FrameLayout
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.get
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_profile_edit.*
-import kotlinx.android.synthetic.main.fragment_profile_edit_characteristics.*
-import kotlinx.android.synthetic.main.fragment_profile_edit_hobbies.*
+import androidx.viewpager.widget.ViewPager
 
 class ProfileEditActivity : VedibartaActivity() {
 
     private val TAG = "ProfileEditActivity"
+    private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    private val SELECTED_BUBBLE = 1
-    private val NON_SELECTED_BUBBLE = 0
+    public var editedCharacteristics = student!!.characteristics.toMutableSet()
+    public var editedHobbies = student!!.hobbies.toMutableSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_edit)
         Log.d(TAG, "created ProfileEditActivity")
-        initWidgets()
-    }
 
-    private fun initWidgets() {
-        setToolbar(toolbar_edit_profile)
-        loadUserData()
-    }
+        sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
-    private fun loadUserData() {
-        populateCharacteristicsTable()
-        populateHobbiesTable()
-    }
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            editProfileContainer.setPagingEnabled(false)
+        setupViewPager(editProfileContainer)
 
-
-    @SuppressLint("InflateParams")
-    private fun populateCharacteristicsTable() {
-
-        val tableRowParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.MATCH_PARENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-        tableRowParams.setMargins(40, 40, 40, 40)
-
-        val bubbleParams =
-            TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-            )
-
-        if (student == null || characteristics.isEmpty()) {
-            handleNoCharacteristics()
-            return
-        }
-
-        (characteristics.indices step 3).forEach { i ->
-            val tableRow = TableRow(this)
-            tableRow.id = i
-            tableRow.layoutParams = tableRowParams
-            tableRow.gravity = Gravity.CENTER_HORIZONTAL
-
-            var bubbleFrame: FrameLayout
-
-            for (j in 0 until 3) {
-                if (i + j >= characteristics.size)
-                    break
-                if (student!!.characteristics.contains(characteristics[i + j])) {
-                    bubbleFrame = LayoutInflater.from(this).inflate(
-                        R.layout.user_profile_bubble_blue,
-                        null
-                    ) as FrameLayout
-                    bubbleFrame.alpha = 1f
-                    bubbleFrame.tag = SELECTED_BUBBLE
-                } else {
-                    bubbleFrame = LayoutInflater.from(this).inflate(
-                        R.layout.user_profile_bubble_blue_selected,
-                        null
-                    ) as FrameLayout
-                    bubbleFrame.alpha = 0.6f
-                    bubbleFrame.tag = NON_SELECTED_BUBBLE
-                }
-                bubbleFrame.id = i + j
-                bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
-                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = characteristics[i + j]
-                bubbleFrame.layoutParams = bubbleParams
-                tableRow.addView(bubbleFrame)
-            }
-
-            characteristicsTable_edit_profile.addView(tableRow)
-        }
-    }
-
-    private fun characteristicsItemClickHandler(view: View) {
-        val row = view.id / 3
-        val tableRow = characteristicsTable_edit_profile[row] as TableRow
-        val bubbleFrame: FrameLayout
-        val viewPos = view.id % 3
-
-        Log.d(TAG, "row: $row, View: ${view.id}")
-
-        if (tableRow[view.id % 3].tag == NON_SELECTED_BUBBLE) {
-            bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_blue,
-                null
-            ) as FrameLayout
-            bubbleFrame.tag = SELECTED_BUBBLE
-        } else {
-            bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_blue_selected,
-                null
-            ) as FrameLayout
-            bubbleFrame.tag = NON_SELECTED_BUBBLE
-        }
-
-        bubbleFrame.id = view.id
-        bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
-
-        Log.d(TAG, "Copying Text ${characteristics[view.id]}, View Id: ${view.id}, Row: $row")
-
-        val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
-        bubble.text = characteristics[view.id]
-        bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
-
-        tableRow.removeViewAt(viewPos)
-        tableRow.addView(bubbleFrame, viewPos)
-
-    }
-
-
-    private fun handleNoCharacteristics() {
-        //TODO: add some behavior for the scenario where the user has no characteristics
-    }
-
-    @SuppressLint("InflateParams")
-    private fun populateHobbiesTable() {
-
-        val tableRowParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.MATCH_PARENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-        tableRowParams.setMargins(40, 40, 40, 40)
-
-        val bubbleParams =
-            TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-            )
-
-        if (student == null || hobbies.isEmpty()) {
-            handleNoHobbies()
-            return
-        }
-
-        (hobbies.indices step 3).forEach { i ->
-            val tableRow = TableRow(this)
-            tableRow.layoutParams = tableRowParams
-            tableRow.gravity = Gravity.CENTER_HORIZONTAL
-            var bubbleFrame: FrameLayout
-
-            for (j in 0 until 3) {
-                if (i + j >= hobbies.size)
-                    break
-                if (student!!.hobbies.contains(hobbies[i + j])) {
-                    bubbleFrame = LayoutInflater.from(this).inflate(
-                        R.layout.user_profile_bubble_orange,
-                        null
-                    ) as FrameLayout
-                    bubbleFrame.alpha = 1f
-                    bubbleFrame.tag = SELECTED_BUBBLE
-                } else {
-                    bubbleFrame = LayoutInflater.from(this).inflate(
-                        R.layout.user_profile_bubble_orange_selected,
-                        null
-                    ) as FrameLayout
-                    bubbleFrame.alpha = 0.6f
-                    bubbleFrame.tag = NON_SELECTED_BUBBLE
-                }
-                bubbleFrame.id = i + j
-                bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it) }
-
-                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = hobbies[i + j]
-                bubbleFrame.layoutParams = bubbleParams
-
-                tableRow.addView(bubbleFrame)
-            }
-
-            hobbiesTable_edit_profile.addView(tableRow)
-        }
-    }
-
-    private fun hobbiesItemClickHandler(view: View) {
-        val row = view.id / 3
-        val tableRow = hobbiesTable_edit_profile[row] as TableRow
-        val bubbleFrame: FrameLayout
-        val viewPos = view.id % 3
-
-        Log.d(TAG, "row: $row, View: ${view.id}")
-
-        if (tableRow[view.id % 3].tag == NON_SELECTED_BUBBLE) {
-            bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_orange,
-                null
-            ) as FrameLayout
-            bubbleFrame.tag = SELECTED_BUBBLE
-        } else {
-            bubbleFrame = LayoutInflater.from(this).inflate(
-                R.layout.user_profile_bubble_orange_selected,
-                null
-            ) as FrameLayout
-            bubbleFrame.tag = NON_SELECTED_BUBBLE
-        }
-
-        bubbleFrame.id = view.id
-        bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it) }
-
-        Log.d(TAG, "Copying Text ${hobbies[view.id]}, View Id: ${view.id}, Row: $row")
-
-        val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
-        bubble.text = hobbies[view.id]
-        bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
-
-        tableRow.removeViewAt(viewPos)
-        tableRow.addView(bubbleFrame, viewPos)
-
-    }
-
-    private fun handleNoHobbies() {
-        //TODO: add some behavior for the scenario where the user has no characteristics
+        editTabs.setupWithViewPager(editProfileContainer)
+        setToolbar(toolbar)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -248,28 +46,58 @@ class ProfileEditActivity : VedibartaActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
+    private fun setupViewPager(viewPager: ViewPager) {
+        val adapter = SectionsPageAdapter(supportFragmentManager)
+        adapter.addFragment(ProfileEditCharacteristicsFragment(), "מאפייני זהות")
+        adapter.addFragment(ProfileEditHobbiesFragment(), "תחביבים")
+        viewPager.adapter = adapter
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, "onOptionsItemSelected started")
-        super.onBackPressed()
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            R.id.actionEditProfile -> commitEditChanges()
+        }
         return super.onOptionsItemSelected(item)
     }
 
-    fun onClickNexrButton(view: View) {
-        characteristicsTable_edit_profile.visibility = View.GONE
-        hobbiesTable_edit_profile.visibility = View.VISIBLE
-        toolbar_edit_profile_title.text = "בחירת תחביבים"
-        view.visibility = View.GONE
-        button2.visibility = View.VISIBLE
+    private fun commitEditChanges() {
+        Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
+        //TODO: push to the database first!
+        student!!.characteristics = editedCharacteristics.toTypedArray()
+        student!!.hobbies = editedHobbies.toTypedArray()
+        onBackPressed()
     }
 
-    fun onClickNexrButton2(view: View) {
-        characteristicsTable_edit_profile.visibility = View.VISIBLE
-        hobbiesTable_edit_profile.visibility = View.GONE
-        toolbar_edit_profile_title.text = resources.getString(R.string.profile_edit_characteristics_title)
-        view.visibility = View.GONE
-        button.visibility = View.VISIBLE
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.user_edit_menu, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onBackPressed() {
+        if (changesOccurred()) {
+            Log.d(TAG, "Found changes")
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.edit_discard_changes_title)
+                .setMessage(R.string.edit_discard_changes_message)
+                .setPositiveButton(android.R.string.yes) { _, _ -> super.onBackPressed() }
+                .setNegativeButton(android.R.string.no) { _, _ -> }
+            builder.create()
+            return
+        }
+        Log.d(TAG, "No changes occurred")
+        super.onBackPressed()
+    }
 
+    private fun changesOccurred(): Boolean {
+        if (!(editedCharacteristics.containsAll(student!!.characteristics.toSet()) &&
+                    student!!.characteristics.toSet().containsAll(editedCharacteristics))
+        )
+            return true
+        if (!(editedHobbies.containsAll(student!!.hobbies.toSet()) &&
+                    student!!.hobbies.toSet().containsAll(editedHobbies))
+        )
+            return true
+        return false
+    }
 }
-

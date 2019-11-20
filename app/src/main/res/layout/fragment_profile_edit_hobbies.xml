@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".userProfile.ProfileEditHobbies">
+    tools:context=".userProfile.ProfileEditHobbiesFragment">
 
     <TableLayout
-        android:id="@+id/hobbiesTable_edit_profile"
+        android:id="@+id/editHobbiesTable"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content" />
 
-</LinearLayout>
+</ScrollView>
