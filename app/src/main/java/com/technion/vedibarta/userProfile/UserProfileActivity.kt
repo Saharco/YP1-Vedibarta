@@ -9,9 +9,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.Gravity
 import kotlinx.android.synthetic.main.activity_user_profile.*
-import android.view.LayoutInflater
 import android.widget.*
 import android.widget.TableLayout
 
@@ -28,8 +26,7 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.Rect
 import android.os.AsyncTask
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -76,6 +73,48 @@ class UserProfileActivity : VedibartaActivity(),
         Log.d(TAG, "created UserProfileActivity")
         initWidgets()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.user_profile_menu, menu)
+//        toolbar.menu.findItem(R.id.action_change_display)
+//            .setIcon(R.drawable.ic_item_appbar)
+//        toolbar.getMenu().findItem(R.id.action_change_display)
+//            .setTitle(R.string.action_switch_to_list)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, "onOptionsItemSelected started")
+        when (item.itemId) {
+            android.R.id.home ->
+            if (isImageFullscreen) {
+                Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
+                if (!minimizeFullscreenImage()) {
+                    super.onBackPressed()
+                }
+            } else {
+                Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
+                super.onBackPressed()
+            }
+            R.id.actionEditProfile ->
+//                val intentNext = Intent(this, ProfileEditActivity.class)
+                    Log.d(TAG, "hello")
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (isImageFullscreen) {
+            Log.d(TAG, "onBackPressed: closing fullscreen image")
+            if (!minimizeFullscreenImage()) {
+                super.onBackPressed()
+            }
+        } else {
+            Log.d(TAG, "onBackPressed: finishing activity")
+            super.onBackPressed()
+        }
+    }
+
 
     private fun initWidgets() {
         setToolbar(toolbar)
@@ -297,32 +336,6 @@ class UserProfileActivity : VedibartaActivity(),
             enlargedToolbar.visibility = View.VISIBLE
             setToolbar(enlargedToolbar)
             changeStatusBarColor(resources.getColor(android.R.color.black))
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, "onOptionsItemSelected started")
-        if (isImageFullscreen) {
-            Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
-            if (!minimizeFullscreenImage()) {
-                super.onBackPressed()
-            }
-        } else {
-            Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
-            super.onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-        if (isImageFullscreen) {
-            Log.d(TAG, "onBackPressed: closing fullscreen image")
-            if (!minimizeFullscreenImage()) {
-                super.onBackPressed()
-            }
-        } else {
-            Log.d(TAG, "onBackPressed: finishing activity")
-            super.onBackPressed()
         }
     }
 

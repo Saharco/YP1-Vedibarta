@@ -10,5 +10,6 @@
     <string name="generateQuestion">מחולל השאלות</string>
     <string name="user_profile_hobbies">התחביבים שלי</string>
     <string name="user_profile_characteristics">אני מזדהה בתור</string>
+    <string name="action_edit_profile_title">ערוך פרופיל</string>
 
 </resources>
