@@ -76,10 +76,6 @@ class UserProfileActivity : VedibartaActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.user_profile_menu, menu)
-//        toolbar.menu.findItem(R.id.action_change_display)
-//            .setIcon(R.drawable.ic_item_appbar)
-//        toolbar.getMenu().findItem(R.id.action_change_display)
-//            .setTitle(R.string.action_switch_to_list)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -97,8 +93,7 @@ class UserProfileActivity : VedibartaActivity(),
                 super.onBackPressed()
             }
             R.id.actionEditProfile ->
-//                val intentNext = Intent(this, ProfileEditActivity.class)
-                    Log.d(TAG, "hello")
+                startActivity(Intent(this, ProfileEditActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
     }
