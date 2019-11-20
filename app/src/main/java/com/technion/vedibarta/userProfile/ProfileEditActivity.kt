@@ -2,10 +2,13 @@ package com.technion.vedibarta.userProfile
 
 import android.content.DialogInterface
 import android.content.res.Configuration
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -77,11 +80,19 @@ class ProfileEditActivity : VedibartaActivity() {
     override fun onBackPressed() {
         if (changesOccurred()) {
             Log.d(TAG, "Found changes")
+            val title = TextView(this)
+            title.setText(R.string.edit_discard_changes_title)
+            title.textSize = 20f
+            title.setTypeface(null, Typeface.BOLD)
+            title.setTextColor(resources.getColor(R.color.textPrimary))
+            title.gravity = Gravity.CENTER
+            title.setPadding(10, 40, 10, 24)
             val builder = AlertDialog.Builder(this)
-            builder.setTitle(R.string.edit_discard_changes_title)
+            builder.setCustomTitle(title)
                 .setMessage(R.string.edit_discard_changes_message)
                 .setPositiveButton(android.R.string.yes) { _, _ -> super.onBackPressed() }
                 .setNegativeButton(android.R.string.no) { _, _ -> }
+                .show()
             builder.create()
             return
         }
