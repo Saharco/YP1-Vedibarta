@@ -114,6 +114,8 @@ class ProfileEditHobbiesFragment : Fragment() {
             ) as FrameLayout
             bubbleFrame.alpha = 1f
             bubbleFrame.tag = SELECTED_BUBBLE
+            Log.d(TAG, "Adding ${hobbies[view.id]} to the set" )
+            (activity as ProfileEditActivity).editedHobbies.add(hobbies[view.id])
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
                 R.layout.user_profile_bubble_orange_selected,
@@ -121,12 +123,12 @@ class ProfileEditHobbiesFragment : Fragment() {
             ) as FrameLayout
             bubbleFrame.alpha = 0.6f
             bubbleFrame.tag = NON_SELECTED_BUBBLE
+            Log.d(TAG, "Removing ${hobbies[view.id]} from the set" )
+            (activity as ProfileEditActivity).editedHobbies.remove(hobbies[view.id])
         }
 
         bubbleFrame.id = view.id
         bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it) }
-
-        Log.d(TAG, "Copying Text ${hobbies[view.id]}, View Id: ${view.id}, Row: $row")
 
         val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
         bubble.text = hobbies[view.id]

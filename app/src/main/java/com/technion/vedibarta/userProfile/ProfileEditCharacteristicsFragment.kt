@@ -18,9 +18,6 @@ import androidx.core.view.get
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 
-/**
- * A simple [Fragment] subclass.
- */
 class ProfileEditCharacteristicsFragment : Fragment() {
 
     private val TAG = "CharFragment@Edit"
@@ -117,6 +114,8 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             ) as FrameLayout
             bubbleFrame.alpha = 1f
             bubbleFrame.tag = SELECTED_BUBBLE
+            Log.d(TAG, "Adding ${characteristics[view.id]} to the set" )
+            (activity as ProfileEditActivity).editedCharacteristics.add(characteristics[view.id])
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
                 R.layout.user_profile_bubble_blue_selected,
@@ -124,6 +123,8 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             ) as FrameLayout
             bubbleFrame.alpha = 0.6f
             bubbleFrame.tag = NON_SELECTED_BUBBLE
+            Log.d(TAG, "Removing ${characteristics[view.id]} from the set" )
+            (activity as ProfileEditActivity).editedCharacteristics.remove(characteristics[view.id])
         }
 
         bubbleFrame.id = view.id

@@ -74,6 +74,17 @@ class UserProfileActivity : VedibartaActivity(),
         initWidgets()
     }
 
+    override fun onStart() {
+        super.onStart()
+        resetTables()
+        loadUserData()
+    }
+
+    private fun resetTables() {
+        characteristicsTable.removeAllViews()
+        hobbiesTable.removeAllViews()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.user_profile_menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -83,15 +94,15 @@ class UserProfileActivity : VedibartaActivity(),
         Log.d(TAG, "onOptionsItemSelected started")
         when (item.itemId) {
             android.R.id.home ->
-            if (isImageFullscreen) {
-                Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
-                if (!minimizeFullscreenImage()) {
+                if (isImageFullscreen) {
+                    Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
+                    if (!minimizeFullscreenImage()) {
+                        super.onBackPressed()
+                    }
+                } else {
+                    Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
                     super.onBackPressed()
                 }
-            } else {
-                Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
-                super.onBackPressed()
-            }
             R.id.actionEditProfile ->
                 startActivity(Intent(this, ProfileEditActivity::class.java))
         }
@@ -110,10 +121,8 @@ class UserProfileActivity : VedibartaActivity(),
         }
     }
 
-
     private fun initWidgets() {
         setToolbar(toolbar)
-        loadUserData()
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()
