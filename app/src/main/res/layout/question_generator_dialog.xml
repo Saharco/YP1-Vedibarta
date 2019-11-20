@@ -9,16 +9,6 @@
     android:paddingRight="8dp"
     android:gravity="center_horizontal">
 
-    <ImageView
-        android:id="@+id/uploadIcon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        app:srcCompat="@drawable/ic_upload_blue"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/alertTitle"
         android:layout_width="wrap_content"
