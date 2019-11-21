@@ -2,6 +2,7 @@ package com.technion.vedibarta.userProfile
 
 
 import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -16,6 +17,7 @@ import android.widget.TextView
 import androidx.core.view.get
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 
 class ProfileEditCharacteristicsFragment : Fragment() {
@@ -49,7 +51,7 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             TableLayout.LayoutParams.MATCH_PARENT,
             TableLayout.LayoutParams.WRAP_CONTENT
         )
-        tableRowParams.setMargins(40, 40, 40, 40)
+        tableRowParams.topMargin = 40 // in pixels
 
         val bubbleParams =
             TableRow.LayoutParams(
@@ -61,7 +63,8 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             return
         }
 
-        (characteristics.indices step 3).forEach { i ->
+        val steps = calculateBubblesInRow()
+        (characteristics.indices step steps).forEach { i ->
             val tableRow = TableRow(activity)
             tableRow.id = i
             tableRow.layoutParams = tableRowParams
@@ -69,7 +72,7 @@ class ProfileEditCharacteristicsFragment : Fragment() {
 
             var bubbleFrame: FrameLayout
 
-            for (j in 0 until 3) {
+            for (j in 0 until steps) {
                 if (i + j >= characteristics.size)
                     break
                 if (student!!.characteristics.contains(characteristics[i + j])) {
@@ -99,22 +102,29 @@ class ProfileEditCharacteristicsFragment : Fragment() {
         }
     }
 
+    private fun calculateBubblesInRow(): Int =
+        ((Resources.getSystem().displayMetrics.widthPixels - dpToPx(resources, 48f)) / dpToPx(
+            resources,
+            100f
+        )).toInt()
+
     private fun characteristicsItemClickHandler(view: View) {
-        val row = view.id / 3
+        val steps = calculateBubblesInRow()
+        val row = view.id / steps
         val tableRow = table[row] as TableRow
         val bubbleFrame: FrameLayout
-        val viewPos = view.id % 3
+        val viewPos = view.id % steps
 
         Log.d(TAG, "row: $row, View: ${view.id}")
 
-        if (tableRow[view.id % 3].tag == NON_SELECTED_BUBBLE) {
+        if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
             bubbleFrame = LayoutInflater.from(activity).inflate(
                 R.layout.user_profile_bubble_blue,
                 null
             ) as FrameLayout
             bubbleFrame.alpha = 1f
             bubbleFrame.tag = SELECTED_BUBBLE
-            Log.d(TAG, "Adding ${characteristics[view.id]} to the set" )
+            Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
             (activity as ProfileEditActivity).editedCharacteristics.add(characteristics[view.id])
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
@@ -123,7 +133,7 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             ) as FrameLayout
             bubbleFrame.alpha = 0.6f
             bubbleFrame.tag = NON_SELECTED_BUBBLE
-            Log.d(TAG, "Removing ${characteristics[view.id]} from the set" )
+            Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
             (activity as ProfileEditActivity).editedCharacteristics.remove(characteristics[view.id])
         }
 

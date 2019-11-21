@@ -3,9 +3,12 @@ package com.technion.vedibarta.utilities
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.app.Activity
+import android.content.Context
+import android.content.res.Resources
 import android.view.WindowManager
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.technion.vedibarta.POJOs.Student
@@ -37,6 +40,14 @@ open class VedibartaActivity : AppCompatActivity() {
                 "לתכנת"
             )
         )
+
+        /**
+         * @param resources: resources object of the current context
+         *
+         * @return [dp] as pixels on the current screen
+         */
+        fun dpToPx(resources: Resources, dp: Float): Float =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
     }
 
     protected val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS: Int = 90
@@ -51,6 +62,12 @@ open class VedibartaActivity : AppCompatActivity() {
             //TODO: redirect to LoginActivity here!!!
         }
     }
+
+    /**
+     * @return [this] as pixels on the current screen
+     */
+    fun Float.dpToPx(): Float =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, resources.displayMetrics)
 
     /**
      * Changes the status bar's color (only works on API 21+)
