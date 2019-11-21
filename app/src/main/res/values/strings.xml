@@ -18,7 +18,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="profile_edit_title">עריכת פרופיל</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--   ChatSearch attribute   -->
+    <string name="chat_search_title">חיפוש אנשים</string>
+    <string name="filter_by_school_text">בחר בית ספר</string>
+    <string name="filter_by_zone_text">בחר מקום מגורים</string>
+    <string name="chat_search_button">חפש</string>
+
+
+
+
 
 </resources>
