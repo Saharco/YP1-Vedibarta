@@ -82,34 +82,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/abuse3" />
 
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="1dp"
-        android:layout_height="48dp"
-        android:background="@color/colorDivider"
-        app:layout_constraintEnd_toStartOf="@id/reportButton"
-        app:layout_constraintStart_toEndOf="@id/reportAbuseDismissButton"
-        app:layout_constraintTop_toBottomOf="@+id/divider1" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/reportButton"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="דווח"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/reportAbuseDismissButton"
-        app:layout_constraintTop_toBottomOf="@+id/divider1"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/reportAbuseDismissButton"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="בחזרה"
-        android:textSize="24sp"
+        android:layout_width="match_parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/reportButton"
-        app:layout_constraintTop_toBottomOf="@+id/divider1"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider1" >
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="1dp"
+            android:layout_height="48dp"
+            android:background="@color/colorDivider"
+            app:layout_constraintEnd_toStartOf="@id/reportButton"
+            app:layout_constraintStart_toEndOf="@id/reportAbuseDismissButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reportButton"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="דווח"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/reportAbuseDismissButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reportAbuseDismissButton"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="בחזרה"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/reportButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
