@@ -14,6 +14,7 @@ import androidx.appcompat.widget.SwitchCompat
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_search_extra_options.*
 import android.widget.ArrayAdapter
+import androidx.core.text.buildSpannedString
 
 
 /**
@@ -89,6 +90,7 @@ class SearchExtraOptionsFragment : Fragment() {
 
     private fun schoolOnCheckedChanged(isChecked: Boolean) {
         populateSchoolAutoCompleteText()
+        schoolTextViewAuto.text = SpannableStringBuilder("")
         if (isChecked) {
             schoolListSpinner.visibility = View.VISIBLE
         } else {
@@ -121,6 +123,7 @@ class SearchExtraOptionsFragment : Fragment() {
 
     private fun regionOnCheckedChanged(isChecked: Boolean) {
         populateSchoolAutoCompleteText()
+        regionTextViewAuto.text = SpannableStringBuilder("")
         if (isChecked) {
             regionListSpinner.visibility = View.VISIBLE
         } else {
