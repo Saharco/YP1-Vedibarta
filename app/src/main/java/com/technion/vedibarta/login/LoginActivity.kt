@@ -9,7 +9,7 @@ import com.technion.vedibarta.R
 
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,7 +17,14 @@ class LoginActivity : AppCompatActivity() {
 
         val fm = supportFragmentManager
         fm.beginTransaction().apply {
-            replace(R.id.login_screen_fragment, LoginOptionsFragment())
+            add(R.id.login_screen_fragment, LoginOptionsFragment())
+        }.commit()
+    }
+
+    override fun onSignInButtonClick() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.login_screen_fragment, LoginFragment())
+            addToBackStack(null)
         }.commit()
     }
 }

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Vedibarta</string>
 
+    <!--    General shared attributes   -->
+    <string name="back">חזור</string>
+    <string name="or">או</string>
+
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
     <string name="user_title_picture_overlay">תמונת נושא</string>
@@ -41,9 +45,11 @@
     <string name="sign_out_from_facebook_hebrew">צא מחשבון הפייסבוק</string>
     <string name="sign_in_with_google_hebrew">היכנס באמצעות גוגל</string>
     <string name="email_sign_in">הירשם באמצעות דואר אלקטרוני</string>
-    <string name="or">או</string>
     <string name="already_a_user">כבר רשום?</string>
     <string name="sign_in"><u>היכנס</u></string>
+    <string name="login_title">התחברות</string>
+    <string name="enter_email_hint">דואר אלקטרוני</string>
+    <string name="enter_password_hint">סיסמה</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
