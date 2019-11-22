@@ -29,7 +29,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-
         <com.facebook.login.widget.LoginButton
             xmlns:facebook="http://schemas.android.com/apk/res-auto"
             facebook:com_facebook_login_text="@string/continue_with_facebook_hebrew"
@@ -84,12 +83,11 @@
             app:autoSizeMaxTextSize="14sp"
             app:autoSizeMinTextSize="10sp"
             android:text="@string/email_sign_in"
-            android:background="@android:color/holo_red_light"
             app:elevation="3dp"
             app:layout_constraintTop_toBottomOf="@+id/or"
             app:layout_constraintEnd_toEndOf="@+id/google_login_button"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/google_login_button" />
+            app:layout_constraintStart_toStartOf="@+id/google_login_button"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/log_in_layout"
