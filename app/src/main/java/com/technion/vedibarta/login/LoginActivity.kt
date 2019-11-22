@@ -5,11 +5,8 @@ import android.os.Bundle
 import com.technion.vedibarta.R
 
 
-
-
-
-
-class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener {
+class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener,
+    LoginFragment.OnBackButtonClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,5 +23,9 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             replace(R.id.login_screen_fragment, LoginFragment())
             addToBackStack(null)
         }.commit()
+    }
+
+    override fun onBackButtonClick() {
+        supportFragmentManager.popBackStack()
     }
 }
