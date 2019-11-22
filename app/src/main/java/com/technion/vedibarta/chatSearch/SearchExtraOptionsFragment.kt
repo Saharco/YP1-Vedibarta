@@ -29,9 +29,7 @@ class SearchExtraOptionsFragment : Fragment() {
     lateinit var schoolSwitch: SwitchCompat
     lateinit var regionSwitch: SwitchCompat
 
-    // (Region, SchoolName)
     lateinit var schoolAndRegionMap: Map<String, String>
-    lateinit var reversedSchoolAndRegionMap: Map<String, String>
 
     private lateinit var schoolTextViewAuto: AutoCompleteTextView
     private lateinit var regionTextViewAuto: AutoCompleteTextView
