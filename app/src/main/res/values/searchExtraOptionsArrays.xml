@@ -1,1714 +1,1192 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <array name="zoneNameList">
-        <item>מחוז צפון</item>
-        <item>מחוז חיפה</item>
-        <item>מחוז תל אביב</item>
-        <item>מחוז מרכז</item>
-        <item>מחוז ירושלים</item>
-        <item>מחוז דרום</item>
+    <array name="regionNameList">
+        <item>ירושלים</item>
+        <item>אבו סנאן</item>
+        <item>באקה אל-גרביה</item>
+        <item>ערערה-בנגב</item>
+        <item>תל אביב - יפו</item>
+        <item>בית שמש</item>
+        <item>חדרה</item>
+        <item>צפריה</item>
+        <item>צפת</item>
+        <item>טלמון</item>
+        <item>סנסנה</item>
+        <item>אלקנה</item>
+        <item>קרית ארבע</item>
+        <item>שילה</item>
+        <item>אשדוד</item>
+        <item>עופרה</item>
+        <item>ברכה</item>
+        <item>ראשון לציון</item>
+        <item>ירושלים</item>
+        <item>ראש העין</item>
+        <item>גבעת שמואל</item>
+        <item>אשדוד</item>
+        <item>אור עקיבא</item>
+        <item>תל אביב - יפו</item>
+        <item>קרית שמונה</item>
+        <item>פתח תקווה</item>
+        <item>פתח תקווה</item>
+        <item>טבריה</item>
+        <item>יבנה</item>
+        <item>אבן שמואל</item>
+        <item>בית שמש</item>
+        <item>באר שבע</item>
+        <item>קדומים</item>
+        <item>בית שאן</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>באר שבע</item>
+        <item>ירושלים</item>
+        <item>קרית מוצקין</item>
+        <item>ערד</item>
+        <item>ירושלים</item>
+        <item>כפר סבא</item>
+        <item>בני דקלים</item>
+        <item>דולב</item>
+        <item>רמת גן</item>
+        <item>אלקנה</item>
+        <item>חפץ חיים</item>
+        <item>מרכז שפירא</item>
+        <item>בית שמש</item>
+        <item>ניצן</item>
+        <item>אלעד</item>
+        <item>אשקלון</item>
+        <item>בני ברק</item>
+        <item>בת ים</item>
+        <item>דימונה</item>
+        <item>הרצליה</item>
+        <item>חיפה</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>לוד</item>
+        <item>מעלה אדומים</item>
+        <item>מעלות-תרשיחא</item>
+        <item>רבבה</item>
+        <item>רחובות</item>
+        <item>בית הגדי</item>
+        <item>קרית גת</item>
+        <item>שעלבים</item>
+        <item>בית שמש</item>
+        <item>אילת</item>
+        <item>חיפה</item>
+        <item>אשקלון</item>
+        <item>הרצליה</item>
+        <item>עברון</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>עפולה</item>
+        <item>כסיפה</item>
+        <item>בית שאן</item>
+        <item>ירושלים</item>
+        <item>בנימינה-גבעת עדה</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>מגדל העמק</item>
+        <item>ירושלים</item>
+        <item>שלומי</item>
+        <item>באר שבע</item>
+        <item>מעלה אפרים</item>
+        <item>עין כרם-בי"ס חקלאי</item>
+        <item>בית חשמונאי</item>
+        <item>חיפה</item>
+        <item>אלון מורה</item>
+        <item>עספיא</item>
+        <item>ירושלים</item>
+        <item>באקה אל-גרביה</item>
+        <item>טמרה</item>
+        <item>ירושלים</item>
+        <item>נס ציונה</item>
+        <item>גסר א-זרקא</item>
+        <item>ירושלים</item>
+        <item>רהט</item>
+        <item>חורה</item>
+        <item>גסר א-זרקא</item>
+        <item>מעלה אדומים</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>רמת גן</item>
+        <item>בית שמש</item>
+        <item>בית שמש</item>
+        <item>כרמיאל</item>
+        <item>נתניה</item>
+        <item>רעננה</item>
+        <item>אום אל-פחם</item>
+        <item>לקיה</item>
+        <item>ירושלים</item>
+        <item>אשל הנשיא</item>
+        <item>רהט</item>
+        <item>שייח דנון</item>
+        <item>כרמיאל</item>
+        <item>נצרת</item>
+        <item>סאגור</item>
+        <item>כפר ורדים</item>
+        <item>רחובות</item>
+        <item>חיפה</item>
+        <item>ירושלים</item>
+        <item>בת ים</item>
+        <item>הוד השרון</item>
+        <item>רעננה</item>
+        <item>נווה ירק</item>
+        <item>תל מונד</item>
+        <item>צפת</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>נס ציונה</item>
+        <item>כפר הרא"ה</item>
+        <item>באר גנים</item>
+        <item>אשל הנשיא</item>
+        <item>כדורי</item>
+        <item>בסמת טבעון</item>
+        <item>פתח תקווה</item>
+        <item>תל אביב - יפו</item>
+        <item>בית שמש</item>
+        <item>מזכרת בתיה</item>
+        <item>עין נקובא</item>
+        <item>נווה איתן</item>
+        <item>תל אביב - יפו</item>
+        <item>חמדיה</item>
+        <item>תל אביב - יפו</item>
+        <item>פתח תקווה</item>
+        <item>באר שבע</item>
+        <item>רהט</item>
+        <item>נהלל</item>
+        <item>כפר סבא</item>
+        <item>באר שבע</item>
+        <item>קרית שמונה</item>
+        <item>גדרה</item>
+        <item>גדרה</item>
+        <item>ירושלים</item>
+        <item>הודיות</item>
+        <item>חולון</item>
+        <item>ברוכין</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>מעגן מיכאל</item>
+        <item>צור משה</item>
+        <item>תל אביב - יפו</item>
+        <item>עין חרוד (מאוחד)</item>
+        <item>ירושלים</item>
+        <item>בנימינה-גבעת עדה</item>
+        <item>מצפה רמון</item>
+        <item>ירושלים</item>
+        <item>חולון</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>כפר קאסם</item>
+        <item>גדיידה-מכר</item>
+        <item>אכסאל</item>
+        <item>דריגאת</item>
+        <item>אום אל-פחם</item>
+        <item>בוקעאתא</item>
+        <item>כאבול</item>
+        <item>שוהם</item>
+        <item>כפר סבא</item>
+        <item>אום אל-פחם</item>
+        <item>ירושלים</item>
+        <item>מרכז אזורי שוהם</item>
+        <item>נתניה</item>
+        <item>חיפה</item>
+        <item>חיפה</item>
+        <item>חיפה</item>
+        <item>פתח תקווה</item>
+        <item>נתניה</item>
+        <item>ירושלים</item>
+        <item>רחובות</item>
+        <item>בן שמן (כפר נוער)</item>
+        <item>כנות</item>
+        <item>ראשון לציון</item>
+        <item>פרדס חנה-כרכור</item>
+        <item>תל שבע</item>
+        <item>תל אביב - יפו</item>
+        <item>כפר מימון</item>
+        <item>נוף הגליל</item>
+        <item>נתניה</item>
+        <item>אור יהודה</item>
+        <item>בת ים</item>
+        <item>אילת</item>
+        <item>באר שבע</item>
+        <item>ירוחם</item>
+        <item>בית שמש</item>
+        <item>מעלות-תרשיחא</item>
+        <item>קרית גת</item>
+        <item>בני ברק</item>
+        <item>פתח תקווה</item>
+        <item>צפת</item>
+        <item>רמת גן</item>
+        <item>נתיבות</item>
+        <item>אשדוד</item>
+        <item>עלי</item>
+        <item>תל אביב - יפו</item>
+        <item>מרכז שפירא</item>
+        <item>באר שבע</item>
+        <item>נחם</item>
+        <item>רחובות</item>
+        <item>בת ים</item>
+        <item>בית שאן</item>
+        <item>חדרה</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>בית אל</item>
+        <item>אשדוד</item>
+        <item>חשמונאים</item>
+        <item>ירושלים</item>
+        <item>רעננה</item>
+        <item>נתניה</item>
+        <item>באר שבע</item>
+        <item>גבעת שמואל</item>
+        <item>קרני שומרון</item>
+        <item>חיפה</item>
+        <item>נחלים</item>
+        <item>ראשון לציון</item>
+        <item>שדה יעקב</item>
+        <item>קרית שמונה</item>
+        <item>ירושלים</item>
+        <item>פתח תקווה</item>
+        <item>אלקנה</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>אשקלון</item>
+        <item>דימונה</item>
+        <item>לוד</item>
+        <item>מעלה אדומים</item>
+        <item>פתח תקווה</item>
+        <item>יד בנימין</item>
+        <item>שעלבים</item>
+        <item>חיפה</item>
+        <item>כפר גלים</item>
+        <item>פתח תקווה</item>
+        <item>כפר הנוער הדתי</item>
+        <item>כרמיאל</item>
+        <item>טירת כרמל</item>
+        <item>שובל</item>
+        <item>ירושלים</item>
+        <item>ירוחם</item>
+        <item>רמלה</item>
+        <item>פתח תקווה</item>
+        <item>רחובות</item>
+        <item>הוד השרון</item>
+        <item>חולון</item>
+        <item>רעננה</item>
+        <item>הרצליה</item>
+        <item>תל אביב - יפו</item>
+        <item>לוד</item>
+        <item>פתח תקווה</item>
+        <item>יטבתה</item>
+        <item>כפר סבא</item>
+        <item>תל אביב - יפו</item>
+        <item>אום אל-פחם</item>
+        <item>יבנה</item>
+        <item>חגי</item>
+        <item>הרצליה</item>
+        <item>אשדוד</item>
+        <item>טירה</item>
+        <item>מגאר</item>
+        <item>נצרת</item>
+        <item>צפת</item>
+        <item>קרית ים</item>
+        <item>שפרעם</item>
+        <item>טמרה</item>
+        <item>מקווה ישראל</item>
+        <item>מקווה ישראל</item>
+        <item>ירושלים</item>
+        <item>רהט</item>
+        <item>נצרת</item>
+        <item>רהט</item>
+        <item>שפרעם</item>
+        <item>אבו גוש</item>
+        <item>באקה אל-גרביה</item>
+        <item>עראבה</item>
+        <item>כרמיאל</item>
+        <item>מעלות-תרשיחא</item>
+        <item>קרית טבעון</item>
+        <item>בתי ספר של מרחבים</item>
+        <item>בית ברל</item>
+        <item>עוזייר</item>
+        <item>עראבה</item>
+        <item>עראבה</item>
+        <item>אלוני יצחק</item>
+        <item>חורה</item>
+        <item>טייבה</item>
+        <item>שגב-שלום</item>
+        <item>חורה</item>
+        <item>ערערה-בנגב</item>
+        <item>שגב-שלום</item>
+        <item>ירושלים</item>
+        <item>נחף</item>
+        <item>רהט</item>
+        <item>סאסא</item>
+        <item>אעבלין</item>
+        <item>חולון</item>
+        <item>מגאר</item>
+        <item>ניין</item>
+        <item>בועיינה-נוגידאת</item>
+        <item>ביר אל-מכסור</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>בענה</item>
+        <item>שפרעם</item>
+        <item>אשדוד</item>
+        <item>גולס</item>
+        <item>פוריידיס</item>
+        <item>גדיידה-מכר</item>
+        <item>עין שמר</item>
+        <item>גורנות הגליל</item>
+        <item>נתיבות</item>
+        <item>קרית מלאכי</item>
+        <item>שדרות</item>
+        <item>שוהם</item>
+        <item>באר שבע</item>
+        <item>טירת כרמל</item>
+        <item>קרית גת</item>
+        <item>קרית מלאכי</item>
+        <item>נתיבות</item>
+        <item>עפולה</item>
+        <item>קרית ים</item>
+        <item>אשדוד</item>
+        <item>זמרת</item>
+        <item>אשקלון</item>
+        <item>אשקלון</item>
+        <item>אבן יהודה</item>
+        <item>יפעת</item>
+        <item>דפנה</item>
+        <item>צרעה</item>
+        <item>אשדוד</item>
+        <item>הרדוף</item>
+        <item>אשדוד</item>
+        <item>אשדוד</item>
+        <item>ריינה</item>
+        <item>חריש</item>
+        <item>אשדוד</item>
+        <item>קרית ים</item>
+        <item>אשדוד</item>
+        <item>מעגן מיכאל</item>
+        <item>שפיים</item>
+        <item>נהלל</item>
+        <item>ראשון לציון</item>
+        <item>טובא-זנגריה</item>
+        <item>ערערה-בנגב</item>
+        <item>נתניה</item>
+        <item>ראשון לציון</item>
+        <item>ראשון לציון</item>
+        <item>אשדוד</item>
+        <item>ראשון לציון</item>
+        <item>כאוכב אבו אל-היגא</item>
+        <item>כפר סילבר</item>
+        <item>יגור</item>
+        <item>בני ברק</item>
+        <item>עין שמר</item>
+        <item>חיפה</item>
+        <item>מעלה עירון</item>
+        <item>ראשון לציון</item>
+        <item>יהוד-מונוסון</item>
+        <item>עין החורש</item>
+        <item>עצמון שגב</item>
+        <item>גשר הזיו</item>
+        <item>ירושלים</item>
+        <item>קרית גת</item>
+        <item>נצרת</item>
+        <item>ירושלים</item>
+        <item>יקנעם עילית</item>
+        <item>חולון</item>
+        <item>חורה</item>
+        <item>ירוחם</item>
+        <item>שעב</item>
+        <item>מגאר</item>
+        <item>טירת כרמל</item>
+        <item>קרית גת</item>
+        <item>באר שבע</item>
+        <item>עומר</item>
+        <item>עין גדי</item>
+        <item>עין מאהל</item>
+        <item>עמיר</item>
+        <item>אשקלון</item>
+        <item>אשקלון</item>
+        <item>ראשון לציון</item>
+        <item>כפר בלום</item>
+        <item>מזרע</item>
+        <item>עכו</item>
+        <item>טייבה</item>
+        <item>פוריידיס</item>
+        <item>כפר מנחם</item>
+        <item>ירושלים</item>
+        <item>ראמה</item>
+        <item>רהט</item>
+        <item>שגב-שלום</item>
+        <item>חיפה</item>
+        <item>ספיר</item>
+        <item>שפרעם</item>
+        <item>ניר עם</item>
+        <item>מאיר שפיה</item>
+        <item>יד מרדכי</item>
+        <item>חורפיש</item>
+        <item>קרית אתא</item>
+        <item>ירושלים</item>
+        <item>סלמה</item>
+        <item>פקיעין (בוקייעה)</item>
+        <item>חולון</item>
+        <item>חולון</item>
+        <item>מעלות-תרשיחא</item>
+        <item>ירושלים</item>
+        <item>נחם</item>
+        <item>תל יצחק</item>
+        <item>מגן</item>
+        <item>מגדל העמק</item>
+        <item>מרכז אזורי שוהם</item>
+        <item>כפר ורדים</item>
+        <item>גדרה</item>
+        <item>ירושלים</item>
+        <item>כפר יונה</item>
+        <item>יבנה</item>
+        <item>אור עקיבא</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>ירושלים</item>
+        <item>דישון</item>
+        <item>עצמון שגב</item>
+        <item>חיפה</item>
+        <item>מגדל שמס</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>חיפה</item>
+        <item>בת ים</item>
+        <item>תל אביב - יפו</item>
+        <item>חיפה</item>
+        <item>ירושלים</item>
+        <item>תל אביב - יפו</item>
+        <item>ראשון לציון</item>
+        <item>חולון</item>
+        <item>ירושלים</item>
+        <item>תל אביב - יפו</item>
+        <item>חיפה</item>
+        <item>ראשון לציון</item>
+        <item>אשקלון</item>
+        <item>תל אביב - יפו</item>
+        <item>חיפה</item>
+        <item>תל אביב - יפו</item>
+        <item>תל אביב - יפו</item>
+        <item>תל אביב - יפו</item>
+        <item>תל אביב - יפו</item>
+        <item>ירושלים</item>
+        <item>בת ים</item>
+        <item>נתניה</item>
+        <item>נתניה</item>
+        <item>תל אביב - יפו</item>
+        <item>פתח תקווה</item>
+        <item>בת ים</item>
+        <item>חולון</item>
+        <item>תל אביב - יפו</item>
+        <item>ירושלים</item>
+        <item>צור הדסה</item>
+        <item>עלי זהב</item>
+        <item>נהריה</item>
+        <item>דימונה</item>
+        <item>אופקים</item>
+        <item>דימונה</item>
+        <item>דימונה</item>
+        <item>כעביה-טבאש-חגאגרה</item>
+        <item>דימונה</item>
+        <item>תל אביב - יפו</item>
+        <item>ניר יפה</item>
+        <item>לוד</item>
+        <item>באר יעקב</item>
+        <item>הרצליה</item>
+        <item>נס ציונה</item>
+        <item>תל אביב - יפו</item>
+        <item>קרית עקרון</item>
+        <item>חולון</item>
+        <item>קבוצת יבנה</item>
+        <item>ירושלים</item>
+        <item>עצמון שגב</item>
+        <item>רחובות</item>
+        <item>גדרה</item>
+        <item>חצור הגלילית</item>
+        <item>עמק חפר</item>
+        <item>בני דרור</item>
+        <item>תל אביב - יפו</item>
+        <item>יבנה</item>
+        <item>כפר סבא</item>
+        <item>קרית יערים(מוסד)</item>
+        <item>מזכרת בתיה</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>אלעד</item>
+        <item>כסיפה</item>
+        <item>תל שבע</item>
+        <item>עילוט</item>
+        <item>תל שבע</item>
+        <item>ירושלים</item>
+        <item>רחובות</item>
+        <item>מקווה ישראל</item>
+        <item>עפולה</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>אופקים</item>
+        <item>פרדס חנה-כרכור</item>
+        <item>בת ים</item>
+        <item>חולון</item>
+        <item>גבעת חיים (איחוד)</item>
+        <item>פתח תקווה</item>
+        <item>כפר יונה</item>
+        <item>מעלה אדומים</item>
+        <item>יבנה</item>
+        <item>פתח תקווה</item>
+        <item>פתח תקווה</item>
+        <item>נס ציונה</item>
+        <item>נתניה</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>ירושלים</item>
+        <item>מולדה</item>
+        <item>תראבין א-צאנע(ישוב)</item>
+        <item>עין השופט</item>
+        <item>סתריה</item>
+        <item>אל סייד</item>
+        <item>אום אל-פחם</item>
+        <item>באר טוביה</item>
+        <item>ירושלים</item>
+        <item>מיתר</item>
+        <item>פתח תקווה</item>
+        <item>חדרה</item>
+        <item>ירושלים</item>
+        <item>בית רבן</item>
+        <item>רחובות</item>
+        <item>דייר אל-אסד</item>
+        <item>ירושלים</item>
+        <item>רמלה</item>
+        <item>ראשון לציון</item>
+        <item>כפר סבא</item>
+        <item>אום אל-פחם</item>
+        <item>רחובות</item>
+        <item>חדרה</item>
+        <item>נתיבות</item>
+        <item>תל אביב - יפו</item>
+        <item>קרית גת</item>
+        <item>באר שבע</item>
+        <item>ירושלים</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>אור יהודה</item>
+        <item>בית הגדי</item>
+        <item>לוד</item>
+        <item>מודיעין-מכבים-רעות</item>
+        <item>זכרון יעקב</item>
+        <item>זכרון יעקב</item>
+        <item>מעלה עירון</item>
+        <item>נחף</item>
+        <item>רהט</item>
+        <item>עגר</item>
+        <item>פתח תקווה</item>
+        <item>גן יבנה</item>
+        <item>רחובות</item>
+        <item>כפר קרע</item>
+        <item>קציר</item>
+        <item>ירושלים</item>
+        <item>אום אל-פחם</item>
+        <item>ירושלים</item>
+        <item>שבלי - אום אל-גנם</item>
+        <item>שדה אליהו</item>
+        <item>רמלה</item>
+        <item>אפרתה</item>
+        <item>תל אביב - יפו</item>
+        <item>חולון</item>
+        <item>חדרה</item>
+        <item>ירושלים</item>
+        <item>בית שמש</item>
     </array>
 
     <array name="schoolNameList">
-        <item>בית רחל שטראוס</item>
-
-        <item>קרית יערים</item>
-
-        <item>אלונים</item>
-
-        <item>עירוני דתי רוטשילד</item>
-
-        <item>עירוני ג</item>
-
-        <item>תכון ליד האוניברסיטה</item>
-
-        <item>הגמנסיה העברית</item>
-
-        <item>רנה קסין דרכא</item>
-
-        <item>חוות הנוער הציוני</item>
-
-        <item>ישיבת נתיב מאיר</item>
-
-        <item>ישיבת ים לצעירים</item>
-
-        <item>תורני ע"ש פ. הימלפרב</item>
-
-        <item>אמי"ת שחר</item>
-
-        <item>תורני נסויי בנות פלך</item>
-
-
-        <item>מדרשיית עמליה</item>
-
-
-        <item>אולפנת צביה ירושלים</item>
-
-
-        <item>אולפנא לבנות</item>
-
-
-        <item>מקיף ע"ש זיו</item>
-
-        <item>תיכון גבעת גונן</item>
-
-        <item>ישיבת בנ"ע מטה בנימין</item>
-
-        <item>עירוני מסורתי</item>
-
-        <item>אולפנא עופרה</item>
-
-        <item>אורט רמות ע"ש יגדיש</item>
-
-        <item>תורני לבנות ב.שולמית</item>
-
-        <item>אולפנת צביה מ. אדומים</item>
-
-        <item>אולפנא ת. לאומנויות</item>
-
-        <item>אור תורה סטון לבנים</item>
-
-        <item>אור תורה סטון לבנות</item>
-
-        <item>המרכז הישראלי למצוינות בחינוך</item>
-
-        <item>תורני נסויי הרטמן</item>
-
-        <item>תיכון מכבים רעות</item>
-
-        <item>ישיבת צביה מ.אדומים</item>
-
-        <item>נעורים</item>
-
-        <item>קדמה ירושלים</item>
-
-        <item>ישיבה שעלי תורה</item>
-
-        <item>ע"ש יצחק רבין עי"ס</item>
-
-        <item>עירוני א</item>
-
-        <item>ישיבת נעם</item>
-
-        <item>אולפנת בנ"ע אורות מודיעין</item>
-
-        <item>ע"ש רא"ל מרדכי גור</item>
-
-        <item>ישיבת בנ"ע פסגת זאב</item>
-
-        <item>ישיבת בנ"ע נר תמיד חשמונאים</item>
-
-        <item>בית הצייר</item>
-
-        <item>תיכון בית צפאפא</item>
-
-        <item>מקיף אבו גוש</item>
-
-        <item>תיכון שועפט</item>
-
-        <item>מקיף בית חנינה</item>
-
-        <item>מקיף שש שנתי אלטור לבנים</item>
-
-        <item>מקיף קשת</item>
-
-        <item>אולפנת בנ"ע פסגת זאב</item>
-
-        <item>אולפנת דולב</item>
-
-        <item>רעות קהילה דתית</item>
-
-        <item>ברנקו וייס מקיף בית שמש</item>
-
-        <item>אמי"ת איתן</item>
-
-        <item>ארץ הצבי</item>
-
-        <item>ישיבת בנ"ע לפיד מודיעין</item>
-
-        <item>אולפנת צביה יצירתית</item>
-
-        <item>תיכון דרור</item>
-
-        <item>מקיף סליגסברג</item>
-
-        <item>אורט דתי ע"ש ספניאן</item>
-
-        <item>עבדאללה בן חוסין</item>
-
-        <item>אזורי מקיף עין כרם</item>
-
-        <item>ישיבת אמי"ת נחשון</item>
-
-        <item>אולפנא בני עקיבא נריה</item>
-
-        <item>אולפנת נחלה דרכא</item>
-
-        <item>חט"ב עיסוואיה בנות</item>
-
-        <item>אולפנת שעלי תורה</item>
-
-        <item>אל סלאם</item>
-
-        <item>תיכון צור באהר</item>
-
-        <item>בי"ס שחר</item>
-
-        <item>גלעד</item>
-
-        <item>אורט שלומי</item>
-
-        <item>ביה"ס עמלני נצרת</item>
-        <item>ביה"ס עמלני נצרת</item>
-
-
-        <item>מפתן צפת</item>
-
-
-        <item>תיכון יחד</item>
-
-
-        <item>מפתן נצרת</item>
-
-
-        <item>מפתן שפרעם</item>
-
-
-        <item>מפתן תמרה</item>
-
-
-        <item>מפתן מגאר</item>
-
-
-        <item>אולפנת נוגה</item>
-
-
-        <item>דרכא דנציגר</item>
-
-
-        <item>מקיף דתי יהודה</item>
-
-
-        <item>עמל אולפנת הראל נהריה</item>
-
-
-        <item>אולפנית לבנות</item>
-
-
-        <item>אורט אמירים</item>
-
-
-        <item>ישיבת בני עקיבא תקות יעקב</item>
-
-
-        <item>ישיבת דרכא המתמיד</item>
-
-
-        <item>ישיבה תיכונית אמי"ת צפת</item>
-
-
-        <item>אזורי ירדן</item>
-
-
-        <item>מקיף אורט מעלות</item>
-
-
-        <item>מקיף משגב</item>
-
-
-        <item>מקיף ולדורף הרדוף</item>
-
-
-        <item>יגאל אלון</item>
-
-
-        <item>אמי"ת תורני מדעי</item>
-
-
-        <item>אולפנת צביה מעלות</item>
-
-
-        <item>מקיף שש שנתי סלאמה</item>
-
-
-        <item>מקיף אורט כרמים</item>
-
-
-        <item>בית הספר אמירים כפר ורדים</item>
-
-
-        <item>ישיבת בנ"ע בית שאן</item>
-
-
-        <item>מקיף ביר אל-מכסור</item>
-
-
-        <item>מקיף אעש שיךס.כניפס</item>
-
-
-        <item>בית הספר אורט סאגור</item>
-
-
-        <item>בי"ס מקיף השלום דנון</item>
-
-
-        <item>מקיף אעבלין</item>
-
-
-        <item>מקיף אלבוכארי</item>
-
-
-        <item>חט"ב חדשה כאבול</item>
-
-
-        <item>עמל כעביה טבאש חגאגרה</item>
-
-
-        <item>מקיף גוליס</item>
-
-
-        <item>עיוני מגדל שמס</item>
-
-
-        <item>תיכון שיבלי</item>
-
-
-        <item>מקיף ראמה</item>
-
-
-        <item>מקיף תרשיחא</item>
-
-
-        <item>מקיף ב</item>
-
-
-        <item>מקיף אבן אלהייתם</item>
-
-
-        <item>אלביאן טמרה</item>
-
-
-        <item>מקיף בוסתן אל מרג</item>
-
-
-        <item>תיכון דיר אל-אסד</item>
-
-
-        <item>מקיף ג א. נמר חוסין</item>
-
-
-        <item>מקיף שש שנתי פקיעין</item>
-
-
-        <item>מקיף אל-בטוף</item>
-
-
-        <item>מקיף אלרסאלה</item>
-
-
-        <item>מקיף ע"ש עפו פאעור</item>
-
-
+        <item>אבדאע לאומניות</item>
         <item>אבו-סלים סלמאן אלשיך</item>
-
-
-        <item>מקיף אבן חלדון</item>
-
-
-        <item>מקיף גדידה</item>
-
-
-        <item>תיכון נחף</item>
-
-
-        <item>בסמת טבעון</item>
-
-
-        <item>חט"ב אבן רושד</item>
-
-
-        <item>מקיף בענה</item>
-
-
-        <item>חט"ב אכסאל</item>
-
-
-        <item>מקיף שש - שנתי</item>
-
-
-        <item>חט"ב בוקעתה</item>
-
-
-        <item>מקיף בועינה נגידאת</item>
-
-
-        <item>מקיף טומשין טובא</item>
-
-
-        <item>מקיף אלבטוף עראבה</item>
-
-
-        <item>רב תחומי עמל עילוט</item>
-
-
-        <item>תיכון סלמאן חטיב</item>
-
-
-        <item>תיכון שק"ד דרכא</item>
-
-
-        <item>מקיף עינות הירדן</item>
-
-
-        <item>הרב תחומי עמק חרוד</item>
-
-
-        <item>תיכון אזורי מגידו</item>
-
-
-        <item>אופק</item>
-
-
-        <item>גאון הירדן</item>
-
-
-        <item>מקיף עמקים-תבור</item>
-
-
-        <item>מקיף עמק החולה</item>
-
-
-        <item>מקיף העמק המערבי</item>
-
-
-        <item>מקיף הר וגיא</item>
-
-
-        <item>מקיף סולם צור</item>
-
-
-        <item>מקיף גליל מערבי</item>
-
-
-        <item>מקיף ע"ש יגאל אלון</item>
-
-
-        <item>הודיות</item>
-
-
-        <item>בית חנה</item>
-
-
-        <item>מקיף ערבי</item>
-
-
-        <item>מקיף חקלאי נהלל</item>
-
-
-        <item>מקיף אנה פרנק</item>
-
-
-        <item>מאור</item>
-
-
-        <item>עופר</item>
-
-
-        <item>מפתן אם אלפחם</item>
-
-
-        <item>מפתן קרית ים</item>
-
-
-        <item>אמי"ת דביר לבנים</item>
-
-
-        <item>תיכון גבעול</item>
-
-
-        <item>שש שנתי אמי"ת בנות</item>
-
-
-        <item>מקיף "בית אלחכמה "</item>
-
-
-        <item>מקיף דתי ע"ש לוינסון</item>
-
-
-        <item>מקיף אורט עש גרינברג</item>
-
-
-        <item>עירוני ב ישיבה</item>
-
-
-        <item>עירוני א</item>
-
-
-        <item>כל ישראל חברים</item>
-
-
-        <item>עירוני חוגים</item>
-
-
-        <item>ישיבת בני עקיבא יבנה</item>
-
-
-        <item>אולפת אמי"ת עירוני ו</item>
-
-
-        <item>תיכון חדרה</item>
-
-
-        <item>עירוני ה</item>
-
-
-        <item>ישיבת בנ"ע חדרה</item>
-
-
-        <item>אולפנת בנ"ע סגולה</item>
-
-
-        <item>אולפנת צביה חיפה</item>
-
-
-        <item>אולפנית אמי"ת או"ע</item>
-
-
-        <item>תיכון אסקנדר</item>
-
-
-        <item>תיכון קטאין אלשומר</item>
-
-
-        <item>חטב עמלנית רגבים</item>
-
-
-        <item>חטב עמלנית קורצק</item>
-
-
-        <item>חטב עמל אבן גבירול</item>
-
-
-        <item>מקיף מופת בסמת</item>
-
-
-        <item>אולפ בנ"ע מ. ברוך</item>
-
-
-        <item>מקיף חדש</item>
-
-
-        <item>תכון חדרה בית-אליעזר</item>
-
-
-        <item>מקיף חדש ע"ש רבין</item>
-
-
-        <item>אחוזת ילדים</item>
-
-
-        <item>מקיף שש שנתי</item>
-
-
-        <item>נתיבות דרור</item>
-
-
-        <item>אורט עירוני ד</item>
-
-
-        <item>תיכון יד ביד</item>
-
-
-        <item>חט"ב ב - אלראזי</item>
-
-
-        <item>חט"ב עין גראר</item>
-
-
         <item>אבן סינא</item>
-
-
-        <item>אפאק</item>
-
-
-        <item>אלמנרה</item>
-
-
-        <item>מקיף פרדיס</item>
-
-
-        <item>תיכון חדיגה</item>
-
-
-        <item>תיכון מעלה עירון</item>
-
-
-        <item>אלאנדלוס</item>
-
-
-        <item>מקיף מושריפה</item>
-
-
-        <item>ניסויי על איזורי תפן</item>
-
-
-        <item>אולפנא אמי"ת</item>
-
-
+        <item>אגיאל א</item>
+        <item>אגיאל ב</item>
         <item>אהבת ישראל</item>
-
-
-        <item>הרים</item>
-
-
-        <item>המגשימים</item>
-
-
-        <item>מקיף מבואות עירון</item>
-
-
-        <item>מקיף גוונים</item>
-
-
-        <item>מקיף אלוני יצחק</item>
-
-
-        <item>מקיף כרמל זבולון</item>
-
-
-        <item>מקיף גבעת פרדיס</item>
-
-
-        <item>תיכון פסגת אמיר</item>
-
-
-        <item>בית הספר רעות לאמנויות</item>
-
-
-        <item>מקיף ע"ש שיפמן</item>
-
-
-        <item>מקיף דתי אריאל</item>
-
-
-        <item>אורט השומרון</item>
-
-
-        <item>מקיף כאוכב</item>
-
-
-        <item>תיכון ממד זכרון יעקב</item>
-
-
-        <item>מקיף שיזף אלמותנבי</item>
-
-
-        <item>מקיף שפיה</item>
-
-
-        <item>חקלאי פרדס-חנה</item>
-
-
-        <item>כפר הנוער הדתי</item>
-
-
-        <item>כפר גלים</item>
-
-
-        <item>תיכון עיוני עתיד</item>
-
-
-        <item>אלסלאם</item>
-
-
-        <item>אל אשראק</item>
-
-
-        <item>שבילים ע"ש בגין</item>
-
-
-        <item>תיכון ממ"ד</item>
-
-
-        <item>אולפנת - לבנות ולהבנות</item>
-
-
-        <item>תיכון להנדסה ולמדעים אורט ערבי</item>
-
-
-        <item>על יסודי צור הדסה</item>
-
-
-        <item>ישיבת מערב שומרון</item>
-
-
-        <item>אורט אלון עפולה</item>
-
-
-        <item>עגורים מבואות חרמון</item>
-
-
-        <item>יהודה הלוי</item>
-
-
-        <item>רימונים</item>
-
-
-        <item>מוסד יובלים</item>
-
-
-        <item>מיוחד צורים</item>
-
-
-        <item>מקיף י"א</item>
-
-
-        <item>מפתן טירה</item>
-
-
-        <item>מיוחד לוטם</item>
-
-
-        <item>בית חולים שלוותה</item>
-
-
-        <item>ניצנים</item>
-
-
-        <item>מפתן</item>
-
-
-        <item>מפתן ארזים</item>
-
-
-        <item>תיכון דה שליט</item>
-
-
-        <item>חמ"ד אמית הלל</item>
-
-
-        <item>מקיף ממ"ד</item>
-
-
-        <item>אולפנית ישורון</item>
-
-
-        <item>תיכון ברנר</item>
-
-
-        <item>שש שנתי אחד העם</item>
-
-
-        <item>מקיף טשרניחובסקי</item>
-
-
-        <item>תורני ואולפ בר אילן</item>
-
-
-        <item>מקיף הדסים</item>
-
-
-        <item>דרכא ע"ש מנחם בגין</item>
-
-
-        <item>בן-גוריון נס-ציונה</item>
-
-
-        <item>ישיבת כפר גנים</item>
-
-
-        <item>ישיבת בני עקיבא נחלים</item>
-
-
-        <item>ישיבת בני עקיבא</item>
-
-
-        <item>ישיבת בנ"ע רעננה</item>
-
-
-        <item>אולפנת בני עקיבא אמנה</item>
-
-
+        <item>אולפ בנ"ע מ. ברוך</item>
         <item>אולפנא בני עקיבא צפירה</item>
-
-
-        <item>ישיבת בנ"ע נווה הרצוג</item>
-
-
-        <item>תיכון גבעת ושינגטון</item>
-
-
-        <item>ראס אלעמוד ע"ס לבנות</item>
-
-
-        <item>עירוני ד גן נחום</item>
-
-
-        <item>אולפנא השומרון</item>
-
-
-        <item>אולפנת אמי"ת להבה</item>
-
-
-        <item>עירוני ה מקיף</item>
-
-
-        <item>תיכון הראל</item>
-
-
-        <item>ישיבת בני עקיבא השומרון</item>
-
-
-        <item>אולפנאת זבולון</item>
-
-
-        <item>אולפנת צביה רחובות</item>
-
-
-        <item>אזורי ע"ש הרצוג</item>
-
-
-        <item>תיכון ע"ש גולדה מאיר</item>
-
-
-        <item>חט"ב תיכון ריגלר</item>
-
-
-        <item>אל ארצי</item>
-
-
-        <item>בית חינוך ע"ש רבין</item>
-
-
-        <item>מקיף עירוני ח</item>
-
-
-        <item>מקיף ט</item>
-
-
-        <item>תיכון דתי איתן חדש</item>
-
-
-        <item>חט"ב חדשה שוהם</item>
-
-
-        <item>קשת ברנקו וייס</item>
-
-
-        <item>אולפנת צביה לוד</item>
-
-
-        <item>ישיבת בני עקיבא גבעת שמואל</item>
-
-
-        <item>חט"ב ממ"ד בנים המר</item>
-
-
-        <item>מקיף י אבני החושן</item>
-
-
-        <item>ישיבת צביה לוד</item>
-
-
-        <item>ישיבת צביה פתח תקווה</item>
-
-
-        <item>דמוקרטי ע"ש יעקב חזן</item>
-
-
-        <item>אולפנת צביה רבבה</item>
-
-
-        <item>חט"ב עמלנית חברת נער</item>
-
-
-        <item>אליעזר בן יהודה</item>
-
-
-        <item>פלך ע"ש רות קורמן</item>
-
-
-        <item>דרכא ע"ש אילן ואסף רמון</item>
-
-
-        <item>מיתרים רעננה</item>
-
-
-        <item>תיכון ע"ש נעמי שמר</item>
-
-
-        <item>קריית החינוך למדעים</item>
-
-
-        <item>ישיבת צביה קטיף</item>
-
-
-        <item>ישיבת אמי"ת עמיחי</item>
-
-
-        <item>אמית מדעי תורני כפר בתיה</item>
-
-
-        <item>אולפנא ראשון לציון</item>
-
-
-        <item>מוסדות ישיבת פ"ת</item>
-
-
-        <item>ישיבה תיכונית אמי"ת אלירז</item>
-
-
-        <item>ראשית חכמה</item>
-
-
-        <item>אמי"ת בנות מודיעין</item>
-
-
-        <item>עתיד נווה נחום</item>
-
-
-        <item>ברנקו וייס עין נקובה עין ראפה</item>
-
-
-        <item>הרטמן בנות</item>
-
-
-        <item>מקיף שכונת אבו שהאב</item>
-
-
-        <item>אולפנית דרכא</item>
-
-
-        <item>קריית חינוך נתיבי נועם דרכא</item>
-
-
-        <item>נוה הדסה</item>
-
-
-        <item>קרית יעקב הרצוג</item>
-
-
-        <item>חטב עמלנית שלום</item>
-
-
-        <item>תיכון המעיין מקיף יב</item>
-
-
-        <item>אולפנה לבנות</item>
-
-
-        <item>ישיבת בני עקיבא ראשון לציון</item>
-
-
-        <item>בית חינוך אמית רננים</item>
-
-
-        <item>נחשון למדעים טכנולוגיה ואומנות</item>
-
-
-        <item>שש שנתי איש שלום</item>
-
-
-        <item>מקיף דתי אזורי</item>
-
-        <item>ברנקו וייס מקיף ע"ש רבין</item>
-
-        <item>מקיף ממ"ד יגאל אלון</item>
-
-        <item>עירוני מקיף שי עגנון</item>
-
-        <item>מקיף אלמגד</item>
-
-        <item>מקיף עתיד אלנגאח למדעים</item>
-
-        <item>עתיד דאר אל חכמא</item>
-
-        <item>חט"ב אבן סינא</item>
-
-        <item>אמי"ת בנים מודיעין</item>
-
-
-        <item>אמית בר אילן</item>
-
-
-        <item>תיכון שש שנתי</item>
-
-
-        <item>מקיף אזורי עמי אסף</item>
-
-
-        <item>מקיף מעין-שחר</item>
-
-
-        <item>תיכון תורני דרך אבות</item>
-
-
-        <item>קבוצת יבנה</item>
-
-
-        <item>אולפנת חפץ חיים</item>
-
-
-        <item>אולפנת שעלבים</item>
-
-
-        <item>אולפנת אהבת ישראל</item>
-
-
-        <item>ישיבה תיכונית</item>
-
-
-        <item>נריה</item>
-
-
-        <item>מקיף חוף השרון</item>
-
-
-        <item>קרית חינוך ע"ש גינסבורג</item>
-
-
-        <item>חכמי לב</item>
-
-
-        <item>רון ארד</item>
-
-
-        <item>מקיף אלמגד ע"ש השיח</item>
-
-
-        <item>מקיף בית חנינה לבנות</item>
-
-
-        <item>שפרירים א</item>
-
-
-        <item>גן ונוף</item>
-
-
-        <item>קרית חינוך בן גוריון</item>
-
-
-        <item>חקלאי נחלת יהודה</item>
-
-
-        <item>תיכון איתן</item>
-
-
-        <item>בן-יקיר</item>
-
-
-        <item>חקלאי בן שמן</item>
-
-
-        <item>מקיף י"ג</item>
-
-
-        <item>שש שנתי שיבולים</item>
-
-
-        <item>אולפנא צביה הר ברכה</item>
-
-
-        <item>הישיבה התיכונית ברוכין</item>
-
-
-        <item>תיכון חב"ד בנות</item>
-
-
-        <item>חיים גורי</item>
-
-
-        <item>עלי זהב</item>
-
-
-        <item>ממ"ד עמנואל</item>
-
-
-        <item>העוגן לב השרון</item>
-
-
-        <item>נפלאות</item>
-
-
-        <item>שש שנתי יצחק נבון</item>
-
-
-        <item>אולפנת השומרון</item>
-
-
-        <item>עירוני משה שרת</item>
-
-
-        <item>עירוני ע"ש בן גוריון</item>
-
-
-        <item>נחלת ישראל</item>
-
-
-        <item>בנימין רוטמן כדורי</item>
-
-
-        <item>תיכונ"ט ע"ש אלתרמן</item>
-
-
-        <item>אופק</item>
-
-
-        <item>ממ"ד לבנים</item>
-
-
-        <item>ברושים</item>
-
-
-        <item>עירוני נווה צדק</item>
-
-
-        <item>שחף</item>
-
-
-        <item>יעד עמלני</item>
-
-
-        <item>תיכון באר עמ"י</item>
-
-
-        <item>גיל</item>
-
-
-        <item>מעוף</item>
-
-
-        <item>תיכונית רעים</item>
-
-
-        <item>מפתן אלון</item>
-
-
-        <item>מפתן הרצליה</item>
-
-
-        <item>גמנסיה עברית הרצליה</item>
-
-
-        <item>תיכון חדש ע"ש רבין</item>
-
-
-        <item>עירוני י אליאנס</item>
-
-
-        <item>עירוני א לאמנויות</item>
-
-
-        <item>עירוני תורני ב ג</item>
-
-
-        <item>עירוני ד</item>
-
-
-        <item>עירוני ה</item>
-
-
-        <item>עירוני ו מקיף</item>
-
-
-        <item>קרית חינוך יפו</item>
-
-
-        <item>עירוני ט</item>
-
-
-        <item>אולפנת הרא"ה תורני מדעי</item>
-
-
-        <item>עירוני עש פנחס אילון</item>
-
-
-        <item>עירוני דתי יבנה</item>
-
-
-        <item>מקיף שש שנתי קוגל</item>
-
-
-        <item>עירוני א חשמונאים</item>
-
-
-        <item>בית וגן דרכא</item>
-
-
-        <item>אולפנת צביה בני ברק</item>
-
-
-        <item>הייטק היי</item>
-
-
-        <item>מקיף חדש</item>
-
-
-        <item>ישיבה תכונית בר אילן</item>
-
-
-        <item>עירוני מקיף רמות</item>
-
-
-        <item>ע"ש יצחק נבון מודיעין</item>
-
-
-        <item>אולפנית הדר גנים</item>
-
-
-        <item>ראס אל עמוד לבנים</item>
-
-
-        <item>בית חנינא</item>
-
-
-        <item>ישיבת ב"ע אדרת</item>
-
-
-        <item>ישיבה תיכונית</item>
-
-
-        <item>אולפנית בנ"ע תל אביב</item>
-
-
-        <item>מקיף שש שנתי ק. שרת</item>
-
-
-        <item>מקיף לאורו נלך</item>
-
-
-        <item>הפתוח הדמוקרטי</item>
-
-
-        <item>תיכון יעדים</item>
-
-
-        <item>ריימונד לאוואן</item>
-
-
-        <item>ממ"ד לטכנולוגיה ולאומנויות</item>
-
-
-        <item>אולפנת צביה הרצליה</item>
-
-
-        <item>מקיף אפרים קציר</item>
-
-
-        <item>עתיד רזיאל</item>
-
-
-        <item>ישיבה תיכונית בנים</item>
-
-
-        <item>מקיף ע"ש יצחק נבון</item>
-
-
-        <item>אולפנת צביה בת ים</item>
-
-
-        <item>ק.חינוך בנ"ע חולון</item>
-
-
-        <item>עירוני יב</item>
-
-
-        <item>אגיאל</item>
-
-
-        <item>חדוות התורה-ישיבת אמ</item>
-
-
-        <item>התנהגותי</item>
-
-
-        <item>עמל ליידי דייויס ת"א</item>
-
-
-        <item>יובלים</item>
-
-
-        <item>אמי"ת גוש דן</item>
-
-
-        <item>מיתרים</item>
-
-
-        <item>יאפא אלמוסתקבל ל"ג</item>
-
-
-        <item>כפר הנוער אמי"ת</item>
-
-
-        <item>שש שנתי רמון</item>
-
-
-        <item>מקוה ישראל דתי</item>
-
-
-        <item>מקוה ישראל כללי</item>
-
-
-        <item>שחקים</item>
-
-
-        <item>בר אילן</item>
-
-
+        <item>אולפנא אמי"ת</item>
+        <item>אולפנא בני עקיבא נריה</item>
         <item>אולפנא הר חברון</item>
-
-
-        <item>פלך</item>
-
-
-        <item>אורט אלמותנבי כסייפה</item>
-
-
-        <item>עמל אחוה דימונה</item>
-
-
-        <item>ישיבת מקור חיים</item>
-
-
-        <item>מקיף חדש רובע יז</item>
-
-
-        <item>תפנית</item>
-
-
-        <item>גשר</item>
-
-
-        <item>אורים</item>
-
-
-        <item>מרכז שיקום נוער</item>
-
-
-        <item>כרם גפנים</item>
-
-
-        <item>בי"ס לח. מיוחד אלאמל</item>
-
-
-        <item>מפתן חרמון</item>
-
-
-        <item>מפתן בית חגי</item>
-
-
-        <item>ישיבה תיכונית חדשה</item>
-
-
-        <item>אולפנת אמי"ת</item>
-
-
-        <item>מקיף דתי עירוני ב</item>
-
-
-        <item>עמל ליהמן דימונה</item>
-
-
-        <item>שבילי אית"ם</item>
-
-
-        <item>מקיף דתי ע"ש רוגוזין</item>
-
-
-        <item>יב"ע בית יהודה</item>
-
-
-        <item>ישיבת בני עקיבא</item>
-
-
-        <item>ישיבת אור עציון</item>
-
-
-        <item>מקיף דתי גרוס</item>
-
-
-        <item>עמל אפלמן דימונה</item>
-
-
-        <item>תיכון אל סייד</item>
-
-
-        <item>אולפנת בנ"ע חן במדבר</item>
-
-
-        <item>אולפנת קרית גת</item>
-
-
-        <item>ישיבה תיכונית דרכא נתיבות</item>
-
-
-        <item>עומר משגב</item>
-
-
-        <item>אולפנת בית שאן</item>
-
-
-        <item>אולפנה מדעים ואמנויות</item>
-
-
-        <item>השלום ע"ש יצחק רבין</item>
-
-
-        <item>אולפנת בנ"ע ערד</item>
-
-
-        <item>אולפנת אבן שמואל</item>
-
-
-        <item>קציר משגב</item>
-
-
-        <item>אולפנא ע"ש הרב שאולי</item>
-
-
-        <item>חט"ב אלפורעה</item>
-
-
-        <item>מקיף דתי חבד בית חנה</item>
-
-
-        <item>אולפנת נוה דקלים</item>
-
-
-        <item>מקיף ע"ש שלאון</item>
-
-
-        <item>מקיף "אבן רושד"</item>
-
-
-        <item>אגיאל</item>
-
-
-        <item>ישיבת צביה אשקלון</item>
-
-
-        <item>יש תיכונית בלבב שלם</item>
-
-
-        <item>תיכון ישיבתי נרייה</item>
-
-
-        <item>מדרשת קמה</item>
-
-
-        <item>ישיבת צביה דימונה</item>
-
-
-        <item>ישיבה תיכונית</item>
-
-
-        <item>אלמתנבי</item>
-
-
-        <item>רוואד אלקודס</item>
-
-
-        <item>בנימין רוטמן אשל הנשיא</item>
-
-
-        <item>משלב דרור</item>
-
-
-        <item>אבדאע לאומניות.</item>
-
-
+        <item>אולפנא השומרון</item>
+        <item>אולפנא לבנות</item>
         <item>אולפנא לבנות שילה</item>
-
-
-        <item>ישיבה תיכונית עלי</item>
-
-
-        <item>עירוני ו</item>
-
-
-        <item>על יסודי אדם</item>
-
-
-        <item>אולפנת בני עקיבא לכי</item>
-
-
-        <item>מקיף</item>
-
-
-        <item>עמל זינמן דימונה</item>
-
-
-        <item>מקיף אלנור</item>
-
-
-        <item>דקלים</item>
-
-
-        <item>מקיף עירוני א</item>
-
-
-        <item>מקיף ו</item>
-
-
-        <item>תיכון חדש ע"ש רבין</item>
-
-
-        <item>מקיף ז</item>
-
-
-        <item>תיכון חדש רמות</item>
-
-
-        <item>אולפנת צביה אשקלון</item>
-
-
-        <item>מקיף ה דרכא</item>
-
-
-        <item>מקיף ח</item>
-
-
-        <item>יצחק רגר</item>
-
-
-        <item>מקיף דתי חדש לבנות</item>
-
-
-        <item>מקיף עירוני ד</item>
-
-
-        <item>מקיף חדש ט</item>
-
-
-        <item>מקיף עומר</item>
-
-
-        <item>תיכון ברנקו וייס מיתרים</item>
-
-
-        <item>אולפנת צביה דימונה</item>
-
-
-        <item>יצחק רבין</item>
-
-
-        <item>מקיף ע. דוד טוביהו</item>
-
-
-        <item>מקיף ע"ש אריה מאיר</item>
-
-
-        <item>תיכון חדש בנים</item>
-
-
-        <item>מקיף דרכא</item>
-
-
-        <item>מקיף י</item>
-
-
-        <item>אומנויות</item>
-
-
-        <item>ישיבת אמי"ת</item>
-
-
-        <item>תיכון סלמאן אלהוזייל</item>
-
-
-        <item>מקיף רהט</item>
-
-
-        <item>מקיף שגב</item>
-
-
-        <item>מקיף טומשין ערערה</item>
-
-
-        <item>טומשין אלביאן תלשבע</item>
-
-
-        <item>מקיף אלנור</item>
-
-
-        <item>מקיף ע"ש יצחק רבין</item>
-
-
-        <item>מקיף אלנור ערערה</item>
-
-
-        <item>מקיף אלחיאת</item>
-
-
-        <item>אלנגאח</item>
-
-
-        <item>דאר אלקלם</item>
-
-
-        <item>אקרא ע"ש עאמר צאנע</item>
-
-
-        <item>מקיף אלסאלם</item>
-
-
-        <item>מקיף אלתקוא</item>
-
-
-        <item>אלסאלם</item>
-
-
-        <item>תיכון אורט מולדה</item>
-
-
-        <item>מקיף צפית</item>
-
-
-        <item>מקיף שקמה</item>
-
-
-        <item>מקיף שער הנגב</item>
-
-
-        <item>תיכון אורט תראבין</item>
-
-
-        <item>בני יששכר</item>
-
-
-        <item>מבואות הנגב</item>
-
-
-        <item>נופי הבשור</item>
-
-
-        <item>מקיף שיטים</item>
-
-
-        <item>אולפנת תהילת ישראל</item>
-
-
-        <item>מקיף דתי</item>
-
-
-        <item>מקיף דתי</item>
-
-
-        <item>רב תחומי עמל הדקלים תל שבע</item>
-
-
-        <item>אשל הנשיא</item>
-
-
-        <item>מקיף כפר סילבר</item>
-
-
-        <item>חקלאי כנות</item>
-
-
-        <item>אולפנת מרכז שפירא</item>
-
-
-        <item>מקיף דתי עזתה בנות</item>
-
-
-        <item>שש שנתי ע"ש יצחק שמיר</item>
-
-
-        <item>בית הספר השיטה</item>
-
-
-        <item>מקיף אלסלעה</item>
-
-
-        <item>אורט פסגות מגדל העמק</item>
-
-
-        <item>פארק המדע</item>
-
-
-        <item>מקיף ע"ש ד"ר חאלד ס</item>
-
-
-        <item>דמוקרטי בעמק- התיכון</item>
-
-
-        <item>המשותף חוף הכרמל</item>
-
-
-        <item>עמל אמירים אופקים</item>
-
-
-        <item>מקיף חוף הכרמל</item>
-
-
-        <item>עירוני יד</item>
-
-
-        <item>ישיבת שעלבים</item>
-
-
-        <item>תיכון ע"ש קציר</item>
-
-
-        <item>מקיף ג ע"ש רוגוזין</item>
-
-
-        <item>מקיף דתי אמי"ת</item>
-
-
-        <item>עירוני ע"ש שזר</item>
-
-
-        <item>מעלה שחרות</item>
-
-
+        <item>אולפנא ע"ש הרב שאולי</item>
+        <item>אולפנא עופרה</item>
+        <item>אולפנא צביה הר ברכה</item>
+        <item>אולפנא ראשון לציון</item>
+        <item>אולפנא ת. לאומנויות</item>
+        <item>אולפנאת זבולון</item>
+        <item>אולפנה לבנות</item>
+        <item>אולפנה מדעים ואמנויות</item>
+        <item>אולפנית אמי"ת או"ע</item>
+        <item>אולפנית בנ"ע תל אביב</item>
+        <item>אולפנית דרכא</item>
+        <item>אולפנית הדר גנים</item>
+        <item>אולפנית ישורון</item>
+        <item>אולפנית לבנות</item>
+        <item>אולפנת - לבנות ולהבנות</item>
+        <item>אולפנת אבן שמואל</item>
+        <item>אולפנת אהבת ישראל</item>
+        <item>אולפנת אמי"ת</item>
+        <item>אולפנת אמי"ת להבה</item>
+        <item>אולפנת בית שאן</item>
+        <item>אולפנת בנ"ע אורות מודיעין</item>
+        <item>אולפנת בנ"ע חן במדבר</item>
         <item>אולפנת בנ"ע טל רמות</item>
-
-
-        <item>מקיף ע"ש ספיר</item>
-
-
-        <item>קרית החינוך אמי"ת</item>
-
-
-        <item>מקיף אזורי מרחבים</item>
-
-
-        <item>התיכון הניסויי</item>
-
-
-        <item>מקיף עין גדי</item>
-
-
-        <item>רב תחומי כסייפה</item>
-
-
-        <item>מקיף עין מאהל</item>
-
-
-        <item>מקיף ע"ש קאסם גאנם</item>
-
-
-        <item>רב תחומי עמל תל שבע א</item>
-
-
+        <item>אולפנת בנ"ע סגולה</item>
+        <item>אולפנת בנ"ע ערד</item>
+        <item>אולפנת בנ"ע פסגת זאב</item>
+        <item>אולפנת בני עקיבא אמנה</item>
+        <item>אולפנת בני עקיבא לכי</item>
+        <item>אולפנת דולב</item>
+        <item>אולפנת הרא"ה תורני מדעי</item>
+        <item>אולפנת השומרון</item>
+        <item>אולפנת חפץ חיים</item>
+        <item>אולפנת מרכז שפירא</item>
+        <item>אולפנת נוגה</item>
+        <item>אולפנת נוה דקלים</item>
+        <item>אולפנת נחלה דרכא</item>
+        <item>אולפנת צביה אשקלון</item>
+        <item>אולפנת צביה בני ברק</item>
+        <item>אולפנת צביה בת ים</item>
+        <item>אולפנת צביה דימונה</item>
+        <item>אולפנת צביה הרצליה</item>
+        <item>אולפנת צביה חיפה</item>
+        <item>אולפנת צביה יצירתית</item>
+        <item>אולפנת צביה ירושלים</item>
+        <item>אולפנת צביה לוד</item>
+        <item>אולפנת צביה מ. אדומים</item>
+        <item>אולפנת צביה מעלות</item>
+        <item>אולפנת צביה רבבה</item>
+        <item>אולפנת צביה רחובות</item>
         <item>אולפנת צביה-עזתה</item>
-
-
+        <item>אולפנת קרית גת</item>
+        <item>אולפנת שעלבים</item>
+        <item>אולפנת שעלי תורה</item>
+        <item>אולפנת תהילת ישראל</item>
+        <item>אולפת אמי"ת עירוני ו</item>
+        <item>אומנויות</item>
+        <item>אופק</item>
+        <item>אופק</item>
+        <item>אור תורה סטון לבנות</item>
+        <item>אור תורה סטון לבנים</item>
+        <item>אורט אלון עפולה</item>
+        <item>אורט אלמותנבי כסייפה</item>
+        <item>אורט אמירים</item>
+        <item>אורט דתי ע"ש ספניאן</item>
+        <item>אורט השומרון</item>
+        <item>אורט עירוני ד</item>
+        <item>אורט פסגות מגדל העמק</item>
+        <item>אורט רמות ע"ש יגדיש</item>
+        <item>אורט שלומי</item>
+        <item>אורים</item>
+        <item>אזורי ירדן</item>
+        <item>אזורי מקיף עין כרם</item>
+        <item>אזורי ע"ש הרצוג</item>
+        <item>אחוזת ילדים</item>
+        <item>אל ארצי</item>
+        <item>אל אשראק</item>
+        <item>אל סלאם</item>
+        <item>אלאנדלוס</item>
+        <item>אלביאן טמרה</item>
+        <item>אלונים</item>
+        <item>אליעזר בן יהודה</item>
+        <item>אלמנרה</item>
+        <item>אלמתנבי</item>
+        <item>אלנגאח</item>
+        <item>אלסאלם</item>
+        <item>אלסלאם</item>
+        <item>אמי"ת איתן</item>
+        <item>אמי"ת בנות מודיעין</item>
+        <item>אמי"ת בנים מודיעין</item>
+        <item>אמי"ת גוש דן</item>
+        <item>אמי"ת דביר לבנים</item>
+        <item>אמי"ת שחר</item>
+        <item>אמי"ת תורני מדעי</item>
+        <item>אמית בר אילן</item>
+        <item>אמית מדעי תורני כפר בתיה</item>
+        <item>אפאק</item>
+        <item>אקרא ע"ש עאמר צאנע</item>
+        <item>ארץ הצבי</item>
+        <item>אשל הנשיא</item>
+        <item>בי"ס לח. מיוחד אלאמל</item>
+        <item>בי"ס מקיף השלום דנון</item>
+        <item>בי"ס שחר</item>
+        <item>ביה"ס עמלני נצרת</item>
+        <item>בית הספר אורט סאגור</item>
+        <item>בית הספר אמירים כפר ורדים</item>
+        <item>בית הספר השיטה</item>
+        <item>בית הספר רעות לאמנויות</item>
+        <item>בית הצייר</item>
+        <item>בית וגן דרכא</item>
+        <item>בית חולים שלוותה</item>
+        <item>בית חינוך אמית רננים</item>
         <item>בית חינוך ירקון</item>
-
-
+        <item>בית חינוך ע"ש רבין</item>
+        <item>בית חנה</item>
+        <item>בית חנינא</item>
+        <item>בית רחל שטראוס</item>
+        <item>בן-גוריון נס-ציונה</item>
+        <item>בן-יקיר</item>
+        <item>בני יששכר</item>
+        <item>בנימין רוטמן אשל הנשיא</item>
+        <item>בנימין רוטמן כדורי</item>
+        <item>בסמת טבעון</item>
+        <item>בר אילן</item>
+        <item>ברושים</item>
+        <item>ברנקו וייס מקיף בית שמש</item>
+        <item>ברנקו וייס מקיף ע"ש רבין</item>
+        <item>ברנקו וייס עין נקובה עין ראפה</item>
+        <item>גאון הירדן</item>
+        <item>גיל</item>
+        <item>גלעד</item>
+        <item>גמנסיה עברית הרצליה</item>
+        <item>גן ונוף</item>
+        <item>גשר</item>
+        <item>דאר אלקלם</item>
+        <item>דמוקרטי בעמק- התיכון</item>
+        <item>דמוקרטי ע"ש יעקב חזן</item>
+        <item>דקלים</item>
+        <item>דרכא דנציגר</item>
+        <item>דרכא ע"ש אילן ואסף רמון</item>
+        <item>דרכא ע"ש מנחם בגין</item>
+        <item>הגמנסיה העברית</item>
+        <item>הודיות</item>
+        <item>הייטק היי</item>
+        <item>הישיבה התיכונית ברוכין</item>
+        <item>המגשימים</item>
+        <item>המרכז הישראלי למצוינות בחינוך</item>
+        <item>המשותף חוף הכרמל</item>
+        <item>העוגן לב השרון</item>
+        <item>הפתוח הדמוקרטי</item>
+        <item>הרב תחומי עמק חרוד</item>
+        <item>הרטמן בנות</item>
+        <item>הרים</item>
+        <item>השלום ע"ש יצחק רבין</item>
+        <item>התיכון הניסויי</item>
+        <item>התנהגותי</item>
+        <item>חדוות התורה-ישיבת אמ</item>
+        <item>חוות הנוער הציוני</item>
+        <item>חט"ב אבן סינא</item>
+        <item>חט"ב אבן רושד</item>
+        <item>חט"ב אכסאל</item>
+        <item>חט"ב אלפורעה</item>
+        <item>חט"ב ב - אלראזי</item>
+        <item>חט"ב בוקעתה</item>
+        <item>חט"ב חדשה כאבול</item>
+        <item>חט"ב חדשה שוהם</item>
+        <item>חט"ב ממ"ד בנים המר</item>
+        <item>חט"ב עין גראר</item>
+        <item>חט"ב עיסוואיה בנות</item>
+        <item>חט"ב עמלנית חברת נער</item>
+        <item>חט"ב תיכון ריגלר</item>
+        <item>חטב עמל אבן גבירול</item>
+        <item>חטב עמלנית קורצק</item>
+        <item>חטב עמלנית רגבים</item>
+        <item>חטב עמלנית שלום</item>
+        <item>חיים גורי</item>
+        <item>חכמי לב</item>
+        <item>חמ"ד אמית הלל</item>
+        <item>חקלאי בן שמן</item>
+        <item>חקלאי כנות</item>
+        <item>חקלאי נחלת יהודה</item>
+        <item>חקלאי פרדס-חנה</item>
+        <item>טומשין אלביאן תלשבע</item>
+        <item>יאפא אלמוסתקבל ל"ג</item>
+        <item>יב"ע בית יהודה</item>
+        <item>יגאל אלון</item>
+        <item>יהודה הלוי</item>
+        <item>יובלים</item>
+        <item>יעד עמלני</item>
+        <item>יצחק רבין</item>
+        <item>יצחק רגר</item>
+        <item>יש תיכונית בלבב שלם</item>
+        <item>ישיבה שעלי תורה</item>
+        <item>ישיבה תיכונית</item>
+        <item>ישיבה תיכונית</item>
+        <item>ישיבה תיכונית</item>
+        <item>ישיבה תיכונית אמי"ת אלירז</item>
+        <item>ישיבה תיכונית אמי"ת צפת</item>
+        <item>ישיבה תיכונית בנים</item>
+        <item>ישיבה תיכונית דרכא נתיבות</item>
+        <item>ישיבה תיכונית חדשה</item>
+        <item>ישיבה תיכונית עלי</item>
+        <item>ישיבה תכונית בר אילן</item>
+        <item>ישיבת אור עציון</item>
+        <item>ישיבת אמי"ת</item>
+        <item>ישיבת אמי"ת נחשון</item>
+        <item>ישיבת אמי"ת עמיחי</item>
+        <item>ישיבת ב"ע אדרת</item>
+        <item>ישיבת בנ"ע בית שאן</item>
+        <item>ישיבת בנ"ע חדרה</item>
+        <item>ישיבת בנ"ע לפיד מודיעין</item>
+        <item>ישיבת בנ"ע מטה בנימין</item>
+        <item>ישיבת בנ"ע נווה הרצוג</item>
+        <item>ישיבת בנ"ע נר תמיד חשמונאים</item>
+        <item>ישיבת בנ"ע פסגת זאב</item>
+        <item>ישיבת בנ"ע רעננה</item>
+        <item>ישיבת בני עקיבא</item>
+        <item>ישיבת בני עקיבא</item>
+        <item>ישיבת בני עקיבא גבעת שמואל</item>
+        <item>ישיבת בני עקיבא השומרון</item>
+        <item>ישיבת בני עקיבא יבנה</item>
+        <item>ישיבת בני עקיבא נחלים</item>
+        <item>ישיבת בני עקיבא ראשון לציון</item>
+        <item>ישיבת בני עקיבא תקות יעקב</item>
+        <item>ישיבת דרכא המתמיד</item>
+        <item>ישיבת ים לצעירים</item>
+        <item>ישיבת כפר גנים</item>
+        <item>ישיבת מערב שומרון</item>
+        <item>ישיבת מקור חיים</item>
+        <item>ישיבת נעם</item>
+        <item>ישיבת נתיב מאיר</item>
+        <item>ישיבת צביה אשקלון</item>
+        <item>ישיבת צביה דימונה</item>
+        <item>ישיבת צביה לוד</item>
+        <item>ישיבת צביה מ.אדומים</item>
+        <item>ישיבת צביה פתח תקווה</item>
+        <item>ישיבת צביה קטיף</item>
+        <item>ישיבת שעלבים</item>
+        <item>כל ישראל חברים</item>
+        <item>כפר גלים</item>
+        <item>כפר הנוער אמי"ת</item>
+        <item>כפר הנוער הדתי</item>
+        <item>כרם גפנים</item>
+        <item>מאור</item>
+        <item>מבואות הנגב</item>
+        <item>מדרשיית עמליה</item>
+        <item>מדרשת קמה</item>
+        <item>מוסד יובלים</item>
+        <item>מוסדות ישיבת פ"ת</item>
+        <item>מיוחד לוטם</item>
+        <item>מיוחד צורים</item>
+        <item>מיתרים</item>
+        <item>מיתרים רעננה</item>
+        <item>ממ"ד לבנים</item>
+        <item>ממ"ד לטכנולוגיה ולאומנויות</item>
+        <item>ממ"ד עמנואל</item>
+        <item>מעוף</item>
+        <item>מעלה שחרות</item>
+        <item>מפתן</item>
+        <item>מפתן אלון</item>
+        <item>מפתן אם אלפחם</item>
+        <item>מפתן ארזים</item>
+        <item>מפתן בית חגי</item>
+        <item>מפתן הרצליה</item>
+        <item>מפתן חרמון</item>
+        <item>מפתן טירה</item>
+        <item>מפתן מגאר</item>
+        <item>מפתן נצרת</item>
+        <item>מפתן צפת</item>
+        <item>מפתן קרית ים</item>
+        <item>מפתן שפרעם</item>
+        <item>מפתן תמרה</item>
+        <item>מקוה ישראל דתי</item>
+        <item>מקוה ישראל כללי</item>
+        <item>מקיף</item>
+        <item>מקיף "אבן רושד"</item>
+        <item>מקיף "בית אלחכמה "</item>
+        <item>מקיף אלנור</item>
+        <item>מקיף אעש שיךס.כניפס</item>
+        <item>מקיף אבו גוש</item>
+        <item>מקיף אבן אלהייתם</item>
+        <item>מקיף אבן חלדון</item>
+        <item>מקיף אורט כרמים</item>
+        <item>מקיף אורט מעלות</item>
+        <item>מקיף אורט עש גרינברג</item>
+        <item>מקיף אזורי מרחבים</item>
+        <item>מקיף אזורי עמי אסף</item>
+        <item>מקיף אל-בטוף</item>
+        <item>מקיף אלבוכארי</item>
+        <item>מקיף אלבטוף עראבה</item>
+        <item>מקיף אלוני יצחק</item>
+        <item>מקיף אלחיאת</item>
+        <item>מקיף אלמגד</item>
+        <item>מקיף אלמגד ע"ש השיח</item>
+        <item>מקיף אלנור</item>
+        <item>מקיף אלנור ערערה</item>
+        <item>מקיף אלסאלם</item>
+        <item>מקיף אלסלעה</item>
+        <item>מקיף אלרסאלה</item>
+        <item>מקיף אלתקוא</item>
+        <item>מקיף אנה פרנק</item>
+        <item>מקיף אעבלין</item>
+        <item>מקיף אפרים קציר</item>
+        <item>מקיף ב</item>
+        <item>מקיף בוסתן אל מרג</item>
+        <item>מקיף בועינה נגידאת</item>
+        <item>מקיף ביר אל-מכסור</item>
+        <item>מקיף בית חנינה</item>
+        <item>מקיף בית חנינה לבנות</item>
+        <item>מקיף בענה</item>
+        <item>מקיף ג א. נמר חוסין</item>
+        <item>מקיף ג ע"ש רוגוזין</item>
+        <item>מקיף גוליס</item>
+        <item>מקיף גבעת פרדיס</item>
+        <item>מקיף גדידה</item>
+        <item>מקיף גוונים</item>
+        <item>מקיף גליל מערבי</item>
+        <item>מקיף דרכא</item>
+        <item>מקיף דתי</item>
+        <item>מקיף דתי</item>
+        <item>מקיף דתי אזורי</item>
+        <item>מקיף דתי אמי"ת</item>
+        <item>מקיף דתי אריאל</item>
+        <item>מקיף דתי גרוס</item>
+        <item>מקיף דתי חבד בית חנה</item>
+        <item>מקיף דתי חדש לבנות</item>
+        <item>מקיף דתי יהודה</item>
+        <item>מקיף דתי ע"ש לוינסון</item>
+        <item>מקיף דתי ע"ש רוגוזין</item>
+        <item>מקיף דתי עזתה בנות</item>
+        <item>מקיף דתי עירוני ב</item>
+        <item>מקיף ה דרכא</item>
+        <item>מקיף הדסים</item>
+        <item>מקיף העמק המערבי</item>
+        <item>מקיף הר וגיא</item>
         <item>מקיף הר טוב</item>
-
-
+        <item>מקיף ו</item>
+        <item>מקיף ולדורף הרדוף</item>
+        <item>מקיף ז</item>
+        <item>מקיף ח</item>
+        <item>מקיף חדש</item>
+        <item>מקיף חדש</item>
+        <item>מקיף חדש ט</item>
+        <item>מקיף חדש ע"ש רבין</item>
+        <item>מקיף חדש רובע יז</item>
+        <item>מקיף חוף הכרמל</item>
+        <item>מקיף חוף השרון</item>
+        <item>מקיף חקלאי נהלל</item>
+        <item>מקיף ט</item>
+        <item>מקיף טומשין טובא</item>
+        <item>מקיף טומשין ערערה</item>
+        <item>מקיף טשרניחובסקי</item>
+        <item>מקיף י"א</item>
+        <item>מקיף י"ג</item>
+        <item>מקיף י</item>
+        <item>מקיף י אבני החושן</item>
+        <item>מקיף כאוכב</item>
+        <item>מקיף כפר סילבר</item>
+        <item>מקיף כרמל זבולון</item>
+        <item>מקיף לאורו נלך</item>
+        <item>מקיף מבואות עירון</item>
+        <item>מקיף מופת בסמת</item>
+        <item>מקיף מושריפה</item>
+        <item>מקיף ממ"ד</item>
+        <item>מקיף ממ"ד יגאל אלון</item>
+        <item>מקיף מעין-שחר</item>
+        <item>מקיף משגב</item>
+        <item>מקיף סולם צור</item>
+        <item>מקיף סליגסברג</item>
+        <item>מקיף ע"ש אריה מאיר</item>
+        <item>מקיף ע"ש ד"ר חאלד ס</item>
+        <item>מקיף ע"ש זיו</item>
+        <item>מקיף ע"ש יגאל אלון</item>
+        <item>מקיף ע"ש יצחק נבון</item>
+        <item>מקיף ע"ש יצחק רבין</item>
+        <item>מקיף ע"ש ספיר</item>
+        <item>מקיף ע"ש עפו פאעור</item>
+        <item>מקיף ע"ש קאסם גאנם</item>
+        <item>מקיף ע"ש שיפמן</item>
+        <item>מקיף ע"ש שלאון</item>
+        <item>מקיף ע. דוד טוביהו</item>
+        <item>מקיף עומר</item>
+        <item>מקיף עין גדי</item>
+        <item>מקיף עין מאהל</item>
+        <item>מקיף עינות הירדן</item>
+        <item>מקיף עירוני א</item>
+        <item>מקיף עירוני ד</item>
+        <item>מקיף עירוני ח</item>
+        <item>מקיף עמק החולה</item>
+        <item>מקיף עמקים-תבור</item>
+        <item>מקיף ערבי</item>
+        <item>מקיף עתיד אלנגאח למדעים</item>
+        <item>מקיף פרדיס</item>
+        <item>מקיף צפית</item>
+        <item>מקיף קשת</item>
+        <item>מקיף ראמה</item>
+        <item>מקיף רהט</item>
+        <item>מקיף שגב</item>
+        <item>מקיף שיזף אלמותנבי</item>
+        <item>מקיף שיטים</item>
+        <item>מקיף שכונת אבו שהאב</item>
+        <item>מקיף שער הנגב</item>
+        <item>מקיף שפיה</item>
+        <item>מקיף שקמה</item>
+        <item>מקיף שש - שנתי</item>
+        <item>מקיף שש שנתי</item>
+        <item>מקיף שש שנתי אלטור לבנים</item>
+        <item>מקיף שש שנתי סלאמה</item>
+        <item>מקיף שש שנתי פקיעין</item>
+        <item>מקיף שש שנתי ק. שרת</item>
+        <item>מקיף שש שנתי קוגל</item>
+        <item>מקיף תרשיחא</item>
+        <item>מרכז שיקום נוער</item>
+        <item>משלב דרור</item>
+        <item>נוה הדסה</item>
+        <item>נופי הבשור</item>
+        <item>נחלת ישראל</item>
+        <item>נחשון למדעים טכנולוגיה ואומנות</item>
+        <item>ניסויי על איזורי תפן</item>
+        <item>ניצנים</item>
+        <item>נעורים</item>
+        <item>נפלאות</item>
+        <item>נריה</item>
+        <item>נתיבות דרור</item>
+        <item>ע"ש יצחק נבון מודיעין</item>
+        <item>ע"ש יצחק רבין עי"ס</item>
+        <item>ע"ש רא"ל מרדכי גור</item>
+        <item>עבדאללה בן חוסין</item>
+        <item>עגורים מבואות חרמון</item>
+        <item>עומר משגב</item>
+        <item>עופר</item>
+        <item>עיוני מגדל שמס</item>
+        <item>עירוני א</item>
+        <item>עירוני א</item>
+        <item>עירוני א חשמונאים</item>
+        <item>עירוני א לאמנויות</item>
+        <item>עירוני ב ישיבה</item>
+        <item>עירוני ג</item>
+        <item>עירוני ד</item>
+        <item>עירוני ד גן נחום</item>
+        <item>עירוני דתי יבנה</item>
+        <item>עירוני דתי רוטשילד</item>
+        <item>עירוני ה</item>
+        <item>עירוני ה</item>
+        <item>עירוני ה מקיף</item>
+        <item>עירוני ו</item>
+        <item>עירוני ו מקיף</item>
+        <item>עירוני חוגים</item>
+        <item>עירוני ט</item>
+        <item>עירוני י אליאנס</item>
+        <item>עירוני יב</item>
+        <item>עירוני יד</item>
+        <item>עירוני מסורתי</item>
+        <item>עירוני מקיף רמות</item>
+        <item>עירוני מקיף שי עגנון</item>
+        <item>עירוני משה שרת</item>
+        <item>עירוני נווה צדק</item>
+        <item>עירוני ע"ש בן גוריון</item>
+        <item>עירוני ע"ש שזר</item>
+        <item>עירוני עש פנחס אילון</item>
+        <item>עירוני תורני ב ג</item>
+        <item>על יסודי אדם</item>
+        <item>על יסודי צור הדסה</item>
+        <item>עלי זהב</item>
+        <item>עמל אולפנת הראל נהריה</item>
+        <item>עמל אחוה דימונה</item>
+        <item>עמל אמירים אופקים</item>
+        <item>עמל אפלמן דימונה</item>
+        <item>עמל זינמן דימונה</item>
+        <item>עמל כעביה טבאש חגאגרה</item>
+        <item>עמל ליהמן דימונה</item>
+        <item>עמל ליידי דייויס ת"א</item>
         <item>עמק יפה</item>
-
-
+        <item>עתיד דאר אל חכמא</item>
+        <item>עתיד נווה נחום</item>
+        <item>עתיד רזיאל</item>
+        <item>פארק המדע</item>
+        <item>פלך</item>
+        <item>פלך ע"ש רות קורמן</item>
+        <item>ק.חינוך בנ"ע חולון</item>
+        <item>קבוצת יבנה</item>
+        <item>קדמה ירושלים</item>
+        <item>קציר משגב</item>
+        <item>קריית החינוך למדעים</item>
+        <item>קריית חינוך נתיבי נועם דרכא</item>
+        <item>קרית החינוך אמי"ת</item>
+        <item>קרית חינוך בן גוריון</item>
         <item>קרית חינוך דרור</item>
-
-
+        <item>קרית חינוך יפו</item>
+        <item>קרית חינוך ע"ש גינסבורג</item>
+        <item>קרית יעקב הרצוג</item>
+        <item>קרית יערים</item>
+        <item>קשת ברנקו וייס</item>
+        <item>ראס אל עמוד לבנים</item>
+        <item>ראס אלעמוד ע"ס לבנות</item>
+        <item>ראשית חכמה</item>
+        <item>רב תחומי כסייפה</item>
+        <item>רב תחומי עמל הדקלים תל שבע</item>
+        <item>רב תחומי עמל עילוט</item>
+        <item>רב תחומי עמל תל שבע א</item>
+        <item>רוואד אלקודס</item>
+        <item>רון ארד</item>
+        <item>ריימונד לאוואן</item>
+        <item>רימונים</item>
+        <item>רנה קסין דרכא</item>
+        <item>רעות קהילה דתית</item>
+        <item>שבילי אית"ם</item>
+        <item>שבילים ע"ש בגין</item>
+        <item>שחף</item>
+        <item>שחקים</item>
+        <item>שפרירים א</item>
+        <item>שש שנתי אחד העם</item>
+        <item>שש שנתי איש שלום</item>
+        <item>שש שנתי אמי"ת בנות</item>
+        <item>שש שנתי יצחק נבון</item>
+        <item>שש שנתי ע"ש יצחק שמיר</item>
+        <item>שש שנתי רמון</item>
+        <item>שש שנתי שיבולים</item>
+        <item>תורני ואולפ בר אילן</item>
+        <item>תורני לבנות ב.שולמית</item>
+        <item>תורני נסויי בנות פלך</item>
+        <item>תורני נסויי הרטמן</item>
+        <item>תורני ע"ש פ. הימלפרב</item>
+        <item>תיכון אורט מולדה</item>
+        <item>תיכון אורט תראבין</item>
+        <item>תיכון אזורי מגידו</item>
+        <item>תיכון איתן</item>
+        <item>תיכון אל סייד</item>
+        <item>תיכון אסקנדר</item>
+        <item>תיכון באר עמ"י</item>
+        <item>תיכון בית צפאפא</item>
+        <item>תיכון ברנקו וייס מיתרים</item>
+        <item>תיכון ברנר</item>
+        <item>תיכון גבעול</item>
+        <item>תיכון גבעת גונן</item>
+        <item>תיכון גבעת ושינגטון</item>
+        <item>תיכון דה שליט</item>
+        <item>תיכון דיר אל-אסד</item>
+        <item>תיכון דרור</item>
+        <item>תיכון דתי איתן חדש</item>
+        <item>תיכון המעיין מקיף יב</item>
+        <item>תיכון הראל</item>
+        <item>תיכון חדיגה</item>
+        <item>תיכון חב"ד בנות</item>
+        <item>תיכון חדרה</item>
+        <item>תיכון חדש בנים</item>
+        <item>תיכון חדש ע"ש רבין</item>
+        <item>תיכון חדש ע"ש רבין</item>
+        <item>תיכון חדש רמות</item>
+        <item>תיכון יד ביד</item>
+        <item>תיכון יחד</item>
+        <item>תיכון יעדים</item>
+        <item>תיכון ישיבתי נרייה</item>
+        <item>תיכון להנדסה ולמדעים אורט ערבי</item>
+        <item>תיכון מכבים רעות</item>
+        <item>תיכון ממ"ד</item>
+        <item>תיכון ממד זכרון יעקב</item>
+        <item>תיכון מעלה עירון</item>
+        <item>תיכון נחף</item>
+        <item>תיכון סלמאן אלהוזייל</item>
+        <item>תיכון סלמאן חטיב</item>
+        <item>תיכון ע"ש גולדה מאיר</item>
+        <item>תיכון ע"ש נעמי שמר</item>
+        <item>תיכון ע"ש קציר</item>
+        <item>תיכון עיוני עתיד</item>
+        <item>תיכון פסגת אמיר</item>
+        <item>תיכון צור באהר</item>
+        <item>תיכון קטאין אלשומר</item>
+        <item>תיכון שועפט</item>
+        <item>תיכון שיבלי</item>
+        <item>תיכון שק"ד דרכא</item>
+        <item>תיכון שש שנתי</item>
+        <item>תיכון תורני דרך אבות</item>
+        <item>תיכונ"ט ע"ש אלתרמן</item>
+        <item>תיכונית רעים</item>
+        <item>תכון חדרה בית-אליעזר</item>
+        <item>תכון ליד האוניברסיטה</item>
+        <item>תפנית</item>
     </array>
 
 </resources>

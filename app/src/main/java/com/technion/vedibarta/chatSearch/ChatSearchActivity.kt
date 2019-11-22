@@ -20,7 +20,8 @@ class ChatSearchActivity : VedibartaActivity() {
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
     var chosenCharacteristics = mutableSetOf<String>()
-
+    var chosenSchool = ""
+    var chosenRegion = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,11 +30,8 @@ class ChatSearchActivity : VedibartaActivity() {
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
         setupViewPager(searchUserContainer)
-        Log.d(TAG,"Page View Created")
         setToolbar(toolbar)
-        Log.d(TAG,"Toolbar Created")
         toolbar.setNavigationOnClickListener { onBackPressed() }
-        Log.d(TAG,"Created")
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -45,8 +43,8 @@ class ChatSearchActivity : VedibartaActivity() {
 
     private fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(SearchCharacteristicsFragment(), "1")
-        adapter.addFragment(SearchExtraOptionsFragment(), "2")
+        adapter.addFragment(SearchExtraOptionsFragment(), "1")
+        adapter.addFragment(SearchCharacteristicsFragment(), "2")
         viewPager.adapter = adapter
     }
 

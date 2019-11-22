@@ -2,19 +2,19 @@ package com.technion.vedibarta.chatSearch
 
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.CompoundButton
-import android.widget.Spinner
-import android.widget.Switch
-import androidx.core.graphics.drawable.toDrawable
+import android.widget.*
+import androidx.appcompat.widget.SwitchCompat
 
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_search_extra_options.*
+import android.widget.ArrayAdapter
+
 
 /**
  * A simple [Fragment] subclass.
@@ -24,13 +24,20 @@ class SearchExtraOptionsFragment : Fragment() {
     private val TAG = "ExtraFragment@Search"
 
     lateinit var schoolsName: Array<String>
-    lateinit var zonesName: Array<String>
+    lateinit var regionsName: Array<String>
 
-    lateinit var schoolSwitch: Switch
-    lateinit var zoneSwitch: Switch
+    lateinit var schoolSwitch: SwitchCompat
+    lateinit var regionSwitch: SwitchCompat
 
-    lateinit var schoolSpinner: Spinner
-    lateinit var zoneSpinner: Spinner
+    // (Region, SchoolName)
+    lateinit var schoolAndRegionMap: Map<String, String>
+    lateinit var reversedSchoolAndRegionMap: Map<String, String>
+
+    private lateinit var schoolTextViewAuto: AutoCompleteTextView
+    private lateinit var regionTextViewAuto: AutoCompleteTextView
+
+    lateinit var schoolAdapter: ArrayAdapter<String>
+    lateinit var regionAdapter: ArrayAdapter<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,64 +46,88 @@ class SearchExtraOptionsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search_extra_options, container, false)
         schoolsName = resources.getStringArray(R.array.schoolNameList)
-        zonesName = resources.getStringArray(R.array.zoneNameList)
+        regionsName =
+            resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
 
         schoolSwitch = view.findViewById(R.id.schoolFilterSwitch)
-        zoneSwitch = view.findViewById(R.id.zoneFilterSwitch)
+        regionSwitch = view.findViewById(R.id.regionFilterSwitch)
 
-        schoolSpinner = view.findViewById(R.id.schoolListSpinner)
-        zoneSpinner = view.findViewById(R.id.zoneListSpinner)
+        schoolTextViewAuto = view.findViewById(R.id.schoolListSpinner)
+        regionTextViewAuto = view.findViewById(R.id.regionListSpinner)
+
+        schoolAndRegionMap =
+            schoolsName.zip(resources.getStringArray(R.array.regionNameList)).toMap()
+
 
         schoolSwitch.setOnCheckedChangeListener { _, isChecked -> schoolOnCheckedChanged(isChecked) }
-        zoneSwitch.setOnCheckedChangeListener { _, isChecked -> zoneOnCheckedChanged(isChecked) }
+        regionSwitch.setOnCheckedChangeListener { _, isChecked -> regionOnCheckedChanged(isChecked) }
 
-        populateSpinners()
+        schoolTextViewAuto.setOnItemClickListener { _, _, _, _ -> onSchoolSelectedListener() }
+        regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
+        populateSchoolAutoCompleteText()
+        populateRegionAutoCompleteText()
 
         return view
     }
 
-    private fun populateSpinners() {
+    private fun populateSchoolAutoCompleteText() {
 
         Log.d(TAG, "${activity!!.applicationContext}")
 
-        ArrayAdapter.createFromResource(
+        schoolAdapter = ArrayAdapter(
             this.context!!,
-            R.array.schoolNameList,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            schoolSpinner.adapter = adapter
+            android.R.layout.simple_dropdown_item_1line, schoolsName
+        )
+        schoolTextViewAuto.setAdapter(schoolAdapter)
+    }
 
-        }
-
-        ArrayAdapter.createFromResource(
+    private fun populateRegionAutoCompleteText() {
+        regionAdapter = ArrayAdapter(
             this.context!!,
-            R.array.zoneNameList,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            zoneSpinner.adapter = adapter
-        }
+            android.R.layout.simple_dropdown_item_1line, regionsName
+        )
+        regionTextViewAuto.setAdapter(regionAdapter)
     }
 
     private fun schoolOnCheckedChanged(isChecked: Boolean) {
+        populateSchoolAutoCompleteText()
         if (isChecked) {
             schoolListSpinner.visibility = View.VISIBLE
         } else {
             schoolListSpinner.visibility = View.GONE
+            (activity as ChatSearchActivity).chosenSchool = ""
         }
     }
 
-    private fun zoneOnCheckedChanged(isChecked: Boolean) {
+    private fun onSchoolSelectedListener() {
+        val schoolName = schoolTextViewAuto.text.toString()
+        val region = schoolAndRegionMap[schoolName]
+        regionTextViewAuto.text = SpannableStringBuilder(region)
+        (activity as ChatSearchActivity).chosenSchool = schoolName
+        (activity as ChatSearchActivity).chosenRegion = region.toString()
+        populateSchoolAutoCompleteText()
+    }
 
+    private fun onRegionSelectedListener(position: Int) {
+        schoolTextViewAuto.text = SpannableStringBuilder("")
+        (activity as ChatSearchActivity).chosenSchool = ""
+        val region = regionAdapter.getItem(position).toString()
+        val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
+        val schoolAdapter = ArrayAdapter(
+            this.context!!,
+            android.R.layout.simple_dropdown_item_1line, schoolList
+        )
+        schoolTextViewAuto.setAdapter(schoolAdapter)
+
+    }
+
+    private fun regionOnCheckedChanged(isChecked: Boolean) {
+        populateSchoolAutoCompleteText()
         if (isChecked) {
-            zoneListSpinner.visibility = View.VISIBLE
+            regionListSpinner.visibility = View.VISIBLE
         } else {
-            zoneListSpinner.visibility = View.GONE
+            regionListSpinner.visibility = View.GONE
+            (activity as ChatSearchActivity).chosenRegion = ""
         }
 
     }
