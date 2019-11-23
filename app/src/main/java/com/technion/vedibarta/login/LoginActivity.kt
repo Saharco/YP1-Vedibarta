@@ -13,6 +13,11 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // If activity is being restored from a previous state, then do nothing.
+        if(savedInstanceState != null) {
+            return
+        }
+
         val fm = supportFragmentManager
         fm.beginTransaction().apply {
             add(R.id.login_screen_fragment, LoginOptionsFragment())
