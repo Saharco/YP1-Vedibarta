@@ -6,7 +6,8 @@ import com.technion.vedibarta.R
 
 
 class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener,
-    LoginFragment.OnBackButtonClickListener {
+    LoginOptionsFragment.OnSignUpWithEmailButtonClickListener,
+    LoginFragment.OnBackButtonClickListener, SignUpWithEmailFragment.OnBackButtonClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +22,13 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     override fun onSignInButtonClick() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.login_screen_fragment, LoginFragment())
+            addToBackStack(null)
+        }.commit()
+    }
+
+    override fun onSignUpWithEmailButtonClick() {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.login_screen_fragment, SignUpWithEmailFragment())
             addToBackStack(null)
         }.commit()
     }

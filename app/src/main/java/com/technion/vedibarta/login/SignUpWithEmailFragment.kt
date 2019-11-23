@@ -1,6 +1,5 @@
 package com.technion.vedibarta.login
 
-
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,10 +11,8 @@ import android.widget.Button
 import com.technion.vedibarta.R
 import java.lang.ClassCastException
 
-/**
- * A simple [Fragment] subclass.
- */
-class LoginFragment : Fragment() {
+
+class SignUpWithEmailFragment : Fragment() {
     private lateinit var backListener: OnBackButtonClickListener
 
     override fun onCreateView(
@@ -23,7 +20,7 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_login, container, false)
+        val view = inflater.inflate(R.layout.fragment_sign_up_with_email, container, false)
 
         val backButton = view.findViewById<Button>(R.id.back_button)
         backButton.setOnClickListener { back() }
