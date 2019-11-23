@@ -94,6 +94,8 @@
             android:id="@+id/divider2"
             android:layout_width="1dp"
             android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:background="@color/colorDivider"
             app:layout_constraintEnd_toStartOf="@id/reportButton"
             app:layout_constraintStart_toEndOf="@id/reportAbuseDismissButton"
