@@ -27,6 +27,11 @@
     <string name="login_title">התחברות</string>
     <string name="enter_email_hint">דואר אלקטרוני</string>
     <string name="enter_password_hint">סיסמה</string>
+    <string name="sign_up_title">הרשמה</string>
+    <string name="enter_password_repeat_hint">אימות סיסמה</string>
+    <string name="enter_first_name_hint">שם פרטי</string>
+    <string name="enter_last_name_hint">שם משפחה</string>
+    <string name="sign_up">הירשם</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
