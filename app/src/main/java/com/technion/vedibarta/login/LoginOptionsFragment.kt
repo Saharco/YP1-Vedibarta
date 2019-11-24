@@ -17,9 +17,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
 
@@ -36,15 +38,14 @@ class LoginOptionsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 381465238096-e60campao164cdi8j1bs8pp0h53cs5c1.apps.googleusercontent.com
+        auth = FirebaseAuth.getInstance()
+
         // Set up google sign-in client
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("381465238096-e60campao164cdi8j1bs8pp0h53cs5c1.apps.googleusercontent.com")
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-        googleSignInClient = GoogleSignIn.getClient(activity!!, gso)
-
-        auth = FirebaseAuth.getInstance()
+        googleSignInClient = GoogleSignIn.getClient(context!!, gso)
     }
 
     override fun onCreateView(
@@ -70,10 +71,8 @@ class LoginOptionsFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val account = GoogleSignIn.getLastSignedInAccount(activity!!)
-        if(account != null) {
-            // TODO: go to main screen
-        }
+        val currentUser = auth.currentUser
+        updateUIForCurrentUser(currentUser)
     }
 
     override fun onAttach(context: Context) {
@@ -107,6 +106,8 @@ class LoginOptionsFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
         if (data == null) {
             Log.w(TAG, "Intent is null")
             return
@@ -120,27 +121,19 @@ class LoginOptionsFragment : Fragment() {
 
             try {
                 val account = task.getResult(ApiException::class.java)!!
-                val idToken = account.idToken
-                if (idToken == null)
-                    Log.w(TAG, "ID Token is null")
-
-                // Successful google sign in
-                handleGoogleAccount(account)
-
+                firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 Log.w(TAG, "Google sign in failed", e)
-            } catch (e: Exception) {
-                Log.w(TAG, "Caught unexpected exception: $e")
             }
 
             return
         }
     }
 
-    private fun handleGoogleAccount(account: GoogleSignInAccount) {
-        Log.d(TAG, "handleGoogleAccount: ${account.id!!}")
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+        Log.d(TAG, "firebaseAuthWithGoogle: ${account.id!!}")
 
-        val dialog = ProgressDialog(activity).apply {
+        val dialog = ProgressDialog(context).apply {
             setMessage("Loading data...")
             setCancelable(false)
             setIndeterminate(true)
@@ -148,17 +141,26 @@ class LoginOptionsFragment : Fragment() {
         }
 
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
         auth.signInWithCredential(credential)
-            .addOnCompleteListener(activity!!) {
-                if (it.isSuccessful) {
-                    Log.w(TAG, "signInWithCredential: Success")
+            .addOnCompleteListener(activity!!) { task ->
+                if (task.isSuccessful) {
+                    Log.w(TAG, "signInWithCredential: success")
+                    val user = auth.currentUser
+                    updateUIForCurrentUser(user)
                 } else {
                     // Sign in failed
-                    Log.w(TAG, "signInWithCredential: failure", it.exception)
+                    Log.w(TAG, "signInWithCredential: failure", task.exception)
+                    Toast.makeText(context, "Auth Failed", Toast.LENGTH_LONG).show()
                 }
-            }
 
-        dialog.cancel()
+                dialog.dismiss()
+            }
+    }
+
+    private fun updateUIForCurrentUser(user: FirebaseUser?) {
+        if (user != null) {
+            // TODO: check if the user's document exists.
+            //  If so, direct to main screen. Otherwise, direct to profile creation screen.
+        }
     }
 }
