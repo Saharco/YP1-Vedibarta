@@ -12,6 +12,7 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.activity_chat_search.editTabs
 import kotlinx.android.synthetic.main.activity_chat_search.toolbar
 
 class ChatSearchActivity : VedibartaActivity() {
@@ -30,6 +31,7 @@ class ChatSearchActivity : VedibartaActivity() {
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
         setupViewPager(searchUserContainer)
+        editTabs.setupWithViewPager(searchUserContainer)
         setToolbar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
     }
@@ -43,8 +45,8 @@ class ChatSearchActivity : VedibartaActivity() {
 
     private fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(SearchExtraOptionsFragment(), "1")
-        adapter.addFragment(SearchCharacteristicsFragment(), "2")
+        adapter.addFragment(SearchCharacteristicsFragment(), "1")
+        adapter.addFragment(SearchExtraOptionsFragment(), "2")
         viewPager.adapter = adapter
     }
 
