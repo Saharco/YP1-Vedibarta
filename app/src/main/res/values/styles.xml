@@ -30,6 +30,17 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="FullscreenTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="UserProfileBubble">
         <item name="android:layout_width">80dp</item>
         <item name="android:layout_height">80dp</item>

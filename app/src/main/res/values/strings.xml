@@ -19,6 +19,10 @@
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
 
+    <!--    ChatCandidates attribute   -->
+    <string name="chat_candidates_title">בחירת שותף</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="profile_edit_title">עריכת פרופיל</string>
 
