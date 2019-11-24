@@ -32,8 +32,7 @@ class CarouselAdapter(val itemClick: (position:Int, item: Item) -> Unit) : Recyc
 
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     fun bind(item: Item) {
-        view.listItemText.text = item.title
-        view.listItemIcon.setImageResource(item.icon)
+        //TODO: bind the views here
     }
 }
 

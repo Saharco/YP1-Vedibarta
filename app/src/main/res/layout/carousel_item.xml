@@ -1,34 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="24dp"
-    android:paddingStart="24dp"
-    android:paddingTop="64dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="64dp">
+    android:layout_margin="20dp"
+    android:paddingStart="20dp"
+    android:paddingTop="124dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="108dp">
 
-    <ImageView
-        android:id="@+id/listItemBackground"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerInParent="true"
-        android:src="@color/colorAccent" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/listItemCard"
+        android:layout_width="148dp"
+        android:layout_height="224dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/listItemIcon"
+    <!--   TODO: Remove "tools:ignore" attribute!! -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageView"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_centerInParent="true" />
+        android:src="@drawable/ic_photo_default_profile_girl"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/listItemCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/listItemCard"
+        tools:ignore="VectorDrawableCompat" />
 
     <TextView
-        android:id="@+id/listItemText"
-        android:layout_width="wrap_content"
+        android:id="@+id/candidateName"
+        android:layout_width="112dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/listItemBackground"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:textColor="@color/colorPrimary"
-        android:textSize="22sp" />
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="זמני"
+        android:textColor="@color/textPrimary"
+        app:autoSizeMaxTextSize="13sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="@+id/listItemCard"
+        app:layout_constraintStart_toStartOf="@+id/listItemCard"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/candidateDescription"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="זמני זמני, זמני זמני זמני"
+        android:textColor="@color/textSecondary"
+        app:autoSizeMaxTextSize="10sp"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="@+id/listItemCard"
+        app:layout_constraintStart_toStartOf="@+id/listItemCard"
+        app:layout_constraintTop_toBottomOf="@+id/candidateName" />
+
+    <TableLayout
+        android:id="@+id/candidateTable"
+        android:layout_width="112dp"
+        android:layout_height="88dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/listItemCard"
+        app:layout_constraintStart_toStartOf="@+id/listItemCard"
+        app:layout_constraintTop_toBottomOf="@id/candidateDescription" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="128dp"
+        android:layout_height="40dp"
+        android:textSize="12sp"
+        android:textColor="@android:color/white"
+        android:focusable="true"
+        android:clickable="true"
+        android:text="בואי נדבר"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="@+id/listItemCard"
+        app:layout_constraintEnd_toEndOf="@+id/listItemCard"
+        app:layout_constraintStart_toStartOf="@+id/listItemCard"
+        app:layout_constraintTop_toBottomOf="@+id/candidateTable" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

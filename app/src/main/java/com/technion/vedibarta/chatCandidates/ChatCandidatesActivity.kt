@@ -25,7 +25,7 @@ class ChatCandidatesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_candidates)
         carousel.initialize(carouselAdapter)
-        carousel.setViewsToChangeColor(listOf(R.id.listItemBackground, R.id.listItemText))
+        carousel.setViewsToChangeColor(listOf()) // TODO: change color of pushed-back cards
         carouselAdapter.setItems(getLargeListOfItems())
     }
 
