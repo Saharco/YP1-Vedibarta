@@ -22,8 +22,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".userProfile.ProfileEditActivity">
+        <activity android:name=".chatCandidates.ChatCandidatesActivity"
+            android:label="@string/chat_candidates_title"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+        <activity android:name=".userProfile.ProfileEditActivity"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -36,12 +45,6 @@
         </provider>
 
         <activity android:name=".userProfile.UserProfileActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <meta-data
