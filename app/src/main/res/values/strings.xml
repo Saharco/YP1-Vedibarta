@@ -73,6 +73,7 @@
     <string name="settings_action_title">Settings</string>
     <string name="user_profile_action_title">Profile</string>
     <string name="search_hint">Search</string>
+    <string name="app_label">Vedibarta</string>
     <string-array name="menuitems">
         <item>Menu Item 0</item>
         <item>Menu Item 1</item>

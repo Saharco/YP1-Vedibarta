@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,6 +13,9 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <TextView
@@ -28,22 +31,31 @@
 
     <EditText
         android:id="@+id/search_field"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:layout_margin="5dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:imeOptions="actionSearch"
-        android:hint="@string/search_hint"
+        android:background="@drawable/border_search_field"
         android:drawableEnd="@drawable/ic_search_24dp"
-        android:background="@drawable/border_search_field"/>
+        android:ems="10"
+        android:hint="@string/search_hint"
+        android:gravity="start"
+        android:textAlignment="viewStart"
+        android:imeOptions="actionSearch"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_toolbar" />
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true"
-        tools:layout_editor_absoluteX="1dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_field">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,10 +63,26 @@
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chat_history"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/chat_history" />
+                android:paddingBottom="60dp"
+                android:clipToPadding="false"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-</LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/extendedFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:contentDescription="Extended FAB"
+        android:text="הכר את השונה"
+        app:icon="@drawable/ic_search_24dp"
+        app:layout_anchor="@id/main_toolbar"
+        app:layout_anchorGravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
