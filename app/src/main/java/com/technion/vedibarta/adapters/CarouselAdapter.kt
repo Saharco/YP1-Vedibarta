@@ -6,37 +6,38 @@ import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.R
-import kotlinx.android.synthetic.main.carousel_item.view.*
 
-class CarouselAdapter(val itemClick: (position:Int, item: Item) -> Unit) : RecyclerView.Adapter<ItemViewHolder>() {
+class CarouselAdapter(val itemClick: (position:Int, carouselAdapterItem: CarouselAdapterItem) -> Unit) : RecyclerView.Adapter<ItemViewHolder>() {
 
-    private var items: List<Item> = listOf()
+    private var carouselAdapterItems: List<CarouselAdapterItem> = listOf()
+    private val selectedPos = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder =
         ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.carousel_item, parent, false))
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(carouselAdapterItems[position])
         holder.itemView.setOnClickListener {
-            itemClick(position,items[position])
+            itemClick(position,carouselAdapterItems[position])
         }
+        holder.itemView.isSelected = position == selectedPos
     }
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = carouselAdapterItems.size
 
-    fun setItems(newItems: List<Item>) {
-        items = newItems
+    fun setItems(newCarouselAdapterItems: List<CarouselAdapterItem>) {
+        carouselAdapterItems = newCarouselAdapterItems
         notifyDataSetChanged()
     }
 }
 
 class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-    fun bind(item: Item) {
+    fun bind(carouselAdapterItem: CarouselAdapterItem) {
         //TODO: bind the views here
     }
 }
 
-data class Item(
+data class CarouselAdapterItem(
     val title: String,
     @DrawableRes val icon: Int
 )

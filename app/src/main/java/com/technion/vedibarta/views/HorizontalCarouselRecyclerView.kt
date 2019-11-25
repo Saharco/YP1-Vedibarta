@@ -5,14 +5,18 @@ import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.R
 import kotlin.math.pow
+
 
 /**
  * A horizontal recycler view which visually acts as a carousel.
@@ -21,9 +25,14 @@ import kotlin.math.pow
 class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
     RecyclerView(context, attrs) {
 
+    private val TAG = "carousel"
+
     private val activeColor = ContextCompat.getColor(context, R.color.colorPrimary)
     private val inactiveColor = ContextCompat.getColor(context, R.color.colorAccent)
     private var viewsToChangeColor = listOf<Int>()
+
+    var position = 0
+    var scrollingPosition = 0
 
     fun <T : ViewHolder> initialize(newAdapter: Adapter<T>) {
         layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
@@ -43,6 +52,7 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
             }
         })
         adapter = newAdapter
+        smoothScrollToPosition(position)
     }
 
     private fun onScrollChanged() {
@@ -105,5 +115,18 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
                 }
             }
         }
+    }
+
+    override fun onScrollStateChanged(state: Int) {
+        super.onScrollStateChanged(state)
+        if (state == SCROLL_STATE_IDLE) {
+            updatePosition()
+        }
+        scrollingPosition = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+    }
+
+    private fun updatePosition() {
+        position = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        scrollingPosition = position
     }
 }
