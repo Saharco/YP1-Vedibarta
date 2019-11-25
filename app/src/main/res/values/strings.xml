@@ -38,8 +38,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--    LoginScreen attribute   -->
-    <string name="facebook_app_id">244371485619567</string>
-    <string name="fb_login_protocol_scheme">fb244371485619567</string>
+    <string name="facebook_app_id">3227815763959885</string>
+    <string name="fb_login_protocol_scheme">fb3227815763959885</string>
     <string name="continue_with_facebook_hebrew">היכנס באמצעות פייסבוק</string>
     <string name="sign_out_from_facebook_hebrew">צא מחשבון הפייסבוק</string>
     <string name="sign_in_with_google_hebrew">היכנס באמצעות גוגל</string>
