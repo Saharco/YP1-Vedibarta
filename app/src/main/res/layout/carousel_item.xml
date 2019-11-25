@@ -36,7 +36,7 @@
 
         <!--   TODO: Remove "tools:ignore" attribute!! -->
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView"
+            android:id="@+id/candidateProfilePicture"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:src="@drawable/ic_photo_default_profile_girl"
@@ -64,7 +64,7 @@
             app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toEndOf="@+id/listItemCard"
             app:layout_constraintStart_toStartOf="@+id/listItemCard"
-            app:layout_constraintTop_toBottomOf="@+id/imageView" />
+            app:layout_constraintTop_toBottomOf="@+id/candidateProfilePicture" />
 
         <TextView
             android:id="@+id/candidateDescription"
