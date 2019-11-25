@@ -5,16 +5,13 @@ import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.CarouselLinearLayoutManager
 import kotlin.math.pow
 
 
@@ -35,7 +32,7 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
     var scrollingPosition = 0
 
     fun <T : ViewHolder> initialize(newAdapter: Adapter<T>) {
-        layoutManager = LinearLayoutManager(context, HORIZONTAL, false)
+        layoutManager = CarouselLinearLayoutManager(context, HORIZONTAL, false)
         newAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onChanged() {
                 post {
@@ -122,11 +119,15 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
         if (state == SCROLL_STATE_IDLE) {
             updatePosition()
         }
-        scrollingPosition = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        scrollingPosition = (layoutManager as CarouselLinearLayoutManager).findFirstVisibleItemPosition()
     }
 
     private fun updatePosition() {
-        position = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        position = (layoutManager as CarouselLinearLayoutManager).findFirstVisibleItemPosition()
         scrollingPosition = position
+    }
+
+    override fun fling(velocityX: Int, velocityY: Int): Boolean {
+        return super.fling((velocityX * 0.15).toInt(), velocityY)
     }
 }
