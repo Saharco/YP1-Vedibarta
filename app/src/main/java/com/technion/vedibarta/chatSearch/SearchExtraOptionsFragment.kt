@@ -14,7 +14,8 @@ import androidx.appcompat.widget.SwitchCompat
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_search_extra_options.*
 import android.widget.ArrayAdapter
-import androidx.core.text.buildSpannedString
+import com.technion.vedibarta.login.userSetupActivity
+import kotlinx.android.synthetic.main.activity_user_setup.*
 
 
 /**
@@ -26,11 +27,14 @@ class SearchExtraOptionsFragment : Fragment() {
 
     lateinit var schoolsName: Array<String>
     lateinit var regionsName: Array<String>
+    lateinit var schoolTags: Array<Int>
+
 
     lateinit var schoolSwitch: SwitchCompat
     lateinit var regionSwitch: SwitchCompat
 
-    lateinit var schoolAndRegionMap: Map<String, String>
+    // Tag -> (schoolName, SchoolRegion)
+    lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
 
     private lateinit var schoolTextViewAuto: AutoCompleteTextView
     private lateinit var regionTextViewAuto: AutoCompleteTextView
@@ -47,6 +51,7 @@ class SearchExtraOptionsFragment : Fragment() {
         schoolsName = resources.getStringArray(R.array.schoolNameList)
         regionsName =
             resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         schoolSwitch = view.findViewById(R.id.schoolFilterSwitch)
         regionSwitch = view.findViewById(R.id.regionFilterSwitch)
@@ -55,13 +60,18 @@ class SearchExtraOptionsFragment : Fragment() {
         regionTextViewAuto = view.findViewById(R.id.regionListSpinner)
 
         schoolAndRegionMap =
-            schoolsName.zip(resources.getStringArray(R.array.regionNameList)).toMap()
+            schoolTags.zip(schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
+                .toMap()
 
 
         schoolSwitch.setOnCheckedChangeListener { _, isChecked -> schoolOnCheckedChanged(isChecked) }
         regionSwitch.setOnCheckedChangeListener { _, isChecked -> regionOnCheckedChanged(isChecked) }
 
-        schoolTextViewAuto.setOnItemClickListener { _, _, _, _ -> onSchoolSelectedListener() }
+        schoolTextViewAuto.setOnItemClickListener { _, _, position, _ ->
+            onSchoolSelectedListener(
+                position
+            )
+        }
         regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
         populateSchoolAutoCompleteText()
         populateRegionAutoCompleteText()
@@ -99,21 +109,30 @@ class SearchExtraOptionsFragment : Fragment() {
         }
     }
 
-    private fun onSchoolSelectedListener() {
+    private fun onSchoolSelectedListener(position: Int) {
+
+        val nameList =
+            schoolAndRegionMap.filter { it.value.first == schoolAdapter.getItem(position) }
+                .values.toMutableList()
+        val region = nameList[position % nameList.size]!!.second
         val schoolName = schoolTextViewAuto.text.toString()
-        val region = schoolAndRegionMap[schoolName]
+
         regionTextViewAuto.text = SpannableStringBuilder(region)
         (activity as ChatSearchActivity).chosenSchool = schoolName
-        (activity as ChatSearchActivity).chosenRegion = region.toString()
+        (activity as ChatSearchActivity).chosenRegion = region
         populateSchoolAutoCompleteText()
     }
 
     private fun onRegionSelectedListener(position: Int) {
         schoolTextViewAuto.text = SpannableStringBuilder("")
-        (activity as ChatSearchActivity).chosenSchool = ""
         val region = regionAdapter.getItem(position).toString()
-        val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
-        val schoolAdapter = ArrayAdapter(
+        (activity as ChatSearchActivity).chosenRegion = region
+        (activity as ChatSearchActivity).chosenSchool = ""
+
+        val schoolList =
+            schoolAndRegionMap.filter { it.value.second == region }.values.toMutableList().unzip()
+                .first.toTypedArray()
+        schoolAdapter = ArrayAdapter(
             this.context!!,
             android.R.layout.simple_dropdown_item_1line, schoolList
         )
@@ -123,12 +142,12 @@ class SearchExtraOptionsFragment : Fragment() {
 
     private fun regionOnCheckedChanged(isChecked: Boolean) {
         populateSchoolAutoCompleteText()
-        regionTextViewAuto.text = SpannableStringBuilder("")
         if (isChecked) {
             regionListSpinner.visibility = View.VISIBLE
         } else {
             regionListSpinner.visibility = View.GONE
             (activity as ChatSearchActivity).chosenRegion = ""
+            regionTextViewAuto.text = SpannableStringBuilder("")
         }
 
     }
