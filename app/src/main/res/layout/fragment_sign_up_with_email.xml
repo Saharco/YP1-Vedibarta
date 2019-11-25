@@ -54,6 +54,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/first_name_input_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName" />
@@ -73,6 +74,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/first_name_input_layout">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/last_name_input_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName" />
@@ -92,6 +94,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/last_name_input_layout">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/email_input_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress" />
@@ -112,6 +115,7 @@
                     app:endIconMode="password_toggle">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password_input_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword" />
@@ -132,6 +136,7 @@
                     app:endIconMode="password_toggle">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password_repeat_input_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword" />
