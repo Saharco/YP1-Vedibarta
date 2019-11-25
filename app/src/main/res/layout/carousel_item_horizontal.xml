@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
-    android:layout_width="224dp"
+    android:layout_width="302dp"
     android:layout_height="match_parent"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
     android:orientation="vertical">
 
     <View

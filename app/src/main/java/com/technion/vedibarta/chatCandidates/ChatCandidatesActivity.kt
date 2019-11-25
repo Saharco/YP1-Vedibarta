@@ -2,11 +2,6 @@ package com.technion.vedibarta.chatCandidates
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.Button
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.CarouselAdapter
 import com.technion.vedibarta.adapters.CarouselAdapterItem
@@ -16,9 +11,8 @@ class ChatCandidatesActivity : AppCompatActivity() {
 
     private val TAG = "ChatCandidates"
 
-    private val carouselAdapter = CarouselAdapter { position: Int, _: CarouselAdapterItem ->
-        carousel.smoothScrollToPosition(position)
-    }
+    private val carouselAdapter = CarouselAdapter(this) { position: Int, _: CarouselAdapterItem ->
+        carousel.smoothScrollToPosition(position)}
 
     private val possibleItems = listOf(
         CarouselAdapterItem("Camera", R.drawable.ic_camera_blue),

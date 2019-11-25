@@ -31,6 +31,8 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
     var position = 0
     var scrollingPosition = 0
 
+    private val scrollSpeedRatio = 0.125f
+
     fun <T : ViewHolder> initialize(newAdapter: Adapter<T>) {
         layoutManager = CarouselLinearLayoutManager(context, HORIZONTAL, false)
         newAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -128,6 +130,6 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
     }
 
     override fun fling(velocityX: Int, velocityY: Int): Boolean {
-        return super.fling((velocityX * 0.15).toInt(), velocityY)
+        return super.fling((velocityX * scrollSpeedRatio).toInt(), velocityY)
     }
 }
