@@ -150,7 +150,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             // TODO: check if the user's document exists.
             //  If so, direct to main screen. Otherwise, direct to profile creation screen.
             startActivity(
-                Intent(this, userSetupActivity::class.java)
+                Intent(this, UserSetupActivity::class.java)
             )
         }
     }

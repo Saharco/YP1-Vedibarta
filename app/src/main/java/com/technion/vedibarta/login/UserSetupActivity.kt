@@ -68,7 +68,6 @@ class UserSetupActivity : VedibartaActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> onBackPressed()
             //TODO: Add checks that user have chosen all required items and filled all fields
 //            R.id.actionDoneSetup -> startActivity(Intent(this, ProfileEditActivity::class.java))()
         }
