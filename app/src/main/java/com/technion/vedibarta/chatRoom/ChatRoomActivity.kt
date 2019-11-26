@@ -34,12 +34,13 @@ class ChatRoomActivity : VedibartaActivity()
     //TODO remove after testing
     private fun populateMessageList(messageList: ArrayList<Message>)
     {
-        val m1 = Message("hello")
-        val m2 = Message("Bye")
-        m2.userId = 1
+        val m1 = Message("hello", Message.MessageType.USER)
+        val m2 = Message("Bye", Message.MessageType.OTHER)
+        val m3 = Message("You both seem to like basketball.\n What do you think about last night's game?", Message.MessageType.GENERATOR)
 
         messageList.add(m1)
         messageList.add(m2)
+        messageList.add(m3)
     }
 
     private fun configureAdapter(messageList: ArrayList<Message>)

@@ -5,7 +5,7 @@ import java.util.*
 
 class Message
 {
-    var userId: Int = 0
+    var messageType: MessageType? = null
     var text: String? = null
     val fullTimeStamp = Date(System.currentTimeMillis())
     private val formatter = SimpleDateFormat("HH:mma")
@@ -13,8 +13,15 @@ class Message
 
     constructor() //empty for firebase
 
-    constructor(messageText: String)
+    constructor(messageText: String, messageType: MessageType)
     {
         text = messageText
+        this.messageType = messageType
+    }
+
+    enum class MessageType {
+        USER,
+        OTHER,
+        GENERATOR
     }
 }
