@@ -38,7 +38,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
             "עמל נופרים בגליל",
             Gender.MALE,
             Timestamp(System.currentTimeMillis()),
-            arrayOf("צבר", "רוסי", "חילוני", "עולה חדש"),
+            arrayOf("רוסי", "חילוני", "עולה חדש", "מרכז", "זמני 1", "זמני 2", "זמני 3", "זמני 4", "זמני 5", "זמני 6", "זמני 7", "זמני 8"),
             arrayOf("ספורט", "לבשל", "בולונז")
         ),
         Student(

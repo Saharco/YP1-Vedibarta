@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.DrawableRes
+import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -26,13 +27,18 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 import kotlinx.android.synthetic.main.activity_user_profile.*
 
-class CarouselAdapter(val context: Context, val itemClick: (position: Int, carouselAdapterItem: Student) -> Unit) :
+class CarouselAdapter(
+    val context: Context,
+    val itemClick: (position: Int, carouselAdapterItem: Student) -> Unit
+) :
     RecyclerView.Adapter<ItemViewHolder>() {
 
     private val TAG = "carouselAdapter"
 
     private var carouselAdapterItems: List<Student> = listOf()
     private val selectedPos = RecyclerView.NO_POSITION
+
+    private val BUBBLE_WIDTH = 38
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val orientation = context.resources.configuration.orientation
@@ -42,25 +48,27 @@ class CarouselAdapter(val context: Context, val itemClick: (position: Int, carou
                     R.layout.carousel_item_horizontal,
                     parent,
                     false
-                ))
+                )
+            )
         } else {
             ItemViewHolder(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.carousel_item,
                     parent,
                     false
-                ))
+                )
+            )
         }
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.bind(carouselAdapterItems[position])
+        holder.bind(carouselAdapterItems[holder.adapterPosition])
         holder.itemView.setOnClickListener {
-            itemClick(position, carouselAdapterItems[position])
+            itemClick(holder.adapterPosition, carouselAdapterItems[holder.adapterPosition])
         }
-        holder.itemView.isSelected = position == selectedPos
+        holder.itemView.isSelected = holder.adapterPosition == selectedPos
 
-        val student = carouselAdapterItems[position]
+        val student = carouselAdapterItems[holder.adapterPosition]
         loadProfilePicture(holder.profilePicture, student)
         holder.name.text = student.name
         holder.description.text = "${student.school}, ${student.region}"
@@ -113,58 +121,65 @@ class CarouselAdapter(val context: Context, val itemClick: (position: Int, carou
 
     @SuppressLint("InflateParams")
     private fun populateTable(table: TableLayout, student: Student) {
+//        if (student.characteristics.isEmpty()) {
+//            handleNoCharacteristics()
+//            return
+//        }
+        table.doOnPreDraw {
 
-        table.removeAllViews()
+            table.removeAllViews()
 
-        val tableRowParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.MATCH_PARENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        val bubbleParams =
-            TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
+            val tableRowParams = TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
             )
 
-        if (student.characteristics.isEmpty()) {
-            handleNoCharacteristics()
-            return
-        }
+            val bubbleParams =
+                TableRow.LayoutParams(
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    TableRow.LayoutParams.WRAP_CONTENT
+                )
 
-        val steps = calculateBubblesInRow()
+            val rowsAmount =
+                (table.height / dpToPx(context.resources, BUBBLE_WIDTH.toFloat())).toInt()
+            val colsAmount =
+                (table.width / dpToPx(context.resources, BUBBLE_WIDTH.toFloat())).toInt()
+            val maxBubblesIndex = rowsAmount * colsAmount
 
-        Log.d(TAG, "Amount of bubbles in a row: $steps")
+            Log.d(TAG, "Amount of rows: $rowsAmount")
+            Log.d(TAG, "Amount of bubbles in a row: $colsAmount")
 
-        (student.characteristics.indices step steps).forEach { i ->
-            val tableRow = TableRow(context)
-            tableRow.layoutParams = tableRowParams
-            tableRow.gravity = Gravity.CENTER_HORIZONTAL
+            (student.characteristics.indices step colsAmount).forEach { i ->
 
-            for (j in 0 until steps) {
-                if (i + j >= student.characteristics.size)
-                    break
+                if (i <= maxBubblesIndex) {
 
-                val bubbleFrame = LayoutInflater.from(context).inflate(
-                    R.layout.carousel_bubble_blue,
-                    null
-                ) as FrameLayout
+                    val tableRow = TableRow(context)
+                    tableRow.layoutParams = tableRowParams
+                    tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
-                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = student.characteristics[i + j]
-                bubbleFrame.layoutParams = bubbleParams
-                tableRow.addView(bubbleFrame)
+                    for (j in 0 until colsAmount) {
+                        if (i + j >= student.characteristics.size)
+                            break
+
+                        if (i + j == maxBubblesIndex) {
+                            //TODO: add "plus" bubble
+                            break
+                        }
+
+                        val bubbleFrame = LayoutInflater.from(context).inflate(
+                            R.layout.carousel_bubble_blue,
+                            null
+                        ) as FrameLayout
+
+                        val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
+                        bubble.text = student.characteristics[i + j]
+                        bubbleFrame.layoutParams = bubbleParams
+                        tableRow.addView(bubbleFrame)
+                    }
+
+                    table.addView(tableRow)
+                }
             }
-
-            table.addView(tableRow)
-        }
-    }
-
-    private fun calculateBubblesInRow(): Int {
-        return if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            198 / 38
-        } else {
-            144 / 38
         }
     }
 
@@ -181,13 +196,13 @@ class CarouselAdapter(val context: Context, val itemClick: (position: Int, carou
     }
 }
 
-class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     val profilePicture: ImageView = view.findViewById(R.id.candidateProfilePicture)
-    val name : TextView = view.findViewById(R.id.candidateName)
-    val description : TextView = view.findViewById(R.id.candidateDescription)
-    val table : TableLayout = view.findViewById(R.id.candidateTable)
-    val button : Button = view.findViewById(R.id.confirmCandidateButton)
+    val name: TextView = view.findViewById(R.id.candidateName)
+    val description: TextView = view.findViewById(R.id.candidateDescription)
+    val table: TableLayout = view.findViewById(R.id.candidateTable)
+    val button: Button = view.findViewById(R.id.confirmCandidateButton)
 
     fun bind(carouselAdapterItem: Student) {
         //TODO: add listeners, tags, etc here
