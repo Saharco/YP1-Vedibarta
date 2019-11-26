@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.technion.vedibarta.R
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.app.ProgressDialog
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
