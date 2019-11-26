@@ -73,7 +73,6 @@ class SignUpWithEmailFragment : Fragment() {
     }
 
     private fun signUp() {
-
         val email = email_input_edit_text.text.toString()
         val password = password_input_edit_text.text.toString()
         val passwordRep = password_repeat_input_edit_text.text.toString()

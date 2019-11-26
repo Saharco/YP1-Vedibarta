@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.isEmail
 import kotlinx.android.synthetic.main.fragment_sign_in_with_email.*
 import java.lang.ClassCastException
 
@@ -24,12 +25,15 @@ class LoginFragment : Fragment() {
     }
 
     private lateinit var backListener: OnBackButtonClickListener
+    private lateinit var loginListener: OnLoginButtonClickListener
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
         backListener = context as? OnBackButtonClickListener ?:
                 throw ClassCastException("$context must implement ${OnBackButtonClickListener::class}")
+        loginListener = context as? OnLoginButtonClickListener ?:
+                throw ClassCastException("$context must implement ${OnLoginButtonClickListener::class}")
     }
 
     override fun onCreateView(
@@ -41,6 +45,9 @@ class LoginFragment : Fragment() {
 
         val backButton = view.findViewById<Button>(R.id.back_button)
         backButton.setOnClickListener { back() }
+
+        val loginButton = view.findViewById<Button>(R.id.login_button)
+        loginButton.setOnClickListener { login() }
 
         return view
     }
@@ -61,8 +68,35 @@ class LoginFragment : Fragment() {
         outState.putString(password_input_edit_text.text.toString(), PASSWORD_KEY)
     }
 
-    private fun back(){
+    private fun back() {
         backListener.onBackButtonClick()
+    }
+
+    private fun login() {
+        val email = email_input_edit_text.text.toString()
+        val password = password_input_edit_text.text.toString()
+
+        val emailError = when {
+            email.isBlank() ->      getString(R.string.blank_input_error)
+            !email.isEmail() ->     getString(R.string.email_format_error)
+            else ->                 null
+        }
+
+        val passwordError = when {
+            password.isBlank() ->   getString(R.string.blank_input_error)
+            else ->                 null
+        }
+
+        email_input_layout.error = emailError
+        password_input_layout.error = passwordError
+
+        if ((emailError == null) and (passwordError == null)){
+            loginListener.onLoginButtonClick(email, password)
+        }
+    }
+
+    interface OnLoginButtonClickListener {
+        fun onLoginButtonClick(email: String, password: String)
     }
 
     interface OnBackButtonClickListener {
