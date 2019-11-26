@@ -36,7 +36,7 @@ class ChatRoomActivity : VedibartaActivity()
     {
         val m1 = Message("hello", Message.MessageType.USER)
         val m2 = Message("Bye", Message.MessageType.OTHER)
-        val m3 = Message("You both seem to like basketball.\n What do you think about last night's game?", Message.MessageType.GENERATOR)
+        val m3 = Message("You both seem to like basketball.\nWhat do you think about last night's game?", Message.MessageType.GENERATOR)
 
         messageList.add(m1)
         messageList.add(m2)
