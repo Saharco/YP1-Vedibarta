@@ -33,6 +33,8 @@
 
         <activity android:name=".login.userSetupActivity" />
 
+        <activity android:name=".main.MainActivity" />
+
         <activity android:name=".userProfile.ProfileEditActivity" />
         <activity
             android:name=".chatCandidates.ChatCandidatesActivity"
