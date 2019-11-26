@@ -35,9 +35,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
         auth = FirebaseAuth.getInstance()
 
+        // 381465238096-e60campao164cdi8j1bs8pp0h53cs5c1.apps.googleusercontent.com
         // Set up google sign-in client
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken("381465238096-e60campao164cdi8j1bs8pp0h53cs5c1.apps.googleusercontent.com")
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -142,7 +143,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     private fun updateUIForCurrentUser(user: FirebaseUser?) {
         if (user != null) {
-            Toast.makeText(this, "Hello, ${user.displayName}!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "!${user.displayName} ,שלום", Toast.LENGTH_LONG).show()
             // TODO: check if the user's document exists.
             //  If so, direct to main screen. Otherwise, direct to profile creation screen.
         }
