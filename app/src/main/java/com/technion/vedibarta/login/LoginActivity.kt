@@ -23,7 +23,8 @@ private const val TAG = "LoginActivity"
 class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener,
     LoginOptionsFragment.OnSignUpWithEmailButtonClickListener,
     LoginOptionsFragment.OnContinueWithGoogleButtonClickListener,
-    LoginFragment.OnBackButtonClickListener, SignUpWithEmailFragment.OnBackButtonClickListener {
+    LoginFragment.OnBackButtonClickListener, SignUpWithEmailFragment.OnBackButtonClickListener,
+    SignUpWithEmailFragment.OnSignUpButtonClickListener {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
@@ -76,6 +77,11 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             replace(R.id.login_screen_fragment, SignUpWithEmailFragment())
             addToBackStack(null)
         }.commit()
+    }
+
+    override fun onSignUpButtonClick(email: String, password: String) {
+        Toast.makeText(this, "Signed Up", Toast.LENGTH_SHORT).show()
+        // TODO: authenticate
     }
 
     override fun onBackButtonClick() {
