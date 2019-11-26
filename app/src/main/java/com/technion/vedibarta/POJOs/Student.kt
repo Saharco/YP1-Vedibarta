@@ -1,17 +1,18 @@
 package com.technion.vedibarta.POJOs
 
 import com.technion.vedibarta.utilities.Gender
+import java.io.Serializable
 import java.sql.Timestamp
 
 data class Student(
-    val name: String,
-    val photo: String?,
-    val region: String,
-    val school: String,
+    var name: String,
+    var photo: String?,
+    var region: String,
+    var school: String,
     val gender: Gender,
-    val lastActivity: Timestamp,
-    val characteristics: Array<String>,
-    val hobbies: Array<String>) {
+    var lastActivity: Timestamp,
+    var characteristics: Array<String>,
+    var hobbies: Array<String>) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

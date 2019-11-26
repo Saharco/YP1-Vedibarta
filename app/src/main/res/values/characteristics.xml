@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="characteristicsMale_hebrew">
+        <item>אשכנזי</item>
+        <item>צבר</item>
+        <item>מזרחי</item>
+        <item>חילוני</item>
+        <item>דתי</item>
+        <item>שומר כשרות</item>
+        <item>מסורתי</item>
+        <item>מוסלמי</item>
+        <item>נוצרי</item>
+        <item>יהודי</item>
+        <item>אתיופי</item>
+        <item>רוסי</item>
+        <item>צמחוני</item>
+        <item>טבעוני</item>
+        <item>דרוזי</item>
+        <item>להט"ב</item>
+        <item>עולה חדש</item>
+        <item>ימני</item>
+        <item>שמאלני</item>
+        <item>ערבי</item>
+        <item>מרכז</item>
+    </array>
+    <array name="characteristicsFemale_hebrew">
+
+    </array>
+</resources>

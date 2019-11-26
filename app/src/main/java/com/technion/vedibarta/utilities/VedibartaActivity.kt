@@ -3,11 +3,16 @@ package com.technion.vedibarta.utilities
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.app.Activity
+import android.content.Context
+import android.content.res.Resources
 import android.view.WindowManager
 import android.os.Build
+import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.technion.vedibarta.POJOs.Student
+import com.technion.vedibarta.R
 import java.sql.Timestamp
 
 /**
@@ -17,18 +22,39 @@ import java.sql.Timestamp
 open class VedibartaActivity : AppCompatActivity() {
 
     //TODO: for now this will configure a default student. change this to null later
-    protected var student: Student? = Student(
-        "סהר כהן",
-        "https://firebasestorage.googleapis.com/v0/b/vedibarta-83bcf.appspot.com/o/temp_profile_pic.jpg?alt=media&token=ab1e40e1-92fd-4d54-ac98-b957a27c726a",
-        "בת חפר, עמק חפר",
-        "טכניון",
-        Gender.MALE,
-        Timestamp(System.currentTimeMillis()),
-        arrayOf("חילוני", "מזרחי", "גבר", "צבר", "אשכנזי"),
-        arrayOf("הוראה", "טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך", "להיות עצלן", "מתמטיקה", "משחקי מחשב", "לתכנת")
-    )
+    companion object {
+        var student: Student? = Student(
+            "סהר כהן",
+            "https://firebasestorage.googleapis.com/v0/b/vedibarta-83bcf.appspot.com/o/temp_profile_pic.jpg?alt=media&token=ab1e40e1-92fd-4d54-ac98-b957a27c726a",
+            "בת חפר, עמק חפר",
+            "טכניון",
+            Gender.MALE,
+            Timestamp(System.currentTimeMillis()),
+            arrayOf("חילוני", "מזרחי", "צבר", "אשכנזי"),
+            arrayOf(
+                "הוראה",
+                "טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך",
+                "מדע",
+                "מתמטיקה",
+                "משחקי מחשב",
+                "לתכנת"
+            )
+        )
+
+        /**
+         * @param resources: resources object of the current context
+         *
+         * @return [dp] as pixels on the current screen
+         */
+        fun dpToPx(resources: Resources, dp: Float): Float =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+    }
 
     protected val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS: Int = 90
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onStart() {
         super.onStart()
@@ -36,6 +62,12 @@ open class VedibartaActivity : AppCompatActivity() {
             //TODO: redirect to LoginActivity here!!!
         }
     }
+
+    /**
+     * @return [this] as pixels on the current screen
+     */
+    fun Float.dpToPx(): Float =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, resources.displayMetrics)
 
     /**
      * Changes the status bar's color (only works on API 21+)
