@@ -20,3 +20,6 @@ bin/
 out/
 local.properties
 *.log
+
+# for security reasons, do not track this file
+app/google-services.json
