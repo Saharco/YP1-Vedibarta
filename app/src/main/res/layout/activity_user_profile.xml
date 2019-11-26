@@ -168,6 +168,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <Button
+                android:id="@+id/logout_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/holo_red_dark"
+                android:backgroundTint="@android:color/holo_red_dark"
+                android:text="LOG OUT"
+                android:drawableEnd="@drawable/ic_exit_white_24dp"/>
+
         </LinearLayout>
     </ScrollView>
 
