@@ -5,21 +5,15 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.viewpager.widget.ViewPager
 
-class CustomViewPager(context: Context, attrs: AttributeSet): ViewPager(context, attrs) {
+class notSwipeableViewPager(context: Context, attrs: AttributeSet) : ViewPager(context, attrs){
 
-    var pageEnabled = true
 
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
-        return pageEnabled && super.onTouchEvent(ev)
+        return false
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return pageEnabled && super.onInterceptTouchEvent(ev)
+        return false
     }
-
-    fun setPagingEnabled(enabled: Boolean) {
-        pageEnabled = enabled
-    }
-
 
 }

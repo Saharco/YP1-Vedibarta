@@ -4,10 +4,10 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".userProfile.ProfileEditHobbiesFragment">
+    tools:context=".chatSearch.SearchCharacteristicsFragment">
 
     <TableLayout
-        android:id="@+id/editHobbiesTable"
+        android:id="@+id/searchCharacteristics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -22,6 +22,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="profile_edit_title">עריכת פרופיל</string>
 
+    <!--   ChatSearch attribute   -->
+    <string name="chat_search_title">חיפוש</string>
+    <string name="filter_by_school_text">חיפוש לפי בית ספר</string>
+    <string name="filter_by_region_text">חיפוש לפי מקום מגורים</string>
+    <string name="chat_search_button">חפש</string>
+
+    <!--    UserSetup Attributes  -->
+    <string name="user_setup_title">הגדרת משתמש</string>
+    <string name="choose_gender_text">אני מזדהה בתור</string>
+    <string name="user_setup_characteristics_title">בחר מאפייני זיהוי</string>
+    <string name="user_setup_hobbies_title">בחר תחביבים</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
