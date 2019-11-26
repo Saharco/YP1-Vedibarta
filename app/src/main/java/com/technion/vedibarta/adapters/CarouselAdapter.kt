@@ -114,11 +114,12 @@ class CarouselAdapter(val context: Context, val itemClick: (position: Int, carou
     @SuppressLint("InflateParams")
     private fun populateTable(table: TableLayout, student: Student) {
 
+        table.removeAllViews()
+
         val tableRowParams = TableLayout.LayoutParams(
             TableLayout.LayoutParams.MATCH_PARENT,
             TableLayout.LayoutParams.WRAP_CONTENT
         )
-        tableRowParams.topMargin = 40 // in pixels
 
         val bubbleParams =
             TableRow.LayoutParams(
@@ -131,9 +132,7 @@ class CarouselAdapter(val context: Context, val itemClick: (position: Int, carou
             return
         }
 
-        Log.d(TAG, "Table width (in pixels): ${dpToPx(context.resources, 184f)}")
-
-        val steps = calculateBubblesInRow(table)
+        val steps = calculateBubblesInRow()
 
         Log.d(TAG, "Amount of bubbles in a row: $steps")
 
@@ -147,16 +146,13 @@ class CarouselAdapter(val context: Context, val itemClick: (position: Int, carou
                     break
 
                 val bubbleFrame = LayoutInflater.from(context).inflate(
-                    R.layout.user_profile_bubble_blue,
+                    R.layout.carousel_bubble_blue,
                     null
                 ) as FrameLayout
 
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
                 bubble.text = student.characteristics[i + j]
                 bubbleFrame.layoutParams = bubbleParams
-                bubbleFrame.scaleX = 0.25f
-                bubbleFrame.scaleY = 0.25f
-
                 tableRow.addView(bubbleFrame)
             }
 
@@ -164,8 +160,13 @@ class CarouselAdapter(val context: Context, val itemClick: (position: Int, carou
         }
     }
 
-    private fun calculateBubblesInRow(table: TableLayout): Int =
-        ((dpToPx(context.resources, 184f)) / (dpToPx(context.resources, 25f))).toInt()
+    private fun calculateBubblesInRow(): Int {
+        return if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            198 / 38
+        } else {
+            144 / 38
+        }
+    }
 
     private fun handleNoCharacteristics() {
         //TODO: add some behavior for the scenario where the user has no characteristics
