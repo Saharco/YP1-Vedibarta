@@ -44,34 +44,35 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/first_name_input_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/enter_first_name_hint"
                     app:boxStrokeColor="@color/colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/first_name_input_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName" />
+                        android:inputType="textPersonName"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/last_name_input_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:hint="@string/enter_last_name_hint"
                     app:boxStrokeColor="@color/colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/first_name_input_layout">
+                    app:layout_constraintTop_toBottomOf="@+id/first_name_input_layout"
+                    app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/last_name_input_edit_text"
@@ -83,15 +84,15 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/email_input_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:hint="@string/enter_email_hint"
                     app:boxStrokeColor="@color/colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/last_name_input_layout">
+                    app:layout_constraintTop_toBottomOf="@+id/last_name_input_layout"
+                    app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/email_input_edit_text"
@@ -103,16 +104,16 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/password_input_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:hint="@string/enter_password_hint"
                     app:boxStrokeColor="@color/colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/email_input_layout"
-                    app:endIconMode="password_toggle">
+                    app:endIconMode="password_toggle"
+                    app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/password_input_edit_text"
@@ -124,16 +125,16 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/password_repeat_input_layout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:hint="@string/enter_password_repeat_hint"
                     app:boxStrokeColor="@color/colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/password_input_layout"
-                    app:endIconMode="password_toggle">
+                    app:endIconMode="password_toggle"
+                    app:errorEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/password_repeat_input_edit_text"
@@ -159,7 +160,7 @@
                         style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/login_button"
+                        android:id="@+id/sign_up_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/sign_up"
