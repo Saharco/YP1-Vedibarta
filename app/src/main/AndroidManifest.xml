@@ -34,6 +34,9 @@
         <activity android:name=".chatCandidates.ChatCandidatesActivity"
             android:label="@string/chat_candidates_title"
             android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
         </activity>
 
         <provider
