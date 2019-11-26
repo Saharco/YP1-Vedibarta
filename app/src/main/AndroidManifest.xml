@@ -36,6 +36,7 @@
         <activity android:name=".main.MainActivity" />
 
         <activity android:name=".userProfile.ProfileEditActivity" />
+        <activity android:name=".chatSearch.ChatSearchActivity" />
         <activity
             android:name=".chatCandidates.ChatCandidatesActivity"
             android:label="@string/chat_candidates_title"

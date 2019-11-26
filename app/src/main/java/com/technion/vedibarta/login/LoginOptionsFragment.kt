@@ -122,7 +122,7 @@ class LoginOptionsFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Log.d(TAG, "onActivityResult invoked")
         callbackManager.onActivityResult(requestCode, resultCode, data)
-        super.onActivityResult(requestCode, resultCode, data)
+        //super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun handleFacebookAccessToken(token: AccessToken) {
@@ -132,6 +132,7 @@ class LoginOptionsFragment : Fragment() {
             .addOnCompleteListener(activity!!) {
                 if (it.isSuccessful) {
                     Log.d(TAG, "signInWithCredential: success")
+                    (activity as LoginActivity).updateUIForCurrentUser(auth.currentUser)
                 } else {
                     try {
                         throw it.exception!!

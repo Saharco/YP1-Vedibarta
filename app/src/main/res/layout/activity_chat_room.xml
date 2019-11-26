@@ -64,7 +64,7 @@
                     android:maxLines="1"
                     android:text="זמני"
                     android:textAlignment="viewStart"
-                    android:textColor="@color/lightPrimary"
+                    android:textColor="@android:color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:autoSizeMaxTextSize="20sp"

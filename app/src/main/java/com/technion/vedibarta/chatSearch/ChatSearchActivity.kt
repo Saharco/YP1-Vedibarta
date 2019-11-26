@@ -1,5 +1,6 @@
 package com.technion.vedibarta.chatSearch
 
+import android.content.Intent
 import android.graphics.Typeface
 import kotlinx.android.synthetic.main.activity_chat_search.*
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.technion.vedibarta.R
+import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -34,6 +36,10 @@ class ChatSearchActivity : VedibartaActivity() {
         editTabs.setupWithViewPager(searchUserContainer)
         setToolbar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
+        searchButton.setOnClickListener {
+            startActivity(Intent(this, ChatCandidatesActivity::class.java))
+            finish()
+        }
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -48,9 +54,5 @@ class ChatSearchActivity : VedibartaActivity() {
         adapter.addFragment(SearchCharacteristicsFragment(), "1")
         adapter.addFragment(SearchExtraOptionsFragment(), "2")
         viewPager.adapter = adapter
-    }
-
-    override fun onBackPressed() {
-
     }
 }

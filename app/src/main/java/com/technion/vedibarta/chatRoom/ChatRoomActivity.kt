@@ -34,9 +34,9 @@ class ChatRoomActivity : VedibartaActivity()
     //TODO remove after testing
     private fun populateMessageList(messageList: ArrayList<Message>)
     {
-        val m1 = Message("hello", Message.MessageType.USER)
-        val m2 = Message("Bye", Message.MessageType.OTHER)
-        val m3 = Message("You both seem to like basketball.\nWhat do you think about last night's game?", Message.MessageType.GENERATOR)
+        val m1 = Message("שלום", Message.MessageType.USER)
+        val m2 = Message("היי", Message.MessageType.OTHER)
+        val m3 = Message("נראה ששניכם אוהבים כדורסל!\nמהי הקבוצה האהובה עליכם?", Message.MessageType.GENERATOR)
 
         messageList.add(m1)
         messageList.add(m2)

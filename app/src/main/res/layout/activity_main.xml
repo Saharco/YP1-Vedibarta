@@ -78,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:contentDescription="Extended FAB"
-        android:text="הכר את השונה"
+        android:text="@string/main_fab_title"
         app:icon="@drawable/ic_search_24dp"
         app:layout_anchor="@id/main_toolbar"
         app:layout_anchorGravity="bottom"

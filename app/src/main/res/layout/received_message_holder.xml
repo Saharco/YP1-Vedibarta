@@ -15,7 +15,7 @@
         android:layout_marginEnd="8dp"
         android:background="@drawable/other_chat_bubble"
         android:padding="10dp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/textPrimary"
         android:textSize="16sp"
         android:text="bye"
         android:visibility="visible"

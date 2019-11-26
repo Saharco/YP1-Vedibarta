@@ -121,7 +121,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         Log.d(TAG, "firebaseAuthWithGoogle: ${account.id!!}")
 
         val dialog = ProgressDialog(this).apply {
-            setMessage("Loading data...")
+            setMessage(resources.getString(R.string.progress_dialog_loading))
             setCancelable(false)
             setIndeterminate(true)
             show()
@@ -144,14 +144,13 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             }
     }
 
-    private fun updateUIForCurrentUser(user: FirebaseUser?) {
+    fun updateUIForCurrentUser(user: FirebaseUser?) {
         if (user != null) {
             Toast.makeText(this, "!${user.displayName} ,שלום", Toast.LENGTH_LONG).show()
             // TODO: check if the user's document exists.
             //  If so, direct to main screen. Otherwise, direct to profile creation screen.
-            startActivity(
-                Intent(this, UserSetupActivity::class.java)
-            )
+            startActivity(Intent(this, UserSetupActivity::class.java))
+            finish()
         }
     }
 }

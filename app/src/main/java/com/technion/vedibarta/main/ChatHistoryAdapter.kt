@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.chat_card.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ChatHistoryAdapter(private val chatCards: ArrayList<ChatCard>) : RecyclerView.Adapter<ChatHistoryAdapter.ViewHolder>() {
+open class ChatHistoryAdapter(private val chatCards: ArrayList<ChatCard>) : RecyclerView.Adapter<ChatHistoryAdapter.ViewHolder>() {
 
     class ViewHolder (val view: View): RecyclerView.ViewHolder(view)
 

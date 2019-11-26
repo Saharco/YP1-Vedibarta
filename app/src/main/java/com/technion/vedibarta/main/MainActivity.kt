@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.SearchView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -16,7 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.R
+import com.technion.vedibarta.chatRoom.ChatRoomActivity
+import com.technion.vedibarta.chatSearch.ChatSearchActivity
+import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 
 
@@ -36,6 +41,10 @@ class MainActivity : VedibartaActivity() {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
                 doMySearch(query)
             }
+        }
+
+        extendedFloatingActionButton.setOnClickListener {
+            startActivity(Intent(this, ChatSearchActivity::class.java))
         }
 
     }
@@ -65,7 +74,17 @@ class MainActivity : VedibartaActivity() {
         demoCards.add(ChatCard(0,"Ron", "Hello", date))
         demoCards.add(ChatCard(0,"Or", "Hello", date))
         demoCards.add(ChatCard(0,"Samuel", "Hello", date))
-        chatHistory.adapter = ChatHistoryAdapter(demoCards)
+
+        val adapter = object : ChatHistoryAdapter(demoCards) {
+            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+                super.onBindViewHolder(holder, position)
+                holder.view.setOnClickListener {
+                    startActivity(Intent(this@MainActivity, ChatRoomActivity::class.java))
+                    finish()
+                }
+            }
+        }
+        chatHistory.adapter = adapter
 
 
     }
@@ -80,5 +99,13 @@ class MainActivity : VedibartaActivity() {
             isIconifiedByDefault = false // Do not iconify the widget; expand it by default
         }
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_user_profile ->
+                startActivity(Intent(this, UserProfileActivity::class.java))
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

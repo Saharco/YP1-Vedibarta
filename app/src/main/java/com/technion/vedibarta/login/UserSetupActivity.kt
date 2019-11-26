@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import com.technion.vedibarta.R
+import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.SectionsPageAdapter
@@ -69,7 +70,11 @@ class UserSetupActivity : VedibartaActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             //TODO: Add checks that user have chosen all required items and filled all fields
-//            R.id.actionDoneSetup -> startActivity(Intent(this, ProfileEditActivity::class.java))()
+            R.id.actionDoneSetup -> {
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+
         }
         return super.onOptionsItemSelected(item)
     }
