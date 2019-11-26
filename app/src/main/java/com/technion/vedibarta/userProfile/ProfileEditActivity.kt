@@ -33,8 +33,6 @@ class ProfileEditActivity : VedibartaActivity() {
 
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            editProfileContainer.setPagingEnabled(false)
         setupViewPager(editProfileContainer)
 
         editTabs.setupWithViewPager(editProfileContainer)
