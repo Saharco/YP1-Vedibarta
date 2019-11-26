@@ -149,6 +149,9 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             Toast.makeText(this, "!${user.displayName} ,שלום", Toast.LENGTH_LONG).show()
             // TODO: check if the user's document exists.
             //  If so, direct to main screen. Otherwise, direct to profile creation screen.
+            startActivity(
+                Intent(this, userSetupActivity::class.java)
+            )
         }
     }
 }
