@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.activity_chat_search.*
 /**
  * A simple [Fragment] subclass.
  */
-class chooseCharacteristicsFragment : Fragment() {
+class ChooseCharacteristicsFragment : Fragment() {
 
     private val TAG = "CharFragment@Search"
 
@@ -48,7 +48,7 @@ class chooseCharacteristicsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as userSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_characteristics_title)
+        (activity as UserSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_characteristics_title)
     }
 
     private fun populateCharacteristicsTable() {
@@ -118,7 +118,7 @@ class chooseCharacteristicsFragment : Fragment() {
             bubbleFrame.alpha = 1f
             bubbleFrame.tag = SELECTED_BUBBLE
             Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
-            (activity as userSetupActivity).chosenCharacteristics.add(characteristics[view.id])
+            (activity as UserSetupActivity).chosenCharacteristics.add(characteristics[view.id])
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
                 R.layout.user_profile_bubble_blue_selected,
@@ -127,7 +127,7 @@ class chooseCharacteristicsFragment : Fragment() {
             bubbleFrame.alpha = 0.6f
             bubbleFrame.tag = NON_SELECTED_BUBBLE
             Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
-            (activity as userSetupActivity).chosenCharacteristics.remove(characteristics[view.id])
+            (activity as UserSetupActivity).chosenCharacteristics.remove(characteristics[view.id])
         }
 
         bubbleFrame.id = view.id

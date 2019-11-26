@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_chat_search.*
 /**
  * A simple [Fragment] subclass.
  */
-class chooseHobbiesFragment : Fragment() {
+class ChooseHobbiesFragment : Fragment() {
 
     private val TAG = "HobbiesFragment@login"
 
@@ -47,7 +47,7 @@ class chooseHobbiesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as userSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_hobbies_title)
+        (activity as UserSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_hobbies_title)
 
     }
 
@@ -126,7 +126,7 @@ class chooseHobbiesFragment : Fragment() {
             bubbleFrame.alpha = 1f
             bubbleFrame.tag = SELECTED_BUBBLE
             Log.d(TAG, "Adding ${hobbies[view.id]} to the set")
-            (activity as userSetupActivity).chosenHobbies.add(hobbies[view.id])
+            (activity as UserSetupActivity).chosenHobbies.add(hobbies[view.id])
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
                 R.layout.user_profile_bubble_orange_selected,
@@ -135,7 +135,7 @@ class chooseHobbiesFragment : Fragment() {
             bubbleFrame.alpha = 0.6f
             bubbleFrame.tag = NON_SELECTED_BUBBLE
             Log.d(TAG, "Removing ${hobbies[view.id]} from the set")
-            (activity as userSetupActivity).chosenHobbies.remove(hobbies[view.id])
+            (activity as UserSetupActivity).chosenHobbies.remove(hobbies[view.id])
         }
 
         bubbleFrame.id = view.id

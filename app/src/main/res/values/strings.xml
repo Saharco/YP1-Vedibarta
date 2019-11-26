@@ -38,6 +38,11 @@
     <string name="choose_gender_text">אני מזדהה בתור</string>
     <string name="user_setup_characteristics_title">בחר מאפייני זיהוי</string>
     <string name="user_setup_hobbies_title">בחר תחביבים</string>
+    <string name="user_setup_region_title">בחר עיר מגורים</string>
+    <string name="user_setup_school_title">בחר בית ספר</string>
+    <string name="user_setup_first_name_title">שם פרטי</string>
+    <string name="user_setup_last_name_title">שם משפחה</string>
+    <string name="user_setup_done_title">סיים</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

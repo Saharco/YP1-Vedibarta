@@ -6,20 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
 
 import com.technion.vedibarta.R
-import kotlinx.android.synthetic.main.activity_chat_search.*
+import com.technion.vedibarta.utilities.Gender
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import kotlinx.android.synthetic.main.activity_user_setup.toolbarTitle
-import kotlinx.android.synthetic.main.fragment_choose_gender.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class chooseGenderFragment : Fragment() {
+class ChooseGenderFragment : Fragment() {
 
 
     lateinit var buttonMale: AppCompatButton
@@ -56,7 +54,7 @@ class chooseGenderFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as userSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_title)
+        (activity as UserSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_title)
 
     }
 
@@ -64,8 +62,8 @@ class chooseGenderFragment : Fragment() {
         cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
         cardViewMale.setCardBackgroundColor(resources.getColor(R.color.background))
 
-        (activity as userSetupActivity).chosenGender = "Female"
-        if (!(activity as userSetupActivity).userSetupContainer.pageEnabled)
+        (activity as UserSetupActivity).chosenGender = Gender.FEMALE
+        if (!(activity as UserSetupActivity).userSetupContainer.pageEnabled)
             buttonNext.visibility = View.VISIBLE
     }
 
@@ -73,16 +71,16 @@ class chooseGenderFragment : Fragment() {
         cardViewMale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
         cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.background))
 
-        (activity as userSetupActivity).chosenGender = "Male"
-        if (!(activity as userSetupActivity).userSetupContainer.pageEnabled)
+        (activity as UserSetupActivity).chosenGender = Gender.MALE
+        if (!(activity as UserSetupActivity).userSetupContainer.pageEnabled)
             buttonNext.visibility = View.VISIBLE
 
     }
 
     private fun onButtonNextClickListener(v: View) {
         v.visibility = View.GONE
-        (activity as userSetupActivity).userSetupContainer.currentItem = 1
-        (activity as userSetupActivity).userSetupContainer.setPagingEnabled(true)
+        (activity as UserSetupActivity).userSetupContainer.currentItem = 1
+        (activity as UserSetupActivity).userSetupContainer.setPagingEnabled(true)
     }
 
 

@@ -1,23 +1,32 @@
 package com.technion.vedibarta.login
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.CustomViewPager
+import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.notSwipeableViewPager
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
-class userSetupActivity : VedibartaActivity() {
+class UserSetupActivity : VedibartaActivity() {
 
     private val TAG = "UserSetupActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
     var chosenCharacteristics = mutableSetOf<String>()
     var chosenHobbies = mutableSetOf<String>()
-    var chosenGender = ""
+    var chosenFirstName = ""
+    var chosenLastName = ""
+    var chosenSchool = ""
+    var chosenRegion = ""
+
+
+    lateinit var chosenGender: Gender
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,13 +50,29 @@ class userSetupActivity : VedibartaActivity() {
     private fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
         viewPager.setPagingEnabled(false)
-        adapter.addFragment(chooseGenderFragment(), "1")
-        adapter.addFragment(chooseCharacteristicsFragment(), "2")
-        adapter.addFragment(chooseHobbiesFragment(), "3")
+        adapter.addFragment(ChooseGenderFragment(), "1")
+        adapter.addFragment(ChooseExtraOptionsFragment(), "2")
+        adapter.addFragment(ChooseCharacteristicsFragment(), "3")
+        adapter.addFragment(ChooseHobbiesFragment(), "4")
         viewPager.adapter = adapter
     }
 
     override fun onBackPressed() {
 
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.user_setup_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            //TODO: Add checks that user have chosen all required items and filled all fields
+//            R.id.actionDoneSetup -> startActivity(Intent(this, ProfileEditActivity::class.java))()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }

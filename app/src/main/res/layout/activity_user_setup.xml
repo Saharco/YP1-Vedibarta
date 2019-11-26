@@ -6,12 +6,24 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/userSetup"
-    tools:context=".login.userSetupActivity">
+    tools:context=".login.UserSetupActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+
+            android:background="@drawable/ic_done_white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </androidx.appcompat.widget.AppCompatButton>
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolBarLayout"
