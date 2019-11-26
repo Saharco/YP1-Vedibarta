@@ -28,7 +28,6 @@ import com.google.firebase.auth.*
 import kotlin.ClassCastException
 
 
-private const val REQ_GOOGLE_SIGN_IN = 1
 private const val TAG = "LoginScreenFragment"
 
 class LoginOptionsFragment : Fragment() {
@@ -36,7 +35,6 @@ class LoginOptionsFragment : Fragment() {
     private lateinit var signUpWithEmailListener: OnSignUpWithEmailButtonClickListener
     private lateinit var continueWithGoogleListener: OnContinueWithGoogleButtonClickListener
 
-    private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
 
     private lateinit var callbackManager: CallbackManager
@@ -122,60 +120,9 @@ class LoginOptionsFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data == null) {
-            Log.w(TAG, "Intent is null")
-            return
-        }
-
-        if (requestCode == REQ_GOOGLE_SIGN_IN) {
-            Log.d(TAG, "onActivityResult: Google Sign in")
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Failed to get account from intent")
-            }
-
-            try {
-                val account = task.getResult(ApiException::class.java)!!
-                val idToken = account.idToken
-                if (idToken == null)
-                    Log.w(TAG, "ID Token is null")
-
-                // Successful google sign in
-                handleGoogleAccount(account)
-
-            } catch (e: ApiException) {
-                Log.w(TAG, "Google sign in failed", e)
-            } catch (e: Exception) {
-                Log.w(TAG, "Caught unexpected exception: $e")
-            }
-            return
-        }
+        Log.d(TAG, "onActivityResult invoked")
         callbackManager.onActivityResult(requestCode, resultCode, data)
-    }
-
-    private fun handleGoogleAccount(account: GoogleSignInAccount) {
-        Log.d(TAG, "handleGoogleAccount: ${account.id!!}")
-
-        val dialog = ProgressDialog(activity).apply {
-            setMessage("Loading data...")
-            setCancelable(false)
-            setIndeterminate(true)
-            show()
-        }
-
-        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(activity!!) {
-                if (it.isSuccessful) {
-                    Log.w(TAG, "signInWithCredential: Success")
-                } else {
-                    // Sign in failed
-                    Log.w(TAG, "signInWithCredential: failure", it.exception)
-                }
-            }
-
-        dialog.cancel()
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun handleFacebookAccessToken(token: AccessToken) {

@@ -108,10 +108,13 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 Log.w(TAG, "Google sign in failed", e)
+            } catch (e: Exception) {
+                Log.w(TAG, "Caught unexpected exception: $e")
             }
-
             return
         }
+//        supportFragmentManager.findFragmentByTag("LoginScreenFragment")!!
+//            .onActivityResult(requestCode, resultCode, data)
     }
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
