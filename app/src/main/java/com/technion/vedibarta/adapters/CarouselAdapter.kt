@@ -144,7 +144,7 @@ class CarouselAdapter(
                 (table.height / dpToPx(context.resources, BUBBLE_WIDTH.toFloat())).toInt()
             val colsAmount =
                 (table.width / dpToPx(context.resources, BUBBLE_WIDTH.toFloat())).toInt()
-            val maxBubblesIndex = rowsAmount * colsAmount
+            val maxBubblesIndex = rowsAmount * colsAmount - 1
 
             Log.d(TAG, "Amount of rows: $rowsAmount")
             Log.d(TAG, "Amount of bubbles in a row: $colsAmount")
@@ -162,7 +162,12 @@ class CarouselAdapter(
                             break
 
                         if (i + j == maxBubblesIndex) {
-                            //TODO: add "plus" bubble
+                            val bubbleFrame = LayoutInflater.from(context).inflate(
+                                R.layout.carousel_plus_bubble,
+                                null
+                            ) as FrameLayout
+                            bubbleFrame.layoutParams = bubbleParams
+                            tableRow.addView(bubbleFrame)
                             break
                         }
 
