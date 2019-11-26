@@ -17,8 +17,6 @@ import java.lang.ClassCastException
 class SignUpWithEmailFragment : Fragment() {
     // Keys to be used when saving and restoring fragment states.
     companion object StatesKeys {
-        const val FIRST_NAME_KEY =      "state:first_name"
-        const val LAST_NAME_KEY =       "state:last_name"
         const val EMAIL_KEY =           "state:email"
         const val PASSWORD_KEY =        "state:password"
         const val PASSWORD_REP_KEY =    "state:password_repeat"
@@ -56,8 +54,6 @@ class SignUpWithEmailFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         if (savedInstanceState != null) {
-            first_name_input_edit_text.setText(savedInstanceState.getString(FIRST_NAME_KEY))
-            last_name_input_edit_text.setText(savedInstanceState.getString(LAST_NAME_KEY))
             email_input_edit_text.setText(savedInstanceState.getString(EMAIL_KEY))
             password_input_edit_text.setText(savedInstanceState.getString(PASSWORD_KEY))
             password_repeat_input_edit_text.setText(savedInstanceState.getString(PASSWORD_REP_KEY))
@@ -67,8 +63,6 @@ class SignUpWithEmailFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putString(first_name_input_edit_text.text.toString(), FIRST_NAME_KEY)
-        outState.putString(last_name_input_edit_text.text.toString(), LAST_NAME_KEY)
         outState.putString(email_input_edit_text.text.toString(), EMAIL_KEY)
         outState.putString(password_input_edit_text.text.toString(), PASSWORD_KEY)
         outState.putString(password_repeat_input_edit_text.text.toString(), PASSWORD_REP_KEY)

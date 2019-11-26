@@ -1,5 +1,6 @@
 package com.technion.vedibarta.login
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.technion.vedibarta.R
-import java.lang.ClassCastException
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import android.app.ProgressDialog
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,8 +20,11 @@ import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.*
 import kotlin.ClassCastException
 
@@ -33,6 +36,19 @@ class LoginOptionsFragment : Fragment() {
     private lateinit var signInListener : OnSignInButtonClickListener
     private lateinit var signUpWithEmailListener: OnSignUpWithEmailButtonClickListener
     private lateinit var continueWithGoogleListener: OnContinueWithGoogleButtonClickListener
+
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var auth: FirebaseAuth
+
+    private lateinit var callbackManager: CallbackManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        auth = FirebaseAuth.getInstance()
+
+        callbackManager = CallbackManager.Factory.create()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +69,7 @@ class LoginOptionsFragment : Fragment() {
 
         val signInWithFacebookButton = view.findViewById<LoginButton>(R.id.facebook_login_button)
         signInWithFacebookButton.fragment = this
+        signInWithFacebookButton.setPermissions("email")
         signInWithFacebookButton.registerCallback(callbackManager, object :
             FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
@@ -112,6 +129,7 @@ class LoginOptionsFragment : Fragment() {
         }
 
         if (requestCode == REQ_GOOGLE_SIGN_IN) {
+            Log.d(TAG, "onActivityResult: Google Sign in")
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             if (!task.isSuccessful) {
                 Log.w(TAG, "Failed to get account from intent")
@@ -182,7 +200,7 @@ class LoginOptionsFragment : Fragment() {
                         try {
                             val resultTask = auth.fetchSignInMethodsForEmail(email)
                             if (!it.isSuccessful)
-                                Log.w(TAG, "Task is not successful");
+                                Log.w(TAG, "Task is not successful")
                             else {
                                 providers = resultTask.result!!.signInMethods
                             }
@@ -198,7 +216,16 @@ class LoginOptionsFragment : Fragment() {
                             alertDialogMessage += "Other account"
                         else
                             alertDialogMessage += "$provider account"
+                        val builder = AlertDialog.Builder(context)
+                        builder.setMessage("Please sign in with your $provider account")
+                        auth.signOut()
+                        LoginManager.getInstance().logOut()
+                    } catch (e: Exception) {
+                        Toast.makeText(activity, "Authentication failed",
+                            Toast.LENGTH_SHORT).show()
                     }
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", it.exception)
                 }
             }
     }

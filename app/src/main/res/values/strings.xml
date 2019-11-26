@@ -43,9 +43,9 @@
     <string name="continue_with_facebook_hebrew">היכנס באמצעות פייסבוק</string>
     <string name="sign_out_from_facebook_hebrew">צא מחשבון הפייסבוק</string>
     <string name="sign_in_with_google_hebrew">היכנס באמצעות גוגל</string>
-    <string name="email_sign_in">הירשם באמצעות דואר אלקטרוני</string>
+    <string name="email_sign_in">הירשם באמצעות דוא\"ל</string>
     <string name="already_a_user">כבר רשום?</string>
-    <string name="sign_in"><u>היכנס</u></string>
+    <string name="sign_in">היכנס</string>
     <string name="login_title">התחברות</string>
     <string name="enter_email_hint">דואר אלקטרוני</string>
     <string name="enter_password_hint">סיסמה</string>

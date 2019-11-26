@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 
 import com.technion.vedibarta.R
-import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_sign_in_with_email.*
 import java.lang.ClassCastException
 
 /**
@@ -37,7 +37,7 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_login, container, false)
+        val view = inflater.inflate(R.layout.fragment_sign_in_with_email, container, false)
 
         val backButton = view.findViewById<Button>(R.id.back_button)
         backButton.setOnClickListener { back() }
