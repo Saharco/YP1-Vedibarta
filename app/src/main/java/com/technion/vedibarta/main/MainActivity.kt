@@ -80,7 +80,6 @@ class MainActivity : VedibartaActivity() {
                 super.onBindViewHolder(holder, position)
                 holder.view.setOnClickListener {
                     startActivity(Intent(this@MainActivity, ChatRoomActivity::class.java))
-                    finish()
                 }
             }
         }

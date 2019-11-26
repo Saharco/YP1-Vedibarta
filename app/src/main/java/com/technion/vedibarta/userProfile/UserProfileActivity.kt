@@ -124,6 +124,8 @@ class UserProfileActivity : VedibartaActivity(),
 
     private fun initWidgets() {
         setToolbar(toolbar)
+        enlargedToolbar.title = student!!.name
+        enlargedToolbar.setTitleTextColor(resources.getColor(android.R.color.white))
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()

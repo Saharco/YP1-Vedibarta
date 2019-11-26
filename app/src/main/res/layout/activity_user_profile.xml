@@ -58,6 +58,7 @@
         android:layout_marginStart="24dp"
         android:clickable="true"
         android:focusable="true"
+        android:layoutDirection="ltr"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/profilePicture"
         app:layout_constraintEnd_toEndOf="@+id/profilePicture"
@@ -99,7 +100,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userName" />
 
-<!--    need to add support library-->
+    <!--    need to add support library-->
     <View
         android:id="@+id/divider1"
         android:layout_width="match_parent"
@@ -113,7 +114,7 @@
         app:layout_constraintTop_toBottomOf="@+id/userDescription" />
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -168,20 +169,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-
-
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/logout_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:background="@android:color/holo_red_dark"
+                android:drawableStart="@drawable/ic_exit_white"
+                android:focusable="true"
+                android:clickable="true"
+                android:gravity="start|center"
+                android:layoutDirection="ltr"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="@string/button_logout_text"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                app:backgroundTint="@android:color/holo_red_dark" />
         </LinearLayout>
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/logout_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@android:color/holo_red_dark"
-            android:backgroundTint="@android:color/holo_red_dark"
-            android:text="LOG OUT"
-            android:gravity="start|center"
-            android:drawableEnd="@drawable/ic_exit_white_24dp"
-            />
+
     </ScrollView>
 
     <RelativeLayout

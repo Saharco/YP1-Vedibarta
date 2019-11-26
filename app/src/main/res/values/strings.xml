@@ -18,6 +18,7 @@
     <string name="action_save_profile_edit">שמור שינויים</string>
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
+    <string name="button_logout_text">התנתקות</string>
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">בחירת שותף</string>
