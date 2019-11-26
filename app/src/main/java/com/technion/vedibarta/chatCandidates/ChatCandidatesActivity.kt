@@ -18,6 +18,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
         carousel.smoothScrollToPosition(position)
     }
 
+    //TODO: change these. they're here for testing
     private val possibleItems = listOf(
         student!!,
         Student(
