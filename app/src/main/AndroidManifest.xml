@@ -73,8 +73,6 @@
             </intent-filter>
         </activity>
 
-
-        <activity android:name=".chatRoom.ChatRoomActivity" />
     </application>
 
 </manifest>
