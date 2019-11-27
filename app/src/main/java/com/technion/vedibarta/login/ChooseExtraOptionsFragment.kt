@@ -10,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import com.google.android.material.textfield.TextInputEditText
 
 import com.technion.vedibarta.R
+import kotlinx.android.synthetic.main.activity_user_setup.*
 
 /**
  * A simple [Fragment] subclass.
@@ -20,19 +22,22 @@ class ChooseExtraOptionsFragment : Fragment() {
 
     private val TAG = "ExtraFragment@Setup"
 
-    lateinit var schoolsName: Array<String>
-    lateinit var regionsName: Array<String>
-    lateinit var schoolTags: Array<Int>
+    private lateinit var schoolsName: Array<String>
+    private lateinit var regionsName: Array<String>
+    private lateinit var schoolTags: Array<Int>
 
 
     // Tag -> (schoolName, SchoolRegion)
-    lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
+    private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
 
     private lateinit var schoolTextViewAuto: AutoCompleteTextView
     private lateinit var regionTextViewAuto: AutoCompleteTextView
 
-    lateinit var schoolAdapter: ArrayAdapter<String>
-    lateinit var regionAdapter: ArrayAdapter<String>
+    private lateinit var schoolAdapter: ArrayAdapter<String>
+    private lateinit var regionAdapter: ArrayAdapter<String>
+
+    private lateinit var firstName : TextInputEditText
+    private lateinit var lastName : TextInputEditText
 
 
     override fun onCreateView(
@@ -40,13 +45,15 @@ class ChooseExtraOptionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_choose_extra_options, container, false)
+        val view = inflater.inflate(R.layout.fragment_choose_extra_options, container, false)
 
         schoolsName = resources.getStringArray(R.array.schoolNameList)
         regionsName =
             resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
         schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
+        firstName = view.findViewById(R.id.textFieldFirstName)
+        lastName = view.findViewById(R.id.textFieldLastName)
 
         schoolTextViewAuto = view.findViewById(R.id.schoolListSpinner)
         regionTextViewAuto = view.findViewById(R.id.regionListSpinner)
@@ -64,6 +71,8 @@ class ChooseExtraOptionsFragment : Fragment() {
         regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
         populateSchoolAutoCompleteText()
         populateRegionAutoCompleteText()
+
+        initViews()
 
         return view
     }
@@ -116,6 +125,16 @@ class ChooseExtraOptionsFragment : Fragment() {
         )
         schoolTextViewAuto.setAdapter(schoolAdapter)
 
+    }
+
+    private fun initViews() {
+        val act = (activity as UserSetupActivity)
+
+        firstName.text =  SpannableStringBuilder(act.chosenFirstName)
+        lastName.text = SpannableStringBuilder(act.chosenLastName)
+
+        schoolTextViewAuto.text = SpannableStringBuilder(act.chosenSchool)
+        regionTextViewAuto.text = SpannableStringBuilder(act.chosenRegion)
     }
 
 }

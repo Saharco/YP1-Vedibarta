@@ -11,6 +11,7 @@ import androidx.cardview.widget.CardView
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.utilities.SectionsPageAdapter
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import kotlinx.android.synthetic.main.activity_user_setup.toolbarTitle
 
@@ -49,13 +50,10 @@ class ChooseGenderFragment : Fragment() {
         cardViewFemale.setOnClickListener { onButtonFemaleClickListener() }
 
         buttonNext.setOnClickListener { onButtonNextClickListener(it) }
+
+        initViews()
+
         return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        (activity as UserSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_title)
-
     }
 
     private fun onButtonFemaleClickListener() {
@@ -81,6 +79,17 @@ class ChooseGenderFragment : Fragment() {
         v.visibility = View.GONE
         (activity as UserSetupActivity).userSetupContainer.currentItem = 1
         (activity as UserSetupActivity).userSetupContainer.setPagingEnabled(true)
+    }
+
+    private fun initViews(){
+
+        when((activity as UserSetupActivity).chosenGender){
+            Gender.MALE -> {cardViewMale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
+                cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.background))}
+            Gender.FEMALE -> {cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
+                cardViewMale.setCardBackgroundColor(resources.getColor(R.color.background))}
+            Gender.NON -> {}
+        }
     }
 
 

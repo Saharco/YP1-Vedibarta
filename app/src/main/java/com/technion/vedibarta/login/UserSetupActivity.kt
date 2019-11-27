@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.FragmentManager
+import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.CustomViewPager
@@ -25,9 +27,7 @@ class UserSetupActivity : VedibartaActivity() {
     var chosenLastName = ""
     var chosenSchool = ""
     var chosenRegion = ""
-
-
-    lateinit var chosenGender: Gender
+    var chosenGender = Gender.NON
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +56,7 @@ class UserSetupActivity : VedibartaActivity() {
         adapter.addFragment(ChooseCharacteristicsFragment(), "3")
         adapter.addFragment(ChooseHobbiesFragment(), "4")
         viewPager.adapter = adapter
+        viewPager.addOnPageChangeListener(CustomViewPageListener(this))
     }
 
     override fun onBackPressed() {
@@ -77,6 +78,32 @@ class UserSetupActivity : VedibartaActivity() {
 
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    class CustomViewPageListener(val activity: UserSetupActivity) :
+        ViewPager.SimpleOnPageChangeListener() {
+
+        override fun onPageSelected(position: Int) {
+            super.onPageSelected(position)
+            when (position) {
+                0 -> {
+                    activity.toolbarTitle.text =
+                        activity.resources.getString(R.string.user_setup_title)
+                }
+                1 -> {
+                    activity.toolbarTitle.text =
+                        activity.resources.getString(R.string.user_setup_extra_options_title)
+                }
+                2 -> {
+                    activity.toolbarTitle.text =
+                        activity.resources.getString(R.string.user_setup_characteristics_title)
+                }
+                3 -> {
+                    activity.toolbarTitle.text =
+                        activity.resources.getString(R.string.user_setup_hobbies_title)
+                }
+            }
+        }
     }
 
 }

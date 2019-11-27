@@ -42,17 +42,15 @@ class ChooseHobbiesFragment : Fragment() {
         hobbies = resources.getStringArray(R.array.hobbiesMale_hebrew)
         table = view.findViewById(R.id.chooseHobbiesTable) as TableLayout
         populateHobbiesTable()
+
+
         return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        (activity as UserSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_hobbies_title)
-
     }
 
     @SuppressLint("InflateParams")
     private fun populateHobbiesTable() {
+
+        val act = (activity as UserSetupActivity)
 
         val tableRowParams = TableLayout.LayoutParams(
             TableLayout.LayoutParams.MATCH_PARENT,
@@ -82,12 +80,21 @@ class ChooseHobbiesFragment : Fragment() {
             for (j in 0 until steps) {
                 if (i + j >= hobbies.size)
                     break
-                bubbleFrame = LayoutInflater.from(activity).inflate(
-                    R.layout.user_profile_bubble_orange_selected,
-                    null
-                ) as FrameLayout
-                bubbleFrame.alpha = 0.6f
-                bubbleFrame.tag = NON_SELECTED_BUBBLE
+                if (act.chosenHobbies.contains(hobbies[i + j])) {
+                    bubbleFrame = LayoutInflater.from(activity).inflate(
+                        R.layout.user_profile_bubble_orange,
+                        null
+                    ) as FrameLayout
+                    bubbleFrame.alpha = 1f
+                    bubbleFrame.tag = SELECTED_BUBBLE
+                } else {
+                    bubbleFrame = LayoutInflater.from(activity).inflate(
+                        R.layout.user_profile_bubble_orange_selected,
+                        null
+                    ) as FrameLayout
+                    bubbleFrame.alpha = 0.6f
+                    bubbleFrame.tag = NON_SELECTED_BUBBLE
+                }
                 bubbleFrame.id = i + j
                 bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it) }
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
@@ -148,6 +155,5 @@ class ChooseHobbiesFragment : Fragment() {
         tableRow.removeViewAt(viewPos)
         tableRow.addView(bubbleFrame, viewPos)
     }
-
 
 }

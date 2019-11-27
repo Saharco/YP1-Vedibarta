@@ -31,7 +31,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".login.UserSetupActivity" />
+        <activity android:name=".login.UserSetupActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
 
         <activity android:name=".main.MainActivity" />
 

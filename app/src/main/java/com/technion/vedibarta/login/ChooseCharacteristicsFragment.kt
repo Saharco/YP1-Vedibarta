@@ -17,7 +17,7 @@ import androidx.core.view.get
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_chat_search.*
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 
 /**
  * A simple [Fragment] subclass.
@@ -43,15 +43,14 @@ class ChooseCharacteristicsFragment : Fragment() {
         characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
         table = view.findViewById(R.id.searchCharacteristics) as TableLayout
         populateCharacteristicsTable()
+
+
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        (activity as UserSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_characteristics_title)
-    }
-
     private fun populateCharacteristicsTable() {
+        val act = (activity as UserSetupActivity)
+
         val tableRowParams = TableLayout.LayoutParams(
             TableLayout.LayoutParams.MATCH_PARENT,
             TableLayout.LayoutParams.WRAP_CONTENT
@@ -64,7 +63,7 @@ class ChooseCharacteristicsFragment : Fragment() {
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        if (VedibartaActivity.student == null || characteristics.isEmpty()) {
+        if (student == null || characteristics.isEmpty()) {
             return
         }
 
@@ -80,17 +79,23 @@ class ChooseCharacteristicsFragment : Fragment() {
             for (j in 0 until steps) {
                 if (i + j >= characteristics.size)
                     break
-
-                bubbleFrame = LayoutInflater.from(activity).inflate(
-                    R.layout.user_profile_bubble_blue_selected,
-                    null
-                ) as FrameLayout
-
-                bubbleFrame.alpha = 0.6f
-                bubbleFrame.tag = NON_SELECTED_BUBBLE
+                if (act.chosenCharacteristics.contains(characteristics[i + j])) {
+                    bubbleFrame = LayoutInflater.from(activity).inflate(
+                        R.layout.user_profile_bubble_blue,
+                        null
+                    ) as FrameLayout
+                    bubbleFrame.alpha = 1f
+                    bubbleFrame.tag = SELECTED_BUBBLE
+                } else {
+                    bubbleFrame = LayoutInflater.from(activity).inflate(
+                        R.layout.user_profile_bubble_blue_selected,
+                        null
+                    ) as FrameLayout
+                    bubbleFrame.alpha = 0.6f
+                    bubbleFrame.tag = NON_SELECTED_BUBBLE
+                }
                 bubbleFrame.id = i + j
                 bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
-
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
                 bubble.text = characteristics[i + j]
                 bubbleFrame.layoutParams = bubbleParams
