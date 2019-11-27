@@ -114,7 +114,7 @@
         app:layout_constraintTop_toBottomOf="@+id/userDescription" />
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/scrollViewLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -221,6 +221,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="#960b040b"
             android:visibility="gone"
+            app:titleTextColor="@android:color/white"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </RelativeLayout>
 

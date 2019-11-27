@@ -43,6 +43,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.chat_card.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -347,12 +348,15 @@ class UserProfileActivity : VedibartaActivity(),
             enlargedToolbar.visibility = View.GONE
             toolbar.visibility = View.VISIBLE
             setToolbar(toolbar)
+            supportActionBar?.setDisplayShowTitleEnabled(false)
             changeStatusBarColor(resources.getColor(R.color.colorPrimaryDark))
         } else {
             Log.d(TAG, "toggleToolbars: setting the fake toolbar")
             toolbar.visibility = View.GONE
             enlargedToolbar.visibility = View.VISIBLE
             setToolbar(enlargedToolbar)
+            supportActionBar?.setDisplayShowTitleEnabled(true)
+            supportActionBar?.title = student!!.name
             changeStatusBarColor(resources.getColor(android.R.color.black))
         }
     }
@@ -376,14 +380,7 @@ class UserProfileActivity : VedibartaActivity(),
         }
 
 
-        fullscreenImage.visibility = View.VISIBLE
-        fullscreenImageContainer.visibility = View.VISIBLE
-        scrollView.setBackgroundColor(resources.getColor(android.R.color.black))
-        scrollView.visibility = View.GONE
-        titlePicture.visibility = View.GONE
-        divider1.visibility = View.GONE
-        changeProfilePictureButton.visibility = View.GONE
-
+        hideScreenElements()
 
         Glide.with(applicationContext)
             .asBitmap()
@@ -538,26 +535,12 @@ class UserProfileActivity : VedibartaActivity(),
 
                 override fun onAnimationEnd(animation: Animator) {
                     thumbView.alpha = 1f
-                    fullscreenImage.visibility = View.GONE
-                    fullscreenImageContainer.visibility = View.GONE
-                    scrollView.visibility = View.VISIBLE
-                    titlePicture.visibility = View.VISIBLE
-                    divider1.visibility = View.VISIBLE
-                    changeProfilePictureButton.visibility = View.VISIBLE
-                    scrollView.setBackgroundColor(resources.getColor(android.R.color.white))
-                    mCurrentAnimator = null
+                    restoreScreenElements()
                 }
 
                 override fun onAnimationCancel(animation: Animator) {
                     thumbView.alpha = 1f
-                    fullscreenImage.visibility = View.GONE
-                    fullscreenImageContainer.visibility = View.GONE
-                    scrollView.visibility = View.VISIBLE
-                    titlePicture.visibility = View.VISIBLE
-                    divider1.visibility = View.VISIBLE
-                    changeProfilePictureButton.visibility = View.VISIBLE
-                    scrollView.setBackgroundColor(resources.getColor(android.R.color.white))
-                    mCurrentAnimator = null
+                    restoreScreenElements()
                 }
             })
             animationSet.start()
@@ -566,6 +549,38 @@ class UserProfileActivity : VedibartaActivity(),
             toggleToolbars()
         }
         Log.d(TAG, "finishing zoomImageFromThumb")
+    }
+
+    private fun restoreScreenElements() {
+        fullscreenImage.visibility = View.GONE
+        fullscreenImageContainer.visibility = View.GONE
+
+        scrollViewLayout.visibility = View.VISIBLE
+        titlePicture.visibility = View.VISIBLE
+        userName.visibility = View.VISIBLE
+        userDescription.visibility = View.VISIBLE
+        divider1.visibility = View.VISIBLE
+        changeProfilePictureButton.visibility = View.VISIBLE
+
+        root.setBackgroundColor(resources.getColor(android.R.color.white))
+        scrollViewLayout.setBackgroundColor(resources.getColor(android.R.color.white))
+
+        mCurrentAnimator = null
+    }
+
+    private fun hideScreenElements() {
+        fullscreenImage.visibility = View.VISIBLE
+        fullscreenImageContainer.visibility = View.VISIBLE
+
+        root.setBackgroundColor(resources.getColor(android.R.color.black))
+        scrollViewLayout.setBackgroundColor(resources.getColor(android.R.color.black))
+
+        scrollViewLayout.visibility = View.GONE
+        titlePicture.visibility = View.GONE
+        userName.visibility = View.GONE
+        userDescription.visibility = View.GONE
+        divider1.visibility = View.GONE
+        changeProfilePictureButton.visibility = View.GONE
     }
 
     private fun minimizeFullscreenImage(): Boolean {

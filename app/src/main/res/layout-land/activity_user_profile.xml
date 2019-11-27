@@ -3,7 +3,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootLandscape"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".userProfile.UserProfileActivity">
@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/scrollView"
+        app:layout_constraintBottom_toTopOf="@id/scrollViewLayout"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <TextView
@@ -31,7 +31,7 @@
 
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/scrollViewLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="false"
@@ -175,43 +175,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/logout_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:background="@android:color/holo_red_dark"
+                    android:drawableStart="@drawable/ic_exit_white"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:gravity="start|center"
+                    android:layoutDirection="ltr"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:text="@string/button_logout_text"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    app:backgroundTint="@android:color/holo_red_dark" />
+
             </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/fullscreenImageContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.ortiz.touchview.TouchImageView
-                    android:id="@+id/fullscreenImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone" />
-
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/enlargedToolbarLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:theme="@style/AppTheme.AppBarOverlay"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/enlargedToolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="#960b040b"
-                    android:visibility="gone"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
-            </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/fullscreenImageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.ortiz.touchview.TouchImageView
+            android:id="@+id/fullscreenImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/enlargedToolbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/enlargedToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#960b040b"
+            android:visibility="gone"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
