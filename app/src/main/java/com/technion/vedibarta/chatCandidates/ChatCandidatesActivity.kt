@@ -27,6 +27,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
             super.onBindViewHolder(holder, position)
             holder.button.setOnClickListener {
                 startActivity(Intent(this@ChatCandidatesActivity, ChatRoomActivity::class.java))
+                finish()
             }
         }
     }
