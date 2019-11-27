@@ -23,7 +23,8 @@ private const val TAG = "LoginActivity"
 class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener,
     LoginOptionsFragment.OnSignUpWithEmailButtonClickListener,
     LoginOptionsFragment.OnContinueWithGoogleButtonClickListener,
-    LoginFragment.OnBackButtonClickListener, SignUpWithEmailFragment.OnBackButtonClickListener,
+    LoginFragment.OnBackButtonClickListener, LoginFragment.OnLoginButtonClickListener,
+    SignUpWithEmailFragment.OnBackButtonClickListener,
     SignUpWithEmailFragment.OnSignUpButtonClickListener {
 
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -82,6 +83,11 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     override fun onSignUpButtonClick(email: String, password: String) {
         Toast.makeText(this, "Signed Up", Toast.LENGTH_SHORT).show()
+        // TODO: authenticate
+    }
+
+    override fun onLoginButtonClick(email: String, password: String) {
+        Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
         // TODO: authenticate
     }
 
