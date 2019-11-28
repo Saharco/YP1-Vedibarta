@@ -1,5 +1,6 @@
 package com.technion.vedibarta.login
 
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -82,13 +83,58 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpButtonClick(email: String, password: String) {
-        Toast.makeText(this, "Signed Up", Toast.LENGTH_SHORT).show()
-        // TODO: authenticate
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Toast.makeText(this, task.exception!!.message, Toast.LENGTH_LONG).show()
+                } else {
+                    val user = auth.currentUser
+                    sendEmailVerification(user!!)
+                }
+            }
+    }
+
+    private fun sendEmailVerification(user: FirebaseUser) {
+        val dialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.sending_verification_email))
+            setCancelable(false)
+            setIndeterminate(true)
+            show()
+        }
+
+        user.sendEmailVerification()
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "Failed to send verification email")
+                    Toast.makeText(this, getString(R.string.something_went_wrong),
+                        Toast.LENGTH_LONG).show()
+                } else {
+                    Log.w(TAG, "Verification email sent")
+                    Toast.makeText(this, getString(R.string.email_sent_successfully),
+                        Toast.LENGTH_LONG).show()
+                    onBackButtonClick()
+                }
+
+                dialog.dismiss()
+            }
     }
 
     override fun onLoginButtonClick(email: String, password: String) {
-        Toast.makeText(this, "Signed In", Toast.LENGTH_SHORT).show()
-        // TODO: authenticate
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "Failed to sign in with email")
+                    Toast.makeText(this, task.exception!!.message, Toast.LENGTH_LONG).show()
+                } else {
+                    val user = auth.currentUser
+                    if (user!!.isEmailVerified) {
+                        updateUIForCurrentUser(user)
+                    } else {
+                        Toast.makeText(this, getString(R.string.email_not_verified_error),
+                            Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
     }
 
     override fun onBackButtonClick() {
@@ -119,15 +165,13 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             }
             return
         }
-//        supportFragmentManager.findFragmentByTag("LoginScreenFragment")!!
-//            .onActivityResult(requestCode, resultCode, data)
     }
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         Log.d(TAG, "firebaseAuthWithGoogle: ${account.id!!}")
 
         val dialog = ProgressDialog(this).apply {
-            setMessage(resources.getString(R.string.progress_dialog_loading))
+            setMessage(getString(R.string.progress_dialog_loading))
             setCancelable(false)
             setIndeterminate(true)
             show()
@@ -151,10 +195,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     fun updateUIForCurrentUser(user: FirebaseUser?) {
-        if (user != null) {
-            Toast.makeText(this, "!${user.displayName} ,שלום", Toast.LENGTH_LONG).show()
-            // TODO: check if the user's document exists.
-            //  If so, direct to main screen. Otherwise, direct to profile creation screen.
+        if (user != null && user.isEmailVerified) {
             startActivity(Intent(this, UserSetupActivity::class.java))
             finish()
         }
