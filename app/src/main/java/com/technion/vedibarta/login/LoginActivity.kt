@@ -196,7 +196,6 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     fun updateUIForCurrentUser(user: FirebaseUser?) {
         if (user != null && user.isEmailVerified) {
-            Toast.makeText(this, "!${user.displayName} ,שלום", Toast.LENGTH_LONG).show()
             startActivity(Intent(this, UserSetupActivity::class.java))
             finish()
         }
