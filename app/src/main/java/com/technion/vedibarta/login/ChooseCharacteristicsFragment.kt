@@ -1,6 +1,7 @@
 package com.technion.vedibarta.login
 
 
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
@@ -24,7 +25,7 @@ import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
  */
 class ChooseCharacteristicsFragment : Fragment() {
 
-    private val TAG = "CharFragment@Search"
+    private val TAG = "CharFragment@Setup"
 
     private val SELECTED_BUBBLE = 1
     private val NON_SELECTED_BUBBLE = 0
@@ -39,13 +40,18 @@ class ChooseCharacteristicsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_characteristics, container, false)
 
-
         characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
         table = view.findViewById(R.id.searchCharacteristics) as TableLayout
         populateCharacteristicsTable()
 
 
         return view
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG, "Configuration changed")
+        populateCharacteristicsTable()
     }
 
     private fun populateCharacteristicsTable() {
@@ -63,7 +69,7 @@ class ChooseCharacteristicsFragment : Fragment() {
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        if (student == null || characteristics.isEmpty()) {
+        if (characteristics.isEmpty()) {
             return
         }
 
@@ -79,7 +85,7 @@ class ChooseCharacteristicsFragment : Fragment() {
             for (j in 0 until steps) {
                 if (i + j >= characteristics.size)
                     break
-                if (act.chosenCharacteristics.contains(characteristics[i + j])) {
+                if (act.setupStudent.characteristics.contains(characteristics[i + j])) {
                     bubbleFrame = LayoutInflater.from(activity).inflate(
                         R.layout.user_profile_bubble_blue,
                         null
@@ -112,6 +118,7 @@ class ChooseCharacteristicsFragment : Fragment() {
         val tableRow = table[row] as TableRow
         val bubbleFrame: FrameLayout
         val viewPos = view.id % steps
+        val act = (activity as UserSetupActivity)
 
         Log.d(TAG, "row: $row, View: ${view.id}")
 
@@ -120,19 +127,29 @@ class ChooseCharacteristicsFragment : Fragment() {
                 R.layout.user_profile_bubble_blue,
                 null
             ) as FrameLayout
+
             bubbleFrame.alpha = 1f
             bubbleFrame.tag = SELECTED_BUBBLE
+
             Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
-            (activity as UserSetupActivity).chosenCharacteristics.add(characteristics[view.id])
+
+            act.setupStudent.characteristics =
+                act.setupStudent.characteristics.plusElement(characteristics[view.id])
+
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
                 R.layout.user_profile_bubble_blue_selected,
                 null
             ) as FrameLayout
+
             bubbleFrame.alpha = 0.6f
             bubbleFrame.tag = NON_SELECTED_BUBBLE
+
             Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
-            (activity as UserSetupActivity).chosenCharacteristics.remove(characteristics[view.id])
+
+            act.setupStudent.characteristics =
+                act.setupStudent.characteristics.filter { element -> element != characteristics[view.id] }
+                    .toTypedArray()
         }
 
         bubbleFrame.id = view.id

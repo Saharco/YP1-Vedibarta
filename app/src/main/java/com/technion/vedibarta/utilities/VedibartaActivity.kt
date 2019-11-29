@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.Fragment
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import java.sql.Timestamp
@@ -48,6 +49,18 @@ open class VedibartaActivity : AppCompatActivity() {
          */
         fun dpToPx(resources: Resources, dp: Float): Float =
             TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+
+        fun hideKeyboard(activity: Activity) {
+            val imm = activity
+                .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            var view = activity.currentFocus
+            if (view == null) {
+                // There is no view to pass the focus to, so we create a new view
+                view = View(activity)
+            }
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
     }
 
     protected val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS: Int = 90
@@ -87,14 +100,5 @@ open class VedibartaActivity : AppCompatActivity() {
      *
      * @param activity: activity in which the keyboard should be hidden
      */
-    protected fun hideKeyboard(activity: Activity) {
-        val imm = activity
-            .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        var view = activity.currentFocus
-        if (view == null) {
-            // There is no view to pass the focus to, so we create a new view
-            view = View(activity)
-        }
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
+
 }

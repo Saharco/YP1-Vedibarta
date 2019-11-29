@@ -2,12 +2,13 @@ package com.technion.vedibarta.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.CustomViewPager
@@ -15,11 +16,24 @@ import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
+import java.sql.Timestamp
 
 class UserSetupActivity : VedibartaActivity() {
 
     private val TAG = "UserSetupActivity"
+    private val STUDENT_KEY = "student"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
+
+    var setupStudent = Student(
+        "",
+        null,
+        "",
+        "",
+        Gender.NONE,
+        Timestamp(System.currentTimeMillis()),
+        characteristics = arrayOf(),
+        hobbies = arrayOf()
+    )
 
     var chosenCharacteristics = mutableSetOf<String>()
     var chosenHobbies = mutableSetOf<String>()
@@ -27,13 +41,19 @@ class UserSetupActivity : VedibartaActivity() {
     var chosenLastName = ""
     var chosenSchool = ""
     var chosenRegion = ""
-    var chosenGender = Gender.NON
+    var chosenGender = Gender.NONE
 
+    var flag = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_setup)
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
+
+        if (savedInstanceState?.get(STUDENT_KEY) != null) {
+            setupStudent = savedInstanceState[STUDENT_KEY] as Student
+            flag = savedInstanceState.getBoolean("FLAG")
+        }
 
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
@@ -43,18 +63,28 @@ class UserSetupActivity : VedibartaActivity() {
         editTabs.touchables.forEach { it.isEnabled = false }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        Log.d(TAG, "Saving Student")
+        Log.d(TAG, "Student Gender: ${setupStudent.gender}")
+
+        outState.putSerializable(STUDENT_KEY, setupStudent)
+        outState.putBoolean("FLAG", flag)
+        super.onSaveInstanceState(outState)
+    }
+
     private fun setToolbar(tb: Toolbar) {
         setSupportActionBar(tb)
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
-    private fun setupViewPager(viewPager: CustomViewPager) {
+    fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
-        viewPager.setPagingEnabled(false)
         adapter.addFragment(ChooseGenderFragment(), "1")
-        adapter.addFragment(ChooseExtraOptionsFragment(), "2")
-        adapter.addFragment(ChooseCharacteristicsFragment(), "3")
-        adapter.addFragment(ChooseHobbiesFragment(), "4")
+        if(!flag){
+            adapter.addFragment(ChooseExtraOptionsFragment(), "2")
+            adapter.addFragment(ChooseCharacteristicsFragment(), "3")
+            adapter.addFragment(ChooseHobbiesFragment(), "4")
+        }
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(CustomViewPageListener(this))
     }

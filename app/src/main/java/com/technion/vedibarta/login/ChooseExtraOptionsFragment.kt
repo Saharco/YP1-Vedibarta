@@ -8,12 +8,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 
 import com.technion.vedibarta.R
-import kotlinx.android.synthetic.main.activity_user_setup.*
+import com.technion.vedibarta.utilities.VedibartaActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -21,6 +22,9 @@ import kotlinx.android.synthetic.main.activity_user_setup.*
 class ChooseExtraOptionsFragment : Fragment() {
 
     private val TAG = "ExtraFragment@Setup"
+
+    private val FIRST_NAME = "firstname"
+    private val LAST_NAME = "lastname"
 
     private lateinit var schoolsName: Array<String>
     private lateinit var regionsName: Array<String>
@@ -39,6 +43,16 @@ class ChooseExtraOptionsFragment : Fragment() {
     private lateinit var firstName : TextInputEditText
     private lateinit var lastName : TextInputEditText
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        val act = (activity as UserSetupActivity)
+
+        if(savedInstanceState != null){
+            act.chosenFirstName = savedInstanceState.getString(FIRST_NAME)!!
+            act.chosenLastName = savedInstanceState.getString(LAST_NAME)!!
+        }
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,18 +77,24 @@ class ChooseExtraOptionsFragment : Fragment() {
                 .toMap()
 
 
-        schoolTextViewAuto.setOnItemClickListener { _, _, position, _ ->
-            onSchoolSelectedListener(
-                position
-            )
-        }
-        regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
+        schoolTextViewAuto.setOnItemClickListener { v, _, position, _ -> onSchoolSelectedListener(v, position) }
+        regionTextViewAuto.setOnItemClickListener { v, _, pos, _ -> onRegionSelectedListener(v, pos) }
+
         populateSchoolAutoCompleteText()
         populateRegionAutoCompleteText()
 
         initViews()
 
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
+        VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
+        schoolTextViewAuto.clearFocus()
+        regionTextViewAuto.clearFocus()
+        firstName.clearFocus()
+        lastName.clearFocus()
     }
 
     private fun populateSchoolAutoCompleteText() {
@@ -96,25 +116,42 @@ class ChooseExtraOptionsFragment : Fragment() {
         regionTextViewAuto.setAdapter(regionAdapter)
     }
 
-    private fun onSchoolSelectedListener(position: Int) {
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        val act = (activity as UserSetupActivity)
+
+        outState.putString(FIRST_NAME, act.chosenFirstName)
+        outState.putString(LAST_NAME, act.chosenLastName)
+
+        super.onSaveInstanceState(outState)
+
+    }
+
+    private fun onSchoolSelectedListener(
+        v: AdapterView<*>,
+        position: Int
+    ) {
 
         val nameList =
             schoolAndRegionMap.filter { it.value.first == schoolAdapter.getItem(position) }
                 .values.toMutableList()
-        val region = nameList[position % nameList.size]!!.second
+        val region = nameList[position % nameList.size].second
         val schoolName = schoolTextViewAuto.text.toString()
 
         regionTextViewAuto.text = SpannableStringBuilder(region)
-        (activity as UserSetupActivity).chosenSchool = schoolName
-        (activity as UserSetupActivity).chosenRegion = region
+        (activity as UserSetupActivity).setupStudent.school = schoolName
+        (activity as UserSetupActivity).setupStudent.region = region
+
+        v.clearFocus()
+
         populateSchoolAutoCompleteText()
     }
 
-    private fun onRegionSelectedListener(position: Int) {
+    private fun onRegionSelectedListener(v: AdapterView<*>, position: Int) {
         schoolTextViewAuto.text = SpannableStringBuilder("")
         val region = regionAdapter.getItem(position).toString()
-        (activity as UserSetupActivity).chosenRegion = region
-        (activity as UserSetupActivity).chosenSchool = ""
+        (activity as UserSetupActivity).setupStudent.region = region
+        (activity as UserSetupActivity).setupStudent.school = ""
 
         val schoolList =
             schoolAndRegionMap.filter { it.value.second == region }.values.toMutableList().unzip()
@@ -125,6 +162,8 @@ class ChooseExtraOptionsFragment : Fragment() {
         )
         schoolTextViewAuto.setAdapter(schoolAdapter)
 
+        v.clearFocus()
+
     }
 
     private fun initViews() {
@@ -133,8 +172,8 @@ class ChooseExtraOptionsFragment : Fragment() {
         firstName.text =  SpannableStringBuilder(act.chosenFirstName)
         lastName.text = SpannableStringBuilder(act.chosenLastName)
 
-        schoolTextViewAuto.text = SpannableStringBuilder(act.chosenSchool)
-        regionTextViewAuto.text = SpannableStringBuilder(act.chosenRegion)
+        schoolTextViewAuto.text = SpannableStringBuilder(act.setupStudent.school)
+        regionTextViewAuto.text = SpannableStringBuilder(act.setupStudent.region)
     }
 
 }
