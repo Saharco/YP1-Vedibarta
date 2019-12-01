@@ -11,6 +11,9 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import java.sql.Timestamp
@@ -19,8 +22,11 @@ import java.sql.Timestamp
  * This is a utility activity with no GUI
  */
 @SuppressLint("Registered")
-open class VedibartaActivity : AppCompatActivity() {
-
+open class VedibartaActivity : AppCompatActivity()
+{
+    val database = FirebaseFirestore.getInstance()
+    val user = FirebaseAuth.getInstance().currentUser
+    val studentsCollection = "students"
     //TODO: for now this will configure a default student. change this to null later
     companion object {
         var student: Student? = Student(
@@ -30,8 +36,8 @@ open class VedibartaActivity : AppCompatActivity() {
             "טכניון",
             Gender.MALE,
             Timestamp(System.currentTimeMillis()),
-            arrayOf("חילוני", "מזרחי", "צבר", "אשכנזי"),
-            arrayOf(
+            listOf("חילוני", "מזרחי", "צבר", "אשכנזי"),
+            listOf(
                 "הוראה",
                 "טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך",
                 "מדע",

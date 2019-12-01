@@ -42,8 +42,8 @@ class ChatCandidatesActivity : VedibartaActivity() {
             "אורט יד ליבוביץ'",
             Gender.MALE,
             Timestamp(System.currentTimeMillis()),
-            arrayOf("מסורתי", "מזרחי", "צבר"),
-            arrayOf("ספורט", "לגלוש", "רובוטיקה")
+            listOf("מסורתי", "מזרחי", "צבר"),
+            listOf("ספורט", "לגלוש", "רובוטיקה")
         ),
         Student(
             "ויקטור בניאס",
@@ -52,8 +52,8 @@ class ChatCandidatesActivity : VedibartaActivity() {
             "עמל נופרים בגליל",
             Gender.MALE,
             Timestamp(System.currentTimeMillis()),
-            arrayOf("רוסי", "חילוני", "עולה חדש", "מרכז", "זמני 1", "זמני 2", "זמני 3", "זמני 4", "זמני 5", "זמני 6", "זמני 7", "זמני 8"),
-            arrayOf("ספורט", "לבשל", "בולונז")
+            listOf("רוסי", "חילוני", "עולה חדש", "מרכז", "זמני 1", "זמני 2", "זמני 3", "זמני 4", "זמני 5", "זמני 6", "זמני 7", "זמני 8"),
+            listOf("ספורט", "לבשל", "בולונז")
         ),
         Student(
             "גיל צימרמן",
@@ -62,8 +62,8 @@ class ChatCandidatesActivity : VedibartaActivity() {
             "טכניון",
             Gender.MALE,
             Timestamp(System.currentTimeMillis()),
-            arrayOf("יהודי"),
-            arrayOf()
+            listOf("יהודי"),
+            listOf()
         ),
         Student(
             "שרה כהן",
@@ -72,8 +72,8 @@ class ChatCandidatesActivity : VedibartaActivity() {
             "רמות ים",
             Gender.FEMALE,
             Timestamp(System.currentTimeMillis()),
-            arrayOf(),
-            arrayOf()
+            listOf(),
+            listOf()
         )
     )
 

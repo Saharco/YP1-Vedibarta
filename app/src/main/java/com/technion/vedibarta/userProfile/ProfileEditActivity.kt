@@ -65,8 +65,8 @@ class ProfileEditActivity : VedibartaActivity() {
     private fun commitEditChanges() {
         Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
         //TODO: push to the database first!
-        student!!.characteristics = editedCharacteristics.toTypedArray()
-        student!!.hobbies = editedHobbies.toTypedArray()
+        student!!.characteristics = editedCharacteristics.toList()
+        student!!.hobbies = editedHobbies.toList()
         onBackPressed()
     }
 
