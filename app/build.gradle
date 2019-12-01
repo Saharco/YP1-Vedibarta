@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'com.google.firebase:firebase-firestore:21.3.0'
-
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

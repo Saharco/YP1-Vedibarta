@@ -75,7 +75,8 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             //TODO: Add checks that user have chosen all required items and filled all fields
             R.id.actionDoneSetup -> {
-                saveProfile()
+                database.saveStudentProfile("$chosenFirstName $chosenLastName", null, chosenRegion,
+                    chosenSchool, chosenGender, Timestamp(System.currentTimeMillis()), chosenCharacteristics.toList(), chosenHobbies.toList())
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
@@ -83,22 +84,4 @@ class UserSetupActivity : VedibartaActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-    private fun saveProfile()
-    {
-        val s = Student("$chosenFirstName $chosenLastName",null, chosenRegion, chosenSchool, chosenGender,
-            Timestamp(System.currentTimeMillis()), chosenCharacteristics.toList(), chosenHobbies.toList())
-
-        try {
-            if (user != null)
-                database.collection(studentsCollection).document(user.uid).set(s)
-                    .addOnSuccessListener { Toast.makeText(this, "saved profile", Toast.LENGTH_LONG).show() }
-                    .addOnFailureListener { e:Exception -> Toast.makeText(this,e.message, Toast.LENGTH_LONG).show() }
-        }
-        catch (e: Exception)
-        {
-            Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
-        }
-    }
-
 }

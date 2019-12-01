@@ -24,9 +24,7 @@ import java.sql.Timestamp
 @SuppressLint("Registered")
 open class VedibartaActivity : AppCompatActivity()
 {
-    val database = FirebaseFirestore.getInstance()
-    val user = FirebaseAuth.getInstance().currentUser
-    val studentsCollection = "students"
+    val database = Database()
     //TODO: for now this will configure a default student. change this to null later
     companion object {
         var student: Student? = Student(
