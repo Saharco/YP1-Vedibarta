@@ -2,6 +2,7 @@ package com.technion.vedibarta.login
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,11 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.utilities.SectionsPageAdapter
+import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
-import kotlinx.android.synthetic.main.activity_user_setup.toolbarTitle
 
 /**
  * A simple [Fragment] subclass.
@@ -20,9 +23,10 @@ import kotlinx.android.synthetic.main.activity_user_setup.toolbarTitle
 class ChooseGenderFragment : Fragment() {
 
 
+    private val TAG = "GenderFragment@Setup"
+
     lateinit var buttonMale: AppCompatButton
     lateinit var buttonFemale: AppCompatButton
-    lateinit var buttonNext: AppCompatButton
 
 
     lateinit var cardViewFemale: CardView
@@ -37,7 +41,6 @@ class ChooseGenderFragment : Fragment() {
 
         buttonMale = view.findViewById(R.id.buttonMale)
         buttonFemale = view.findViewById(R.id.buttonFemale)
-        buttonNext = view.findViewById(R.id.buttonNext)
 
         cardViewMale = view.findViewById(R.id.cardViewMale)
         cardViewFemale = view.findViewById(R.id.cardViewFemale)
@@ -48,39 +51,45 @@ class ChooseGenderFragment : Fragment() {
         cardViewMale.setOnClickListener { onButtonMaleClickListener() }
         cardViewFemale.setOnClickListener { onButtonFemaleClickListener() }
 
-        buttonNext.setOnClickListener { onButtonNextClickListener(it) }
+
+        initViews()
+
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        (activity as UserSetupActivity).toolbarTitle.text = resources.getString(R.string.user_setup_title)
-
-    }
-
     private fun onButtonFemaleClickListener() {
+
         cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
         cardViewMale.setCardBackgroundColor(resources.getColor(R.color.background))
 
-        (activity as UserSetupActivity).chosenGender = Gender.FEMALE
-        if (!(activity as UserSetupActivity).userSetupContainer.pageEnabled)
-            buttonNext.visibility = View.VISIBLE
+        Log.d(TAG, "Female Chosen")
+
+        (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
     }
 
     private fun onButtonMaleClickListener() {
+
         cardViewMale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
         cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.background))
 
-        (activity as UserSetupActivity).chosenGender = Gender.MALE
-        if (!(activity as UserSetupActivity).userSetupContainer.pageEnabled)
-            buttonNext.visibility = View.VISIBLE
+        Log.d(TAG, "Male Chosen")
 
+        (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
     }
 
-    private fun onButtonNextClickListener(v: View) {
-        v.visibility = View.GONE
-        (activity as UserSetupActivity).userSetupContainer.currentItem = 1
-        (activity as UserSetupActivity).userSetupContainer.setPagingEnabled(true)
+    private fun initViews() {
+        when ((activity as UserSetupActivity).setupStudent.gender) {
+            Gender.MALE -> {
+                cardViewMale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
+                cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.background))
+            }
+            Gender.FEMALE -> {
+                cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
+                cardViewMale.setCardBackgroundColor(resources.getColor(R.color.background))
+            }
+            Gender.NONE -> {
+            }
+        }
     }
 
 

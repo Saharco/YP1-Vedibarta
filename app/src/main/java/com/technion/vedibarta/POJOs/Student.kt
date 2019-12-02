@@ -9,7 +9,7 @@ data class Student(
     var photo: String?,
     var region: String,
     var school: String,
-    val gender: Gender,
+    var gender: Gender,
     var lastActivity: Timestamp,
     var characteristics: List<String>,
     var hobbies: List<String>) : Serializable {

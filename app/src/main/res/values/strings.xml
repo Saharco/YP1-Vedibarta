@@ -4,6 +4,7 @@
     <!--    General shared attributes   -->
     <string name="back">חזור</string>
     <string name="or">או</string>
+    <string name="allowed_letters">אבגדהוזחטיכלמנסעפצקרשתץףןםך</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
@@ -37,13 +38,18 @@
     <!--    UserSetup Attributes  -->
     <string name="user_setup_title">הגדרת משתמש</string>
     <string name="choose_gender_text">אני מזדהה בתור</string>
-    <string name="user_setup_characteristics_title">בחר מאפייני זיהוי</string>
-    <string name="user_setup_hobbies_title">בחר תחביבים</string>
-    <string name="user_setup_region_title">בחר עיר מגורים</string>
-    <string name="user_setup_school_title">בחר בית ספר</string>
+    <string name="user_setup_characteristics_title">מאפייני זיהוי</string>
+    <string name="user_setup_extra_options_title">פרטים אישיים</string>
+    <string name="user_setup_hobbies_title">תחביבים</string>
+    <string name="user_setup_region_title">עיר מגורים</string>
+    <string name="user_setup_school_title">בית ספר</string>
     <string name="user_setup_first_name_title">שם פרטי</string>
     <string name="user_setup_last_name_title">שם משפחה</string>
     <string name="user_setup_done_title">סיים</string>
+    <string name="user_setup_gender_next_button_text">הבא</string>
+    <string name="text_field_hint">רק אותיות בעברית</string>
+    <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
+    <string name="user_setup_missing_details_message">אנא מלא את כל הפרטים החסרים</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
