@@ -638,10 +638,12 @@ class UserProfileActivity : VedibartaActivity(),
             when (requestCode) {
                 REQUEST_CAMERA -> if (selectedImage != null) {
                     uploadPhoto(selectedImage!!)
+                    database.uploadProfilePicture(selectedImage!!)
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
                     uploadPhoto(selectedImage!!)
+                    database.uploadProfilePicture(selectedImage!!)
                 }
             }
         }
