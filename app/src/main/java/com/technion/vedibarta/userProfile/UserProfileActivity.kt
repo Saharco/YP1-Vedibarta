@@ -642,16 +642,20 @@ class UserProfileActivity : VedibartaActivity(),
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
-                    uploadPhoto(selectedImage!!)
-                    database.uploadProfilePicture(selectedImage!!)
-                        ?.addOnSuccessListener { Toast.makeText(this, "gallery_upload", Toast.LENGTH_LONG).show() }
+                    //uploadPhoto(selectedImage!!)
+                    database.downloadProfilePicture()
+                        ?.addOnSuccessListener {
+                            Toast.makeText(this, "Profile Downloaded", Toast.LENGTH_LONG).show()
+                            uploadPhoto(it)
+                        }
                         ?.addOnFailureListener{ Toast.makeText(this, it.message, Toast.LENGTH_LONG).show() }
                 }
             }
         }
     }
 
-    private fun uploadPhoto(imagePath: Uri) {
+    private fun uploadPhoto(imagePath: Uri)
+    {
         val resize = ImageCompressTask()
         resize.execute(imagePath)
     }
