@@ -644,6 +644,8 @@ class UserProfileActivity : VedibartaActivity(),
                     selectedImage = data!!.data
                     uploadPhoto(selectedImage!!)
                     database.uploadProfilePicture(selectedImage!!)
+                        ?.addOnSuccessListener { Toast.makeText(this, "gallery_upload", Toast.LENGTH_LONG).show() }
+                        ?.addOnFailureListener{ Toast.makeText(this, it.message, Toast.LENGTH_LONG).show() }
                 }
             }
         }
