@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.textfield.TextInputEditText
 
 import com.technion.vedibarta.R
@@ -26,9 +27,7 @@ class ChooseExtraOptionsFragment : Fragment() {
     private val FIRST_NAME = "firstname"
     private val LAST_NAME = "lastname"
 
-    private lateinit var schoolsName: Array<String>
-    private lateinit var regionsName: Array<String>
-    private lateinit var schoolTags: Array<Int>
+
 
 
     // Tag -> (schoolName, SchoolRegion)
@@ -61,19 +60,22 @@ class ChooseExtraOptionsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_extra_options, container, false)
 
-        schoolsName = resources.getStringArray(R.array.schoolNameList)
-        regionsName =
+        (activity as UserSetupActivity).schoolsName = resources.getStringArray(R.array.schoolNameList)
+        (activity as UserSetupActivity).regionsName =
             resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
-        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
+        (activity as UserSetupActivity).schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         firstName = view.findViewById(R.id.textFieldFirstName)
         lastName = view.findViewById(R.id.textFieldLastName)
+
+        firstName.doOnTextChanged { text, _, _, _ -> (activity as UserSetupActivity).chosenFirstName=text.toString() }
+        lastName.doOnTextChanged { text, _, _, _ -> (activity as UserSetupActivity).chosenLastName=text.toString() }
 
         schoolTextViewAuto = view.findViewById(R.id.schoolListSpinner)
         regionTextViewAuto = view.findViewById(R.id.regionListSpinner)
 
         schoolAndRegionMap =
-            schoolTags.zip(schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
+            (activity as UserSetupActivity).schoolTags.zip((activity as UserSetupActivity).schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
                 .toMap()
 
 
@@ -103,7 +105,7 @@ class ChooseExtraOptionsFragment : Fragment() {
 
         schoolAdapter = ArrayAdapter(
             this.context!!,
-            android.R.layout.simple_dropdown_item_1line, schoolsName
+            android.R.layout.simple_dropdown_item_1line, (activity as UserSetupActivity).schoolsName
         )
         schoolTextViewAuto.setAdapter(schoolAdapter)
     }
@@ -111,7 +113,7 @@ class ChooseExtraOptionsFragment : Fragment() {
     private fun populateRegionAutoCompleteText() {
         regionAdapter = ArrayAdapter(
             this.context!!,
-            android.R.layout.simple_dropdown_item_1line, regionsName
+            android.R.layout.simple_dropdown_item_1line, (activity as UserSetupActivity).regionsName
         )
         regionTextViewAuto.setAdapter(regionAdapter)
     }
@@ -120,8 +122,10 @@ class ChooseExtraOptionsFragment : Fragment() {
 
         val act = (activity as UserSetupActivity)
 
-        outState.putString(FIRST_NAME, act.chosenFirstName)
-        outState.putString(LAST_NAME, act.chosenLastName)
+
+        Log.d(TAG, "First Name: ${firstName.text}, Last Name: ${lastName.text}")
+        outState.putString(FIRST_NAME,firstName.text.toString())
+        outState.putString(LAST_NAME, lastName.text.toString())
 
         super.onSaveInstanceState(outState)
 
@@ -169,8 +173,11 @@ class ChooseExtraOptionsFragment : Fragment() {
     private fun initViews() {
         val act = (activity as UserSetupActivity)
 
-        firstName.text =  SpannableStringBuilder(act.chosenFirstName)
-        lastName.text = SpannableStringBuilder(act.chosenLastName)
+
+        Log.d(TAG, "Init Views")
+
+//        firstName.text =  SpannableStringBuilder(act.chosenFirstName)
+//        lastName.text = SpannableStringBuilder(act.chosenLastName)
 
         schoolTextViewAuto.text = SpannableStringBuilder(act.setupStudent.school)
         regionTextViewAuto.text = SpannableStringBuilder(act.setupStudent.region)

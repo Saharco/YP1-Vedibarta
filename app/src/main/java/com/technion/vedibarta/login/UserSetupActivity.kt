@@ -1,11 +1,15 @@
 package com.technion.vedibarta.login
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.POJOs.Student
@@ -34,6 +38,10 @@ class UserSetupActivity : VedibartaActivity() {
         characteristics = arrayOf(),
         hobbies = arrayOf()
     )
+
+    lateinit var schoolsName: Array<String>
+    lateinit var regionsName: Array<String>
+    lateinit var schoolTags: Array<Int>
 
     var chosenCharacteristics = mutableSetOf<String>()
     var chosenHobbies = mutableSetOf<String>()
@@ -80,7 +88,7 @@ class UserSetupActivity : VedibartaActivity() {
     fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
         adapter.addFragment(ChooseGenderFragment(), "1")
-        if(!flag){
+        if (!flag) {
             adapter.addFragment(ChooseExtraOptionsFragment(), "2")
             adapter.addFragment(ChooseCharacteristicsFragment(), "3")
             adapter.addFragment(ChooseHobbiesFragment(), "4")
@@ -102,12 +110,42 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             //TODO: Add checks that user have chosen all required items and filled all fields
             R.id.actionDoneSetup -> {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                if (validateUserInput()) {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+                else{
+                    missingDetailsDialog()
+                }
             }
 
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun missingDetailsDialog() {
+        val title = TextView(this)
+        title.setText(R.string.user_setup_missing_details_dialog_title)
+        title.textSize = 20f
+        title.setTypeface(null, Typeface.BOLD)
+        title.setTextColor(resources.getColor(R.color.textPrimary))
+        title.gravity = Gravity.CENTER
+        title.setPadding(10, 40, 10, 24)
+        val builder = AlertDialog.Builder(this)
+        builder.setCustomTitle(title)
+            .setMessage(R.string.user_setup_missing_details_message)
+            .setPositiveButton(android.R.string.yes) { _, _ -> }
+            .show()
+        builder.create()
+    }
+
+    private fun validateUserInput(): Boolean {
+
+        Log.d(TAG, "Chars: ${setupStudent.characteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName ")
+        Log.d(TAG, "last name: $chosenLastName,  School: ${setupStudent.school}, Region: ${setupStudent.region}")
+
+        return setupStudent.characteristics.isNotEmpty() && setupStudent.hobbies.isNotEmpty() && chosenFirstName != ""
+                && chosenLastName != "" && schoolsName.contains(setupStudent.school) && regionsName.contains(setupStudent.region)
     }
 
     class CustomViewPageListener(val activity: UserSetupActivity) :

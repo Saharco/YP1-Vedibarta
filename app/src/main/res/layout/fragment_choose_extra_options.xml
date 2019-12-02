@@ -43,6 +43,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textFieldFirstName"
                     android:layout_width="0dp"
+                    android:digits="@string/allowed_letters"
+                    android:hint="@string/text_field_hint"
                     android:layout_height="wrap_content"
                     android:imeOptions="flagNoExtractUi"
                     android:layout_marginEnd="16dp"
@@ -69,6 +71,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textFieldLastName"
                     android:layout_width="0dp"
+                    android:digits="@string/allowed_letters"
+                    android:hint="@string/text_field_hint"
                     android:layout_height="wrap_content"
                     android:imeOptions="flagNoExtractUi"
                     android:layout_marginTop="16dp"
