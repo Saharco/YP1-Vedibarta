@@ -1,5 +1,6 @@
 package com.technion.vedibarta.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager.widget.ViewPager
@@ -43,15 +45,8 @@ class UserSetupActivity : VedibartaActivity() {
     lateinit var regionsName: Array<String>
     lateinit var schoolTags: Array<Int>
 
-    var chosenCharacteristics = mutableSetOf<String>()
-    var chosenHobbies = mutableSetOf<String>()
     var chosenFirstName = ""
     var chosenLastName = ""
-    var chosenSchool = ""
-    var chosenRegion = ""
-    var chosenGender = Gender.NONE
-
-    var flag = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +55,6 @@ class UserSetupActivity : VedibartaActivity() {
 
         if (savedInstanceState?.get(STUDENT_KEY) != null) {
             setupStudent = savedInstanceState[STUDENT_KEY] as Student
-            flag = savedInstanceState.getBoolean("FLAG")
         }
 
         setupViewPager(userSetupContainer)
@@ -76,7 +70,6 @@ class UserSetupActivity : VedibartaActivity() {
         Log.d(TAG, "Student Gender: ${setupStudent.gender}")
 
         outState.putSerializable(STUDENT_KEY, setupStudent)
-        outState.putBoolean("FLAG", flag)
         super.onSaveInstanceState(outState)
     }
 
@@ -85,13 +78,26 @@ class UserSetupActivity : VedibartaActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
         adapter.addFragment(ChooseGenderFragment(), "1")
-        if (!flag) {
-            adapter.addFragment(ChooseExtraOptionsFragment(), "2")
-            adapter.addFragment(ChooseCharacteristicsFragment(), "3")
-            adapter.addFragment(ChooseHobbiesFragment(), "4")
+        adapter.addFragment(ChooseExtraOptionsFragment(), "2")
+        adapter.addFragment(ChooseCharacteristicsFragment(), "3")
+        adapter.addFragment(ChooseHobbiesFragment(), "4")
+        viewPager.setOnTouchListener { v, event ->
+            if(setupStudent.gender == Gender.NONE){
+                Toast.makeText(
+                    applicationContext,
+                    "Please Choose Gender",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else{
+                v.onTouchEvent(event)
+//                viewPager.setPagingEnabled(true)
+            }
+            return@setOnTouchListener true
         }
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(CustomViewPageListener(this))
@@ -108,7 +114,6 @@ class UserSetupActivity : VedibartaActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            //TODO: Add checks that user have chosen all required items and filled all fields
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
                     startActivity(Intent(this, MainActivity::class.java))
@@ -153,6 +158,11 @@ class UserSetupActivity : VedibartaActivity() {
 
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
+            if(activity.setupStudent.gender == Gender.NONE)
+            {
+                Toast.makeText(activity.applicationContext, "Please Choose Gender", Toast.LENGTH_SHORT).show()
+                return
+            }
             when (position) {
                 0 -> {
                     activity.toolbarTitle.text =

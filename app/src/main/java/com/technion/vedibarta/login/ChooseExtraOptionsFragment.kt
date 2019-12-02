@@ -82,6 +82,8 @@ class ChooseExtraOptionsFragment : Fragment() {
         schoolTextViewAuto.setOnItemClickListener { v, _, position, _ -> onSchoolSelectedListener(v, position) }
         regionTextViewAuto.setOnItemClickListener { v, _, pos, _ -> onRegionSelectedListener(v, pos) }
 
+        regionTextViewAuto.doOnTextChanged { _, _, _, _ -> populateSchoolAutoCompleteText() }
+
         populateSchoolAutoCompleteText()
         populateRegionAutoCompleteText()
 
@@ -146,8 +148,7 @@ class ChooseExtraOptionsFragment : Fragment() {
         (activity as UserSetupActivity).setupStudent.school = schoolName
         (activity as UserSetupActivity).setupStudent.region = region
 
-        v.clearFocus()
-
+        VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
         populateSchoolAutoCompleteText()
     }
 
@@ -166,7 +167,7 @@ class ChooseExtraOptionsFragment : Fragment() {
         )
         schoolTextViewAuto.setAdapter(schoolAdapter)
 
-        v.clearFocus()
+        VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
 
     }
 

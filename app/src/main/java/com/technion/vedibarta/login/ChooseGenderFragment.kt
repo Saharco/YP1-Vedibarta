@@ -27,7 +27,6 @@ class ChooseGenderFragment : Fragment() {
 
     lateinit var buttonMale: AppCompatButton
     lateinit var buttonFemale: AppCompatButton
-    lateinit var buttonNext: AppCompatButton
 
 
     lateinit var cardViewFemale: CardView
@@ -59,7 +58,6 @@ class ChooseGenderFragment : Fragment() {
     }
 
     private fun onButtonFemaleClickListener() {
-        val adapter = ((activity as UserSetupActivity).userSetupContainer.adapter as SectionsPageAdapter)
 
         cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
         cardViewMale.setCardBackgroundColor(resources.getColor(R.color.background))
@@ -67,16 +65,9 @@ class ChooseGenderFragment : Fragment() {
         Log.d(TAG, "Female Chosen")
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
-        if ((activity as UserSetupActivity).flag){
-//            buttonNext.visibility = View.VISIBLE
-            (activity as UserSetupActivity).flag = false
-            (activity as UserSetupActivity).setupViewPager((activity as UserSetupActivity).userSetupContainer)
-            (activity as UserSetupActivity).editTabs.setupWithViewPager((activity as UserSetupActivity).userSetupContainer)
-        }
     }
 
     private fun onButtonMaleClickListener() {
-        val adapter = ((activity as UserSetupActivity).userSetupContainer.adapter as SectionsPageAdapter)
 
         cardViewMale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
         cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.background))
@@ -84,13 +75,6 @@ class ChooseGenderFragment : Fragment() {
         Log.d(TAG, "Male Chosen")
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
-        if ((activity as UserSetupActivity).flag){
-//            buttonNext.visibility = View.VISIBLE
-            (activity as UserSetupActivity).flag = false
-            (activity as UserSetupActivity).setupViewPager((activity as UserSetupActivity).userSetupContainer)
-            (activity as UserSetupActivity).editTabs.setupWithViewPager((activity as UserSetupActivity).userSetupContainer)
-        }
-
     }
 
     private fun initViews() {
