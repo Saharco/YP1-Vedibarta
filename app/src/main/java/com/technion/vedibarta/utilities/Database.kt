@@ -12,12 +12,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.technion.vedibarta.POJOs.Student
+import java.io.File
 import java.sql.Timestamp
 
 class Database {
     private val database = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance().reference
     private val user = FirebaseAuth.getInstance().currentUser
+    private val logTag = "DataBase"
 
     private class StoragePathBuilder(user: FirebaseUser)
     {
@@ -83,20 +85,20 @@ class Database {
         return filePathRef.putFile(file)
     }
 
-    private fun downloadFile(path: String, res: Uri): FileDownloadTask
+    private fun downloadFile(path: String, destination: Uri): FileDownloadTask
     {
         val filePathRef = storage.child(path)
-        return filePathRef.getFile(res)
+        return filePathRef.getFile(destination)
     }
 
     private fun logSuccess(action: Action)
     {
-        Log.d("DataBase", "${user?.uid} $action success")
+        Log.d(logTag, "${user?.uid} $action success")
     }
 
     private fun logFailure(e: Exception, action: Action)
     {
-        Log.d("DataBase", "${user?.uid} $action got Error: ${e.message}")
+        Log.d(logTag, "${user?.uid} $action got Error: ${e.message} the cause: ${e.cause?.message}")
     }
 
 
@@ -120,6 +122,7 @@ class Database {
         if (user != null)
         {
             val path = StoragePathBuilder(user).students().userId().pictures().fileName("profile_pic")
+            Log.d(logTag, "uploading profile picture")
             task = uploadFile(photo, path)
                 .addOnSuccessListener { logSuccess(Action.UPLOAD_PROFILE_PICTURE) }
                 .addOnFailureListener{ e:Exception -> logFailure(e, Action.UPLOAD_PROFILE_PICTURE) }
@@ -127,13 +130,14 @@ class Database {
         return task
     }
 
-    fun downloadProfilePicture(photo: Uri): StorageTask<FileDownloadTask.TaskSnapshot>?
+    fun downloadProfilePicture(photoDestination: Uri): StorageTask<FileDownloadTask.TaskSnapshot>?
     {
         var task: StorageTask<FileDownloadTask.TaskSnapshot>? = null
         if (user != null)
         {
+            Log.d(logTag, "downloading profile picture")
             val path = StoragePathBuilder(user).students().userId().pictures().fileName("profile_pic")
-            task = downloadFile(path, photo)
+            task = downloadFile(path, photoDestination)
                 .addOnSuccessListener { logSuccess(Action.DOWNLOAD_PROFILE_PICTURE) }
                 .addOnFailureListener{ e:Exception -> logFailure(e, Action.DOWNLOAD_PROFILE_PICTURE) }
         }
