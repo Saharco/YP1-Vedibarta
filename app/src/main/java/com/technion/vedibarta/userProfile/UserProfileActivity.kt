@@ -46,6 +46,7 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.chat_card.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.Exception
 
 
 class UserProfileActivity : VedibartaActivity(),
@@ -642,13 +643,10 @@ class UserProfileActivity : VedibartaActivity(),
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
-                    //uploadPhoto(selectedImage!!)
-                    database.downloadProfilePicture()
+                    database.uploadProfilePicture(selectedImage!!)
                         ?.addOnSuccessListener {
-                            Toast.makeText(this, "Profile Downloaded", Toast.LENGTH_LONG).show()
-                            uploadPhoto(it)
+                            uploadPhoto(selectedImage!!)
                         }
-                        ?.addOnFailureListener{ Toast.makeText(this, it.message, Toast.LENGTH_LONG).show() }
                 }
             }
         }

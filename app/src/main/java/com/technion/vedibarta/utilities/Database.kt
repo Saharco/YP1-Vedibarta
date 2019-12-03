@@ -2,6 +2,7 @@ package com.technion.vedibarta.utilities
 
 import android.net.Uri
 import android.util.Log
+import androidx.core.content.FileProvider
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -86,10 +87,10 @@ class Database {
         return filePathRef.putFile(file)
     }
 
-    private fun downloadFile(path: String): Task<Uri>
+    private fun downloadFile(path: String, destination: File): FileDownloadTask
     {
         val filePathRef = storage.child(path)
-        return filePathRef.downloadUrl
+        return filePathRef.getFile(destination)
     }
 
     private fun logSuccess(action: Action)
@@ -131,16 +132,20 @@ class Database {
         return task
     }
 
-    fun downloadProfilePicture(): Task<Uri>?
+    fun downloadProfilePicture(destination: File): StorageTask<FileDownloadTask.TaskSnapshot>?
     {
-        var task: Task<Uri>? = null
+        var task: StorageTask<FileDownloadTask.TaskSnapshot>? = null
         if (user != null)
         {
             Log.d(logTag, "downloading profile picture")
             val path = StoragePathBuilder(user).students().userId().pictures().fileName("profile_pic")
-            task = downloadFile(path)
-                .addOnSuccessListener { logSuccess(Action.DOWNLOAD_PROFILE_PICTURE) }
-                .addOnFailureListener{ e:Exception -> logFailure(e, Action.DOWNLOAD_PROFILE_PICTURE) }
+            task = downloadFile(path, destination)
+                .addOnSuccessListener {
+                    logSuccess(Action.DOWNLOAD_PROFILE_PICTURE)
+                }
+                .addOnFailureListener {
+                    logFailure(it, Action.DOWNLOAD_PROFILE_PICTURE)
+                }
         }
         return task
     }
