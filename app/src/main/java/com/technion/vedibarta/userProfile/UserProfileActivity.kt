@@ -645,7 +645,12 @@ class UserProfileActivity : VedibartaActivity(),
                     selectedImage = data!!.data
                     database.uploadProfilePicture(selectedImage!!)
                         ?.addOnSuccessListener {
-                            uploadPhoto(selectedImage!!)
+                            val temp = File(externalCacheDir, "temp")
+                            database.downloadProfilePicture(temp)
+                                ?.addOnSuccessListener {
+                                    selectedImage = FileProvider.getUriForFile(this, "$packageName.provider", temp)
+                                    uploadPhoto(selectedImage!!)
+                                }
                         }
                 }
             }
