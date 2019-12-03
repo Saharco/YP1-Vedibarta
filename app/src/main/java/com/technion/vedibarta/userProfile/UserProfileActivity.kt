@@ -640,17 +640,15 @@ class UserProfileActivity : VedibartaActivity(),
                 REQUEST_CAMERA -> if (selectedImage != null) {
                     uploadPhoto(selectedImage!!)
                     database.uploadProfilePicture(selectedImage!!)
+                        ?.addOnSuccessListener {
+                            uploadPhoto(selectedImage!!)
+                        }
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
                     database.uploadProfilePicture(selectedImage!!)
                         ?.addOnSuccessListener {
-                            val temp = File(externalCacheDir, "temp")
-                            database.downloadProfilePicture(temp)
-                                ?.addOnSuccessListener {
-                                    selectedImage = FileProvider.getUriForFile(this, "$packageName.provider", temp)
-                                    uploadPhoto(selectedImage!!)
-                                }
+                            uploadPhoto(selectedImage!!)
                         }
                 }
             }

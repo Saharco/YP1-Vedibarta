@@ -93,24 +93,30 @@ class Database {
         return filePathRef.getFile(destination)
     }
 
-    private fun logSuccess(action: Action)
+    private fun logSuccess(a: Action)
     {
-        Log.d(logTag, "${user?.uid} $action success")
+        Log.d(logTag, "${user?.uid} $a success")
     }
 
-    private fun logFailure(e: Exception, action: Action)
+    private fun logFailure(e: Exception, a: Action)
     {
-        Log.d(logTag, "${user?.uid} $action got Error: ${e.message} the cause: ${e.cause?.message}")
+        Log.d(logTag, "${user?.uid} $a got Error: ${e.message} the cause: ${e.cause?.message}")
+    }
+
+    private fun logStart(a: Action)
+    {
+        Log.d(logTag, "started $a")
     }
 
 
     fun saveStudentProfile(name: String, photo: String?, region: String, school: String, gender: Gender,
-                           lastTimeActive: Timestamp, characteristics: List<String>, hobbies: List<String>): com.google.android.gms.tasks.Task<Void>?
+                           lastTimeActive: Timestamp, characteristics: List<String>, hobbies: List<String>): Task<Void>?
     {
         val s = Student(name, photo, region, school, gender, lastTimeActive, characteristics, hobbies)
-        var task:com.google.android.gms.tasks.Task<Void>? = null
+        var task:Task<Void>? = null
         if (user != null)
         {
+            logStart(Action.SAVE_PROFILE)
             task = DataBasePathBuilder(database, user).students().userId().build().set(s)
                 .addOnSuccessListener { logSuccess(Action.SAVE_PROFILE) }
                 .addOnFailureListener{ e:Exception -> logFailure(e, Action.SAVE_PROFILE) }
@@ -124,7 +130,7 @@ class Database {
         if (user != null)
         {
             val path = StoragePathBuilder(user).students().userId().pictures().fileName("profile_pic")
-            Log.d(logTag, "uploading profile picture")
+            logStart(Action.UPLOAD_PROFILE_PICTURE)
             task = uploadFile(photo, path)
                 .addOnSuccessListener { logSuccess(Action.UPLOAD_PROFILE_PICTURE) }
                 .addOnFailureListener{ e:Exception -> logFailure(e, Action.UPLOAD_PROFILE_PICTURE) }
@@ -137,7 +143,7 @@ class Database {
         var task: StorageTask<FileDownloadTask.TaskSnapshot>? = null
         if (user != null)
         {
-            Log.d(logTag, "downloading profile picture")
+            logStart(Action.DOWNLOAD_PROFILE_PICTURE)
             val path = StoragePathBuilder(user).students().userId().pictures().fileName("profile_pic")
             task = downloadFile(path, destination)
                 .addOnSuccessListener {
