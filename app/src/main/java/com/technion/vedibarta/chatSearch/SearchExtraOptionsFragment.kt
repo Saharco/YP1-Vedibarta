@@ -14,6 +14,8 @@ import androidx.appcompat.widget.SwitchCompat
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_search_extra_options.*
 import android.widget.ArrayAdapter
+import androidx.core.widget.doOnTextChanged
+import com.technion.vedibarta.utilities.VedibartaActivity
 
 
 /**
@@ -22,11 +24,6 @@ import android.widget.ArrayAdapter
 class SearchExtraOptionsFragment : Fragment() {
 
     private val TAG = "ExtraFragment@Search"
-
-    lateinit var schoolsName: Array<String>
-    lateinit var regionsName: Array<String>
-    lateinit var schoolTags: Array<Int>
-
 
     lateinit var schoolSwitch: SwitchCompat
     lateinit var regionSwitch: SwitchCompat
@@ -46,10 +43,12 @@ class SearchExtraOptionsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search_extra_options, container, false)
-        schoolsName = resources.getStringArray(R.array.schoolNameList)
-        regionsName =
+        (activity as ChatSearchActivity).schoolsName =
+            resources.getStringArray(R.array.schoolNameList)
+        (activity as ChatSearchActivity).regionsName =
             resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
-        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
+        (activity as ChatSearchActivity).schoolTags =
+            resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         schoolSwitch = view.findViewById(R.id.schoolFilterSwitch)
         regionSwitch = view.findViewById(R.id.regionFilterSwitch)
@@ -58,7 +57,11 @@ class SearchExtraOptionsFragment : Fragment() {
         regionTextViewAuto = view.findViewById(R.id.regionListSpinner)
 
         schoolAndRegionMap =
-            schoolTags.zip(schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
+            (activity as ChatSearchActivity).schoolTags.zip(
+                (activity as ChatSearchActivity).schoolsName.zip(
+                    resources.getStringArray(R.array.regionNameList)
+                )
+            )
                 .toMap()
 
 
@@ -71,6 +74,16 @@ class SearchExtraOptionsFragment : Fragment() {
             )
         }
         regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
+
+        regionTextViewAuto.doOnTextChanged { text, _, _, _ ->
+            populateSchoolAutoCompleteText()
+            (activity as ChatSearchActivity).chosenRegion = text.toString()
+        }
+
+        schoolTextViewAuto.doOnTextChanged { text, _, _, _ ->
+            (activity as ChatSearchActivity).chosenSchool = text.toString()
+        }
+
         populateSchoolAutoCompleteText()
         populateRegionAutoCompleteText()
 
@@ -83,7 +96,8 @@ class SearchExtraOptionsFragment : Fragment() {
 
         schoolAdapter = ArrayAdapter(
             this.context!!,
-            android.R.layout.simple_dropdown_item_1line, schoolsName
+            android.R.layout.simple_dropdown_item_1line,
+            (activity as ChatSearchActivity).schoolsName
         )
         schoolTextViewAuto.setAdapter(schoolAdapter)
     }
@@ -91,7 +105,8 @@ class SearchExtraOptionsFragment : Fragment() {
     private fun populateRegionAutoCompleteText() {
         regionAdapter = ArrayAdapter(
             this.context!!,
-            android.R.layout.simple_dropdown_item_1line, regionsName
+            android.R.layout.simple_dropdown_item_1line,
+            (activity as ChatSearchActivity).regionsName
         )
         regionTextViewAuto.setAdapter(regionAdapter)
     }
@@ -107,12 +122,19 @@ class SearchExtraOptionsFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        VedibartaActivity.hideKeyboard(activity as ChatSearchActivity)
+        regionTextViewAuto.clearFocus()
+        schoolTextViewAuto.clearFocus()
+    }
+
     private fun onSchoolSelectedListener(position: Int) {
 
         val nameList =
             schoolAndRegionMap.filter { it.value.first == schoolAdapter.getItem(position) }
                 .values.toMutableList()
-        val region = nameList[position % nameList.size]!!.second
+        val region = nameList[position % nameList.size].second
         val schoolName = schoolTextViewAuto.text.toString()
 
         regionTextViewAuto.text = SpannableStringBuilder(region)
