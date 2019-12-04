@@ -47,7 +47,7 @@
     <string name="user_setup_last_name_title">שם משפחה</string>
     <string name="user_setup_done_title">סיים</string>
     <string name="user_setup_gender_next_button_text">הבא</string>
-    <string name="text_field_hint">רק אותיות בעברית</string>
+    <string name="text_field_hint">עברית/ערבית בלבד</string>
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
     <string name="user_setup_missing_details_message">אנא מלא את כל הפרטים החסרים</string>
 

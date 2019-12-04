@@ -1,6 +1,7 @@
 package com.technion.vedibarta.login
 
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
@@ -8,9 +9,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.TextView
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.textfield.TextInputEditText
 
@@ -24,11 +27,6 @@ class ChooseExtraOptionsFragment : Fragment() {
 
     private val TAG = "ExtraFragment@Setup"
 
-    private val FIRST_NAME = "firstname"
-    private val LAST_NAME = "lastname"
-
-
-
 
     // Tag -> (schoolName, SchoolRegion)
     private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
@@ -39,19 +37,8 @@ class ChooseExtraOptionsFragment : Fragment() {
     private lateinit var schoolAdapter: ArrayAdapter<String>
     private lateinit var regionAdapter: ArrayAdapter<String>
 
-    private lateinit var firstName : TextInputEditText
-    private lateinit var lastName : TextInputEditText
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        val act = (activity as UserSetupActivity)
-
-        if(savedInstanceState != null){
-            act.chosenFirstName = savedInstanceState.getString(FIRST_NAME)!!
-            act.chosenLastName = savedInstanceState.getString(LAST_NAME)!!
-        }
-        super.onCreate(savedInstanceState)
-    }
+    private lateinit var firstName: TextInputEditText
+    private lateinit var lastName: TextInputEditText
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,37 +46,44 @@ class ChooseExtraOptionsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_extra_options, container, false)
+        val act = (activity as UserSetupActivity)
 
-        (activity as UserSetupActivity).schoolsName = resources.getStringArray(R.array.schoolNameList)
-        (activity as UserSetupActivity).regionsName =
-            resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
-        (activity as UserSetupActivity).schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
+        act.schoolsName = resources.getStringArray(R.array.schoolNameList)
+        act.regionsName = resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+        act.schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         firstName = view.findViewById(R.id.textFieldFirstName)
         lastName = view.findViewById(R.id.textFieldLastName)
 
-        firstName.doOnTextChanged { text, _, _, _ -> (activity as UserSetupActivity).chosenFirstName=text.toString() }
-        lastName.doOnTextChanged { text, _, _, _ -> (activity as UserSetupActivity).chosenLastName=text.toString() }
+        firstName.doOnTextChanged { text, _, _, _ -> act.chosenFirstName = text.toString() }
+        lastName.doOnTextChanged { text, _, _, _ -> act.chosenLastName = text.toString() }
 
         schoolTextViewAuto = view.findViewById(R.id.schoolListSpinner)
         regionTextViewAuto = view.findViewById(R.id.regionListSpinner)
 
-        schoolAndRegionMap =
-            (activity as UserSetupActivity).schoolTags.zip((activity as UserSetupActivity).schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
-                .toMap()
+        schoolAndRegionMap = act.schoolTags.zip(act.schoolsName.zip(resources.getStringArray(R.array.regionNameList))).toMap()
 
 
-        schoolTextViewAuto.setOnItemClickListener { v, _, position, _ -> onSchoolSelectedListener(v, position) }
-        regionTextViewAuto.setOnItemClickListener { v, _, pos, _ -> onRegionSelectedListener(v, pos) }
+        schoolTextViewAuto.setOnItemClickListener { _, _, position, _ -> onSchoolSelectedListener(
+            position
+        ) }
+        regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
 
         regionTextViewAuto.doOnTextChanged { _, _, _, _ -> populateSchoolAutoCompleteText() }
 
         populateSchoolAutoCompleteText()
         populateRegionAutoCompleteText()
 
-        initViews()
+        initViews(view)
 
         return view
+    }
+
+    private fun TextView.markRequired() {
+        text = buildSpannedString {
+            append(text)
+            color(Color.RED) { append(" *") } // Mind the space prefix.
+        }
     }
 
     override fun onPause() {
@@ -120,21 +114,7 @@ class ChooseExtraOptionsFragment : Fragment() {
         regionTextViewAuto.setAdapter(regionAdapter)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-
-        val act = (activity as UserSetupActivity)
-
-
-        Log.d(TAG, "First Name: ${firstName.text}, Last Name: ${lastName.text}")
-        outState.putString(FIRST_NAME,firstName.text.toString())
-        outState.putString(LAST_NAME, lastName.text.toString())
-
-        super.onSaveInstanceState(outState)
-
-    }
-
     private fun onSchoolSelectedListener(
-        v: AdapterView<*>,
         position: Int
     ) {
 
@@ -152,7 +132,7 @@ class ChooseExtraOptionsFragment : Fragment() {
         populateSchoolAutoCompleteText()
     }
 
-    private fun onRegionSelectedListener(v: AdapterView<*>, position: Int) {
+    private fun onRegionSelectedListener(position: Int) {
         schoolTextViewAuto.text = SpannableStringBuilder("")
         val region = regionAdapter.getItem(position).toString()
         (activity as UserSetupActivity).setupStudent.region = region
@@ -171,14 +151,15 @@ class ChooseExtraOptionsFragment : Fragment() {
 
     }
 
-    private fun initViews() {
+    private fun initViews(v: View) {
         val act = (activity as UserSetupActivity)
 
+        v.findViewById<TextView>(R.id.textViewFirstNameTitle).markRequired()
+        v.findViewById<TextView>(R.id.textViewLastNameTitle).markRequired()
+        v.findViewById<TextView>(R.id.schoolFilterSwitchText).markRequired()
+        v.findViewById<TextView>(R.id.regionFilterSwitchText).markRequired()
 
         Log.d(TAG, "Init Views")
-
-//        firstName.text =  SpannableStringBuilder(act.chosenFirstName)
-//        lastName.text = SpannableStringBuilder(act.chosenLastName)
 
         schoolTextViewAuto.text = SpannableStringBuilder(act.setupStudent.school)
         regionTextViewAuto.text = SpannableStringBuilder(act.setupStudent.region)
