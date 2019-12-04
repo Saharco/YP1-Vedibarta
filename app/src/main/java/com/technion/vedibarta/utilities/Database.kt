@@ -2,12 +2,11 @@ package com.technion.vedibarta.utilities
 
 import android.net.Uri
 import android.util.Log
-import androidx.core.content.FileProvider
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
@@ -15,17 +14,15 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.technion.vedibarta.POJOs.Student
 import java.io.File
-import java.sql.Timestamp
 
 class Database {
     private val database = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance().reference
-    private val user = FirebaseAuth.getInstance().currentUser
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid
     private val logTag = "DataBase"
 
-    private class StoragePathBuilder(user: FirebaseUser)
+    private class StoragePathBuilder(private val userId: String)
     {
-        private val userId = user.uid
         private var path = ""
 
         fun students(): StoragePathBuilder
@@ -52,10 +49,8 @@ class Database {
         }
     }
 
-    private class DataBasePathBuilder(private val database: FirebaseFirestore, user: FirebaseUser)
+    private class DataBasePathBuilder(private val database: FirebaseFirestore, private val userId: String)
     {
-        private val userId = user.uid
-
         fun students() = CollectionPath(database.collection("students"), userId)
 
         fun chats() = CollectionPath(database.collection("chats"), userId)
@@ -95,12 +90,12 @@ class Database {
 
     private fun logSuccess(a: Action)
     {
-        Log.d(logTag, "${user?.uid} $a success")
+        Log.d(logTag, "$userId $a success")
     }
 
     private fun logFailure(e: Exception, a: Action)
     {
-        Log.d(logTag, "${user?.uid} $a got Error: ${e.message} the cause: ${e.cause?.message}")
+        Log.d(logTag, "$userId $a got Error: ${e.message} the cause: ${e.cause?.message}")
     }
 
     private fun logStart(a: Action)
@@ -109,16 +104,30 @@ class Database {
     }
 
 
-    fun saveStudentProfile(name: String, photo: String?, region: String, school: String, gender: Gender,
-                           lastTimeActive: Timestamp, characteristics: List<String>, hobbies: List<String>): Task<Void>?
+    fun saveStudentProfile(s: Student): Task<Void>?
     {
-        val s = Student(name, photo, region, school, gender, lastTimeActive, characteristics, hobbies)
         var task:Task<Void>? = null
-        if (user != null)
+        if (userId != null)
         {
             logStart(Action.SAVE_PROFILE)
-            task = DataBasePathBuilder(database, user).students().userId().build().set(s)
+            task = DataBasePathBuilder(database, userId).students().userId().build().set(s)
                 .addOnSuccessListener { logSuccess(Action.SAVE_PROFILE) }
+                .addOnFailureListener{ e:Exception -> logFailure(e, Action.SAVE_PROFILE) }
+        }
+        return task
+    }
+
+    fun getStudentProfile(destination: Student): Task<DocumentSnapshot>?
+    {
+        var task: Task<DocumentSnapshot>? = null
+        if (userId != null)
+        {
+            logStart(Action.SAVE_PROFILE)
+            task = DataBasePathBuilder(database, userId).students().userId().build().get()
+                .addOnSuccessListener {document ->
+                    destination = document.toObject(Student::class.java)
+                    logSuccess(Action.SAVE_PROFILE)
+                }
                 .addOnFailureListener{ e:Exception -> logFailure(e, Action.SAVE_PROFILE) }
         }
         return task
@@ -127,9 +136,9 @@ class Database {
     fun uploadProfilePicture(photo: Uri): StorageTask<UploadTask.TaskSnapshot>?
     {
         var task: StorageTask<UploadTask.TaskSnapshot>? = null
-        if (user != null)
+        if (userId != null)
         {
-            val path = StoragePathBuilder(user).students().userId().pictures().fileName("profile_pic")
+            val path = StoragePathBuilder(userId).students().userId().pictures().fileName("profile_pic")
             logStart(Action.UPLOAD_PROFILE_PICTURE)
             task = uploadFile(photo, path)
                 .addOnSuccessListener { logSuccess(Action.UPLOAD_PROFILE_PICTURE) }
@@ -141,10 +150,10 @@ class Database {
     fun downloadProfilePicture(destination: File): StorageTask<FileDownloadTask.TaskSnapshot>?
     {
         var task: StorageTask<FileDownloadTask.TaskSnapshot>? = null
-        if (user != null)
+        if (userId != null)
         {
             logStart(Action.DOWNLOAD_PROFILE_PICTURE)
-            val path = StoragePathBuilder(user).students().userId().pictures().fileName("profile_pic")
+            val path = StoragePathBuilder(userId).students().userId().pictures().fileName("profile_pic")
             task = downloadFile(path, destination)
                 .addOnSuccessListener {
                     logSuccess(Action.DOWNLOAD_PROFILE_PICTURE)
