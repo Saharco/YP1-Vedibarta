@@ -23,8 +23,8 @@ class ProfileEditActivity : VedibartaActivity() {
     private val TAG = "ProfileEditActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    public var editedCharacteristics = student!!.characteristics.toMutableSet()
-    public var editedHobbies = student!!.hobbies.toMutableSet()
+    var editedCharacteristics = student!!.characteristics.toMutableSet()
+    var editedHobbies = student!!.hobbies.toMutableSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +67,12 @@ class ProfileEditActivity : VedibartaActivity() {
         //TODO: push to the database first!
         student!!.characteristics = editedCharacteristics.toList()
         student!!.hobbies = editedHobbies.toList()
-        onBackPressed()
+        database.saveStudentProfile(student!!)?.addOnSuccessListener {
+            Log.d("profileEdit", "saved profile changes")
+            onBackPressed()
+        }?.addOnFailureListener {
+            Log.d("profileEdit", "${it.message}, cause: ${it.cause?.message}")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
