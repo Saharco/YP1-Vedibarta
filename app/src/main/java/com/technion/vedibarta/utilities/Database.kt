@@ -14,7 +14,6 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.technion.vedibarta.POJOs.Student
 import java.io.File
-import kotlin.reflect.KClass
 
 class Database {
     private val database = FirebaseFirestore.getInstance()
@@ -119,6 +118,8 @@ class Database {
         return task
     }
 
+    //to get a Student object you will need to use document.toObject(Student::class.java)
+    //when document is the parameter of the lambda expression task.addOnSuccessListener{}
     fun getStudentProfile(): Task<DocumentSnapshot>?
     {
         var task: Task<DocumentSnapshot>? = null

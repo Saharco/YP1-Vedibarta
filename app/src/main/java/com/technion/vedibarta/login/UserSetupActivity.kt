@@ -5,18 +5,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
-import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.utilities.Gender
-import com.technion.vedibarta.utilities.SectionsPageAdapter
-import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.*
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import java.lang.Exception
 import java.sql.Timestamp
+import java.util.*
 
 class UserSetupActivity : VedibartaActivity() {
 
@@ -77,13 +74,9 @@ class UserSetupActivity : VedibartaActivity() {
             R.id.actionDoneSetup -> {
                 database.saveStudentProfile(
                     Student("$chosenFirstName $chosenLastName", null, chosenRegion,
-                    chosenSchool, chosenGender, Timestamp(System.currentTimeMillis()),
+                    chosenSchool, chosenGender, Date(System.currentTimeMillis()),
                     chosenCharacteristics.toList(), chosenHobbies.toList()))
                     ?.addOnSuccessListener {
-                        database.getStudentProfile()?.addOnSuccessListener { document ->
-                            val d = document.data?.get("characteristics")
-                            Log.d("DataBase", d?.javaClass?.kotlin.toString())
-                        }
                     }
 
                 startActivity(Intent(this, MainActivity::class.java))
