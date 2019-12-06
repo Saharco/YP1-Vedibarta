@@ -1,7 +1,5 @@
 package com.technion.vedibarta.userProfile
 
-import android.content.DialogInterface
-import android.content.res.Configuration
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
