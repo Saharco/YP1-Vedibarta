@@ -119,7 +119,7 @@ class Database {
     }
 
     //to get a Student object you will need to use document.toObject(Student::class.java)
-    //when document is the parameter of the lambda expression task.addOnSuccessListener{}
+    //when document is the parameter of the lambda expression task.addOnSuccessListener{document ->}
     fun getStudentProfile(): Task<DocumentSnapshot>?
     {
         var task: Task<DocumentSnapshot>? = null
