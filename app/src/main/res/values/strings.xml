@@ -55,6 +55,7 @@
     <string name="text_field_hint">רק אותיות בעברית</string>
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
     <string name="user_setup_missing_details_message">אנא מלא את כל הפרטים החסרים</string>
+    <string name="checking_document">מסתנכרן עם השרת</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

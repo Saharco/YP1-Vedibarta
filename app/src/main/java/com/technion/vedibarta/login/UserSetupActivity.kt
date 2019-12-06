@@ -1,6 +1,7 @@
 package com.technion.vedibarta.login
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -49,9 +50,17 @@ class UserSetupActivity : VedibartaActivity() {
     {
         super.onCreate(savedInstanceState)
 
-        database.getStudentProfile()?.addOnCompleteListener { document ->
-            if (document.result != null && document.result!!.exists())
+        val dialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.checking_document))
+            setCancelable(false)
+            setIndeterminate(true)
+            show()
+        }
+
+        database.getStudentProfile()?.addOnSuccessListener { document ->
+            if (document != null && document.exists())
             {
+                dialog.dismiss()
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
