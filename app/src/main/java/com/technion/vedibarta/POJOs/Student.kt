@@ -3,16 +3,19 @@ package com.technion.vedibarta.POJOs
 import com.technion.vedibarta.utilities.Gender
 import java.io.Serializable
 import java.sql.Timestamp
+import java.util.*
+import kotlin.reflect.KClass
 
 data class Student(
-    var name: String,
-    var photo: String?,
-    var region: String,
-    var school: String,
-    var gender: Gender,
-    var lastActivity: Timestamp,
-    var characteristics: List<String>,
-    var hobbies: List<String>) : Serializable {
+    var name: String = "",
+    var photo: String? = null,
+    var region: String = "",
+    var school: String = "",
+    val gender: Gender = Gender.MALE,
+    var lastActivity: Date = Date(System.currentTimeMillis()),
+    var characteristics: List<String> = listOf(),
+    var hobbies: List<String> = listOf()
+) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -42,5 +45,4 @@ data class Student(
         result = 31 * result + hobbies.hashCode()
         return result
     }
-
 }

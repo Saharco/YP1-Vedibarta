@@ -46,6 +46,7 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.chat_card.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.Exception
 
 
 class UserProfileActivity : VedibartaActivity(),
@@ -638,16 +639,24 @@ class UserProfileActivity : VedibartaActivity(),
             when (requestCode) {
                 REQUEST_CAMERA -> if (selectedImage != null) {
                     uploadPhoto(selectedImage!!)
+                    database.uploadProfilePicture(selectedImage!!)
+                        ?.addOnSuccessListener {
+                            uploadPhoto(selectedImage!!)
+                        }
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
-                    uploadPhoto(selectedImage!!)
+                    database.uploadProfilePicture(selectedImage!!)
+                        ?.addOnSuccessListener {
+                            uploadPhoto(selectedImage!!)
+                        }
                 }
             }
         }
     }
 
-    private fun uploadPhoto(imagePath: Uri) {
+    private fun uploadPhoto(imagePath: Uri)
+    {
         val resize = ImageCompressTask()
         resize.execute(imagePath)
     }

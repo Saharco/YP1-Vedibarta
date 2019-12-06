@@ -16,12 +16,10 @@ import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
-import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.utilities.Gender
-import com.technion.vedibarta.utilities.SectionsPageAdapter
-import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.*
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import java.sql.Timestamp
+import java.util.*
 
 class UserSetupActivity : VedibartaActivity() {
 
@@ -119,9 +117,9 @@ class UserSetupActivity : VedibartaActivity() {
                         setupStudent.region,
                         setupStudent.school,
                         setupStudent.gender,
-                        Timestamp(System.currentTimeMillis()),
+                        Date(System.currentTimeMillis()),
                         setupStudent.characteristics,
-                        setupStudent.hobbies)
+                        setupStudent.hobbies)?.addOnSuccessListener {}
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
