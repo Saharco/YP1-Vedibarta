@@ -1,3 +1,3 @@
 package com.technion.vedibarta.utilities
 
-enum class Gender { MALE, FEMALE }
+enum class Gender { MALE, FEMALE, NONE }

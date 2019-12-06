@@ -15,8 +15,7 @@ data class Student(
     var lastActivity: Date = Date(System.currentTimeMillis()),
     var characteristics: List<String> = listOf(),
     var hobbies: List<String> = listOf()
-) : Serializable
-{
+) : Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

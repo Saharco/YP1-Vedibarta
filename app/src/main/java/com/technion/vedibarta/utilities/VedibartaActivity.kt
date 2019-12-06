@@ -1,21 +1,16 @@
 package com.technion.vedibarta.utilities
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.app.Activity
-import android.content.Context
 import android.content.res.Resources
-import android.view.WindowManager
 import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.appcompat.app.AppCompatActivity
 import com.technion.vedibarta.POJOs.Student
-import com.technion.vedibarta.R
 import java.sql.Timestamp
 
 /**
@@ -52,13 +47,26 @@ open class VedibartaActivity : AppCompatActivity()
          */
         fun dpToPx(resources: Resources, dp: Float): Float =
             TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+
+        /**
+         * Hides the virtual keyboard in the activity, if it is open
+         *
+         * @param activity: activity in which the keyboard should be hidden
+         */
+        fun hideKeyboard(activity: Activity) {
+            val imm = activity
+                .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            var view = activity.currentFocus
+            if (view == null) {
+                // There is no view to pass the focus to, so we create a new view
+                view = View(activity)
+            }
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
     }
 
     protected val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS: Int = 90
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onStart() {
         super.onStart()
@@ -86,19 +94,6 @@ open class VedibartaActivity : AppCompatActivity()
         }
     }
 
-    /**
-     * Hides the virtual keyboard in the activity, if it is open
-     *
-     * @param activity: activity in which the keyboard should be hidden
-     */
-    protected fun hideKeyboard(activity: Activity) {
-        val imm = activity
-            .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        var view = activity.currentFocus
-        if (view == null) {
-            // There is no view to pass the focus to, so we create a new view
-            view = View(activity)
-        }
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
+
+
 }
