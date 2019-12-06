@@ -40,6 +40,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
+import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -639,46 +640,72 @@ class UserProfileActivity : VedibartaActivity(),
             when (requestCode) {
                 REQUEST_CAMERA -> if (selectedImage != null) {
                     uploadPhoto(selectedImage!!)
-                    database.uploadProfilePicture(selectedImage!!)
-                        ?.addOnSuccessListener {
-                            uploadPhoto(selectedImage!!)
-                        }
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
-                    database.uploadProfilePicture(selectedImage!!)
-                        ?.addOnSuccessListener {
-                            uploadPhoto(selectedImage!!)
-                        }
+                    uploadPhoto(selectedImage!!)
                 }
             }
         }
     }
 
-    private fun uploadPhoto(imagePath: Uri)
-    {
+    private fun uploadPhoto(imagePath: Uri) {
         val resize = ImageCompressTask()
         resize.execute(imagePath)
-    }
-
-    private fun setNewUserProfilePic(bytes: ByteArray) {
-        updateServerUserProfilePic(bytes)
-        //populateProfilePicture() TODO: uncomment this when the Student class has the new information
     }
 
     /**
      * Updates the user profile picture *IN THE DATABASE!*,
      * updates the local Student class after the server update
+     * TODO: move to database abstraction if possible
      */
     private fun updateServerUserProfilePic(bytes: ByteArray) {
-        //TODO: push profile pic change to the server and update Student with the new picture URL
+        val storageRef = database.storage.child("students/${database.userId}/pictures/profile_pic")
+        startLoadingPictureChange()
+        storageRef.putBytes(bytes)
+            .addOnSuccessListener {
+                storageRef.downloadUrl
+                    .addOnSuccessListener {
+                        userPhotoURL = it.toString()
+                        database.database.collection("students").document(database.userId!!)
+                            .set(mapOf(Pair("photo", userPhotoURL)), SetOptions.merge())
+                            .addOnSuccessListener {
+                                Log.d(TAG, "successfully updated user profile picture")
+                                student!!.photo = userPhotoURL
+                                populateProfilePicture()
+                            }
+                            .addOnFailureListener {
+                                Log.d(TAG, "failed to update user profile picture")
+                                finishLoadingPictureChange()
+                            }
+                    }
+                    .addOnFailureListener {
+                        Log.d(TAG, "failed to update user profile picture")
+                        finishLoadingPictureChange()
+                    }
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "failed to update user profile picture")
+                finishLoadingPictureChange()
+            }
+    }
+
+    private fun finishLoadingPictureChange() {
+        profilePicturePB.visibility = View.GONE
+        profilePicture.visibility = View.VISIBLE
+        changeProfilePictureButton.visibility = View.VISIBLE
+    }
+
+    private fun startLoadingPictureChange() {
+        profilePicturePB.visibility = View.VISIBLE
+        profilePicture.visibility = View.INVISIBLE
+        changeProfilePictureButton.visibility = View.GONE
     }
 
     private inner class ImageCompressTask : AsyncTask<Uri, Int, ByteArray>() {
 
         override fun onPreExecute() {
-            profilePicturePB.visibility = View.VISIBLE
-            profilePicture.visibility = View.INVISIBLE
+            startLoadingPictureChange()
         }
 
         override fun doInBackground(vararg uris: Uri): ByteArray? {
@@ -705,14 +732,7 @@ class UserProfileActivity : VedibartaActivity(),
 
         override fun onPostExecute(bytes: ByteArray) {
             super.onPostExecute(bytes)
-            Glide.with(applicationContext)
-                .asBitmap()
-                .load(bytes)
-                .apply(RequestOptions.circleCropTransform())
-                .into(profilePicture)
-            profilePicturePB.visibility = View.GONE
-            profilePicture.visibility = View.VISIBLE
-            setNewUserProfilePic(bytes)
+            updateServerUserProfilePic(bytes)
         }
 
         private fun getBytesFromBitmap(bitmap: Bitmap, quality: Int): ByteArray {
