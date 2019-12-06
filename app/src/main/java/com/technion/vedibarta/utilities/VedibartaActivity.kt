@@ -22,23 +22,7 @@ open class VedibartaActivity : AppCompatActivity()
     val database = Database()
     //TODO: for now this will configure a default student. change this to null later
     companion object {
-        var student: Student? = Student(
-            "סהר כהן",
-            "https://firebasestorage.googleapis.com/v0/b/vedibarta-83bcf.appspot.com/o/temp_profile_pic.jpg?alt=media&token=ab1e40e1-92fd-4d54-ac98-b957a27c726a",
-            "בת חפר, עמק חפר",
-            "טכניון",
-            Gender.MALE,
-            Timestamp(System.currentTimeMillis()),
-            listOf("חילוני", "מזרחי", "צבר", "אשכנזי"),
-            listOf(
-                "הוראה",
-                "טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך",
-                "מדע",
-                "מתמטיקה",
-                "משחקי מחשב",
-                "לתכנת"
-            )
-        )
+        var student: Student? = null
 
         /**
          * @param resources: resources object of the current context

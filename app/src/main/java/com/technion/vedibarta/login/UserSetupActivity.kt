@@ -45,8 +45,18 @@ class UserSetupActivity : VedibartaActivity() {
     var chosenFirstName = ""
     var chosenLastName = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
+
+        database.getStudentProfile()?.addOnCompleteListener { document ->
+            if (document.result != null && document.result!!.exists())
+            {
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        }
+
         setContentView(R.layout.activity_user_setup)
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
