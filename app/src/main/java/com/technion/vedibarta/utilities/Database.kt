@@ -14,6 +14,7 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.technion.vedibarta.POJOs.Student
 import java.io.File
+import kotlin.reflect.KClass
 
 class Database {
     private val database = FirebaseFirestore.getInstance()
@@ -73,7 +74,8 @@ class Database {
     {
         SAVE_PROFILE,
         UPLOAD_PROFILE_PICTURE,
-        DOWNLOAD_PROFILE_PICTURE
+        DOWNLOAD_PROFILE_PICTURE,
+        GET_PROFILE
     }
 
     private fun uploadFile(file: Uri, path: String): StorageTask<UploadTask.TaskSnapshot>
@@ -117,18 +119,15 @@ class Database {
         return task
     }
 
-    fun getStudentProfile(destination: Student): Task<DocumentSnapshot>?
+    fun getStudentProfile(): Task<DocumentSnapshot>?
     {
         var task: Task<DocumentSnapshot>? = null
         if (userId != null)
         {
-            logStart(Action.SAVE_PROFILE)
+            logStart(Action.GET_PROFILE)
             task = DataBasePathBuilder(database, userId).students().userId().build().get()
-                .addOnSuccessListener {document ->
-                    destination = document.toObject(Student::class.java)
-                    logSuccess(Action.SAVE_PROFILE)
-                }
-                .addOnFailureListener{ e:Exception -> logFailure(e, Action.SAVE_PROFILE) }
+                .addOnSuccessListener { logSuccess(Action.GET_PROFILE) }
+                .addOnFailureListener{ e:Exception -> logFailure(e, Action.GET_PROFILE) }
         }
         return task
     }

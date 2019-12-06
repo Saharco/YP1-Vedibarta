@@ -3,6 +3,7 @@ package com.technion.vedibarta.POJOs
 import com.technion.vedibarta.utilities.Gender
 import java.io.Serializable
 import java.sql.Timestamp
+import kotlin.reflect.KClass
 
 data class Student(
     var name: String,
@@ -42,5 +43,4 @@ data class Student(
         result = 31 * result + hobbies.hashCode()
         return result
     }
-
 }

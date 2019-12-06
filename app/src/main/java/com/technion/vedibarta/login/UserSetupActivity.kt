@@ -75,8 +75,17 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             //TODO: Add checks that user have chosen all required items and filled all fields
             R.id.actionDoneSetup -> {
-                database.saveStudentProfile("$chosenFirstName $chosenLastName", null, chosenRegion,
-                    chosenSchool, chosenGender, Timestamp(System.currentTimeMillis()), chosenCharacteristics.toList(), chosenHobbies.toList())
+                database.saveStudentProfile(
+                    Student("$chosenFirstName $chosenLastName", null, chosenRegion,
+                    chosenSchool, chosenGender, Timestamp(System.currentTimeMillis()),
+                    chosenCharacteristics.toList(), chosenHobbies.toList()))
+                    ?.addOnSuccessListener {
+                        database.getStudentProfile()?.addOnSuccessListener { document ->
+                            val d = document.data?.get("characteristics")
+                            Log.d("DataBase", d?.javaClass?.kotlin.toString())
+                        }
+                    }
+
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
