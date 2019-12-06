@@ -11,7 +11,7 @@ data class Student(
     var photo: String? = null,
     var region: String = "",
     var school: String = "",
-    val gender: Gender = Gender.MALE,
+    var gender: Gender = Gender.MALE,
     var lastActivity: Date = Date(System.currentTimeMillis()),
     var characteristics: List<String> = listOf(),
     var hobbies: List<String> = listOf()

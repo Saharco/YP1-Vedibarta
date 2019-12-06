@@ -111,7 +111,7 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
-                    database.saveStudentProfile(
+                    database.saveStudentProfile(Student(
                         "$chosenFirstName $chosenLastName",
                         null,
                         setupStudent.region,
@@ -119,7 +119,8 @@ class UserSetupActivity : VedibartaActivity() {
                         setupStudent.gender,
                         Date(System.currentTimeMillis()),
                         setupStudent.characteristics,
-                        setupStudent.hobbies)?.addOnSuccessListener {}
+                        setupStudent.hobbies)
+                    )?.addOnSuccessListener {}
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {

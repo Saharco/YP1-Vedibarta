@@ -20,6 +20,11 @@
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
     <string name="button_logout_text">התנתקות</string>
+    <string name="user_profile_dialog_title_suffix">, תעלה תמונה שלך</string>
+    <string name="user_profile_dialog_description">בחר תוכן ראוי בלבד\nתוכן לא ראוי יימחק</string>
+    <string name="user_profile_dialog_camera_button">מצלמה</string>
+    <string name="user_profile_dialog_gallery_button">מהגלריה</string>
+    <string name="user_profile_dialog_dismiss_button">ביטול</string>
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">בחירת שותף</string>
