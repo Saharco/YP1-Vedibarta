@@ -32,12 +32,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".login.UserSetupActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".login.UserSetupActivity" />
 
         <activity android:name=".main.MainActivity" />
 
@@ -62,11 +57,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".userProfile.UserProfileActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".userProfile.UserProfileActivity"/>
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
