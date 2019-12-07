@@ -52,7 +52,7 @@ class MainActivity : VedibartaActivity() {
 
         if (student == null)
         {
-            database.getStudentProfile()?.addOnSuccessListener {document ->
+            database.students().userId().build().get().addOnSuccessListener {document ->
                 student = document.toObject(Student::class.java)
                 Log.d(logTag, "loaded student profile successfully")
             }?.addOnFailureListener {

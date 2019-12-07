@@ -10,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.technion.vedibarta.POJOs.Student
 import java.sql.Timestamp
 
@@ -19,7 +20,9 @@ import java.sql.Timestamp
 @SuppressLint("Registered")
 open class VedibartaActivity : AppCompatActivity()
 {
-    val database = Database()
+    val userId = FirebaseAuth.getInstance().currentUser?.uid
+    val storage = Storage(userId)
+    val database = DocumentsCollections(userId)
     //TODO: for now this will configure a default student. change this to null later
     companion object {
         var student: Student? = null

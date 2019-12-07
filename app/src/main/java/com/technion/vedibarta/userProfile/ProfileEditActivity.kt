@@ -67,7 +67,7 @@ class ProfileEditActivity : VedibartaActivity() {
         //TODO: push to the database first!
         student!!.characteristics = editedCharacteristics.toList()
         student!!.hobbies = editedHobbies.toList()
-        database.saveStudentProfile(student!!)?.addOnSuccessListener {
+        database.students().userId().build().set(student!!).addOnSuccessListener {
             Log.d("profileEdit", "saved profile changes")
             onBackPressed()
         }?.addOnFailureListener {

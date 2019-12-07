@@ -57,7 +57,7 @@ class UserSetupActivity : VedibartaActivity() {
             show()
         }
 
-        database.getStudentProfile()?.addOnSuccessListener { document ->
+        database.students().userId().build().get().addOnSuccessListener { document ->
             if (document != null && document.exists())
             {
                 dialog.dismiss()
@@ -130,7 +130,7 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
-                    database.saveStudentProfile(Student(
+                    database.students().userId().build().set(Student(
                         "$chosenFirstName $chosenLastName",
                         null,
                         setupStudent.region,
@@ -139,7 +139,7 @@ class UserSetupActivity : VedibartaActivity() {
                         Date(System.currentTimeMillis()),
                         setupStudent.characteristics,
                         setupStudent.hobbies)
-                    )?.addOnSuccessListener {}
+                    ).addOnSuccessListener {}
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
