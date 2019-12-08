@@ -51,6 +51,8 @@ import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.*
+import kotlinx.android.synthetic.main.chat_card.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -164,9 +166,7 @@ class UserProfileActivity : VedibartaActivity(),
             }
             val token = it.result?.token
             Log.d(TAG, "token is: $token")
-            database.database.collection("students")
-                .document(database.userId!!)
-                .update("tokens", FieldValue.arrayRemove(token))
+            database.students().userId().build().update("tokens", FieldValue.arrayRemove(token))
 
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
@@ -712,14 +712,14 @@ class UserProfileActivity : VedibartaActivity(),
      * TODO: move to database abstraction if possible
      */
     private fun updateServerUserProfilePic(bytes: ByteArray) {
-        val storageRef = database.storage.child("students/${database.userId}/pictures/profile_pic")
+        val storageRef = storage.students().userId().pictures().fileName("profile_pic")
         startLoadingPictureChange()
         storageRef.putBytes(bytes)
             .addOnSuccessListener {
                 storageRef.downloadUrl
                     .addOnSuccessListener {
                         userPhotoURL = it.toString()
-                        database.database.collection("students").document(database.userId!!)
+                        database.students().userId().build()
                             .set(mapOf(Pair("photo", userPhotoURL)), SetOptions.merge())
                             .addOnSuccessListener {
                                 Log.d(TAG, "successfully updated user profile picture")

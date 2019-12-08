@@ -1,6 +1,7 @@
 package com.technion.vedibarta.login
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -49,9 +50,17 @@ class UserSetupActivity : VedibartaActivity() {
     {
         super.onCreate(savedInstanceState)
 
-        database.getStudentProfile()?.addOnCompleteListener { document ->
-            if (document.result != null && document.result!!.exists())
+        val dialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.checking_document))
+            setCancelable(false)
+            setIndeterminate(true)
+            show()
+        }
+
+        database.students().userId().build().get().addOnSuccessListener { document ->
+            if (document != null && document.exists())
             {
+                dialog.dismiss()
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
@@ -121,7 +130,7 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
-                    database.saveStudentProfile(Student(
+                    database.students().userId().build().set(Student(
                         "$chosenFirstName $chosenLastName",
                         null,
                         setupStudent.region,
@@ -130,7 +139,7 @@ class UserSetupActivity : VedibartaActivity() {
                         Date(System.currentTimeMillis()),
                         setupStudent.characteristics,
                         setupStudent.hobbies)
-                    )?.addOnSuccessListener {}
+                    ).addOnSuccessListener {}
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
