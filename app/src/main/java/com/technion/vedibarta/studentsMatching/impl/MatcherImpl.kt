@@ -9,7 +9,24 @@ import com.technion.vedibarta.studentsMatching.Matcher
 const val STUDENTS_LIMIT = 10
 const val TAG = "Matcher"
 
-class MatcherImpl(private val characteristics: List<String>, private val region: String? = null, private val school: String? = null) : Matcher {
+/**
+ * The default implementation of [Matcher].
+ *
+ * The matched students will all be a perfect match, and if needed, the rest will be an ok match.
+ * Perfect students will always be placed before ok students in the returned lists.
+ * The algorithm will match no more than [STUDENTS_LIMIT] students.
+ *
+ * Any student which fits the [characteristics], [region] and [school] will be considered a perfect
+ * match. If there aren't enough students who do fit the parameters (less than [STUDENTS_LIMIT]),
+ * any other student who has all-but-one of the specified [characteristics], will be considered an
+ * ok match.
+ *
+ * @param characteristics the wanted set of characteristics, which the matched users must have.
+ * @param region if not null, the region in which the matched users must live.
+ * @param school if not null, the school in which the matched users must study.
+ */
+class MatcherImpl(private val characteristics: Collection<String>, private val region: String? = null,
+                  private val school: String? = null) : Matcher {
     private val studentsCollection = FirebaseFirestore.getInstance().collection("students")
 
     override fun match(): List<Student> {
@@ -39,7 +56,7 @@ class MatcherImpl(private val characteristics: List<String>, private val region:
         return result
     }
 
-    private fun matchWithGivenCharacteristics(characteristics: List<String>, amount: Long): List<DocumentSnapshot> {
+    private fun matchWithGivenCharacteristics(characteristics: Iterable<String>, amount: Long): List<DocumentSnapshot> {
         var query = studentsCollection.whereEqualTo("region", region)
             .whereEqualTo("school", school)
 
