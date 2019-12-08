@@ -59,7 +59,9 @@ class ChatRoomListeners(private val chatRoom: ChatRoomActivity,
         chatRoom.database
             .students()
             .userId()
+            .chats()
             .chatWith(chatPartnerID)
+            .messages()
             .build().add(Message(text = chatBox.text.toString()))
             .addOnSuccessListener { chatBox.setText("")}
             .addOnFailureListener {

@@ -29,13 +29,16 @@ class Storage(private val userId: String?)
 
 interface ICollectionPath
 {
-    fun build(): CollectionReference
     fun userId():IDocumentPath
+    fun chatWith(partnerId: String): IDocumentPath
+    fun build(): CollectionReference
+
 }
 interface IDocumentPath
 {
+    fun chats(): ICollectionPath
+    fun messages(): ICollectionPath
     fun build(): DocumentReference
-    fun chatWith(partnerId: String): ICollectionPath
 }
 class DocumentsCollections(private val userId: String?)
 {
@@ -45,11 +48,13 @@ class DocumentsCollections(private val userId: String?)
 }
 private class CollectionPath(private val c: CollectionReference, private val userId: String?):ICollectionPath
 {
-    override fun build(): CollectionReference = c
+    override fun chatWith(partnerId: String): IDocumentPath = DocumentPath(c.document(partnerId), userId)
     override fun userId() = DocumentPath(c.document("$userId"), userId)
+    override fun build(): CollectionReference = c
 }
 private class DocumentPath(private val d: DocumentReference, private val userId: String?): IDocumentPath
 {
+    override fun chats(): ICollectionPath = CollectionPath(d.collection("chats"), userId)
+    override fun messages(): ICollectionPath = CollectionPath(d.collection("messages"), userId)
     override fun build(): DocumentReference = d
-    override fun chatWith(partnerId: String): ICollectionPath = CollectionPath(d.collection(partnerId), userId)
 }
