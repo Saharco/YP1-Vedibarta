@@ -54,7 +54,13 @@ class ChatRoomActivity : VedibartaActivity()
 
     private fun configureAdapter()
     {
-        val query = database.students().userId().chats().chatWith(chatPartnerId!!).messages()
+        //TODO(for testing, must delete later)
+        var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
+        if (userId == partner)
+        {
+            partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
+        }
+        val query = database.students().userId().chats().chatWith(partner).messages()
                                     .build().limit(50).orderBy("fullTimeStamp")
         val options = FirestoreRecyclerOptions.Builder<Message>()
             .setQuery(query,Message::class.java)
