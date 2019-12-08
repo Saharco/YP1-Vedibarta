@@ -2,51 +2,69 @@ package com.technion.vedibarta.chatRoom
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.technion.vedibarta.R
+import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.technion.vedibarta.POJOs.Message
+import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.technion.vedibarta.utilities.DocumentsCollections
+import java.lang.Exception
+
 
 class ChatRoomActivity : VedibartaActivity()
     ,ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
     ,ChatRoomAbuseReportDialog.AbuseReportDialogListener
 {
+    private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat_room)
+        setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
 
-        val chatRoomListeners = ChatRoomListeners(this@ChatRoomActivity, supportFragmentManager)
+        val chatRoomListeners = ChatRoomListeners(this, supportFragmentManager)
 
         setToolbar(chatToolbar)
         chatRoomListeners.configureListeners()
-        val messageList = ArrayList<Message>()
-        populateMessageList(messageList)// TODO remove after testing
-        configureAdapter(messageList)
+        try
+        {
+            configureAdapter()
+        }
+        catch (e: Exception)
+        {
+            Log.d("Chat", "${e.message}, cause: ${e.cause?.message}")
+        }
     }
 
-    //TODO remove after testing
-    private fun populateMessageList(messageList: ArrayList<Message>)
-    {
-        val m1 = Message("שלום", Message.MessageType.USER)
-        val m2 = Message("היי", Message.MessageType.OTHER)
-        val m3 = Message("נראה ששניכם אוהבים כדורסל!\nמהי הקבוצה האהובה עליכם?", Message.MessageType.GENERATOR)
-
-        messageList.add(m1)
-        messageList.add(m2)
-        messageList.add(m3)
+    override fun onStart() {
+        super.onStart()
+        adapter.startListening()
     }
 
-    private fun configureAdapter(messageList: ArrayList<Message>)
+    override fun onStop() {
+        super.onStop()
+        adapter.stopListening()
+    }
+
+    private fun configureAdapter()
     {
+        val query = database.students().userId().chats().build().limit(50).orderBy("fullTimeStamp")
+        val options = FirestoreRecyclerOptions.Builder<Message>()
+            .setQuery(query,Message::class.java)
+            .build()
+        adapter = getChatAdapter(options)
         chatView.layoutManager = LinearLayoutManager(this)
-        chatView.adapter = ChatRoomMessageAdapter(messageList){Unit}
+        chatView.adapter = adapter
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -79,6 +97,87 @@ class ChatRoomActivity : VedibartaActivity()
 
     override fun onAbuseTypeClick(dialog: DialogFragment)
     {
+        TODO("need to decide what to do")
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun getChatAdapter(options: FirestoreRecyclerOptions<Message>): FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
+    {
+       return  object: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options)
+        {
+            override fun getItemViewType(position: Int): Int
+            {
+                return this.snapshots[position].messageType.ordinal
+            }
+            override fun onCreateViewHolder(
+                parent: ViewGroup,
+                viewType: Int
+            ): RecyclerView.ViewHolder {
+                var view: View? = null
+                when (viewType) {
+                    MessageType.USER.ordinal -> {
+                        view = LayoutInflater.from(parent.context).inflate(
+                            com.technion.vedibarta.R.layout.sent_message_holder,
+                            parent,
+                            false
+                        )
+                        return SentMessageViewHolder(view)
+                    }
+                    MessageType.OTHER.ordinal -> {
+                        view = LayoutInflater.from(parent.context).inflate(
+                            com.technion.vedibarta.R.layout.received_message_holder,
+                            parent,
+                            false
+                        )
+                        return ReceivedMessageViewHolder(view)
+                    }
+                    else -> {
+                        view = LayoutInflater.from(parent.context).inflate(
+                            com.technion.vedibarta.R.layout.generator_message_holder,
+                            parent,
+                            false
+                        )
+                        return GeneratorMessageViewHolder(view)
+                    }
+                }
+            }
+
+            override fun onBindViewHolder(
+                holder: RecyclerView.ViewHolder,
+                position: Int,
+                message: Message
+            ) {
+                when (holder) {
+                    is SentMessageViewHolder -> holder.bind(message)
+                    is ReceivedMessageViewHolder -> holder.bind(message)
+                    is GeneratorMessageViewHolder -> holder.bind(message)
+                }
+            }
+        }
+    }
+
+    private class SentMessageViewHolder(view: View) :
+        RecyclerView.ViewHolder(view) {
+
+        fun bind(message: Message) {
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.sentMessageBody).text = message.text
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.sentMessageTime).text = message.getTime()
+        }
+    }
+
+    private class ReceivedMessageViewHolder(view: View) :
+        RecyclerView.ViewHolder(view) {
+
+        fun bind(message: Message) {
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.receivedMessageBody).text = message.text
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.receivedMessageTime).text = message.getTime()
+        }
+    }
+    private class GeneratorMessageViewHolder(view: View) :
+        RecyclerView.ViewHolder(view) {
+
+        fun bind(message: Message) {
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.generatorMessageBody).text = message.text
+        }
     }
 }

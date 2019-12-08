@@ -3,13 +3,17 @@ package com.technion.vedibarta.chatRoom
 import android.app.Activity
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.FragmentManager
+import com.technion.vedibarta.POJOs.Message
+import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.ListenersSetter
+import com.technion.vedibarta.utilities.VedibartaActivity
 
-class ChatRoomListeners(private val chatRoom: Activity, private val supportFragmentManager: FragmentManager) {
+class ChatRoomListeners(private val chatRoom: ChatRoomActivity, private val supportFragmentManager: FragmentManager) {
 
     fun configureListeners() {
         val popupMenu = chatRoom.findViewById<View>(R.id.popupMenu)
@@ -47,7 +51,16 @@ class ChatRoomListeners(private val chatRoom: Activity, private val supportFragm
 
     private fun sendMessage(v: View)
     {
-        Toast.makeText(chatRoom, "Message Sent", Toast.LENGTH_SHORT).show()
+        val chatBox: EditText = chatRoom.findViewById<View>(R.id.chatBox) as EditText
+
+        chatRoom.database
+            .students()
+            .userId()
+            .chats()
+            .build().add(Message(text = chatBox.text.toString()))
+            .addOnSuccessListener { chatBox.setText("")}
+            .addOnFailureListener {
+                Toast.makeText(chatRoom, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
     }
 
 }
