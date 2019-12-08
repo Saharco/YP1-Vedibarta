@@ -26,24 +26,20 @@ class ChatRoomActivity : VedibartaActivity()
     ,ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
     ,ChatRoomAbuseReportDialog.AbuseReportDialogListener
 {
+
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
+    var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
 
-        val chatRoomListeners = ChatRoomListeners(this, supportFragmentManager)
+        val chatRoomListeners = ChatRoomListeners(this, chatPartnerId!!, supportFragmentManager)
 
         setToolbar(chatToolbar)
         chatRoomListeners.configureListeners()
-        try
-        {
-            configureAdapter()
-        }
-        catch (e: Exception)
-        {
-            Log.d("Chat", "${e.message}, cause: ${e.cause?.message}")
-        }
+        configureAdapter()
     }
 
     override fun onStart() {
@@ -58,7 +54,7 @@ class ChatRoomActivity : VedibartaActivity()
 
     private fun configureAdapter()
     {
-        val query = database.students().userId().chats().build().limit(50).orderBy("fullTimeStamp")
+        val query = database.students().userId().chatWith(chatPartnerId!!).build().limit(50).orderBy("fullTimeStamp")
         val options = FirestoreRecyclerOptions.Builder<Message>()
             .setQuery(query,Message::class.java)
             .build()

@@ -13,7 +13,10 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.ListenersSetter
 import com.technion.vedibarta.utilities.VedibartaActivity
 
-class ChatRoomListeners(private val chatRoom: ChatRoomActivity, private val supportFragmentManager: FragmentManager) {
+class ChatRoomListeners(private val chatRoom: ChatRoomActivity,
+                        private val chatPartnerID: String,
+                        private val supportFragmentManager: FragmentManager)
+{
 
     fun configureListeners() {
         val popupMenu = chatRoom.findViewById<View>(R.id.popupMenu)
@@ -56,7 +59,7 @@ class ChatRoomListeners(private val chatRoom: ChatRoomActivity, private val supp
         chatRoom.database
             .students()
             .userId()
-            .chats()
+            .chatWith(chatPartnerID)
             .build().add(Message(text = chatBox.text.toString()))
             .addOnSuccessListener { chatBox.setText("")}
             .addOnFailureListener {
