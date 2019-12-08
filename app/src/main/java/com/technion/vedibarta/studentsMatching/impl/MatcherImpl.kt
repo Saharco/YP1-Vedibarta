@@ -29,8 +29,10 @@ class MatcherImpl(private val characteristics: List<String>, private val region:
     private fun tryWithOneLessCharacteristic(amount: Long): List<DocumentSnapshot> {
         val result = emptyList<DocumentSnapshot>().toMutableList()
 
-        for (i in 0.. characteristics.size) {
-            val newCharacteristics = characteristics.drop(i)
+        val shuffleCharacteristics = characteristics.shuffled()
+
+        for (i in 0.. shuffleCharacteristics.size) {
+            val newCharacteristics = shuffleCharacteristics.drop(i)
             result.addAll(matchWithGivenCharacteristics(newCharacteristics, amount - result.size))
         }
 
