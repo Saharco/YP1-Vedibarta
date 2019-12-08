@@ -148,8 +148,9 @@
 
             <View
                 android:id="@+id/divider2"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="1dp"
+                android:layout_marginTop="16dp"
                 android:background="@color/colorDivider" />
 
             <TextView
@@ -169,24 +170,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/logout_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="32dp"
-                android:background="@android:color/holo_red_dark"
-                android:drawableStart="@drawable/ic_exit_white"
-                android:focusable="true"
-                android:clickable="true"
-                android:gravity="start|center"
-                android:layoutDirection="ltr"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:text="@string/button_logout_text"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                app:backgroundTint="@android:color/holo_red_dark" />
         </LinearLayout>
 
     </ScrollView>
@@ -221,8 +204,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="#960b040b"
             android:visibility="gone"
-            app:titleTextColor="@android:color/white"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextColor="@android:color/white" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

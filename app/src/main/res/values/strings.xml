@@ -10,7 +10,6 @@
     <string name="user_profile_title">הפרופיל שלי</string>
     <string name="user_title_picture_overlay">תמונת נושא</string>
     <string name="user_profile_picture_overlay">תמונת פרופיל</string>
-    <string name="vertical_ellipsis">&#8942;</string>
     <string name="reportAbuse">דווח על הטרדה</string>
     <string name="generateQuestion">מחולל השאלות</string>
     <string name="user_profile_hobbies">התחביבים שלי</string>
@@ -19,20 +18,21 @@
     <string name="action_save_profile_edit">שמור שינויים</string>
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
-    <string name="button_logout_text">התנתקות</string>
+    <string name="action_logout_title">התנתקות</string>
     <string name="user_profile_dialog_title_suffix">, תעלה תמונה שלך</string>
     <string name="user_profile_dialog_description">בחר תוכן ראוי בלבד\nתוכן לא ראוי יימחק</string>
     <string name="user_profile_dialog_camera_button">מצלמה</string>
     <string name="user_profile_dialog_gallery_button">מהגלריה</string>
     <string name="user_profile_dialog_dismiss_button">ביטול</string>
+    <string name="dialog_logout_title">התנתקות</string>
+    <string name="dialog_logout_message_m">בטוח שברצונך להתנתק?</string>
+    <string name="dialog_logout_message_f">בטוחה שברצונך להתנתק?</string>
+    <string name="profile_edit_title">עריכת פרופיל</string>
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">בחירת שותף</string>
-    <string name="chat_candidate_accept_button">בואי נדבר</string>
+    <string name="chat_candidate_accept_button_f">בואי נדבר</string>
 
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="profile_edit_title">עריכת פרופיל</string>
 
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
@@ -101,6 +101,7 @@
     <string name="user_profile_action_title">Profile</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Vedibarta</string>
+
     <string-array name="menuitems">
         <item>Menu Item 0</item>
         <item>Menu Item 1</item>

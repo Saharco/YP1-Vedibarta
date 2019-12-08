@@ -15,10 +15,10 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintBottom_toTopOf="@id/scrollViewLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/scrollViewLayout"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <TextView
@@ -174,26 +174,6 @@
                     android:id="@+id/hobbiesTable"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/logout_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="32dp"
-                    android:background="@android:color/holo_red_dark"
-                    android:drawableStart="@drawable/ic_exit_white"
-                    android:focusable="true"
-                    android:clickable="true"
-                    android:gravity="start|center"
-                    android:layoutDirection="ltr"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:text="@string/button_logout_text"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    app:backgroundTint="@android:color/holo_red_dark" />
 
             </LinearLayout>
 
