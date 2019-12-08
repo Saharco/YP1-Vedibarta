@@ -56,11 +56,29 @@ class ChatRoomListeners(private val chatRoom: ChatRoomActivity,
     {
         val chatBox: EditText = chatRoom.findViewById<View>(R.id.chatBox) as EditText
 
+        //TODO(duplicate and hardcoded for testing must delete later)
+        var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
+        if (chatRoom.userId != partner)
+        {
+            partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
+        }
+
         chatRoom.database
             .students()
             .userId()
             .chats()
-            .chatWith(chatPartnerID)
+            .chatWith(partner)
+            .messages()
+            .build().add(Message(text = chatBox.text.toString()))
+            .addOnSuccessListener { chatBox.setText("")}
+            .addOnFailureListener {
+                Toast.makeText(chatRoom, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
+
+        chatRoom.database
+            .students()
+            .chatWith(partner)
+            .chats()
+            .chatWith(chatRoom.userId!!)
             .messages()
             .build().add(Message(text = chatBox.text.toString()))
             .addOnSuccessListener { chatBox.setText("")}
