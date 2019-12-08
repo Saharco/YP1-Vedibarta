@@ -166,9 +166,7 @@ class UserProfileActivity : VedibartaActivity(),
             }
             val token = it.result?.token
             Log.d(TAG, "token is: $token")
-            database.database.collection("students")
-                .document(database.userId!!)
-                .update("tokens", FieldValue.arrayRemove(token))
+            database.students().userId().build().update("tokens", FieldValue.arrayRemove(token))
 
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
