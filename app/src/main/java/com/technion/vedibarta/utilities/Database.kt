@@ -35,7 +35,7 @@ interface ICollectionPath
 interface IDocumentPath
 {
     fun build(): DocumentReference
-    fun chats(): ICollectionPath
+    fun chatWith(partnerId: String): ICollectionPath
 }
 class DocumentsCollections(private val userId: String?)
 {
@@ -51,5 +51,5 @@ private class CollectionPath(private val c: CollectionReference, private val use
 private class DocumentPath(private val d: DocumentReference, private val userId: String?): IDocumentPath
 {
     override fun build(): DocumentReference = d
-    override fun chats(): ICollectionPath = CollectionPath(d.collection("chats"), userId)
+    override fun chatWith(partnerId: String): ICollectionPath = CollectionPath(d.collection(partnerId), userId)
 }
