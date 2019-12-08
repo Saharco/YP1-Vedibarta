@@ -58,7 +58,7 @@ class ChatRoomListeners(private val chatRoom: ChatRoomActivity,
 
         //TODO(duplicate and hardcoded for testing must delete later)
         var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
-        if (chatRoom.userId != partner)
+        if (chatRoom.userId == partner)
         {
             partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
         }
@@ -80,7 +80,7 @@ class ChatRoomListeners(private val chatRoom: ChatRoomActivity,
             .chats()
             .chatWith(chatRoom.userId!!)
             .messages()
-            .build().add(Message(text = chatBox.text.toString()))
+            .build().add(Message(MessageType.OTHER, text = chatBox.text.toString()))
             .addOnSuccessListener { chatBox.setText("")}
             .addOnFailureListener {
                 Toast.makeText(chatRoom, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
