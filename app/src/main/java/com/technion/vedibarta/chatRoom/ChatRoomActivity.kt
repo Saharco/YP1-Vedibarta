@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +20,7 @@ import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.DocumentsCollections
 import java.lang.Exception
 
@@ -35,11 +38,10 @@ class ChatRoomActivity : VedibartaActivity()
         super.onCreate(savedInstanceState)
         setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
 
-        val chatRoomListeners = ChatRoomListeners(this, chatPartnerId!!, supportFragmentManager)
-
         setToolbar(chatToolbar)
-        chatRoomListeners.configureListeners()
         configureAdapter()
+        buttonChatBoxSend.setOnClickListener { sendMessage(it) }
+        popupMenu.setOnClickListener{ showPopup(it) }
     }
 
     override fun onStart() {
@@ -61,7 +63,7 @@ class ChatRoomActivity : VedibartaActivity()
             partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
         }
         val query = database.students().userId().chats().chatWith(partner).messages()
-                                    .build().limit(50).orderBy("fullTimeStamp")
+                                    .build().orderBy("fullTimeStamp")
         val options = FirestoreRecyclerOptions.Builder<Message>()
             .setQuery(query,Message::class.java)
             .build()
@@ -182,5 +184,65 @@ class ChatRoomActivity : VedibartaActivity()
         fun bind(message: Message) {
             itemView.findViewById<TextView>(com.technion.vedibarta.R.id.generatorMessageBody).text = message.text
         }
+    }
+
+    private fun sendMessage(v: View)
+    {
+        val text: String = chatBox.text.toString()
+        if (text.isEmpty())
+            return
+
+        //TODO(duplicate and hardcoded for testing must delete later)
+        var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
+        if (userId == partner)
+        {
+            partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
+        }
+
+        database.students()
+            .userId()
+            .chats()
+            .chatWith(partner)
+            .messages()
+            .build().add(Message(text = chatBox.text.toString()))
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
+
+        database.students()
+            .chatWith(partner)
+            .chats()
+            .chatWith(userId!!)
+            .messages()
+            .build().add(Message(MessageType.OTHER, text = chatBox.text.toString()))
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
+        chatBox.setText("")
+    }
+
+    private fun showPopup(view: View)
+    {
+        val popup = PopupMenu(this, view)
+        popup.inflate(R.menu.chat_room_popup_menu)
+
+        popup.setOnMenuItemClickListener { item: MenuItem? ->
+
+            when (item!!.itemId) {
+                R.id.generateQuestion -> {
+                    ChatRoomQuestionGeneratorDialog().show(
+                        supportFragmentManager,
+                        "QuestionGeneratorFragment"
+                    )
+                }
+                R.id.reportAbuse -> {
+                    ChatRoomAbuseReportDialog().show(
+                        supportFragmentManager,
+                        "ReportAbuseDialog"
+                    )
+                }
+            }
+
+            true
+        }
+        popup.show()
     }
 }
