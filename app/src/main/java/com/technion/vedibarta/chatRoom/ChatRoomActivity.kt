@@ -117,6 +117,14 @@ class ChatRoomActivity : VedibartaActivity()
             {
                 return this.snapshots[position].messageType.ordinal
             }
+
+            override fun onDataChanged()
+            {
+                super.onDataChanged()
+                val lastVisiblePosition = (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                if (this.itemCount - lastVisiblePosition <= 2)
+                    chatView.smoothScrollToPosition(this.itemCount)
+            }
             
             override fun onCreateViewHolder(
                 parent: ViewGroup,
@@ -192,6 +200,7 @@ class ChatRoomActivity : VedibartaActivity()
 
     private fun sendMessage(v: View)
     {
+        chatView.smoothScrollToPosition(adapter.itemCount)
         val text: String = chatBox.text.toString()
         if (text.isEmpty())
             return
@@ -266,9 +275,11 @@ class ChatRoomActivity : VedibartaActivity()
         }
         userPath.set(Message(userMassageType, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+            }
         partnerPath.set(Message(partnerMessageType, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+            }
     }
 }
