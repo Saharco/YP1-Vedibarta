@@ -18,9 +18,18 @@ class Storage(private val userId: String?)
         path += "$userId/"
         return this
     }
+    fun otherUser(id: String): Storage
+    {
+        path += "$id/"
+        return this
+    }
     fun pictures(): Storage {
         path += "pictures/"
         return this
+    }
+    fun profilePicture(): StorageReference
+    {
+        return storage.child("$path/profile_pic")
     }
     fun fileName(name: String): StorageReference
     {

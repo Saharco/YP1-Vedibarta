@@ -129,18 +129,12 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
-                    database.students().userId().build().set(Student(
-                        "$chosenFirstName $chosenLastName",
-                        null,
-                        setupStudent.region,
-                        setupStudent.school,
-                        setupStudent.gender,
-                        Date(System.currentTimeMillis()),
-                        setupStudent.characteristics,
-                        setupStudent.hobbies)
-                    ).addOnSuccessListener {}
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    database.students().userId().build().set(setupStudent)
+                        .addOnSuccessListener {
+                            startActivity(Intent(this, MainActivity::class.java))
+                            finish()
+                        }
+                        .addOnFailureListener { Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG) }
                 } else {
                     missingDetailsDialog()
                 }
