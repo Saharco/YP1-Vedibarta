@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
@@ -20,9 +19,10 @@ import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.DocumentsCollections
-import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class ChatRoomActivity : VedibartaActivity()
@@ -32,6 +32,9 @@ class ChatRoomActivity : VedibartaActivity()
 
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
     var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private val flippedDateFormatter = SimpleDateFormat("yy/MM/dd", Locale.getDefault())
+    private val flippedCurrentDate = flippedDateFormatter.format(Date(System.currentTimeMillis()))
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -114,6 +117,7 @@ class ChatRoomActivity : VedibartaActivity()
             {
                 return this.snapshots[position].messageType.ordinal
             }
+            
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int
@@ -122,7 +126,7 @@ class ChatRoomActivity : VedibartaActivity()
                 when (viewType) {
                     MessageType.USER.ordinal -> {
                         view = LayoutInflater.from(parent.context).inflate(
-                            com.technion.vedibarta.R.layout.sent_message_holder,
+                            R.layout.sent_message_holder,
                             parent,
                             false
                         )
@@ -130,7 +134,7 @@ class ChatRoomActivity : VedibartaActivity()
                     }
                     MessageType.OTHER.ordinal -> {
                         view = LayoutInflater.from(parent.context).inflate(
-                            com.technion.vedibarta.R.layout.received_message_holder,
+                            R.layout.received_message_holder,
                             parent,
                             false
                         )
@@ -138,7 +142,7 @@ class ChatRoomActivity : VedibartaActivity()
                     }
                     else -> {
                         view = LayoutInflater.from(parent.context).inflate(
-                            com.technion.vedibarta.R.layout.generator_message_holder,
+                            R.layout.generator_message_holder,
                             parent,
                             false
                         )
@@ -165,8 +169,8 @@ class ChatRoomActivity : VedibartaActivity()
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
-            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.sentMessageBody).text = message.text
-            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.sentMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
+            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.getTime()
         }
     }
 
@@ -174,15 +178,15 @@ class ChatRoomActivity : VedibartaActivity()
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
-            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.receivedMessageBody).text = message.text
-            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.receivedMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
+            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.getTime()
         }
     }
     private class GeneratorMessageViewHolder(view: View) :
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
-            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.generatorMessageBody).text = message.text
+            itemView.findViewById<TextView>(R.id.generatorMessageBody).text = message.text
         }
     }
 
@@ -192,6 +196,7 @@ class ChatRoomActivity : VedibartaActivity()
         if (text.isEmpty())
             return
 
+
         //TODO(duplicate and hardcoded for testing must delete later)
         var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
         if (userId == partner)
@@ -199,23 +204,12 @@ class ChatRoomActivity : VedibartaActivity()
             partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
         }
 
-        database.students()
-            .userId()
-            .chats()
-            .chatWith(partner)
-            .messages()
-            .build().add(Message(text = chatBox.text.toString()))
-            .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
-
-        database.students()
-            .chatWith(partner)
-            .chats()
-            .chatWith(userId!!)
-            .messages()
-            .build().add(Message(MessageType.OTHER, text = chatBox.text.toString()))
-            .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
+        val lastMessageDate = flippedDateFormatter.format(adapter.snapshots.last().fullTimeStamp)
+        if (flippedCurrentDate > lastMessageDate)
+        {
+            duplicateWrite(userId!!, partner, flippedCurrentDate.reversed(),true)
+        }
+        duplicateWrite(userId!!, partner, text, false)
         chatBox.setText("")
     }
 
@@ -244,5 +238,37 @@ class ChatRoomActivity : VedibartaActivity()
             true
         }
         popup.show()
+    }
+
+    private fun duplicateWrite(userId: String, partnerId: String, text: String, isGeneratorMessage: Boolean)
+    {
+        val timeSent = Date(System.currentTimeMillis())
+        val userPath  = database.students()
+                                        .userId()
+                                        .chats()
+                                        .chatWith(partnerId)
+                                        .messages()
+                                        .message(timeSent)
+                                        .build()
+        val partnerPath = database.students()
+                                                .chatWith(partnerId)
+                                                .chats()
+                                                .chatWith(userId)
+                                                .messages()
+                                                .message(timeSent)
+                                                .build()
+        var userMassageType = MessageType.USER
+        var partnerMessageType = MessageType.OTHER
+        if (isGeneratorMessage)
+        {
+            userMassageType = MessageType.GENERATOR
+            partnerMessageType = MessageType.GENERATOR
+        }
+        userPath.set(Message(userMassageType, text, timeSent), SetOptions.merge())
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
+        partnerPath.set(Message(partnerMessageType, text, timeSent), SetOptions.merge())
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show() }
     }
 }
