@@ -73,7 +73,7 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <activity android:name=".chatRoom.ChatRoomActivity"/>
+        <activity android:name=".chatRoom.ChatRoomActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

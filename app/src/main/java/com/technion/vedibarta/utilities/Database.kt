@@ -1,35 +1,55 @@
 package com.technion.vedibarta.utilities
 
-import android.util.Log
-import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import com.technion.vedibarta.POJOs.Student
-import java.lang.Exception
-import java.sql.Timestamp
+import com.google.firebase.storage.*
 
-class Database
+class Storage(private val userId: String?)
+{
+    private val storage = FirebaseStorage.getInstance().reference
+    private var path = ""
+    fun students(): Storage {
+        path += "students/"
+        return this
+    }
+    fun userId(): Storage {
+        path += "$userId/"
+        return this
+    }
+    fun pictures(): Storage {
+        path += "pictures/"
+        return this
+    }
+    fun fileName(name: String): StorageReference
+    {
+        return storage.child("$path$name")
+    }
+}
+
+interface ICollectionPath
+{
+    fun build(): CollectionReference
+    fun userId():IDocumentPath
+}
+interface IDocumentPath
+{
+    fun build(): DocumentReference
+    fun chats(): ICollectionPath
+}
+class DocumentsCollections(private val userId: String?)
 {
     private val database = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance().reference
-    private val user = FirebaseAuth.getInstance().currentUser
-    private val studentsCollection = "students"
-
-    fun saveStudentProfile(name: String, photo: String?, region: String, shcool: String, gender: Gender,
-                            lastTimeActive: Timestamp, characteristics: List<String>, hobbies: List<String>)
-    {
-        val s = Student(name,photo, region, shcool, gender, lastTimeActive, characteristics, hobbies)
-
-        try {
-            if (user != null)
-                database.collection(studentsCollection).document(user.uid).set(s)
-                    .addOnSuccessListener { Log.d("Database", "saved profile of ${user.uid}")}
-                    .addOnFailureListener { e: Exception -> Log.d("Database", "${user.uid} got error: ${e.message}") }
-        }
-        catch (e: Exception)
-        {
-            Log.d("Database", "${user?.uid} got error: ${e.message}")
-        }
-    }
+    fun students():ICollectionPath = CollectionPath(database.collection("students"), userId)
+    fun chats():ICollectionPath = CollectionPath(database.collection("chats"), userId)
+}
+private class CollectionPath(private val c: CollectionReference, private val userId: String?):ICollectionPath
+{
+    override fun build(): CollectionReference = c
+    override fun userId() = DocumentPath(c.document("$userId"), userId)
+}
+private class DocumentPath(private val d: DocumentReference, private val userId: String?): IDocumentPath
+{
+    override fun build(): DocumentReference = d
+    override fun chats(): ICollectionPath = CollectionPath(d.collection("chats"), userId)
 }

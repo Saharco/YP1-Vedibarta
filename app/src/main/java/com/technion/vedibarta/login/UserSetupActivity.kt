@@ -1,6 +1,7 @@
 package com.technion.vedibarta.login
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -16,12 +17,10 @@ import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
-import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.utilities.Gender
-import com.technion.vedibarta.utilities.SectionsPageAdapter
-import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.*
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import java.sql.Timestamp
+import java.util.*
 
 class UserSetupActivity : VedibartaActivity() {
 
@@ -47,8 +46,26 @@ class UserSetupActivity : VedibartaActivity() {
     var chosenFirstName = ""
     var chosenLastName = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
+
+        val dialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.checking_document))
+            setCancelable(false)
+            setIndeterminate(true)
+            show()
+        }
+
+        database.students().userId().build().get().addOnSuccessListener { document ->
+            if (document != null && document.exists())
+            {
+                dialog.dismiss()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        }
+
         setContentView(R.layout.activity_user_setup)
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
@@ -113,15 +130,16 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
-                    database.saveStudentProfile(
+                    database.students().userId().build().set(Student(
                         "$chosenFirstName $chosenLastName",
                         null,
                         setupStudent.region,
                         setupStudent.school,
                         setupStudent.gender,
-                        Timestamp(System.currentTimeMillis()),
+                        Date(System.currentTimeMillis()),
                         setupStudent.characteristics,
                         setupStudent.hobbies)
+                    ).addOnSuccessListener {}
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
