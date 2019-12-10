@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -16,6 +17,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -104,7 +106,7 @@ class MainActivity : VedibartaActivity() {
         chatHistory.adapter = adapter
     }
 
-    private class ViewHolder (view: View): RecyclerView.ViewHolder(view)
+    private class ViewHolder (val view: View): RecyclerView.ViewHolder(view)
     {
         fun bind(card: ChatCard)
         {
@@ -140,7 +142,12 @@ class MainActivity : VedibartaActivity() {
                 Log.d("wtf", "onBindViewHolder")
                 when(holder)
                 {
-                    is ViewHolder -> holder.bind(card)
+                    is ViewHolder -> {
+                        holder.bind(card)
+                        holder.view.setOnClickListener {
+                            startActivity(Intent(this@MainActivity, ChatRoomActivity::class.java))
+                        }
+                    }
                 }
              }
         }
