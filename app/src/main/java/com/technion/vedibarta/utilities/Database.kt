@@ -1,9 +1,11 @@
 package com.technion.vedibarta.utilities
 
+import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.*
+import java.lang.Exception
 import java.util.*
 
 class Storage(private val userId: String?)
@@ -72,4 +74,9 @@ private class DocumentPath(private val d: DocumentReference, private val userId:
     override fun chats(): ICollectionPath = CollectionPath(d.collection("chats"), userId)
     override fun messages(): ICollectionPath = CollectionPath(d.collection("messages"), userId)
     override fun build(): DocumentReference = d
+}
+
+fun error(e: Exception)
+{
+    Log.d("wtf", "${e.message}, cause: ${e.cause?.message}")
 }
