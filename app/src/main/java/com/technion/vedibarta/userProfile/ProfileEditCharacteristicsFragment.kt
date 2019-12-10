@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.core.view.get
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 
@@ -38,7 +39,11 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             R.layout.fragment_profile_edit_characteristics, container,
             false
         )
-        characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        if (student!!.gender != Gender.FEMALE)
+            characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        else
+            characteristics = resources.getStringArray(R.array.characteristicsFemale_hebrew)
+
         table = view.findViewById(R.id.editCharacteristicsTable) as TableLayout
         populateCharacteristicsTable()
         return view
