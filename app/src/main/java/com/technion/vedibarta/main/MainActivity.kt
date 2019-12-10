@@ -145,7 +145,11 @@ class MainActivity : VedibartaActivity() {
                     is ViewHolder -> {
                         holder.bind(card)
                         holder.view.setOnClickListener {
-                            startActivity(Intent(this@MainActivity, ChatRoomActivity::class.java))
+                            val i = Intent(this@MainActivity, ChatRoomActivity::class.java)
+                            i.putExtra("id", card.userId)
+                            i.putExtra("name", card.userName)
+                            i.putExtra("photoUrl", card.userPhoto)
+                            startActivity(i)
                         }
                     }
                 }

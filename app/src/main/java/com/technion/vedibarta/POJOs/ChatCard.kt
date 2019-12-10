@@ -3,7 +3,8 @@ package com.technion.vedibarta.POJOs
 import java.util.*
 
 data class ChatCard (
-    val userPhotoId: Int = 0,
+    val userPhoto: String = "",
     val userName: String = "",
+    val userId: String = "",
     var lastMessage: String = "",
     val date: String = "")
