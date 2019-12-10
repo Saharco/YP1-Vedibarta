@@ -42,10 +42,8 @@ class ChatRoomActivity : VedibartaActivity()
     private val currentDate = Date(System.currentTimeMillis())
     private val MESSAGE_SOUND_INTERVAL: Long = 2000
     private val soundHandler = Handler()
-    private var numMessages = 0
-
-    // This task clears the sound block from the handler, allowing more new messages to play a sound
     private val soundTask = Runnable { soundHandler.removeMessages(0) }
+    private var numMessages = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?)
