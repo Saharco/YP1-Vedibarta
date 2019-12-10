@@ -76,7 +76,7 @@ private class DocumentPath(private val d: DocumentReference, private val userId:
     override fun build(): DocumentReference = d
 }
 
-fun error(e: Exception)
+fun error(e: Exception, additional: String = "")
 {
-    Log.d("wtf", "${e.message}, cause: ${e.cause?.message}")
+    Log.d("wtf", "$additional ${e.message}, cause: ${e.cause?.message}")
 }
