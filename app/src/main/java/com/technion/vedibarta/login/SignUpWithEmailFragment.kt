@@ -99,7 +99,7 @@ class SignUpWithEmailFragment : Fragment() {
         password_input_layout.error = passwordError
         password_repeat_input_layout.error = passwordRepError
 
-        if ((emailError == null) and (passwordError == null) and (passwordRepError == null)){
+        if ((emailError == null) and (passwordError == null) and (passwordRepError == null)) {
             signUpListener.onSignUpButtonClick(email, password)
         }
     }

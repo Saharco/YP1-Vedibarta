@@ -101,7 +101,7 @@
             android:textColor="@android:color/white"
             android:focusable="true"
             android:clickable="true"
-            android:text="@string/chat_candidate_accept_button"
+            android:text="@string/chat_candidate_accept_button_f"
             android:layout_marginBottom="4dp"
             app:backgroundTint="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="@+id/listItemCard"

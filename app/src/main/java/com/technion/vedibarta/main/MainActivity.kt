@@ -16,6 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.POJOs.ChatCard
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
@@ -26,6 +27,8 @@ import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class MainActivity : VedibartaActivity() {
+
+    private val logTag = "ChatHistory"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,15 @@ class MainActivity : VedibartaActivity() {
             startActivity(Intent(this, ChatSearchActivity::class.java))
         }
 
+        if (student == null)
+        {
+            database.students().userId().build().get().addOnSuccessListener {document ->
+                student = document.toObject(Student::class.java)
+                Log.d(logTag, "loaded student profile successfully")
+            }?.addOnFailureListener {
+                Log.d(logTag, "${it.message}, cause: ${it.cause?.message}")
+            } ?: Log.d(logTag, "student profile not found")
+        }
     }
 
     private fun doMySearch(query: String) {

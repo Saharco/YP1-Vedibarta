@@ -10,7 +10,6 @@
     <string name="user_profile_title">הפרופיל שלי</string>
     <string name="user_title_picture_overlay">תמונת נושא</string>
     <string name="user_profile_picture_overlay">תמונת פרופיל</string>
-    <string name="vertical_ellipsis">&#8942;</string>
     <string name="reportAbuse">דווח על הטרדה</string>
     <string name="generateQuestion">מחולל השאלות</string>
     <string name="user_profile_hobbies">התחביבים שלי</string>
@@ -19,21 +18,29 @@
     <string name="action_save_profile_edit">שמור שינויים</string>
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
-    <string name="button_logout_text">התנתקות</string>
+    <string name="action_logout_title">התנתקות</string>
+    <string name="user_profile_dialog_title_suffix">, תעלה תמונה שלך</string>
+    <string name="user_profile_dialog_description">בחר תוכן ראוי בלבד\nתוכן לא ראוי יימחק</string>
+    <string name="user_profile_dialog_camera_button">מצלמה</string>
+    <string name="user_profile_dialog_gallery_button">מהגלריה</string>
+    <string name="user_profile_dialog_dismiss_button">ביטול</string>
+    <string name="dialog_logout_title">התנתקות</string>
+    <string name="dialog_logout_message_m">בטוח שברצונך להתנתק?</string>
+    <string name="dialog_logout_message_f">בטוחה שברצונך להתנתק?</string>
+    <string name="profile_edit_title">עריכת פרופיל</string>
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">בחירת שותף</string>
-    <string name="chat_candidate_accept_button">בואי נדבר</string>
+    <string name="chat_candidate_accept_button_f">בואי נדבר</string>
 
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="profile_edit_title">עריכת פרופיל</string>
 
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
     <string name="filter_by_school_text">חיפוש לפי בית ספר</string>
     <string name="filter_by_region_text">חיפוש לפי מקום מגורים</string>
     <string name="chat_search_button">חפש</string>
+    <string name="chat_search_wrong_details_title">פרטים שגויים</string>
+    <string name="chat_search_wrong_details_message">יש לבחור רק בתי ספר ומקומות מגורים הנמצאים ברשימה</string>
 
     <!--    UserSetup Attributes  -->
     <string name="user_setup_title">הגדרת משתמש</string>
@@ -50,6 +57,7 @@
     <string name="text_field_hint">עברית/ערבית בלבד</string>
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
     <string name="user_setup_missing_details_message">אנא מלא את כל הפרטים החסרים</string>
+    <string name="checking_document">מסתנכרן עם השרת</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -74,12 +82,16 @@
     <string name="enter_last_name_hint">שם משפחה</string>
     <string name="sign_up">הירשם</string>
     <string name="progress_dialog_loading">טוען…</string>
+    <string name="sending_verification_email">שולח דוא\"ל אימות</string>
+    <string name="email_sent_successfully">ההודעה נשלחה בהצלחה</string>
 
     <!--    Error Messages  -->
+    <string name="something_went_wrong">אירעה שגיאה</string>
     <string name="blank_input_error">אנא מלא</string>
     <string name="email_format_error">הכנס כתובת מהצורה mail@client.com</string>
     <string name="short_password_error">על הסיסמה להכיל לפחות 8 תווים</string>
     <string name="wrong_password_repeat">הסיסמאות לא זהות</string>
+    <string name="email_not_verified_error">אנא אמת דוא\"ל</string>
 
     <!-- MainActivity attributes-->
     <string name="main_title">ודיברת</string>
@@ -91,6 +103,7 @@
     <string name="user_profile_action_title">Profile</string>
     <string name="search_hint">Search</string>
     <string name="app_label">Vedibarta</string>
+
     <string-array name="menuitems">
         <item>Menu Item 0</item>
         <item>Menu Item 1</item>

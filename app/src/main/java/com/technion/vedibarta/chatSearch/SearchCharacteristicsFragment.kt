@@ -5,7 +5,6 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +13,8 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.core.view.get
-
+import androidx.fragment.app.Fragment
 import com.technion.vedibarta.R
-import com.technion.vedibarta.userProfile.ProfileEditActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 
 /**
@@ -46,6 +44,8 @@ class SearchCharacteristicsFragment : Fragment() {
     }
 
     private fun populateCharacteristicsTable() {
+        val act = (activity as ChatSearchActivity)
+
         val tableRowParams = TableLayout.LayoutParams(
             TableLayout.LayoutParams.MATCH_PARENT,
             TableLayout.LayoutParams.WRAP_CONTENT
@@ -58,7 +58,7 @@ class SearchCharacteristicsFragment : Fragment() {
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        if (VedibartaActivity.student == null || characteristics.isEmpty()) {
+        if (characteristics.isEmpty()) {
             return
         }
 
@@ -74,17 +74,23 @@ class SearchCharacteristicsFragment : Fragment() {
             for (j in 0 until steps) {
                 if (i + j >= characteristics.size)
                     break
-
-                bubbleFrame = LayoutInflater.from(activity).inflate(
-                    R.layout.user_profile_bubble_blue_selected,
-                    null
-                ) as FrameLayout
-
-                bubbleFrame.alpha = 0.6f
-                bubbleFrame.tag = NON_SELECTED_BUBBLE
+                if (act.chosenCharacteristics.contains(characteristics[i + j])) {
+                    bubbleFrame = LayoutInflater.from(activity).inflate(
+                        R.layout.user_profile_bubble_blue,
+                        null
+                    ) as FrameLayout
+                    bubbleFrame.alpha = 1f
+                    bubbleFrame.tag = SELECTED_BUBBLE
+                } else {
+                    bubbleFrame = LayoutInflater.from(activity).inflate(
+                        R.layout.user_profile_bubble_blue_selected,
+                        null
+                    ) as FrameLayout
+                    bubbleFrame.alpha = 0.6f
+                    bubbleFrame.tag = NON_SELECTED_BUBBLE
+                }
                 bubbleFrame.id = i + j
                 bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
-
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
                 bubble.text = characteristics[i + j]
                 bubbleFrame.layoutParams = bubbleParams
@@ -94,6 +100,7 @@ class SearchCharacteristicsFragment : Fragment() {
             table.addView(tableRow)
         }
     }
+
 
     private fun characteristicsItemClickHandler(view: View) {
         val steps = calculateBubblesInRow()

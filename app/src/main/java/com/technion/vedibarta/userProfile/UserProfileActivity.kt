@@ -26,9 +26,11 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.os.AsyncTask
 import android.view.*
 import android.view.animation.DecelerateInterpolator
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -40,9 +42,16 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
+import com.facebook.login.LoginManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.iid.FirebaseInstanceId
+import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.*
 import kotlinx.android.synthetic.main.chat_card.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -51,7 +60,7 @@ import java.io.IOException
 class UserProfileActivity : VedibartaActivity(),
     ProfilePictureUploadDialog.ProfilePictureUploadDialogListener {
 
-    private val TAG = "UserProfileActivity"
+    private val TAG = "user-profile"
 
     private val APP_PERMISSION_REQUEST_CAMERA = 100
     private val REQUEST_CAMERA = 1
@@ -107,6 +116,8 @@ class UserProfileActivity : VedibartaActivity(),
                 }
             R.id.actionEditProfile ->
                 startActivity(Intent(this, ProfileEditActivity::class.java))
+            R.id.actionLogOut ->
+                onLogoutClick()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -120,6 +131,49 @@ class UserProfileActivity : VedibartaActivity(),
         } else {
             Log.d(TAG, "onBackPressed: finishing activity")
             super.onBackPressed()
+        }
+    }
+
+    private fun onLogoutClick() {
+        val title = TextView(this)
+        title.setText(R.string.dialog_logout_title)
+        title.textSize = 20f
+        title.setTypeface(null, Typeface.BOLD)
+        title.setTextColor(resources.getColor(R.color.textPrimary))
+        title.gravity = Gravity.CENTER
+        title.setPadding(10, 40, 10, 24)
+
+        var msg = R.string.dialog_logout_message_m
+        if (student!!.gender == Gender.FEMALE)
+            msg = R.string.dialog_logout_message_f
+
+        val builder = AlertDialog.Builder(this)
+        builder.setCustomTitle(title)
+            .setMessage(msg)
+            .setPositiveButton(android.R.string.yes) {_, _ ->
+                performLogout()
+            }
+            .setNegativeButton(android.R.string.no) {_, _ -> }
+            .show()
+        builder.create()
+    }
+
+    private fun performLogout() {
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+            if (!it.isSuccessful) {
+                Log.d(TAG, "logout failed")
+                return@addOnCompleteListener
+            }
+            val token = it.result?.token
+            Log.d(TAG, "token is: $token")
+            database.students().userId().build().update("tokens", FieldValue.arrayRemove(token))
+
+            FirebaseAuth.getInstance().signOut()
+            LoginManager.getInstance().logOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
     }
 
@@ -652,24 +706,58 @@ class UserProfileActivity : VedibartaActivity(),
         resize.execute(imagePath)
     }
 
-    private fun setNewUserProfilePic(bytes: ByteArray) {
-        updateServerUserProfilePic(bytes)
-        //populateProfilePicture() TODO: uncomment this when the Student class has the new information
-    }
-
     /**
      * Updates the user profile picture *IN THE DATABASE!*,
      * updates the local Student class after the server update
+     * TODO: move to database abstraction if possible
      */
     private fun updateServerUserProfilePic(bytes: ByteArray) {
-        //TODO: push profile pic change to the server and update Student with the new picture URL
+        val storageRef = storage.students().userId().pictures().fileName("profile_pic")
+        startLoadingPictureChange()
+        storageRef.putBytes(bytes)
+            .addOnSuccessListener {
+                storageRef.downloadUrl
+                    .addOnSuccessListener {
+                        userPhotoURL = it.toString()
+                        database.students().userId().build()
+                            .set(mapOf(Pair("photo", userPhotoURL)), SetOptions.merge())
+                            .addOnSuccessListener {
+                                Log.d(TAG, "successfully updated user profile picture")
+                                student!!.photo = userPhotoURL
+                                populateProfilePicture()
+                            }
+                            .addOnFailureListener {
+                                Log.d(TAG, "failed to update user profile picture")
+                                finishLoadingPictureChange()
+                            }
+                    }
+                    .addOnFailureListener {
+                        Log.d(TAG, "failed to update user profile picture")
+                        finishLoadingPictureChange()
+                    }
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "failed to update user profile picture")
+                finishLoadingPictureChange()
+            }
+    }
+
+    private fun finishLoadingPictureChange() {
+        profilePicturePB.visibility = View.GONE
+        profilePicture.visibility = View.VISIBLE
+        changeProfilePictureButton.visibility = View.VISIBLE
+    }
+
+    private fun startLoadingPictureChange() {
+        profilePicturePB.visibility = View.VISIBLE
+        profilePicture.visibility = View.INVISIBLE
+        changeProfilePictureButton.visibility = View.GONE
     }
 
     private inner class ImageCompressTask : AsyncTask<Uri, Int, ByteArray>() {
 
         override fun onPreExecute() {
-            profilePicturePB.visibility = View.VISIBLE
-            profilePicture.visibility = View.INVISIBLE
+            startLoadingPictureChange()
         }
 
         override fun doInBackground(vararg uris: Uri): ByteArray? {
@@ -696,14 +784,7 @@ class UserProfileActivity : VedibartaActivity(),
 
         override fun onPostExecute(bytes: ByteArray) {
             super.onPostExecute(bytes)
-            Glide.with(applicationContext)
-                .asBitmap()
-                .load(bytes)
-                .apply(RequestOptions.circleCropTransform())
-                .into(profilePicture)
-            profilePicturePB.visibility = View.GONE
-            profilePicture.visibility = View.VISIBLE
-            setNewUserProfilePic(bytes)
+            updateServerUserProfilePic(bytes)
         }
 
         private fun getBytesFromBitmap(bitmap: Bitmap, quality: Int): ByteArray {

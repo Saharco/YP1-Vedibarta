@@ -149,7 +149,6 @@ class ChooseCharacteristicsFragment : Fragment() {
 
             act.setupStudent.characteristics =
                 act.setupStudent.characteristics.filter { element -> element != characteristics[view.id] }
-                    .toTypedArray()
         }
 
         bubbleFrame.id = view.id

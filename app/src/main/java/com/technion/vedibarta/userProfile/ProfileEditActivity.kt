@@ -1,7 +1,5 @@
 package com.technion.vedibarta.userProfile
 
-import android.content.DialogInterface
-import android.content.res.Configuration
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
@@ -23,8 +21,8 @@ class ProfileEditActivity : VedibartaActivity() {
     private val TAG = "ProfileEditActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    public var editedCharacteristics = student!!.characteristics.toMutableSet()
-    public var editedHobbies = student!!.hobbies.toMutableSet()
+    var editedCharacteristics = student!!.characteristics.toMutableSet()
+    var editedHobbies = student!!.hobbies.toMutableSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +63,14 @@ class ProfileEditActivity : VedibartaActivity() {
     private fun commitEditChanges() {
         Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
         //TODO: push to the database first!
-        student!!.characteristics = editedCharacteristics.toTypedArray()
-        student!!.hobbies = editedHobbies.toTypedArray()
-        onBackPressed()
+        student!!.characteristics = editedCharacteristics.toList()
+        student!!.hobbies = editedHobbies.toList()
+        database.students().userId().build().set(student!!).addOnSuccessListener {
+            Log.d("profileEdit", "saved profile changes")
+            onBackPressed()
+        }?.addOnFailureListener {
+            Log.d("profileEdit", "${it.message}, cause: ${it.cause?.message}")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

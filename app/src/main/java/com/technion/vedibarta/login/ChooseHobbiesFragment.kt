@@ -159,7 +159,6 @@ class ChooseHobbiesFragment : Fragment() {
             Log.d(TAG, "Removing ${hobbies[view.id]} from the set")
 
             act.setupStudent.hobbies = act.setupStudent.hobbies.filter { element -> element != hobbies[view.id] }
-                .toTypedArray()
         }
 
         bubbleFrame.id = view.id
