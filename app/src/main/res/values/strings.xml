@@ -19,8 +19,9 @@
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
     <string name="action_logout_title">התנתקות</string>
-    <string name="user_profile_dialog_title_suffix">, תעלה תמונה שלך</string>
-    <string name="user_profile_dialog_description">בחר תוכן ראוי בלבד\nתוכן לא ראוי יימחק</string>
+    <string name="user_profile_dialog_title_suffix_m">, תעלה תמונה שלך</string>
+    <string name="user_profile_dialog_title_suffix_f">, תעלי תמונה שלך</string>
+    <string name="user_profile_dialog_description">יש לבחור תוכן ראוי בלבד\nתוכן לא ראוי יימחק</string>
     <string name="user_profile_dialog_camera_button">מצלמה</string>
     <string name="user_profile_dialog_gallery_button">מהגלריה</string>
     <string name="user_profile_dialog_dismiss_button">ביטול</string>
@@ -36,8 +37,8 @@
 
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
-    <string name="filter_by_school_text">חיפוש לפי בית ספר</string>
-    <string name="filter_by_region_text">חיפוש לפי מקום מגורים</string>
+    <string name="filter_by_school_text">סינון לפי בית ספר</string>
+    <string name="filter_by_region_text">סינון לפי מקום מגורים</string>
     <string name="chat_search_button">חפש</string>
     <string name="chat_search_wrong_details_title">פרטים שגויים</string>
     <string name="chat_search_wrong_details_message">יש לבחור רק בתי ספר ומקומות מגורים הנמצאים ברשימה</string>
@@ -53,15 +54,25 @@
     <string name="user_setup_first_name_title">שם פרטי</string>
     <string name="user_setup_last_name_title">שם משפחה</string>
     <string name="user_setup_done_title">סיים</string>
-    <string name="user_setup_gender_next_button_text">הבא</string>
     <string name="text_field_hint">עברית/ערבית בלבד</string>
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
-    <string name="user_setup_missing_details_message">אנא מלא את כל הפרטים החסרים</string>
     <string name="checking_document">מסתנכרן עם השרת</string>
+    <string name="user_setup_dialog_message">יש לבחור בן/בת</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="enterMessage">כתוב הודעה</string>
+    <!--    ChatRoom attribute   -->
+    <string name="chat_room_abuse_dialog_title">דיווח</string>
+    <string name="chat_room_abuse_dialog_message">יש לסמן את הסיבות לדיווח</string>
+    <string name="chat_room_abuse_dialog_option1">אלימות מילולית</string>
+    <string name="chat_room_abuse_dialog_option2">הטרדה מינית</string>
+    <string name="chat_room_abuse_dialog_option3">תוכן פוגעני</string>
+    <string name="chat_room_abuse_dialog_report_button_m">דווח</string>
+    <string name="chat_room_abuse_dialog_report_button_f">דווחי</string>
+    <string name="chat_room_abuse_dialog_back_button">ביטול</string>
+    <string name="chat_room_question_generator_title">מחולל השאלות</string>
+    <string name="chat_room_question_generator_question_title">שאלות לדוגמא:</string>
+    <string name="chat_room_enter_message_m">כתוב הודעה</string>
+    <string name="chat_room_enter_message_f">כתבי הודעה</string>
+
 
 
     <!--    LoginScreen attribute   -->

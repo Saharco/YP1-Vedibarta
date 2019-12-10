@@ -1,6 +1,8 @@
 package com.technion.vedibarta.chatRoom
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -10,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 
@@ -28,6 +31,8 @@ class ChatRoomActivity : VedibartaActivity()
         chatRoomListeners.configureListeners()
         val messageList = ArrayList<Message>()
         populateMessageList(messageList)// TODO remove after testing
+        if (student!!.gender == Gender.FEMALE)
+            chatBox.text = SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
         configureAdapter(messageList)
     }
 
