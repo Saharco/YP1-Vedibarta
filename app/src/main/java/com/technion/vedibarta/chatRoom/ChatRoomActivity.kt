@@ -20,10 +20,12 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.SetOptions
-import com.technion.vedibarta.R
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import android.media.MediaPlayer
+import android.os.Handler
+import java.lang.Exception
 
 
 class ChatRoomActivity : VedibartaActivity()
@@ -32,12 +34,18 @@ class ChatRoomActivity : VedibartaActivity()
 {
 
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    private var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var chatPartnerId: String = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
     // private var chatPartnerId: String? = intent.getStringExtra("id") //TODO use this instead of the above
     // private val photoUrl: String? = intent.getStringExtra("photoUrl")
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
     private val currentDate = Date(System.currentTimeMillis())
+    private val MESSAGE_SOUND_INTERVAL: Long = 2000
+    private val soundHandler = Handler()
+    private var numMessages = 0
+
+    // This task clears the sound block from the handler, allowing more new messages to play a sound
+    private val soundTask = Runnable { soundHandler.removeMessages(0) }
 
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -59,6 +67,17 @@ class ChatRoomActivity : VedibartaActivity()
     override fun onStop() {
         super.onStop()
         adapter.stopListening()
+    }
+
+    override fun onPause()
+    {
+        super.onPause()
+        Log.d("wtf", "onPause")
+        database.students()
+            .userId()
+            .chats()
+            .chatWith(chatPartnerId)
+            .build().update("numMessages", numMessages)
     }
 
     private fun configureAdapter()
@@ -138,7 +157,7 @@ class ChatRoomActivity : VedibartaActivity()
                 when (viewType) {
                     MessageType.USER.ordinal -> {
                         view = LayoutInflater.from(parent.context).inflate(
-                            R.layout.sent_message_holder,
+                            com.technion.vedibarta.R.layout.sent_message_holder,
                             parent,
                             false
                         )
@@ -146,7 +165,7 @@ class ChatRoomActivity : VedibartaActivity()
                     }
                     MessageType.OTHER.ordinal -> {
                         view = LayoutInflater.from(parent.context).inflate(
-                            R.layout.received_message_holder,
+                            com.technion.vedibarta.R.layout.received_message_holder,
                             parent,
                             false
                         )
@@ -154,7 +173,7 @@ class ChatRoomActivity : VedibartaActivity()
                     }
                     else -> {
                         view = LayoutInflater.from(parent.context).inflate(
-                            R.layout.generator_message_holder,
+                            com.technion.vedibarta.R.layout.generator_message_holder,
                             parent,
                             false
                         )
@@ -173,16 +192,51 @@ class ChatRoomActivity : VedibartaActivity()
                     is ReceivedMessageViewHolder -> holder.bind(message)
                     is GeneratorMessageViewHolder -> holder.bind(message)
                 }
+
+                if (!soundHandler.hasMessages(0))
+                {
+                    soundHandler.removeCallbacksAndMessages(null)
+                    soundHandler.postDelayed(soundTask, MESSAGE_SOUND_INTERVAL)
+                    try {
+                        val res = tryToPlaySound(message.messageType, this.itemCount)
+                    }
+                    catch (e: Exception)
+                    {
+                        com.technion.vedibarta.utilities.error(e, "tryToPlaySound")
+                    }
+                }
             }
         }
+    }
+
+    private fun tryToPlaySound(type: MessageType, count: Int): Boolean
+    {
+        if (count > numMessages) {
+            // Update the amount of already-acknowledged messages
+            numMessages = count
+            // Let the handler know about the successful sound invocation, so it can lock it for a set time
+            soundHandler.sendEmptyMessage(0)
+
+            if (type == MessageType.USER)
+            {
+                val mp = MediaPlayer.create(applicationContext, com.technion.vedibarta.R.raw.message_sent_audio);
+                mp.start();
+                return true;
+            } else {
+                val mp = MediaPlayer.create(applicationContext, com.technion.vedibarta.R.raw.message_received_audio);
+                mp.start();
+                return true
+            }
+        }
+        return false
     }
 
     private class SentMessageViewHolder(view: View) :
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
-            itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.sentMessageBody).text = message.text
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.sentMessageTime).text = message.getTime()
         }
     }
 
@@ -190,15 +244,15 @@ class ChatRoomActivity : VedibartaActivity()
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
-            itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.receivedMessageBody).text = message.text
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.receivedMessageTime).text = message.getTime()
         }
     }
     private class GeneratorMessageViewHolder(view: View) :
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
-            itemView.findViewById<TextView>(R.id.generatorMessageBody).text = message.text
+            itemView.findViewById<TextView>(com.technion.vedibarta.R.id.generatorMessageBody).text = message.text
         }
     }
 
@@ -234,18 +288,18 @@ class ChatRoomActivity : VedibartaActivity()
     private fun showPopup(view: View)
     {
         val popup = PopupMenu(this, view)
-        popup.inflate(R.menu.chat_room_popup_menu)
+        popup.inflate(com.technion.vedibarta.R.menu.chat_room_popup_menu)
 
         popup.setOnMenuItemClickListener { item: MenuItem? ->
 
             when (item!!.itemId) {
-                R.id.generateQuestion -> {
+                com.technion.vedibarta.R.id.generateQuestion -> {
                     ChatRoomQuestionGeneratorDialog().show(
                         supportFragmentManager,
                         "QuestionGeneratorFragment"
                     )
                 }
-                R.id.reportAbuse -> {
+                com.technion.vedibarta.R.id.reportAbuse -> {
                     ChatRoomAbuseReportDialog().show(
                         supportFragmentManager,
                         "ReportAbuseDialog"
@@ -300,11 +354,11 @@ class ChatRoomActivity : VedibartaActivity()
         }
         userPath.set(Message(userMassageType, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
         partnerPath.set(Message(partnerMessageType, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
     }
 }
