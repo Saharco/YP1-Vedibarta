@@ -19,7 +19,6 @@ import androidx.core.view.get
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_chat_search.*
 
 /**
  * A simple [Fragment] subclass.
@@ -40,7 +39,7 @@ class ChooseHobbiesFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_hobbies, container, false)
-        hobbies = resources.getStringArray(R.array.hobbiesMale_hebrew)
+        hobbies = resources.getStringArray(R.array.hobbies_hebrew)
         table = view.findViewById(R.id.chooseHobbiesTable) as TableLayout
 
         populateHobbiesTable()

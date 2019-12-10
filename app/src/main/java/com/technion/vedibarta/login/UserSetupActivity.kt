@@ -1,7 +1,6 @@
 package com.technion.vedibarta.login
 
 import android.annotation.SuppressLint
-import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -105,7 +104,7 @@ class UserSetupActivity : VedibartaActivity() {
             if (setupStudent.gender == Gender.NONE) {
                 Toast.makeText(
                     applicationContext,
-                    "יש לבחור בן/בת",
+                    R.string.user_setup_dialog_message,
                     Toast.LENGTH_SHORT
                 ).show()
             } else {

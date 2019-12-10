@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.core.view.get
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 
@@ -39,11 +40,13 @@ class ChooseCharacteristicsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_characteristics, container, false)
+        if ((activity as UserSetupActivity).setupStudent.gender != Gender.FEMALE)
+            characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        else
+            characteristics = resources.getStringArray(R.array.characteristicsFemale_hebrew)
 
-        characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
         table = view.findViewById(R.id.searchCharacteristics) as TableLayout
         populateCharacteristicsTable()
-
 
         return view
     }
