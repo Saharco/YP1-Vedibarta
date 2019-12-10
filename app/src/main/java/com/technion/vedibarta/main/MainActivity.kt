@@ -22,6 +22,8 @@ import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : VedibartaActivity() {
@@ -111,8 +113,9 @@ class MainActivity : VedibartaActivity() {
         fun bind(card: ChatCard)
         {
             itemView.findViewById<TextView>(R.id.user_name).text = card.userName
-            itemView.findViewById<TextView>(R.id.last_message).text = card.userName
-            itemView.findViewById<TextView>(R.id.relative_timestamp).text = card.userName
+            itemView.findViewById<TextView>(R.id.last_message).text = card.lastMessage
+            itemView.findViewById<TextView>(R.id.relative_timestamp).text = card.relativeTime
+            //TODO load profile image into user_picture in card layout
         }
     }
     private fun getAdapter(options: FirestoreRecyclerOptions<ChatCard>): FirestoreRecyclerAdapter<ChatCard,RecyclerView.ViewHolder>

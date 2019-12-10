@@ -7,4 +7,5 @@ data class ChatCard (
     val userName: String = "",
     val userId: String = "",
     var lastMessage: String = "",
+    val relativeTime: String = "",
     val date: String = "")
