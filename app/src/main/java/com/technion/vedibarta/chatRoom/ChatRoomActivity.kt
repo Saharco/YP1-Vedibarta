@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit
 import android.media.MediaPlayer
 import android.os.Handler
 import java.lang.Exception
+import com.technion.vedibarta.utilities.error
 
 
 class ChatRoomActivity : VedibartaActivity()
@@ -34,9 +35,9 @@ class ChatRoomActivity : VedibartaActivity()
 {
 
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    private var chatPartnerId: String = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
     // private var chatPartnerId: String? = intent.getStringExtra("id") //TODO use this instead of the above
-    // private val photoUrl: String? = intent.getStringExtra("photoUrl")
+    private var photoUrl: String? = null
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
     private val currentDate = Date(System.currentTimeMillis())
@@ -50,11 +51,16 @@ class ChatRoomActivity : VedibartaActivity()
     {
         super.onCreate(savedInstanceState)
         setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
+        photoUrl = intent.getStringExtra("photoUrl")
+        chatPartnerId = intent.getStringExtra("id")
+        numMessages =intent.getIntExtra("numMessages", 0)
+        val partnerName = intent.getStringExtra("name")
 
         setToolbar(chatToolbar)
         configureAdapter()
         buttonChatBoxSend.setOnClickListener { sendMessage(it) }
         popupMenu.setOnClickListener{ showPopup(it) }
+        toolbarUserName.text = partnerName
     }
 
     override fun onStart() {
@@ -74,7 +80,7 @@ class ChatRoomActivity : VedibartaActivity()
         database.students()
             .userId()
             .chats()
-            .chatWith(chatPartnerId)
+            .chatWith(chatPartnerId!!)
             .build().update("numMessages", numMessages)
     }
 
@@ -200,7 +206,7 @@ class ChatRoomActivity : VedibartaActivity()
                     }
                     catch (e: Exception)
                     {
-                        com.technion.vedibarta.utilities.error(e, "tryToPlaySound")
+                        error(e, "tryToPlaySound")
                     }
                 }
             }
