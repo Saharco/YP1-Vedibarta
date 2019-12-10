@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -22,6 +23,7 @@ import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -124,16 +126,13 @@ class MainActivity : VedibartaActivity() {
         {
             override fun onDataChanged() {
                 super.onDataChanged()
-                Log.d("wtf", "onDataChanged")
             }
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int
             ): ViewHolder
             {
-                Log.d("wtf", "onCreateViewHolder")
                 val userNameView = LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-                Log.d("wtf", "inflated")
                 return ViewHolder(userNameView)
             }
 
@@ -142,17 +141,17 @@ class MainActivity : VedibartaActivity() {
                 position: Int,
                 card: ChatCard
             ) {
-                Log.d("wtf", "onBindViewHolder")
                 when(holder)
                 {
                     is ViewHolder -> {
                         holder.bind(card)
                         holder.view.setOnClickListener {
-                            val i = Intent(this@MainActivity, ChatRoomActivity::class.java)
-                            i.putExtra("id", card.userId)
-                            i.putExtra("name", card.userName)
-                            i.putExtra("photoUrl", card.userPhoto)
-                            startActivity(i)
+                                val i = Intent(this@MainActivity, ChatRoomActivity::class.java)
+                                i.putExtra("id", card.userId)
+                                i.putExtra("name", card.userName)
+                                i.putExtra("photoUrl", card.userPhoto)
+                                i.putExtra("numMessages", card.numMessages)
+                                startActivity(i)
                         }
                     }
                 }

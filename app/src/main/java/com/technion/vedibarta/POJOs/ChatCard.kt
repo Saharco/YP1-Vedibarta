@@ -8,4 +8,5 @@ data class ChatCard (
     val userId: String = "",
     var lastMessage: String = "",
     val relativeTime: String = "",
+    val numMessages: Int = 0,
     val date: String = "")
