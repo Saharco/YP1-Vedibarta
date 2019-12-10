@@ -5,30 +5,27 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.view.*
 import android.widget.SearchView
-import androidx.appcompat.app.ActionBarDrawerToggle
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.MenuItemCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class MainActivity : VedibartaActivity() {
 
     private val logTag = "ChatHistory"
+    private lateinit var adapter: FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +35,7 @@ class MainActivity : VedibartaActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        setupRecyclerView()
+        configureAdapter()
 
         if (Intent.ACTION_SEARCH == intent.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
@@ -61,43 +58,14 @@ class MainActivity : VedibartaActivity() {
         }
     }
 
-    private fun doMySearch(query: String) {
-        Log.d("Yuval", "Searching for something...")
+    override fun onStart() {
+        super.onStart()
+        adapter.startListening()
     }
 
-    private fun setupRecyclerView() {
-        val chatHistory = findViewById<RecyclerView>(R.id.chat_history)
-        chatHistory.setHasFixedSize(true)
-        val layoutManager = LinearLayoutManager(this)
-        chatHistory.layoutManager = layoutManager
-        val demoCards = ArrayList<ChatCard>()
-        val date = "today"
-        demoCards.add(ChatCard(0,"יובל", "Hello", date))
-        demoCards.add(ChatCard(0,"Sahar", "Hello", date))
-        demoCards.add(ChatCard(0,"Victor", "Hello", date))
-        demoCards.add(ChatCard(0,"Gil", "Hello", date))
-        demoCards.add(ChatCard(0,"Ron", "Hello", date))
-        demoCards.add(ChatCard(0,"Or", "Hello", date))
-        demoCards.add(ChatCard(0,"Samuel", "Hello", date))
-        demoCards.add(ChatCard(0,"Yuval", "Hello", date))
-        demoCards.add(ChatCard(0,"Sahar", "Hello", date))
-        demoCards.add(ChatCard(0,"Victor", "Hello", date))
-        demoCards.add(ChatCard(0,"Gil", "Hello", date))
-        demoCards.add(ChatCard(0,"Ron", "Hello", date))
-        demoCards.add(ChatCard(0,"Or", "Hello", date))
-        demoCards.add(ChatCard(0,"Samuel", "Hello", date))
-
-        val adapter = object : ChatHistoryAdapter(demoCards) {
-            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-                super.onBindViewHolder(holder, position)
-                holder.view.setOnClickListener {
-                    startActivity(Intent(this@MainActivity, ChatRoomActivity::class.java))
-                }
-            }
-        }
-        chatHistory.adapter = adapter
-
-
+    override fun onStop() {
+        super.onStop()
+        adapter.stopListening()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -118,5 +86,63 @@ class MainActivity : VedibartaActivity() {
                 startActivity(Intent(this, UserProfileActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun doMySearch(query: String) {
+        Log.d("Yuval", "Searching for something...")
+    }
+
+    private fun configureAdapter()
+    {
+        val query = database.students().userId().chats().build()
+        val options = FirestoreRecyclerOptions.Builder<ChatCard>()
+            .setQuery(query,ChatCard::class.java)
+            .build()
+        val chatHistory = findViewById<RecyclerView>(R.id.chat_history)
+        adapter = getAdapter(options)
+        chatHistory.layoutManager = LinearLayoutManager(this)
+        chatHistory.adapter = adapter
+    }
+
+    private class ViewHolder (view: View): RecyclerView.ViewHolder(view)
+    {
+        fun bind(card: ChatCard)
+        {
+            itemView.findViewById<TextView>(R.id.user_name).text = card.userName
+            itemView.findViewById<TextView>(R.id.last_message).text = card.userName
+            itemView.findViewById<TextView>(R.id.relative_timestamp).text = card.userName
+        }
+    }
+    private fun getAdapter(options: FirestoreRecyclerOptions<ChatCard>): FirestoreRecyclerAdapter<ChatCard,RecyclerView.ViewHolder>
+    {
+        return object: FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>(options)
+        {
+            override fun onDataChanged() {
+                super.onDataChanged()
+                Log.d("wtf", "onDataChanged")
+            }
+            override fun onCreateViewHolder(
+                parent: ViewGroup,
+                viewType: Int
+            ): ViewHolder
+            {
+                Log.d("wtf", "onCreateViewHolder")
+                val userNameView = LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
+                Log.d("wtf", "inflated")
+                return ViewHolder(userNameView)
+            }
+
+            override fun onBindViewHolder(
+                holder: RecyclerView.ViewHolder,
+                position: Int,
+                card: ChatCard
+            ) {
+                Log.d("wtf", "onBindViewHolder")
+                when(holder)
+                {
+                    is ViewHolder -> holder.bind(card)
+                }
+             }
+        }
     }
 }
