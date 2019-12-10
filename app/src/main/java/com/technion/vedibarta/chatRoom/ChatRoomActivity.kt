@@ -23,6 +23,7 @@ import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.R
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class ChatRoomActivity : VedibartaActivity()
@@ -32,8 +33,9 @@ class ChatRoomActivity : VedibartaActivity()
 
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
     var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
-    private val flippedDateFormatter = SimpleDateFormat("yy/MM/dd", Locale.getDefault())
-    private val flippedCurrentDate = flippedDateFormatter.format(Date(System.currentTimeMillis()))
+    private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
+    private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
+    private val currentDate = Date(System.currentTimeMillis())
 
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -213,10 +215,15 @@ class ChatRoomActivity : VedibartaActivity()
             partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
         }
 
-        val lastMessageDate = flippedDateFormatter.format(adapter.snapshots.last().fullTimeStamp)
-        if (flippedCurrentDate > lastMessageDate)
+        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
+        if (lastMessageDate != null)
         {
-            duplicateWrite(userId!!, partner, flippedCurrentDate.reversed(),true)
+            val timeGap = currentDate.time - lastMessageDate.time
+            val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
+            {
+                duplicateWrite(userId!!, partner, dateFormatter.format(currentDate),true)
+            }
         }
         duplicateWrite(userId!!, partner, text, false)
         chatBox.setText("")
@@ -252,14 +259,14 @@ class ChatRoomActivity : VedibartaActivity()
     private fun duplicateWrite(userId: String, partnerId: String, text: String, isGeneratorMessage: Boolean)
     {
         val timeSent = Date(System.currentTimeMillis())
-        val userPath  = database.students()
+        var userPath  = database.students()
                                         .userId()
                                         .chats()
                                         .chatWith(partnerId)
                                         .messages()
                                         .message(timeSent)
                                         .build()
-        val partnerPath = database.students()
+        var partnerPath = database.students()
                                                 .chatWith(partnerId)
                                                 .chats()
                                                 .chatWith(userId)
@@ -272,6 +279,22 @@ class ChatRoomActivity : VedibartaActivity()
         {
             userMassageType = MessageType.GENERATOR
             partnerMessageType = MessageType.GENERATOR
+
+            userPath = database.students()
+                .userId()
+                .chats()
+                .chatWith(partnerId)
+                .messages()
+                .systemMessage(timeSent)
+                .build()
+
+            partnerPath = database.students()
+                .chatWith(partnerId)
+                .chats()
+                .chatWith(userId)
+                .messages()
+                .systemMessage(timeSent)
+                .build()
         }
         userPath.set(Message(userMassageType, text, timeSent), SetOptions.merge())
             .addOnFailureListener {

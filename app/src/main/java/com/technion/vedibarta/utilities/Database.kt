@@ -44,6 +44,7 @@ interface ICollectionPath
     fun userId():IDocumentPath
     fun chatWith(partnerId: String): IDocumentPath
     fun message(d: Date): IDocumentPath
+    fun systemMessage(d: Date): IDocumentPath
     fun build(): CollectionReference
 
 }
@@ -61,6 +62,8 @@ class DocumentsCollections(private val userId: String?)
 }
 private class CollectionPath(private val c: CollectionReference, private val userId: String?):ICollectionPath
 {
+    override fun systemMessage(d: Date): IDocumentPath = DocumentPath(c.document("sys$d"), userId)
+
     override fun chatWith(partnerId: String): IDocumentPath = DocumentPath(c.document(partnerId), userId)
     override fun userId() = DocumentPath(c.document("$userId"), userId)
     override fun message(d: Date): IDocumentPath = DocumentPath(c.document(d.toString()), userId)
