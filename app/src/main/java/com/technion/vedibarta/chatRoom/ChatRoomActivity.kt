@@ -34,7 +34,7 @@ class ChatRoomActivity : VedibartaActivity()
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
     private var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
     // private var chatPartnerId: String? = intent.getStringExtra("id") //TODO use this instead of the above
-    private val photoUrl: String? = intent.getStringExtra("photoUrl")
+    // private val photoUrl: String? = intent.getStringExtra("photoUrl")
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
     private val currentDate = Date(System.currentTimeMillis())
