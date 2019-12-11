@@ -273,13 +273,6 @@ class ChatRoomActivity : VedibartaActivity()
             return
 
 
-        //TODO(duplicate and hardcoded for testing must delete later)
-        var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
-        if (userId == partner)
-        {
-            partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
-        }
-
         val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
         if (lastMessageDate != null)
         {
@@ -287,10 +280,10 @@ class ChatRoomActivity : VedibartaActivity()
             val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
             if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
             {
-                duplicateWrite(userId!!, partner, dateFormatter.format(currentDate),true)
+                duplicateWrite(userId!!, chatPartnerId!!, dateFormatter.format(currentDate),true)
             }
         }
-        duplicateWrite(userId!!, partner, text, false)
+        duplicateWrite(userId!!, chatPartnerId!!, text, false)
         chatBox.setText("")
     }
 
