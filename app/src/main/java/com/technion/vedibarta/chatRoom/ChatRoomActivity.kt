@@ -98,8 +98,8 @@ class ChatRoomActivity : VedibartaActivity()
             .setQuery(query,Message::class.java)
             .build()
         adapter = getChatAdapter(options)
-        chatView.layoutManager = LinearLayoutManager(this)
         chatView.adapter = adapter
+        chatView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -140,6 +140,7 @@ class ChatRoomActivity : VedibartaActivity()
     {
        return  object: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options)
         {
+            private var needInitialScroll = true
             override fun getItemViewType(position: Int): Int
             {
                 return this.snapshots[position].messageType.ordinal
@@ -151,6 +152,13 @@ class ChatRoomActivity : VedibartaActivity()
                 val lastVisiblePosition = (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 if (this.itemCount - lastVisiblePosition <= 2)
                     chatView.smoothScrollToPosition(this.itemCount)
+                else
+                    if (needInitialScroll)
+                    {
+                        needInitialScroll = false
+                        chatView.smoothScrollToPosition(this.itemCount)
+                    }
+
             }
             
             override fun onCreateViewHolder(
