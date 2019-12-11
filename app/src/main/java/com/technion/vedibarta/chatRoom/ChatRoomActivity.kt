@@ -36,7 +36,6 @@ class ChatRoomActivity : VedibartaActivity()
 
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
     private var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
-    // private var chatPartnerId: String? = intent.getStringExtra("id") //TODO use this instead of the above
     private var photoUrl: String? = null
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -76,12 +75,6 @@ class ChatRoomActivity : VedibartaActivity()
     override fun onPause()
     {
         super.onPause()
-        Log.d("wtf", "onPause")
-        database.students()
-            .userId()
-            .chats()
-            .chatWith(chatPartnerId!!)
-            .build().update("numMessages", numMessages)
     }
 
     private fun configureAdapter()
@@ -100,6 +93,17 @@ class ChatRoomActivity : VedibartaActivity()
         adapter = getChatAdapter(options)
         chatView.adapter = adapter
         chatView.layoutManager = LinearLayoutManager(this)
+        val initialAdapterPopulationListener = object: View.OnLayoutChangeListener{
+            override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int,p5: Int, p6: Int, p7: Int, p8: Int)
+            {
+                if (adapter.itemCount > 0)
+                {
+                    chatView.smoothScrollToPosition(adapter.itemCount)
+                    chatView.removeOnLayoutChangeListener(this)
+                }
+            }
+        }
+        chatView.addOnLayoutChangeListener(initialAdapterPopulationListener)
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -152,13 +156,6 @@ class ChatRoomActivity : VedibartaActivity()
                 val lastVisiblePosition = (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                 if (this.itemCount - lastVisiblePosition <= 2)
                     chatView.smoothScrollToPosition(this.itemCount)
-                else
-                    if (needInitialScroll)
-                    {
-                        needInitialScroll = false
-                        chatView.smoothScrollToPosition(this.itemCount)
-                    }
-
             }
             
             override fun onCreateViewHolder(
