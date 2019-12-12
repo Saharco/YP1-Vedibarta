@@ -13,16 +13,12 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.R
-import kotlinx.android.synthetic.main.activity_chat_room.view.*
-import java.lang.Exception
 
-class ChatRoomAdapter(private val chatRoomActivity: ChatRoomActivity,
+class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
                       options: FirestoreRecyclerOptions<Message>,
-                      var numMessages: Int): FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options)
+                      numMessages: Int): FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options)
 {
-    private val MESSAGE_SOUND_INTERVAL: Long = 2000
-    private val soundHandler = Handler()
-    private val soundTask = Runnable { soundHandler.removeMessages(0) }
+    private val soundPlayer = SoundPlayer(chatRoomActivity, numMessages)
     private val chatView= chatRoomActivity.findViewById<RecyclerView>(R.id.chatView)
 
     override fun getItemViewType(position: Int): Int
@@ -82,37 +78,7 @@ class ChatRoomAdapter(private val chatRoomActivity: ChatRoomActivity,
             is GeneratorMessageViewHolder -> holder.bind(message)
         }
 
-        if (!soundHandler.hasMessages(0)) {
-            soundHandler.removeCallbacksAndMessages(null)
-            soundHandler.postDelayed(soundTask, MESSAGE_SOUND_INTERVAL)
-            try {
-                val res = tryToPlaySound(message.messageType, this.itemCount)
-            } catch (e: Exception) {
-                com.technion.vedibarta.utilities.error(e, "tryToPlaySound")
-            }
-        }
-    }
-
-    private fun tryToPlaySound(type: MessageType, count: Int): Boolean
-    {
-        if (count > numMessages) {
-            // Update the amount of already-acknowledged messages
-            numMessages = count
-            // Let the handler know about the successful sound invocation, so it can lock it for a set time
-            soundHandler.sendEmptyMessage(0)
-
-            if (type == MessageType.USER)
-            {
-                val mp = MediaPlayer.create(chatRoomActivity, R.raw.message_sent_audio);
-                mp.start();
-                return true;
-            } else {
-                val mp = MediaPlayer.create(chatRoomActivity, R.raw.message_received_audio);
-                mp.start();
-                return true
-            }
-        }
-        return false
+        soundPlayer.playMessageSound(message.messageType, this.itemCount)
     }
 
     private class SentMessageViewHolder(view: View) :

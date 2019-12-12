@@ -2,10 +2,8 @@ package com.technion.vedibarta.chatRoom
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
@@ -23,10 +21,6 @@ import com.google.firebase.firestore.SetOptions
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import android.media.MediaPlayer
-import android.os.Handler
-import java.lang.Exception
-import com.technion.vedibarta.utilities.error
 
 
 class ChatRoomActivity : VedibartaActivity()
@@ -76,21 +70,21 @@ class ChatRoomActivity : VedibartaActivity()
 
     private fun configureAdapter()
     {
-        //TODO(for testing, must delete later)
-        var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
-        if (userId == partner)
-        {
-            partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
-        }
-        val query = database.students().userId().chats().chatWith(partner).messages()
-                                    .build().orderBy("fullTimeStamp")
-        val options = FirestoreRecyclerOptions.Builder<Message>()
+        val query =
+            database
+                .students()
+                .userId()
+                .chats()
+                .chatWith(chatPartnerId!!)
+                .messages()
+                .build().orderBy("fullTimeStamp")
+
+        val options =
+            FirestoreRecyclerOptions.Builder<Message>()
             .setQuery(query,Message::class.java)
             .build()
-        adapter = getChatAdapter(options)
-        chatView.adapter = adapter
-        chatView.layoutManager = LinearLayoutManager(this)
-        val initialAdapterPopulationListener = object: View.OnLayoutChangeListener{
+        
+        val initialChatViewPopulationListener = object: View.OnLayoutChangeListener{
             override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int,p5: Int, p6: Int, p7: Int, p8: Int)
             {
                 if (adapter.itemCount > 0)
@@ -100,7 +94,11 @@ class ChatRoomActivity : VedibartaActivity()
                 }
             }
         }
-        chatView.addOnLayoutChangeListener(initialAdapterPopulationListener)
+
+        adapter = ChatRoomAdapter(this, options, numMessages)
+        chatView.adapter = adapter
+        chatView.layoutManager = LinearLayoutManager(this)
+        chatView.addOnLayoutChangeListener(initialChatViewPopulationListener)
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -135,11 +133,6 @@ class ChatRoomActivity : VedibartaActivity()
     {
         TODO("need to decide what to do")
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun getChatAdapter(options: FirestoreRecyclerOptions<Message>): FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    {
-        return ChatRoomAdapter(this, options, numMessages)
     }
 
     private fun sendMessage(v: View)
