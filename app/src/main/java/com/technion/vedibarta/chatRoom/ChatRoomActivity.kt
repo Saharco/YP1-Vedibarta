@@ -63,11 +63,6 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.stopListening()
     }
 
-    override fun onPause()
-    {
-        super.onPause()
-    }
-
     private fun configureAdapter()
     {
         val query =
@@ -83,7 +78,7 @@ class ChatRoomActivity : VedibartaActivity()
             FirestoreRecyclerOptions.Builder<Message>()
             .setQuery(query,Message::class.java)
             .build()
-        
+
         val initialChatViewPopulationListener = object: View.OnLayoutChangeListener{
             override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int,p5: Int, p6: Int, p7: Int, p8: Int)
             {
@@ -135,28 +130,6 @@ class ChatRoomActivity : VedibartaActivity()
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
     }
 
-    private fun sendMessage(v: View)
-    {
-        chatView.smoothScrollToPosition(adapter.itemCount)
-        val text: String = chatBox.text.toString()
-        if (text.isEmpty())
-            return
-
-
-        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
-        if (lastMessageDate != null)
-        {
-            val timeGap = currentDate.time - lastMessageDate.time
-            val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
-            {
-                duplicateWrite(userId!!, chatPartnerId!!, dateFormatter.format(currentDate),true)
-            }
-        }
-        duplicateWrite(userId!!, chatPartnerId!!, text, false)
-        chatBox.setText("")
-    }
-
     private fun showPopup(view: View)
     {
         val popup = PopupMenu(this, view)
@@ -182,6 +155,28 @@ class ChatRoomActivity : VedibartaActivity()
             true
         }
         popup.show()
+    }
+
+    private fun sendMessage(v: View)
+    {
+        chatView.smoothScrollToPosition(adapter.itemCount)
+        val text: String = chatBox.text.toString()
+        if (text.isEmpty())
+            return
+
+        //TODO fix the writing to database after cloud functions implemented
+        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
+        if (lastMessageDate != null)
+        {
+            val timeGap = currentDate.time - lastMessageDate.time
+            val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
+            {
+                duplicateWrite(userId!!, chatPartnerId!!, dateFormatter.format(currentDate),true)
+            }
+        }
+        duplicateWrite(userId!!, chatPartnerId!!, text, false)
+        chatBox.setText("")
     }
 
     private fun duplicateWrite(userId: String, partnerId: String, text: String, isGeneratorMessage: Boolean)
