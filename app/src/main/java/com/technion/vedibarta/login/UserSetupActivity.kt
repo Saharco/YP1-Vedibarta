@@ -36,14 +36,7 @@ class UserSetupActivity : VedibartaActivity() {
 
 
     var setupStudent = Student(
-        "",
-        null,
-        "",
-        "",
-        Gender.NONE,
-        Timestamp(System.currentTimeMillis()),
-        characteristics = listOf(),
-        hobbies = listOf()
+        lastActivity = Timestamp(System.currentTimeMillis())
     )
 
     lateinit var schoolsName: Array<String>
@@ -178,8 +171,9 @@ class UserSetupActivity : VedibartaActivity() {
     private fun validateUserInput(): Boolean {
 
         missingDetailsText = ""
+        val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
-        Log.d(TAG,"Chars: ${setupStudent.characteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName ")
+        Log.d(TAG,"Chars: ${studentsCharacteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName ")
         Log.d(TAG,"last name: $chosenLastName,  School: ${setupStudent.school}, Region: ${setupStudent.region}")
 
         if (setupStudent.gender == Gender.NONE) {
@@ -207,7 +201,7 @@ class UserSetupActivity : VedibartaActivity() {
             return false
         }
 
-        if (setupStudent.characteristics.isEmpty()) {
+        if (studentsCharacteristics.isEmpty()) {
             missingDetailsText += "יש לבחור מאפייני זהות\n"
             return false
         }
