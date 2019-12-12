@@ -1,8 +1,8 @@
 package com.technion.vedibarta.studentsMatching.impl
 
 import android.util.Log
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.studentsMatching.Matcher
 
@@ -21,14 +21,14 @@ const val TAG = "Matcher"
  * any other student who has all-but-one of the specified [characteristics], will be considered an
  * ok match.
  *
+ * @param studentsCollection a reference to the students collection where matches will be searched.
  * @param characteristics the wanted set of characteristics, which the matched users must have.
  * @param region if not null, the region in which the matched users must live.
  * @param school if not null, the school in which the matched users must study.
  */
-class MatcherImpl(private val characteristics: Collection<String>, private val region: String? = null,
+class MatcherImpl(private val studentsCollection: CollectionReference,
+                  private val characteristics: Collection<String>, private val region: String? = null,
                   private val school: String? = null) : Matcher {
-    private val studentsCollection = FirebaseFirestore.getInstance().collection("students")
-
     override fun match(): List<Student> {
         return getDocs().map { it.toObject(Student::class.java)!! }
     }
