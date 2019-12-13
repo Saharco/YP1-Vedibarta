@@ -68,6 +68,8 @@ open class CarouselAdapter(
         loadProfilePicture(holder.profilePicture, student)
         holder.name.text = student.name
         holder.description.text = "${student.school}, ${student.region}"
+        if (student.gender != Gender.FEMALE)
+            holder.button.text = context.resources.getString(R.string.chat_candidate_accept_button_m)
         populateTable(holder.table, student)
     }
 
@@ -207,6 +209,6 @@ class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val button: Button = view.findViewById(R.id.confirmCandidateButton)
 
     fun bind(carouselAdapterItem: Student) {
-        //TODO: add listeners, tags, etc here
+
     }
 }
