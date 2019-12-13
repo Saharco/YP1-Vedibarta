@@ -130,6 +130,7 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
+                    setupStudent.name = "$chosenLastName $chosenLastName"
                     database.students().userId().build().set(setupStudent)
                         .addOnSuccessListener {
                             startActivity(Intent(this, MainActivity::class.java))
