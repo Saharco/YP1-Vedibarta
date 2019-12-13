@@ -32,6 +32,7 @@
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">בחירת שותף</string>
+    <string name="chat_candidate_accept_button_m">בוא נדבר</string>
     <string name="chat_candidate_accept_button_f">בואי נדבר</string>
 
 
