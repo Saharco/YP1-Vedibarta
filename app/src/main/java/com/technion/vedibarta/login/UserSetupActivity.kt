@@ -1,6 +1,7 @@
 package com.technion.vedibarta.login
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -129,7 +130,7 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
-                    setupStudent.name = "$chosenLastName $chosenLastName"
+                    setupStudent.name = "$chosenFirstName $chosenLastName"
                     database.students().userId().build().set(setupStudent)
                         .addOnSuccessListener {
                             startActivity(Intent(this, MainActivity::class.java))
