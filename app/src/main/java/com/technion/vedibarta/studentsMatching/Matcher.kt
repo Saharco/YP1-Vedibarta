@@ -1,6 +1,6 @@
 package com.technion.vedibarta.studentsMatching
 
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.android.gms.tasks.Task
 import com.technion.vedibarta.POJOs.Student
 
 /**
@@ -8,14 +8,8 @@ import com.technion.vedibarta.POJOs.Student
  */
 interface Matcher {
     /**
-     * Run the matching algorithm and return the matched students.
-     * @return a [List] of [Student] objects, the matched students.
+     * Run the matching algorithm asynchronously and return the matched students.
+     * @return a [Set] of [Student] objects, the matched students.
      */
-    fun match(): List<Student>
-
-    /**
-     * Run the matching algorithm and return the documents of the matched students.
-     * @return a [List] of [DocumentSnapshot], the matched students' documents at time of running.
-     */
-    fun getDocs(): List<DocumentSnapshot>
+    fun match(): Task<Set<Student>>
 }
