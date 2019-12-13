@@ -62,11 +62,6 @@ class ChatRoomActivity : VedibartaActivity()
     override fun onStart() {
         super.onStart()
         adapter.startListening()
-        chatRoomListeners.configureListeners()
-        val messageList = ArrayList<Message>()
-        populateMessageList(messageList)// TODO remove after testing
-
-        configureAdapter(messageList)
     }
 
     override fun onStop() {
