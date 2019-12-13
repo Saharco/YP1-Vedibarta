@@ -2,6 +2,7 @@ package com.technion.vedibarta.login
 
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
@@ -46,6 +47,13 @@ class ChooseHobbiesFragment : Fragment() {
 
         return view
     }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.d(TAG, "Configuration changed")
+        populateHobbiesTable()
+    }
+
 
     @SuppressLint("InflateParams")
     private fun populateHobbiesTable() {

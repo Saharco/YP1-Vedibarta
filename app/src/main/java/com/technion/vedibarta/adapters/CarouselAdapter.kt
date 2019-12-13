@@ -2,9 +2,7 @@ package com.technion.vedibarta.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.util.Log
 import android.view.Gravity
@@ -12,8 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,11 +20,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.utilities.Gender
-import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
-import kotlinx.android.synthetic.main.activity_user_profile.*
 
 open class CarouselAdapter(
     val context: Context,
@@ -152,7 +145,8 @@ open class CarouselAdapter(
             Log.d(TAG, "Amount of rows: $rowsAmount")
             Log.d(TAG, "Amount of bubbles in a row: $colsAmount")
 
-            (student.characteristics.indices step colsAmount).forEach { i ->
+            val studentsCharacteristics = student.characteristics.filter { it.value }.keys.toList()
+            (studentsCharacteristics.indices step colsAmount).forEach { i ->
 
                 if (i <= maxBubblesIndex) {
 
@@ -161,7 +155,7 @@ open class CarouselAdapter(
                     tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
                     for (j in 0 until colsAmount) {
-                        if (i + j >= student.characteristics.size)
+                        if (i + j >= studentsCharacteristics.size)
                             break
 
                         if (i + j == maxBubblesIndex) {
@@ -180,7 +174,7 @@ open class CarouselAdapter(
                         ) as FrameLayout
 
                         val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                        bubble.text = student.characteristics[i + j]
+                        bubble.text = studentsCharacteristics[i + j]
                         bubbleFrame.layoutParams = bubbleParams
                         tableRow.addView(bubbleFrame)
                     }

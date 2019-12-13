@@ -133,8 +133,7 @@ class ChooseCharacteristicsFragment : Fragment() {
 
             Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
 
-            act.setupStudent.characteristics =
-                act.setupStudent.characteristics.plusElement(characteristics[view.id])
+            act.setupStudent.characteristics[characteristics[view.id]] = true
 
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
@@ -147,8 +146,7 @@ class ChooseCharacteristicsFragment : Fragment() {
 
             Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
 
-            act.setupStudent.characteristics =
-                act.setupStudent.characteristics.filter { element -> element != characteristics[view.id] }
+            act.setupStudent.characteristics[characteristics[view.id]] = false
         }
 
         bubbleFrame.id = view.id

@@ -58,6 +58,7 @@
                     android:layout_marginTop="20dp"
                     app:autoSizeMaxTextSize="13sp"
                     app:autoSizeMinTextSize="11sp"
+                    android:imeOptions="flagNoExtractUi"
                     app:autoSizeTextType="uniform"
                     android:visibility="gone"
                     android:completionThreshold="0"
@@ -71,11 +72,13 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             android:layout_marginEnd="56dp"
             android:layout_marginStart="56dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardViewSchool">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -111,6 +114,7 @@
                     android:id="@+id/regionListSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:imeOptions="flagNoExtractUi"
                     android:layout_marginTop="20dp"
                     app:autoSizeMaxTextSize="13sp"
                     app:autoSizeMinTextSize="11sp"
