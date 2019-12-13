@@ -283,6 +283,7 @@ class UserProfileActivity : VedibartaActivity(),
 
     @SuppressLint("InflateParams")
     private fun populateCharacteristicsTable() {
+        val studentsCharacteristics = student!!.characteristics.filter { it.value }.keys.toList()
 
         val tableRowParams = TableLayout.LayoutParams(
             TableLayout.LayoutParams.MATCH_PARENT,
@@ -296,7 +297,7 @@ class UserProfileActivity : VedibartaActivity(),
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        if (student == null || student!!.characteristics.isEmpty()) {
+        if (student == null || studentsCharacteristics.isEmpty()) {
             handleNoCharacteristics()
             return
         }
@@ -306,14 +307,13 @@ class UserProfileActivity : VedibartaActivity(),
         val steps = calculateBubblesInRow()
 
         Log.d(TAG, "Amount of bubbles in a row: $steps")
-
-        (student!!.characteristics.indices step steps).forEach { i ->
+        (studentsCharacteristics.indices step steps).forEach { i ->
             val tableRow = TableRow(this)
             tableRow.layoutParams = tableRowParams
             tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
             for (j in 0 until steps) {
-                if (i + j >= student!!.characteristics.size)
+                if (i + j >= studentsCharacteristics.size)
                     break
 
                 val bubbleFrame = LayoutInflater.from(this).inflate(
@@ -322,7 +322,7 @@ class UserProfileActivity : VedibartaActivity(),
                 ) as FrameLayout
 
                 val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = student!!.characteristics[i + j]
+                bubble.text = studentsCharacteristics[i + j]
                 bubbleFrame.layoutParams = bubbleParams
 
                 tableRow.addView(bubbleFrame)

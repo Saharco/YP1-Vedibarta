@@ -21,7 +21,7 @@ class ProfileEditActivity : VedibartaActivity() {
     private val TAG = "ProfileEditActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    var editedCharacteristics = student!!.characteristics.toMutableSet()
+    var editedCharacteristics = student!!.characteristics.toMutableMap()
     var editedHobbies = student!!.hobbies.toMutableSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,12 +63,12 @@ class ProfileEditActivity : VedibartaActivity() {
     private fun commitEditChanges() {
         Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
         //TODO: push to the database first!
-        student!!.characteristics = editedCharacteristics.toList()
+        student!!.characteristics = editedCharacteristics
         student!!.hobbies = editedHobbies.toList()
         database.students().userId().build().set(student!!).addOnSuccessListener {
             Log.d("profileEdit", "saved profile changes")
             onBackPressed()
-        }?.addOnFailureListener {
+        }.addOnFailureListener {
             Log.d("profileEdit", "${it.message}, cause: ${it.cause?.message}")
         }
     }
@@ -102,9 +102,7 @@ class ProfileEditActivity : VedibartaActivity() {
     }
 
     private fun changesOccurred(): Boolean {
-        if (!(editedCharacteristics.containsAll(student!!.characteristics.toSet()) &&
-                    student!!.characteristics.toSet().containsAll(editedCharacteristics))
-        )
+        if (editedCharacteristics.filter { it.value } != student!!.characteristics.filter { it.value })
             return true
         if (!(editedHobbies.containsAll(student!!.hobbies.toSet()) &&
                     student!!.hobbies.toSet().containsAll(editedHobbies))
