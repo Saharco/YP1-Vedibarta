@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.POJOs.Gender
 import kotlinx.android.synthetic.main.profile_picture_dialog.*
 
 class ProfilePictureUploadDialog private constructor() : DialogFragment() {

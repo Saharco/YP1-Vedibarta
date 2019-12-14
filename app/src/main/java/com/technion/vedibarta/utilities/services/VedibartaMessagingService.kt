@@ -19,17 +19,18 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.technion.vedibarta.POJOs.ActivityCode
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import java.util.concurrent.ExecutionException
 
 /**
- * This background service is constantly running on the user's device and listens to cloud functions' payloads
+ * This is a *background service*.
+ * These listeners are constantly running on the user's device and listen to cloud functions' payloads
  * that are sent to a user's FCM token.
- * The service also handles new new tokens.
+ * The service also handles new tokens.
  *
- * //FIXME: this class is not yet complete
  */
 class VedibartaMessagingService : FirebaseMessagingService() {
 
@@ -98,10 +99,10 @@ class VedibartaMessagingService : FirebaseMessagingService() {
         notificationIntent.putExtra("CHAT_ID", chatId)
         notificationIntent.putExtra("OTHER_ID", senderId)
         notificationIntent.putExtra("IS_NOT_REFERENCED_FROM_LOBBY", true)
-//        notificationIntent.putExtra(
-//            MainActivity.EXTRA_CHANGE_ACTIVITY,
-//            ActivityCode.ActivityChatRoom
-//        )
+        notificationIntent.putExtra(
+            VedibartaActivity.EXTRA_CHANGE_ACTIVITY,
+            ActivityCode.ActivityChatRoom
+        )
 
         // This intent will start when the user clicks the notification.
         // A pending intent is required because it's "lazy" - a regular intent is instantaneous

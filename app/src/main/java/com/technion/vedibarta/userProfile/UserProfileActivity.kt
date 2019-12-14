@@ -48,11 +48,9 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.iid.FirebaseInstanceId
 import com.technion.vedibarta.login.LoginActivity
-import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.*
-import kotlinx.android.synthetic.main.chat_card.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 

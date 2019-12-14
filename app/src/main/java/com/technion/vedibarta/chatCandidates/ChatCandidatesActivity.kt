@@ -7,7 +7,7 @@ import com.technion.vedibarta.adapters.CarouselAdapter
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.adapters.ItemViewHolder
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
-import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_candidates.*
 import java.sql.Timestamp

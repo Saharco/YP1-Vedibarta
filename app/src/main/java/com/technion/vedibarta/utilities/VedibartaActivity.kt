@@ -75,6 +75,8 @@ open class VedibartaActivity : AppCompatActivity() {
         var isActivityRunning = false
 
         const val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS = 90
+        const val EXTRA_CHANGE_ACTIVITY = "EXTRA_CHANGE_ACTIVITY"
+
 
         /**
          * @param resources: resources object of the current context

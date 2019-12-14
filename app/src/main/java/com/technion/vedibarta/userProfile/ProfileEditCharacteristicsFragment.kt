@@ -17,7 +17,7 @@ import android.widget.TextView
 import androidx.core.view.get
 
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 

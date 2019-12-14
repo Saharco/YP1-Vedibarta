@@ -20,7 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 
 open class CarouselAdapter(

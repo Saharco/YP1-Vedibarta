@@ -1,7 +1,6 @@
 package com.technion.vedibarta.POJOs
 
 import com.google.firebase.firestore.DocumentId
-import com.technion.vedibarta.utilities.Gender
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.HashMap
