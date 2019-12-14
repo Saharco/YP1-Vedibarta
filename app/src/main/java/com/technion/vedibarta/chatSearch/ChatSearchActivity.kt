@@ -8,10 +8,13 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import com.google.firebase.firestore.FirebaseFirestore
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
+import com.technion.vedibarta.studentsMatching.impl.MatcherImpl
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -19,7 +22,10 @@ import kotlinx.android.synthetic.main.activity_chat_search.*
 
 class ChatSearchActivity : VedibartaActivity() {
 
-    private val TAG = "ChatSearchActivity"
+    companion object {
+        private const val MATCHING_TIMEOUT = 10L
+        private const val TAG = "ChatSearchActivity"
+    }
 
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
@@ -28,8 +34,8 @@ class ChatSearchActivity : VedibartaActivity() {
     lateinit var schoolTags: Array<Int>
 
     var chosenCharacteristics = arrayListOf<String>()
-    var chosenSchool = ""
-    var chosenRegion = ""
+    var chosenSchool: String? = null
+    var chosenRegion: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +53,6 @@ class ChatSearchActivity : VedibartaActivity() {
         editTabs.setupWithViewPager(searchUserContainer)
         setToolbar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
-        searchButton.setOnClickListener {
-            startActivity(Intent(this, ChatCandidatesActivity::class.java))
-            finish()
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -77,8 +79,7 @@ class ChatSearchActivity : VedibartaActivity() {
             R.id.actionChatSearch -> {
                 //TODO pass the chosen filters to database/other activity fo rmatching
                 if(validateChosenDetails()) {
-                    startActivity(Intent(this, ChatCandidatesActivity::class.java))
-                    finish()
+                    searchMatch()
                 }
                 else{
                     missingDetailsDialog()
@@ -106,8 +107,8 @@ class ChatSearchActivity : VedibartaActivity() {
     }
 
     private fun validateChosenDetails() : Boolean{
-        return (schoolsName.contains(chosenSchool)  || chosenSchool == "")
-                && (regionsName.contains(chosenRegion) || chosenRegion == "")
+        return (schoolsName.contains(chosenSchool)  || chosenSchool == null)
+                && (regionsName.contains(chosenRegion) || chosenRegion == null)
     }
 
     private fun setupViewPager(viewPager: CustomViewPager) {
@@ -115,5 +116,29 @@ class ChatSearchActivity : VedibartaActivity() {
         adapter.addFragment(SearchCharacteristicsFragment(), "1")
         adapter.addFragment(SearchExtraOptionsFragment(), "2")
         viewPager.adapter = adapter
+    }
+
+    private fun searchMatch() {
+        Log.d(TAG, "Searching a match")
+
+        val studentsCollection = FirebaseFirestore.getInstance().collection("students")
+
+        MatcherImpl(studentsCollection, chosenCharacteristics, chosenRegion, chosenSchool).match()
+            .addOnSuccessListener(this) { students ->
+                if (students.isNotEmpty()) {
+                    Log.d(TAG, "Matched students successfully")
+
+                    val intent = Intent(this, ChatCandidatesActivity::class.java)
+                    intent.putExtra("STUDENTS", students.toTypedArray())
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Log.d(TAG, "No matching students founds")
+                    Toast.makeText(this, R.string.no_matching_students, Toast.LENGTH_LONG).show()
+                }
+            }.addOnFailureListener(this) { exp ->
+                Log.w(TAG, "Matching students failed", exp)
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+            }
     }
 }

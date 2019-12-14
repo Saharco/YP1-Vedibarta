@@ -118,7 +118,7 @@ class SearchExtraOptionsFragment : Fragment() {
             schoolListSpinner.visibility = View.VISIBLE
         } else {
             schoolListSpinner.visibility = View.GONE
-            (activity as ChatSearchActivity).chosenSchool = ""
+            (activity as ChatSearchActivity).chosenSchool = null
         }
     }
 
@@ -147,7 +147,7 @@ class SearchExtraOptionsFragment : Fragment() {
         schoolTextViewAuto.text = SpannableStringBuilder("")
         val region = regionAdapter.getItem(position).toString()
         (activity as ChatSearchActivity).chosenRegion = region
-        (activity as ChatSearchActivity).chosenSchool = ""
+        (activity as ChatSearchActivity).chosenSchool = null
 
         val schoolList =
             schoolAndRegionMap.filter { it.value.second == region }.values.toMutableList().unzip()
@@ -166,7 +166,7 @@ class SearchExtraOptionsFragment : Fragment() {
             regionListSpinner.visibility = View.VISIBLE
         } else {
             regionListSpinner.visibility = View.GONE
-            (activity as ChatSearchActivity).chosenRegion = ""
+            (activity as ChatSearchActivity).chosenRegion = null
             regionTextViewAuto.text = SpannableStringBuilder("")
         }
 

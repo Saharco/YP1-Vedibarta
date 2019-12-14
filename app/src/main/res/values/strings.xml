@@ -35,7 +35,6 @@
     <string name="chat_candidate_accept_button_m">בוא נדבר</string>
     <string name="chat_candidate_accept_button_f">בואי נדבר</string>
 
-
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
     <string name="filter_by_school_text">סינון לפי בית ספר</string>
@@ -43,6 +42,7 @@
     <string name="chat_search_button">חפש</string>
     <string name="chat_search_wrong_details_title">פרטים שגויים</string>
     <string name="chat_search_wrong_details_message">יש לבחור רק בתי ספר ומקומות מגורים הנמצאים ברשימה</string>
+    <string name="no_matching_students">לא נימצאו תלמידים</string>
 
     <!--    UserSetup Attributes  -->
     <string name="user_setup_title">הגדרת משתמש</string>
@@ -74,8 +74,6 @@
     <string name="chat_room_enter_message_m">כתוב הודעה</string>
     <string name="chat_room_enter_message_f">כתבי הודעה</string>
 
-
-
     <!--    LoginScreen attribute   -->
     <string name="facebook_app_id">3227815763959885</string>
     <string name="fb_login_protocol_scheme">fb3227815763959885</string>
@@ -104,6 +102,7 @@
     <string name="short_password_error">על הסיסמה להכיל לפחות 8 תווים</string>
     <string name="wrong_password_repeat">הסיסמאות לא זהות</string>
     <string name="email_not_verified_error">אנא אמת דוא\"ל</string>
+    <string name="timeout_error">שגיאה: הפעולה נמשכת זמן רב מידי</string>
 
     <!-- MainActivity attributes-->
     <string name="main_title">ודיברת</string>
