@@ -10,7 +10,6 @@ import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_candidates.*
-import java.sql.Timestamp
 
 class ChatCandidatesActivity : VedibartaActivity() {
 
@@ -28,70 +27,6 @@ class ChatCandidatesActivity : VedibartaActivity() {
             }
         }
     }
-
-    //TODO: change these. they're here for testing
-    private val possibleItems = listOf(
-        student!!,
-        Student(
-            "יובל נהון",
-            "https://firebasestorage.googleapis.com/v0/b/takecare-81dab.appspot.com/o/itemPictures%2FuserUploads%2F1hrI3pYVvrVbtnxzrRh8nH3A1Y92%2F1aa42704-181f-4698-91ec-166d093902ae?alt=media&token=0fef3b51-16f2-4918-b8ae-b5ff1dacf5eb",
-            "נתניה",
-            "אורט יד ליבוביץ'",
-            Gender.MALE,
-            Timestamp(System.currentTimeMillis()),
-            mutableMapOf(
-                "מסורתי" to true,
-                "מזרחי" to true,
-                "צבר" to true
-            ),
-            listOf("ספורט", "לגלוש", "רובוטיקה")
-        ),
-        Student(
-            "ויקטור בניאס",
-            "https://firebasestorage.googleapis.com/v0/b/takecare-81dab.appspot.com/o/itemPictures%2FuserUploads%2FjTj93R9w05WEVQoqLPLfU4BSjDl1%2Fc0f3aac9-08e1-437a-b9c3-4dd8217f0f16?alt=media&token=715bdec5-8a32-4b82-8f75-aa25bc179f4b",
-            "טבריה",
-            "עמל נופרים בגליל",
-            Gender.MALE,
-            Timestamp(System.currentTimeMillis()),
-            mutableMapOf(
-                "רוסי" to true,
-                "חילוני" to true,
-                "עולה חדש" to true,
-                "מרכז" to true,
-                "זמני 1" to true,
-                "זמני 2" to true,
-                "זמני 3" to true,
-                "זמני 4" to true,
-                "זמני 5" to true,
-                "זמני 6" to true,
-                "זמני 7" to true,
-                "זמני 8" to true
-            ),
-            listOf("ספורט", "לבשל", "בולונז")
-        ),
-        Student(
-            "גיל צימרמן",
-            null,
-            "יקנעם",
-            "טכניון",
-            Gender.MALE,
-            Timestamp(System.currentTimeMillis()),
-            mutableMapOf(
-                "יהודי" to true
-            ),
-            listOf()
-        ),
-        Student(
-            "שרה כהן",
-            null,
-            "עמק חפר",
-            "רמות ים",
-            Gender.FEMALE,
-            Timestamp(System.currentTimeMillis()),
-            mutableMapOf(),
-            listOf()
-        )
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

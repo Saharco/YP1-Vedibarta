@@ -1,10 +1,14 @@
 package com.technion.vedibarta.POJOs
 
+import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
+import com.technion.vedibarta.utilities.Gender
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.HashMap
 
+@Parcelize
 data class Student(
     var name: String = "",
     var photo: String? = null,
