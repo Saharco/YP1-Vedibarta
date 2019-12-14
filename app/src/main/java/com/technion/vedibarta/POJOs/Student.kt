@@ -1,5 +1,6 @@
 package com.technion.vedibarta.POJOs
 
+import android.annotation.SuppressLint
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
 import com.technion.vedibarta.utilities.Gender
@@ -8,6 +9,7 @@ import java.io.Serializable
 import java.util.*
 import kotlin.collections.HashMap
 
+@SuppressLint("ParcelCreator")
 @Parcelize
 data class Student(
     var name: String = "",
