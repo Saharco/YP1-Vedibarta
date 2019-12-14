@@ -74,7 +74,6 @@ exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}')
                                     sender_id: senderDoc.data().uid,
                                     sender_photo_url: photo,
                                     chat_id: chatDoc.data().chat,
-                                    item_id: chatDoc.data().item
                                 }
 
                             };
