@@ -123,6 +123,8 @@
     </string-array>
 
     <!--  FCM  -->
+    <string name="vedibarta_notification_channel_name">ודיברת</string>
+
     <string name="payload_display_status">display_status</string>
     <string name="payload_admin_broadcast">admin_broadcast</string>
     <string name="payload_data_message_title">title</string>
