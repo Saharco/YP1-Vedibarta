@@ -31,7 +31,7 @@ open class CarouselAdapter(
 
     private val TAG = "carouselAdapter"
 
-    private var carouselAdapterItems: List<Student> = listOf()
+    protected var carouselAdapterItems: List<Student> = listOf()
     private val selectedPos = RecyclerView.NO_POSITION
 
     private val BUBBLE_WIDTH = 38

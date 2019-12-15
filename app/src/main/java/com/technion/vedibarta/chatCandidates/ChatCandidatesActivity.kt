@@ -21,8 +21,16 @@ class ChatCandidatesActivity : VedibartaActivity() {
     private val carouselAdapter: CarouselAdapter = object : CarouselAdapter(this, lambda) {
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             super.onBindViewHolder(holder, position)
+
             holder.button.setOnClickListener {
-                startActivity(Intent(this@ChatCandidatesActivity, ChatRoomActivity::class.java))
+                val extras:Bundle =  Bundle();
+                val student = carouselAdapterItems[holder.adapterPosition]
+                extras.putString("name",student.name)
+                extras.putString("photoUrl",student.photo)
+                extras.putString("id",student.uid) // not there yet
+                val intent:Intent = Intent(this@ChatCandidatesActivity,ChatRoomActivity::class.java)
+                intent.putExtras(extras)
+                startActivity(intent)
                 finish()
             }
         }
