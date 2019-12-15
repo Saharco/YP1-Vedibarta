@@ -42,6 +42,7 @@ class Storage(private val userId: String?)
 interface ICollectionPath
 {
     fun userId():IDocumentPath
+    fun otherUserId(id: String): IDocumentPath
     fun chatId(chatId: String): IDocumentPath
     fun message(d: Date): IDocumentPath
     fun systemMessage(d: Date): IDocumentPath
@@ -62,9 +63,9 @@ class DocumentsCollections(private val userId: String?)
 private class CollectionPath(private val c: CollectionReference, private val userId: String?):ICollectionPath
 {
     override fun systemMessage(d: Date): IDocumentPath = DocumentPath(c.document("sys$d"), userId)
-
     override fun chatId(chatId: String): IDocumentPath = DocumentPath(c.document(chatId), userId)
     override fun userId() = DocumentPath(c.document("$userId"), userId)
+    override fun otherUserId(id: String): IDocumentPath = DocumentPath(c.document(id), userId)
     override fun message(d: Date): IDocumentPath = DocumentPath(c.document(d.toString()), userId)
     override fun build(): CollectionReference = c
 }
