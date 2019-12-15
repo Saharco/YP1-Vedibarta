@@ -1,7 +1,6 @@
 package com.technion.vedibarta.chatRoom
 
 import android.os.Bundle
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.MenuItem
@@ -18,6 +17,7 @@ import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.Gender
@@ -27,12 +27,12 @@ import java.util.concurrent.TimeUnit
 
 
 class ChatRoomActivity : VedibartaActivity()
-    ,ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
-    ,ChatRoomAbuseReportDialog.AbuseReportDialogListener
-{
+    , ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
+    , ChatRoomAbuseReportDialog.AbuseReportDialogListener {
     val systemSender = "-1"
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    private var chatId: String? = null //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var chatId: String? =
+        null //TODO(this only temporary value, set this right on activity creation before adapter is configured)
     private var photoUrl: String? = null
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -40,21 +40,21 @@ class ChatRoomActivity : VedibartaActivity()
     private var numMessages = 0
 
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
+        setContentView(R.layout.activity_chat_room)
         val partnerName = intent.getStringExtra("name")
         chatId = intent.getStringExtra("chatId")
         photoUrl = intent.getStringExtra("photoUrl")
-        numMessages =intent.getIntExtra("numMessages", 0)
+        numMessages = intent.getIntExtra("numMessages", 0)
 
         setToolbar(chatToolbar)
         configureAdapter()
         buttonChatBoxSend.setOnClickListener { sendMessage(it) }
-        popupMenu.setOnClickListener{ showPopup(it) }
+        popupMenu.setOnClickListener { showPopup(it) }
         if (student!!.gender == Gender.FEMALE)
-            chatBox.text = SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
+            chatBox.text =
+                SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
         toolbarUserName.text = partnerName
     }
 
@@ -68,42 +68,34 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.stopListening()
     }
 
-    private fun getChatId(userId: String, partnerId: String): String
-    {
+    private fun getChatId(userId: String, partnerId: String): String {
         if (userId < partnerId)
             return "$userId$partnerId"
         return "$partnerId$userId"
     }
 
-    private fun configureAdapter()
-    {
+    private fun configureAdapter() {
         val query =
             database
                 .chats()
                 .chatId(chatId!!)
                 .messages()
-                .build().orderBy("fullTimeStamp")
+                .build().orderBy("fullTimeStamp", Query.Direction.DESCENDING)
 
         val options =
             FirestoreRecyclerOptions.Builder<Message>()
-            .setQuery(query,Message::class.java)
-            .build()
-
-        val initialChatViewPopulationListener = object: View.OnLayoutChangeListener{
-            override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int,p5: Int, p6: Int, p7: Int, p8: Int)
-            {
-                if (adapter.itemCount > 0)
-                {
-                    chatView.scrollToPosition(adapter.itemCount)
-                    chatView.removeOnLayoutChangeListener(this)
-                }
-            }
-        }
+                .setQuery(query, Message::class.java)
+                .build()
 
         adapter = ChatRoomAdapter(this, options, numMessages)
+        adapter.notifyDataSetChanged() //
         chatView.adapter = adapter
-        chatView.layoutManager = LinearLayoutManager(this)
-        chatView.addOnLayoutChangeListener(initialChatViewPopulationListener)
+        adapter.notifyDataSetChanged() //
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        chatView.layoutManager = layoutManager
+        chatView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            chatView.scrollToPosition(0)
+        }
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -121,27 +113,21 @@ class ChatRoomActivity : VedibartaActivity()
         return true
     }
 
-    override fun onQuestionclick(dialog: DialogFragment, v: View)
-    {
-        try
-        {
+    override fun onQuestionclick(dialog: DialogFragment, v: View) {
+        try {
             val question = (v as TextView).text
             Toast.makeText(this, question, Toast.LENGTH_SHORT).show()
-        }
-        catch (e: ClassCastException)
-        {
+        } catch (e: ClassCastException) {
             Log.d("QuestionGenerator", e.toString())
         }
     }
 
-    override fun onAbuseTypeClick(dialog: DialogFragment)
-    {
+    override fun onAbuseTypeClick(dialog: DialogFragment) {
         TODO("need to decide what to do")
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showPopup(view: View)
-    {
+    private fun showPopup(view: View) {
         val popup = PopupMenu(this, view)
         popup.inflate(R.menu.chat_room_popup_menu)
 
@@ -167,39 +153,39 @@ class ChatRoomActivity : VedibartaActivity()
         popup.show()
     }
 
-    private fun sendMessage(v: View)
-    {
-        chatView.smoothScrollToPosition(adapter.itemCount)
-        val text: String = chatBox.text.toString()
-        if (text.isEmpty())
+    private fun sendMessage(v: View) {
+        var text = chatBox.text.toString()
+        if (text.replace(" ", "")
+                .replace("\n", "")
+                .replace("\t", "")
+                .isEmpty() )
             return
+
+        text = text.replace("[\n]+".toRegex(), "\n").trim()
 
         //TODO fix the writing to database after cloud functions implemented
         val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
-        if (lastMessageDate != null)
-        {
+        if (lastMessageDate != null) {
             val timeGap = currentDate.time - lastMessageDate.time
-            val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
-            {
-                write(dateFormatter.format(currentDate),true)
+            val dayGap =
+                (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
+                write(dateFormatter.format(currentDate), true)
             }
         }
         write(text, false)
         chatBox.setText("")
     }
 
-    private fun write(text: String, isGeneratorMessage: Boolean)
-    {
+    private fun write(text: String, isGeneratorMessage: Boolean) {
         val timeSent = Date(System.currentTimeMillis())
-        var path  = database.chats()
-                                        .chatId(chatId!!)
-                                        .messages()
-                                        .message(timeSent)
-                                        .build()
+        var path = database.chats()
+            .chatId(chatId!!)
+            .messages()
+            .message(timeSent)
+            .build()
         var sender = userId!!
-        if (isGeneratorMessage)
-        {
+        if (isGeneratorMessage) {
             sender = systemSender
             path = database.chats()
                 .chatId(chatId!!)
