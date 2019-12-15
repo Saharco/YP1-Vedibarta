@@ -65,6 +65,8 @@ class UserSetupActivity : VedibartaActivity() {
 //                finish()
 //            }
 //        }
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
 
         setContentView(R.layout.activity_user_setup)
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
