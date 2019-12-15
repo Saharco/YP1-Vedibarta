@@ -138,6 +138,9 @@
     <string name="payload_data_chat_id">chat_id</string>
     <string name="payload_data_photo">photo</string>
 
+    <!--  Notification messages  -->
+    <string name="notification_chat_title_prefix">הודעה חדשה מ</string>
+
     <!--  VedibartaActivity  -->
     <string name="dialog_timeout_title">אירעתה שגיאה</string>
     <string name="dialog_timeout_body">התהליך לוקח יותר מדי זמן! \nיש לבדוק את חיבור האינטרנט ולנסות שוב</string>

@@ -108,9 +108,6 @@ class VedibartaMessagingService : FirebaseMessagingService() {
         // This intent will start when the user clicks the notification.
         // A pending intent is required because it's "lazy" - a regular intent is instantaneous
         // and requires a context. We wrap it in a pending intent
-        // This intent will start when the user clicks the notification.
-        // A pending intent is required because it's "lazy" - a regular intent is instantaneous
-        // and requires a context. We wrap it in a pending intent
         val notificationPendingIntent = PendingIntent.getActivity(
             this, 0,
             notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
@@ -133,13 +130,13 @@ class VedibartaMessagingService : FirebaseMessagingService() {
         }
 
         val systemResources = Resources.getSystem()
+        val chatTitle = "${getString(R.string.notification_chat_title_prefix)}$title"
 
         // adding the notification's properties
-        // Add the notification's properties
         builder.setSmallIcon(R.drawable.ic_launcher)
-//            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
             .setWhen(System.currentTimeMillis())
-            .setContentTitle(title)
+            .setContentTitle(chatTitle)
             .setContentText(message)
 //            .setDefaults(NotificationCompat.DEFAULT_SOUND | NotificationCompat.DEFAULT_VIBRATE)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
@@ -213,10 +210,5 @@ class VedibartaMessagingService : FirebaseMessagingService() {
             db.collection("students").document(user.uid)
                 .update("tokens", FieldValue.arrayUnion(token))
         }
-    }
-
-    override fun onDeletedMessages() {
-        super.onDeletedMessages()
-        TODO()
     }
 }

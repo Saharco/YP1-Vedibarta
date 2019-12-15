@@ -69,8 +69,8 @@ exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}')
                                 data: {
                                     display_status: "admin_broadcast",
                                     notification_type: "CHAT",
-                                    title: "New message from " + senderDoc.data().name,
-                                    body: snap.data().message,
+                                    title: senderDoc.data().name,
+                                    body: snap.data().text,
                                     sender_id: senderDoc.data().uid,
                                     sender_photo_url: photo,
                                     chat_id: chatDoc.data().chat,
