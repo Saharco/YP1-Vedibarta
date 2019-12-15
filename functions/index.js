@@ -44,12 +44,12 @@ exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCre
  */
 exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
     return admin.firestore()
-        .collection('users')
+        .collection('students')
         .doc(snap.data().receiver)
         .get()
         .then(receiverDoc => {
             return admin.firestore()
-                .collection('users')
+                .collection('students')
                 .doc(snap.data().sender)
                 .get()
                 .then(senderDoc => {
