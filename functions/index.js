@@ -60,9 +60,9 @@ exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}')
                         .then(chatDoc => {
                             console.log('Creating a chat notification for: ', receiverDoc.data().name);
                             let tokens = receiverDoc.data().tokens;
-                            let photo = null;
-                            if (typeof senderDoc.data().profilePicture !== 'undefined') {
-                                photo = senderDoc.data().profilePicture;
+                            let photo = "none";
+                            if (typeof senderDoc.data().photo !== 'undefined') {
+                                photo = senderDoc.data().photo;
                             }
                             const payload = {
 

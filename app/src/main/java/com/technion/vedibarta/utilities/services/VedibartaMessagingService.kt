@@ -36,6 +36,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
 
     companion object {
         private const val TAG = "Vedibarta/messaging"
+        private const val NO_PICTURE = "none"
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -70,7 +71,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
 
     private fun sendChatNotification(
         title: String, message: String, senderId: String,
-        senderPhotoURL: String?, chatId: String
+        senderPhotoURL: String, chatId: String
     ) {
         Log.d(TAG, "#sendChatNotification: starting...")
 
@@ -115,7 +116,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
             notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        if (senderPhotoURL != null) {
+        if (senderPhotoURL != NO_PICTURE) {
             val futureTarget = Glide.with(this)
                 .asBitmap()
                 .load(senderPhotoURL)
@@ -136,7 +137,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
         // adding the notification's properties
         // Add the notification's properties
         builder.setSmallIcon(R.drawable.ic_launcher)
-            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+//            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
             .setWhen(System.currentTimeMillis())
             .setContentTitle(title)
             .setContentText(message)
