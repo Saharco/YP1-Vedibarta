@@ -29,7 +29,7 @@ class ChatRoomActivity : VedibartaActivity()
 {
 
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    private var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var chatId: String? = null //TODO(this only temporary value, set this right on activity creation before adapter is configured)
     private var photoUrl: String? = null
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -41,10 +41,11 @@ class ChatRoomActivity : VedibartaActivity()
     {
         super.onCreate(savedInstanceState)
         setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
-        photoUrl = intent.getStringExtra("photoUrl")
-        chatPartnerId = intent.getStringExtra("id")
-        numMessages =intent.getIntExtra("numMessages", 0)
         val partnerName = intent.getStringExtra("name")
+        val partnerId = intent.getStringExtra("id")
+        chatId = getChatId(userId!!, partnerId!!)
+        photoUrl = intent.getStringExtra("photoUrl")
+        numMessages =intent.getIntExtra("numMessages", 0)
 
         setToolbar(chatToolbar)
         configureAdapter()
@@ -63,14 +64,19 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.stopListening()
     }
 
+    private fun getChatId(userId: String, partnerId: String): String
+    {
+        if (userId < partnerId)
+            return "$userId$partnerId"
+        return "$partnerId$userId"
+    }
+
     private fun configureAdapter()
     {
         val query =
             database
-                .students()
-                .userId()
                 .chats()
-                .chatWith(chatPartnerId!!)
+                .chatId(chatId!!)
                 .messages()
                 .build().orderBy("fullTimeStamp")
 
@@ -172,58 +178,32 @@ class ChatRoomActivity : VedibartaActivity()
             val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
             if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
             {
-                duplicateWrite(userId!!, chatPartnerId!!, dateFormatter.format(currentDate),true)
+                write(dateFormatter.format(currentDate),true)
             }
         }
-        duplicateWrite(userId!!, chatPartnerId!!, text, false)
+        write(text, false)
         chatBox.setText("")
     }
 
-    private fun duplicateWrite(userId: String, partnerId: String, text: String, isGeneratorMessage: Boolean)
+    private fun write(text: String, isGeneratorMessage: Boolean)
     {
         val timeSent = Date(System.currentTimeMillis())
-        var userPath  = database.students()
-                                        .userId()
-                                        .chats()
-                                        .chatWith(partnerId)
+        var path  = database.chats()
+                                        .chatId(chatId!!)
                                         .messages()
                                         .message(timeSent)
                                         .build()
-        var partnerPath = database.students()
-                                                .chatWith(partnerId)
-                                                .chats()
-                                                .chatWith(userId)
-                                                .messages()
-                                                .message(timeSent)
-                                                .build()
-        var userMassageType = MessageType.USER
-        var partnerMessageType = MessageType.OTHER
+        var MassageType = MessageType.USER
         if (isGeneratorMessage)
         {
-            userMassageType = MessageType.GENERATOR
-            partnerMessageType = MessageType.GENERATOR
-
-            userPath = database.students()
-                .userId()
-                .chats()
-                .chatWith(partnerId)
-                .messages()
-                .systemMessage(timeSent)
-                .build()
-
-            partnerPath = database.students()
-                .chatWith(partnerId)
-                .chats()
-                .chatWith(userId)
+            MassageType = MessageType.GENERATOR
+            path = database.chats()
+                .chatId(chatId!!)
                 .messages()
                 .systemMessage(timeSent)
                 .build()
         }
-        userPath.set(Message(userMassageType, text, timeSent), SetOptions.merge())
-            .addOnFailureListener {
-                Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
-            }
-        partnerPath.set(Message(partnerMessageType, text, timeSent), SetOptions.merge())
+        path.set(Message(MassageType, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
                 Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
