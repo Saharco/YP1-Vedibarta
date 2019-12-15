@@ -2,8 +2,6 @@ package com.technion.vedibarta.POJOs
 
 import android.annotation.SuppressLint
 import android.os.Parcelable
-import com.google.firebase.firestore.DocumentId
-import com.technion.vedibarta.utilities.Gender
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
@@ -21,4 +19,4 @@ data class Student(
     var characteristics: MutableMap<String, Boolean> = HashMap(),
     var hobbies: List<String> = emptyList(),
     val uid: String = ""
-): Serializable
+): Serializable, Parcelable

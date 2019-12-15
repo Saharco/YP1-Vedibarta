@@ -137,11 +137,8 @@ class UserSetupActivity : VedibartaActivity() {
                             finish()
                         }
                         .addOnFailureListener {
-                            Toast.makeText(
-                                this,
-                                R.string.something_went_wrong,
-                                Toast.LENGTH_LONG
-                            )
+                            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
+                                .show()
                         }
                 } else {
                     missingDetailsDialog()

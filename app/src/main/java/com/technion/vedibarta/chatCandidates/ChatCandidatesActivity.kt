@@ -2,36 +2,56 @@ package com.technion.vedibarta.chatCandidates
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import com.google.firebase.firestore.FirebaseFirestore
+import com.technion.vedibarta.ExtentionFunctions.create
+import com.technion.vedibarta.ExtentionFunctions.getName
+import com.technion.vedibarta.ExtentionFunctions.getPhoto
+import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.CarouselAdapter
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.adapters.ItemViewHolder
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
-import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_candidates.*
 
 class ChatCandidatesActivity : VedibartaActivity() {
 
-    private val TAG = "ChatCandidates"
+    companion object {
+        const val TAG = "Vedibarta/candidates"
+    }
 
-    private val lambda : (Int, Student) -> Unit = { position: Int, _: Student ->
-                carousel.smoothScrollToPosition(position) }
+    private val lambda: (Int, Student) -> Unit = { position: Int, _: Student ->
+        carousel.smoothScrollToPosition(position)
+    }
 
     private val carouselAdapter: CarouselAdapter = object : CarouselAdapter(this, lambda) {
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             super.onBindViewHolder(holder, position)
 
             holder.button.setOnClickListener {
-                val extras:Bundle =  Bundle();
-                val student = carouselAdapterItems[holder.adapterPosition]
-                extras.putString("name",student.name)
-                extras.putString("photoUrl",student.photo)
-                extras.putString("id",student.uid) // not there yet
-                val intent:Intent = Intent(this@ChatCandidatesActivity,ChatRoomActivity::class.java)
-                intent.putExtras(extras)
-                startActivity(intent)
-                finish()
+                val other = carouselAdapterItems[holder.adapterPosition]
+
+                val chat = ChatCard().create(student!!, other)
+                Log.d(TAG, "chat id is: ${chat.chat}")
+                val docRef = FirebaseFirestore.getInstance().collection("chats").document(chat.chat!!)
+                docRef.set(chat)
+                    .addOnSuccessListener {
+                        val intent = Intent(this@ChatCandidatesActivity, ChatRoomActivity::class.java)
+                        intent.putExtra("chatId", chat.chat)
+                        intent.putExtra("partnerId", other.uid)
+                        intent.putExtra("name", chat.getName(other.uid))
+                        intent.putExtra("photoUrl", chat.getPhoto(other.uid))
+                        intent.putExtra("numMessages", chat.numMessages)
+
+                        startActivity(intent)
+                        finish()
+                    }.addOnFailureListener {
+                        Log.d(TAG, "failed to create chat document")
+                        Toast.makeText(applicationContext, "Failed to open chat", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
     }
@@ -39,14 +59,11 @@ class ChatCandidatesActivity : VedibartaActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_candidates)
+
+        val students = intent.getParcelableArrayExtra("STUDENTS")!!.map { it as Student }
+
         carousel.initialize(carouselAdapter)
         carousel.setViewsToChangeColor(listOf()) // TODO: change color of pushed-back cards
-        carouselAdapter.setItems(getLargeListOfItems())
-    }
-
-    private fun getLargeListOfItems(): List<Student> {
-        val items = mutableListOf<Student>()
-        (0..40).map { items.add(possibleItems.random()) }
-        return items
+        carouselAdapter.setItems(students)
     }
 }
