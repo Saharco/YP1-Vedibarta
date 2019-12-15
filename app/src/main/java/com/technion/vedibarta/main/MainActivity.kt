@@ -13,7 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.technion.vedibarta.ExtentionFunctions.*
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
+import com.technion.vedibarta.ExtentionFunctions.getName
+import com.technion.vedibarta.ExtentionFunctions.getPartnerId
+import com.technion.vedibarta.ExtentionFunctions.getPhoto
 import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -22,13 +28,16 @@ import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
 
 
 class MainActivity : VedibartaActivity() {
 
     private val logTag = "ChatHistory"
     private lateinit var adapter: FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>
+
+    companion object {
+        const val TAG = "Vedibarta/chat-lobby"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +46,21 @@ class MainActivity : VedibartaActivity() {
         val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        // Update user's tokens
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful || task.result == null) {
+                    Log.d(TAG, "getInstanceId failed")
+                    return@OnCompleteListener
+                }
+                val token = task.result!!.token
+                Log.d(TAG, "Token is: $token")
+                FirebaseFirestore.getInstance()
+                    .collection("students")
+                    .document(userId!!)
+                    .update("tokens", FieldValue.arrayUnion(token))
+            })
 
         configureAdapter()
 
@@ -50,9 +74,8 @@ class MainActivity : VedibartaActivity() {
             startActivity(Intent(this, ChatSearchActivity::class.java))
         }
 
-        if (student == null)
-        {
-            database.students().userId().build().get().addOnSuccessListener {document ->
+        if (student == null) {
+            database.students().userId().build().get().addOnSuccessListener { document ->
                 student = document.toObject(Student::class.java)
                 Log.d(logTag, "loaded student profile successfully")
             }.addOnFailureListener {
@@ -61,8 +84,7 @@ class MainActivity : VedibartaActivity() {
         }
     }
 
-    override fun onStart()
-    {
+    override fun onStart() {
         super.onStart()
         adapter.startListening()
     }
@@ -96,11 +118,10 @@ class MainActivity : VedibartaActivity() {
         Log.d("Yuval", "Searching for something...")
     }
 
-    private fun configureAdapter()
-    {
+    private fun configureAdapter() {
         val query = database.chats().build().whereArrayContains("participantsId", userId!!)
         val options = FirestoreRecyclerOptions.Builder<ChatCard>()
-            .setQuery(query,ChatCard::class.java)
+            .setQuery(query, ChatCard::class.java)
             .build()
         val chatHistory = findViewById<RecyclerView>(R.id.chat_history)
         adapter = getAdapter(options)
@@ -108,10 +129,8 @@ class MainActivity : VedibartaActivity() {
         chatHistory.adapter = adapter
     }
 
-    private class ViewHolder (val view: View, val userId: String): RecyclerView.ViewHolder(view)
-    {
-        fun bind(card: ChatCard)
-        {
+    private class ViewHolder(val view: View, val userId: String) : RecyclerView.ViewHolder(view) {
+        fun bind(card: ChatCard) {
             Log.d("wtf", "bind")
             try {
                 val partnerId = card.getPartnerId(userId)
@@ -120,24 +139,21 @@ class MainActivity : VedibartaActivity() {
                 itemView.findViewById<TextView>(R.id.relative_timestamp).text = card.relativeTime
                 val photoUrl = card.getPhoto(partnerId)
                 //TODO load profile image into user_picture in card layout
-            }
-            catch (e: Exception)
-            {
+            } catch (e: Exception) {
                 com.technion.vedibarta.utilities.error(e)
             }
         }
     }
-    private fun getAdapter(options: FirestoreRecyclerOptions<ChatCard>): FirestoreRecyclerAdapter<ChatCard,RecyclerView.ViewHolder>
-    {
-        return object: FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>(options)
-        {
+
+    private fun getAdapter(options: FirestoreRecyclerOptions<ChatCard>): FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder> {
+        return object : FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>(options) {
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int
-            ): ViewHolder
-            {
+            ): ViewHolder {
                 Log.d("wtf", "onCreateViewHolder")
-                val userNameView = LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
+                val userNameView =
+                    LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
                 return ViewHolder(userNameView, userId!!)
             }
 
@@ -147,8 +163,7 @@ class MainActivity : VedibartaActivity() {
                 card: ChatCard
             ) {
                 Log.d("wtf", "onBindViewHolder")
-                when(holder)
-                {
+                when (holder) {
                     is ViewHolder -> {
                         holder.bind(card)
                         holder.view.setOnClickListener {
@@ -162,7 +177,7 @@ class MainActivity : VedibartaActivity() {
                         }
                     }
                 }
-             }
+            }
         }
     }
 }
