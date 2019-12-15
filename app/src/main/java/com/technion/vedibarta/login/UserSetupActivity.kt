@@ -35,6 +35,7 @@ class UserSetupActivity : VedibartaActivity() {
 
 
     var setupStudent = Student(
+        uid = userId!!,
         lastActivity = Timestamp(System.currentTimeMillis())
     )
 

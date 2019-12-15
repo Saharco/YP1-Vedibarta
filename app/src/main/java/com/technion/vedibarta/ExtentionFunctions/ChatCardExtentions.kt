@@ -7,12 +7,12 @@ fun ChatCard.create(a: Student, b: Student): ChatCard
 {
     var s1: Student = a
     var s2: Student = b
-    if (s1.documentId!! > s2.documentId!!)
+    if (s1.uid > s2.uid)
     {
         s1 = b
         s2 = a
     }
-    this.participantsId = listOf(s1.documentId!!, s2.documentId!!)
+    this.participantsId = listOf(s1.uid, s2.uid)
     this.participantsName = listOf(s1.name, s2.name)
     this.participantsPhoto = listOf(s1.photo, s2.photo)
     this.chat = participantsId[0]+participantsId[1]
