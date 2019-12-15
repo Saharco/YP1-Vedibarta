@@ -1,7 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
-const db = functions.firestore;
+const db = functions.region('europe-west1').firestore;
 
 // -- End of initialization --
 
@@ -19,7 +19,7 @@ exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCre
     return admin.firestore().runTransaction(function (transaction) {
         return transaction.get(chatDocRef).then(function (chatDoc) {
             if (!chatDoc.exists) {
-                throw "Chat room does not exist";
+                throw new "Chat room does not exist";
             }
             transaction.update(chatDocRef, {messagesCount: chatDoc.data().messagesCount + 1});
             transaction.update(chatDocRef, {timestamp: snap.data().timestamp});
