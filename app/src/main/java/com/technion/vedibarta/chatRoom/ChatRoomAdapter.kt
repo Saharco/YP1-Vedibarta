@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.R
 
 class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
@@ -20,10 +19,17 @@ class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
 {
     private val soundPlayer = SoundPlayer(chatRoomActivity, numMessages)
     private val chatView= chatRoomActivity.findViewById<RecyclerView>(R.id.chatView)
+    private val uid = chatRoomActivity.userId
+    private val systemSender = chatRoomActivity.systemSender
 
     override fun getItemViewType(position: Int): Int
     {
-        return this.snapshots[position].messageType.ordinal
+        val sender = snapshots[position].sender
+        if (sender == systemSender)
+            return MessageType.SYSTEM.ordinal
+        if (sender == uid)
+            return MessageType.USER.ordinal
+        return MessageType.OTHER.ordinal
     }
 
     override fun onDataChanged()
@@ -72,13 +78,23 @@ class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
         position: Int,
         message: Message
     ) {
+        var type = MessageType.USER
         when (holder) {
-            is SentMessageViewHolder -> holder.bind(message)
-            is ReceivedMessageViewHolder -> holder.bind(message)
-            is GeneratorMessageViewHolder -> holder.bind(message)
+            is SentMessageViewHolder -> {
+                holder.bind(message)
+                type = MessageType.USER
+            }
+            is ReceivedMessageViewHolder -> {
+                holder.bind(message)
+                type = MessageType.OTHER
+            }
+            is GeneratorMessageViewHolder -> {
+                holder.bind(message)
+                type = MessageType.SYSTEM
+            }
         }
 
-        soundPlayer.playMessageSound(message.messageType, this.itemCount)
+        soundPlayer.playMessageSound(type, this.itemCount)
     }
 
     private class SentMessageViewHolder(view: View) :

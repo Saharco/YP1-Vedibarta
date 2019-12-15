@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -27,7 +26,7 @@ class ChatRoomActivity : VedibartaActivity()
     ,ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
     ,ChatRoomAbuseReportDialog.AbuseReportDialogListener
 {
-
+    val systemSender = "-1"
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
     private var chatId: String? = null //TODO(this only temporary value, set this right on activity creation before adapter is configured)
     private var photoUrl: String? = null
@@ -192,17 +191,17 @@ class ChatRoomActivity : VedibartaActivity()
                                         .messages()
                                         .message(timeSent)
                                         .build()
-        var MassageType = MessageType.USER
+        var sender = userId!!
         if (isGeneratorMessage)
         {
-            MassageType = MessageType.GENERATOR
+            sender = systemSender
             path = database.chats()
                 .chatId(chatId!!)
                 .messages()
                 .systemMessage(timeSent)
                 .build()
         }
-        path.set(Message(MassageType, text, timeSent), SetOptions.merge())
+        path.set(Message(sender, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
                 Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }

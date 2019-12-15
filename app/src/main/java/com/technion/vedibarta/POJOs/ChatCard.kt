@@ -1,5 +1,7 @@
 package com.technion.vedibarta.POJOs
 
+import com.google.firebase.firestore.DocumentId
+import java.io.Serializable
 import java.util.*
 
 data class ChatCard (
@@ -9,5 +11,7 @@ data class ChatCard (
     var lastMessage: String = "",
     val relativeTime: String = "",
     val numMessages: Int = 0,
-    val date: String = "")
+    val date: String = "",
+    @DocumentId var chatId: String? = null
+): Serializable
 

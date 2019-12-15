@@ -9,12 +9,10 @@ import android.view.*
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.ExtentionFunctions.*
 import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.POJOs.Student
@@ -25,8 +23,6 @@ import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class MainActivity : VedibartaActivity() {
@@ -158,7 +154,7 @@ class MainActivity : VedibartaActivity() {
                         holder.view.setOnClickListener {
                             val partnerId = card.getPartnerId(userId!!)
                             val i = Intent(this@MainActivity, ChatRoomActivity::class.java)
-                            i.putExtra("chatId", card.getChatId())
+                            i.putExtra("chatId", card.chatId)
                             i.putExtra("name", card.getName(partnerId))
                             i.putExtra("photoUrl", card.getPhoto(partnerId))
                             i.putExtra("numMessages", card.numMessages)
