@@ -24,6 +24,26 @@
         <item>מרכז</item>
     </array>
     <array name="characteristicsFemale_hebrew">
-
+        <item>אשכנזייה</item>
+        <item>צברית</item>
+        <item>מזרחית</item>
+        <item>חילונית</item>
+        <item>דתייה</item>
+        <item>שומרת כשרות</item>
+        <item>מסורתית</item>
+        <item>מוסלמית</item>
+        <item>נוצרייה</item>
+        <item>יהודייה</item>
+        <item>אתיופית</item>
+        <item>רוסייה</item>
+        <item>צמחונית</item>
+        <item>טבעונית</item>
+        <item>דרוזית</item>
+        <item>להט"ב</item>
+        <item>עולה חדשה</item>
+        <item>ימנית</item>
+        <item>שמאלנית</item>
+        <item>ערבייה</item>
+        <item>מרכז</item>
     </array>
 </resources>

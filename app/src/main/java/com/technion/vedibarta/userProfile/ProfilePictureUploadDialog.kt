@@ -9,12 +9,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.Gender
 import kotlinx.android.synthetic.main.profile_picture_dialog.*
 
 class ProfilePictureUploadDialog private constructor() : DialogFragment() {
 
     private lateinit var listener: ProfilePictureUploadDialogListener
     private lateinit var userName: String
+    private lateinit var gender: Gender
+
 
     interface ProfilePictureUploadDialogListener {
         fun onCameraUploadClicked(dialog: DialogFragment)
@@ -22,10 +25,11 @@ class ProfilePictureUploadDialog private constructor() : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(name: String): ProfilePictureUploadDialog {
+        fun newInstance(name: String, gender: Gender): ProfilePictureUploadDialog {
             val fragment = ProfilePictureUploadDialog()
             val args = Bundle()
             args.putString("name", name.substringBefore(' '))
+            args.putSerializable("gender", gender)
             fragment.arguments = args
             return fragment
         }
@@ -34,6 +38,8 @@ class ProfilePictureUploadDialog private constructor() : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userName = arguments!!.getString("name")!!
+        gender = arguments!!.getSerializable("gender")!! as Gender
+
     }
 
     override fun onCreateView(
@@ -57,7 +63,11 @@ class ProfilePictureUploadDialog private constructor() : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        alertTitle.text = "$userName${alertTitle.text}"
+        if(gender != Gender.FEMALE)
+            alertTitle.text = "$userName${alertTitle.text}"
+        else
+            alertTitle.text = "$userName${R.string.user_profile_dialog_title_suffix_f}"
+
 
         cameraUploadButton.setOnClickListener {
             listener.onCameraUploadClicked(this)

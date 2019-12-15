@@ -1,6 +1,8 @@
 package com.technion.vedibarta.chatRoom
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -49,6 +51,8 @@ class ChatRoomActivity : VedibartaActivity()
         configureAdapter()
         buttonChatBoxSend.setOnClickListener { sendMessage(it) }
         popupMenu.setOnClickListener{ showPopup(it) }
+        if (student!!.gender == Gender.FEMALE)
+            chatBox.text = SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
         toolbarUserName.text = partnerName
     }
 
@@ -137,18 +141,18 @@ class ChatRoomActivity : VedibartaActivity()
     private fun showPopup(view: View)
     {
         val popup = PopupMenu(this, view)
-        popup.inflate(com.technion.vedibarta.R.menu.chat_room_popup_menu)
+        popup.inflate(R.menu.chat_room_popup_menu)
 
         popup.setOnMenuItemClickListener { item: MenuItem? ->
 
             when (item!!.itemId) {
-                com.technion.vedibarta.R.id.generateQuestion -> {
+                R.id.generateQuestion -> {
                     ChatRoomQuestionGeneratorDialog().show(
                         supportFragmentManager,
                         "QuestionGeneratorFragment"
                     )
                 }
-                com.technion.vedibarta.R.id.reportAbuse -> {
+                R.id.reportAbuse -> {
                     ChatRoomAbuseReportDialog().show(
                         supportFragmentManager,
                         "ReportAbuseDialog"
@@ -203,7 +207,7 @@ class ChatRoomActivity : VedibartaActivity()
         }
         path.set(Message(sender, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
-                Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
     }
 }

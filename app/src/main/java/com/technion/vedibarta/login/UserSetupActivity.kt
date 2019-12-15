@@ -46,27 +46,25 @@ class UserSetupActivity : VedibartaActivity() {
     var chosenFirstName = ""
     var chosenLastName = ""
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val dialog = ProgressDialog(this).apply {
-//            setMessage(getString(R.string.checking_document))
-//            setCancelable(false)
-//            setIndeterminate(true)
-//            show()
-//        }
-//
-//        database.students().userId().build().get().addOnSuccessListener { document ->
-//            if (document != null && document.exists())
-//            {
-//                dialog.dismiss()
-//                startActivity(Intent(this, MainActivity::class.java))
-//                finish()
-//            }
-//        }
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+        val dialog = ProgressDialog(this).apply {
+            setMessage(getString(R.string.checking_document))
+            setCancelable(false)
+            setIndeterminate(true)
+            show()
+        }
+
+        database.students().userId().build().get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                dialog.dismiss()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            } else {
+                dialog.dismiss()
+            }
+        }
 
         setContentView(R.layout.activity_user_setup)
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
@@ -107,7 +105,7 @@ class UserSetupActivity : VedibartaActivity() {
             if (setupStudent.gender == Gender.NONE) {
                 Toast.makeText(
                     applicationContext,
-                    "יש לבחור בן/בת",
+                    R.string.user_setup_dialog_message,
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
@@ -132,13 +130,19 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
-                    setupStudent.name = "$chosenLastName $chosenLastName"
+                    setupStudent.name = "$chosenFirstName $chosenLastName"
                     database.students().userId().build().set(setupStudent)
                         .addOnSuccessListener {
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
-                        .addOnFailureListener { Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG) }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                this,
+                                R.string.something_went_wrong,
+                                Toast.LENGTH_LONG
+                            )
+                        }
                 } else {
                     missingDetailsDialog()
                 }
@@ -170,8 +174,14 @@ class UserSetupActivity : VedibartaActivity() {
         missingDetailsText = ""
         val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
-        Log.d(TAG,"Chars: ${studentsCharacteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName ")
-        Log.d(TAG,"last name: $chosenLastName,  School: ${setupStudent.school}, Region: ${setupStudent.region}")
+        Log.d(
+            TAG,
+            "Chars: ${studentsCharacteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName "
+        )
+        Log.d(
+            TAG,
+            "last name: $chosenLastName,  School: ${setupStudent.school}, Region: ${setupStudent.region}"
+        )
 
         if (setupStudent.gender == Gender.NONE) {
             missingDetailsText += "יש לבחור בן/בת\n"

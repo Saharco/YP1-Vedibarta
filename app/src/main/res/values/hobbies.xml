@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="hobbiesMale_hebrew">
+    <array name="hobbies_hebrew">
         <item>הוראה</item>
-        <item>טקסט ארוךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךךך</item>
         <item>משחקי מחשב</item>
         <item>תכנות</item>
         <item>כדורגל</item>
@@ -22,8 +21,6 @@
         <item>ריקוד</item>
         <item>כושר</item>
         <item>מתמטיקה</item>
-    </array>
-    <array name="hobbiesFemale_hebrew">
-
+        <item>גלישת גלים</item>
     </array>
 </resources>
