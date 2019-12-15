@@ -19,11 +19,6 @@ fun ChatCard.create(a: Student, b: Student): ChatCard
     return this
 }
 
-fun ChatCard.getChatId(): String
-{
-    return this.participantsId[0]+this.participantsId[1]
-}
-
 fun ChatCard.getPartnerId(myUserId: String): String
 {
     if (participantsId[0] != myUserId)

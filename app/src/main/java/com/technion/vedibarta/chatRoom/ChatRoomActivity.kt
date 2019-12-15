@@ -88,7 +88,7 @@ class ChatRoomActivity : VedibartaActivity()
             {
                 if (adapter.itemCount > 0)
                 {
-                    chatView.smoothScrollToPosition(adapter.itemCount)
+                    chatView.scrollToPosition(adapter.itemCount)
                     chatView.removeOnLayoutChangeListener(this)
                 }
             }
