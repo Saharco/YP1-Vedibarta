@@ -14,5 +14,5 @@ data class Student(
     var lastActivity: Date? = null,
     var characteristics: MutableMap<String, Boolean> = HashMap(),
     var hobbies: List<String> = emptyList(),
-    @DocumentId var documentId: String? = null
+    val uid: String = ""
 ): Serializable
