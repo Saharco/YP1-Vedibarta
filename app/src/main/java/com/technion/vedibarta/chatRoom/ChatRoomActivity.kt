@@ -21,6 +21,8 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
+import java.lang.Exception
+import java.security.spec.ECField
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -33,6 +35,7 @@ class ChatRoomActivity : VedibartaActivity()
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
     private var chatId: String? =
         null //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var partnerId: String? = null
     private var photoUrl: String? = null
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -45,6 +48,7 @@ class ChatRoomActivity : VedibartaActivity()
         setContentView(R.layout.activity_chat_room)
         val partnerName = intent.getStringExtra("name")
         chatId = intent.getStringExtra("chatId")
+        partnerId = intent.getStringExtra("partnerId")
         photoUrl = intent.getStringExtra("photoUrl")
         numMessages = intent.getIntExtra("numMessages", 0)
 
@@ -193,9 +197,15 @@ class ChatRoomActivity : VedibartaActivity()
                 .systemMessage(timeSent)
                 .build()
         }
-        path.set(Message(sender, text, timeSent), SetOptions.merge())
-            .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
-            }
+        try {
+            path.set(Message(sender, partnerId!!, text, timeSent), SetOptions.merge())
+                .addOnFailureListener {
+                    Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+                }
+        }
+        catch (e:Exception)
+        {
+            com.technion.vedibarta.utilities.error(e)
+        }
     }
 }

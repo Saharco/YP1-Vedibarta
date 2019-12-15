@@ -170,6 +170,7 @@ class MainActivity : VedibartaActivity() {
                             val partnerId = card.getPartnerId(userId!!)
                             val i = Intent(this@MainActivity, ChatRoomActivity::class.java)
                             i.putExtra("chatId", card.chatId)
+                            i.putExtra("partnerId", partnerId)
                             i.putExtra("name", card.getName(partnerId))
                             i.putExtra("photoUrl", card.getPhoto(partnerId))
                             i.putExtra("numMessages", card.numMessages)

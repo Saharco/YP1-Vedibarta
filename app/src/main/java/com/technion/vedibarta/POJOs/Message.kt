@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class Message(val sender: String = "",
+                   val receiver: String = "",
                    var text: String = "",
                    val timestamp: Date = Date(System.currentTimeMillis()))
 {
