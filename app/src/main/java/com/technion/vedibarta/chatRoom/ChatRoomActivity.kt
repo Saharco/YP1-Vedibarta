@@ -19,8 +19,8 @@ import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.Gender
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit

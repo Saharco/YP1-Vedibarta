@@ -30,9 +30,9 @@ import com.technion.vedibarta.login.LoginActivity
  */
 @SuppressLint("Registered")
 open class VedibartaActivity : AppCompatActivity() {
-    protected val userId = FirebaseAuth.getInstance().currentUser?.uid
-    protected val storage = Storage(userId)
-    protected val database = DocumentsCollections(userId)
+    val userId = FirebaseAuth.getInstance().currentUser?.uid
+    val storage = Storage(userId)
+    val database = DocumentsCollections(userId)
 
     private var progress: ProgressDialog? = null
     private var progressHandler: Handler? = null
