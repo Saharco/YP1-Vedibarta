@@ -197,15 +197,9 @@ class ChatRoomActivity : VedibartaActivity()
                 .systemMessage(timeSent)
                 .build()
         }
-        try {
-            path.set(Message(sender, partnerId!!, text, timeSent), SetOptions.merge())
-                .addOnFailureListener {
-                    Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
-                }
-        }
-        catch (e:Exception)
-        {
-            com.technion.vedibarta.utilities.error(e)
-        }
+        path.set(Message(sender, partnerId!!, text, timeSent), SetOptions.merge())
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+            }
     }
 }

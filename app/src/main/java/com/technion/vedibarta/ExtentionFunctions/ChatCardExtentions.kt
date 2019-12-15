@@ -15,6 +15,7 @@ fun ChatCard.create(a: Student, b: Student): ChatCard
     this.participantsId = listOf(s1.documentId!!, s2.documentId!!)
     this.participantsName = listOf(s1.name, s2.name)
     this.participantsPhoto = listOf(s1.photo, s2.photo)
+    this.chat = participantsId[0]+participantsId[1]
 
     return this
 }

@@ -12,6 +12,6 @@ data class ChatCard (
     val relativeTime: String = "",
     val numMessages: Int = 0,
     val date: String = "",
-    @DocumentId var chatId: String? = null
+    var chat: String? = null
 ): Serializable
 
