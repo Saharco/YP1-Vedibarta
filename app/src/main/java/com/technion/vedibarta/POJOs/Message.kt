@@ -5,10 +5,10 @@ import java.util.*
 
 data class Message(val sender: String = "",
                    var text: String = "",
-                   val fullTimeStamp: Date = Date(System.currentTimeMillis()))
+                   val timestamp: Date = Date(System.currentTimeMillis()))
 {
     fun getTime(): String
     {
-        return SimpleDateFormat("HH:mma").format(fullTimeStamp)
+        return SimpleDateFormat("HH:mma").format(timestamp)
     }
 }

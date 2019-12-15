@@ -80,7 +80,7 @@ class ChatRoomActivity : VedibartaActivity()
                 .chats()
                 .chatId(chatId!!)
                 .messages()
-                .build().orderBy("fullTimeStamp", Query.Direction.DESCENDING)
+                .build().orderBy("timestamp", Query.Direction.DESCENDING)
 
         val options =
             FirestoreRecyclerOptions.Builder<Message>()
@@ -164,7 +164,7 @@ class ChatRoomActivity : VedibartaActivity()
         text = text.replace("[\n]+".toRegex(), "\n").trim()
 
         //TODO fix the writing to database after cloud functions implemented
-        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
+        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.timestamp
         if (lastMessageDate != null) {
             val timeGap = currentDate.time - lastMessageDate.time
             val dayGap =
