@@ -1,6 +1,5 @@
 package com.technion.vedibarta.login
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,9 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.technion.vedibarta.R
-import android.app.ProgressDialog
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -22,8 +18,6 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.*
 import kotlin.ClassCastException
 
@@ -137,11 +131,11 @@ class LoginOptionsFragment : Fragment() {
                     try {
                         throw it.exception!!
                     } catch (e: FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(activity, "Credentials has been malformed or expired",
-                            Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, "Credentials has been malformed or expired")
+                        Toast.makeText(activity, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
                     } catch (e: FirebaseAuthUserCollisionException) {
-                        Toast.makeText(activity, "User with same credentials already exists",
-                            Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, "User with same credentials already exists")
+                        Toast.makeText(activity, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
                         val email = authCredential.signInMethod
                         var provider = ""; var providers: List<String>? = null
                         try {
@@ -156,20 +150,11 @@ class LoginOptionsFragment : Fragment() {
                         }
                         if (providers == null || providers.isEmpty())
                             Log.w(TAG, "No existing sign in providers")
-                        else
-                            provider = providers[0]
-                        var alertDialogMessage = "Please sign in with your "
-                        if (provider.isEmpty())
-                            alertDialogMessage += "Other account"
-                        else
-                            alertDialogMessage += "$provider account"
-                        val builder = AlertDialog.Builder(context)
-                        builder.setMessage("Please sign in with your $provider account")
                         auth.signOut()
                         LoginManager.getInstance().logOut()
                     } catch (e: Exception) {
-                        Toast.makeText(activity, "Authentication failed",
-                            Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, "Authentication failed")
+                        Toast.makeText(activity, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
                     }
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", it.exception)

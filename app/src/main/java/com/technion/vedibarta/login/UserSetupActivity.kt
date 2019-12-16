@@ -183,37 +183,37 @@ class UserSetupActivity : VedibartaActivity() {
         )
 
         if (setupStudent.gender == Gender.NONE) {
-            missingDetailsText += "יש לבחור בן/בת\n"
+            missingDetailsText += "${R.string.user_setup_gender_missing}\n"
             return false
         }
 
         if (chosenFirstName == "") {
-            missingDetailsText += "יש למלא את השדה שם פרטי\n"
+            missingDetailsText += "${R.string.user_setup_first_name_missing}\n"
             return false
         }
 
         if (chosenLastName == "") {
-            missingDetailsText += "יש למלא את השדה שם משפחה\n"
+            missingDetailsText += "${R.string.user_setup_last_name_missing}\n"
             return false
         }
 
         if (!schoolsName.contains(setupStudent.school)) {
-            missingDetailsText += "יש לבחור בית ספר מהרשימה\n"
+            missingDetailsText += "${R.string.user_setup_school_missing}\n"
             return false
         }
 
         if (!regionsName.contains(setupStudent.region)) {
-            missingDetailsText += "יש לבחור מקום מגורים מהרשימה\n"
+            missingDetailsText += "${R.string.user_setup_region_missing}\n"
             return false
         }
 
         if (studentsCharacteristics.isEmpty()) {
-            missingDetailsText += "יש לבחור מאפייני זהות\n"
+            missingDetailsText += "${R.string.user_setup_characteristics_missing}\n"
             return false
         }
 
         if (setupStudent.hobbies.isEmpty()) {
-            missingDetailsText += "יש לבחור תחביבים\n"
+            missingDetailsText += "${R.string.user_setup_hobbies_missing}\n"
             return false
         }
 

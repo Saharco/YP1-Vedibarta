@@ -63,7 +63,7 @@ class ChatRoomAbuseReportDialog: DialogFragment() {
         }
 
         reportAbuseDismissButton.setOnClickListener {
-            Toast.makeText(context, "dismiss", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, R.string.dismiss, Toast.LENGTH_SHORT).show()
             dismiss()
         }
     }
