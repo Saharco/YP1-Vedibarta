@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -52,7 +53,7 @@ class UserSetupActivity : VedibartaActivity() {
         val dialog = ProgressDialog(this).apply {
             setMessage(getString(R.string.checking_document))
             setCancelable(false)
-            setIndeterminate(true)
+            isIndeterminate = true
             show()
         }
 
@@ -74,6 +75,11 @@ class UserSetupActivity : VedibartaActivity() {
             setupStudent = savedInstanceState[STUDENT_KEY] as Student
         }
 
+        schoolsName = resources.getStringArray(R.array.schoolNameList)
+        regionsName =
+            resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
+
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
         setToolbar(toolbar)
@@ -83,8 +89,6 @@ class UserSetupActivity : VedibartaActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        Log.d(TAG, "Saving Student")
-        Log.d(TAG, "Student Gender: ${setupStudent.gender}")
 
         outState.putSerializable(STUDENT_KEY, setupStudent)
         super.onSaveInstanceState(outState)
@@ -103,6 +107,7 @@ class UserSetupActivity : VedibartaActivity() {
         adapter.addFragment(ChooseCharacteristicsFragment(), "3")
         adapter.addFragment(ChooseHobbiesFragment(), "4")
         viewPager.setOnTouchListener { v, event ->
+
             if (setupStudent.gender == Gender.NONE) {
                 Toast.makeText(
                     applicationContext,
@@ -173,15 +178,6 @@ class UserSetupActivity : VedibartaActivity() {
         missingDetailsText = ""
         val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
-        Log.d(
-            TAG,
-            "Chars: ${studentsCharacteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName "
-        )
-        Log.d(
-            TAG,
-            "last name: $chosenLastName,  School: ${setupStudent.school}, Region: ${setupStudent.region}"
-        )
-
         if (setupStudent.gender == Gender.NONE) {
             missingDetailsText += "${R.string.user_setup_gender_missing}\n"
             return false
@@ -220,7 +216,7 @@ class UserSetupActivity : VedibartaActivity() {
         return true
     }
 
-    class CustomViewPageListener(val activity: UserSetupActivity) :
+    inner class CustomViewPageListener(val activity: UserSetupActivity) :
         ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
