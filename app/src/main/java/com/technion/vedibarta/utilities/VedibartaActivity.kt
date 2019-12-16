@@ -29,8 +29,10 @@ import com.technion.vedibarta.login.LoginActivity
  * This is a utility activity with no GUI
  */
 @SuppressLint("Registered")
-open class VedibartaActivity : AppCompatActivity() {
-    val userId = FirebaseAuth.getInstance().currentUser?.uid
+open class VedibartaActivity : AppCompatActivity()
+{
+    val user = FirebaseAuth.getInstance().currentUser
+    val userId = user?.uid
     val storage = Storage(userId)
     val database = DocumentsCollections(userId)
 
@@ -122,8 +124,9 @@ open class VedibartaActivity : AppCompatActivity() {
         setVisible(false)
     }
 
-    private fun tryRedirectToLogin() {
-        if (student == null) {
+    private fun tryRedirectToLogin()
+    {
+        if (user == null || !user.isEmailVerified) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
