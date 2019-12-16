@@ -41,7 +41,7 @@ open class VedibartaActivity : AppCompatActivity()
     protected var loadTimeout: Int = 5000
 
     // A task that's executed when a time-out occurs with a loading process
-    private val loadTimeoutTask = Runnable {
+    protected val loadTimeoutTask = Runnable {
 
         if (progress != null) {
             progress!!.dismiss()
