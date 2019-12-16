@@ -61,7 +61,9 @@ exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}')
                             console.log('Creating a chat notification for: ', receiverDoc.data().name);
                             let tokens = receiverDoc.data().tokens;
                             let photo = "none";
-                            if (typeof senderDoc.data().photo !== 'undefined') {
+                            if ('photo' in senderDoc.data() &&
+                                senderDoc.data().photo !== 'undefined' &&
+                                senderDoc.data().photo !== null) {
                                 photo = senderDoc.data().photo;
                             }
                             const payload = {
@@ -85,7 +87,7 @@ exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}')
                                     return response;
                                 })
                                 .catch(function (error) {
-                                    console.log("Error sending chat notification\nError message: ", error)
+                                    console.log("Error sending chat notification\nError message: ", error);
                                 });
                         });
                 });

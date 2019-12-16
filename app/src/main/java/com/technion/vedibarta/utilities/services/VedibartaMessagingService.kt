@@ -6,9 +6,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.*
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
@@ -121,7 +125,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
 
             try {
                 val bitmap = futureTarget.get()
-                builder.setLargeIcon(bitmap)
+                builder.setLargeIcon(getCircleBitmap(bitmap))
             } catch (e: InterruptedException) { // do nothing
             } catch (e: ExecutionException) { // do nothing
             }
@@ -130,14 +134,21 @@ class VedibartaMessagingService : FirebaseMessagingService() {
         }
 
         val systemResources = Resources.getSystem()
-        val chatTitle = "${getString(R.string.notification_chat_title_prefix)}$title"
+        val chatTitle =
+            SpannableString("\u200f${getString(R.string.notification_chat_title_prefix)}$title\u200f")
+        chatTitle.setSpan(
+            StyleSpan(Typeface.BOLD),
+            getString(R.string.notification_chat_title_prefix).length + 1,
+            chatTitle.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
 
         // adding the notification's properties
         builder.setSmallIcon(R.drawable.ic_launcher)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
             .setWhen(System.currentTimeMillis())
             .setContentTitle(chatTitle)
-            .setContentText(message)
+            .setContentText("\u200f$message\u200f")
 //            .setDefaults(NotificationCompat.DEFAULT_SOUND | NotificationCompat.DEFAULT_VIBRATE)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setContentIntent(notificationPendingIntent)
@@ -210,5 +221,42 @@ class VedibartaMessagingService : FirebaseMessagingService() {
             db.collection("students").document(user.uid)
                 .update("tokens", FieldValue.arrayUnion(token))
         }
+    }
+
+    private fun getCircleBitmap(bitmap: Bitmap): Bitmap {
+        val output: Bitmap
+        val srcRect: Rect
+        val dstRect: Rect
+        val r: Float
+        val width = bitmap.width
+        val height = bitmap.height
+
+        if (width > height) {
+            output = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888)
+            val left = (width - height) / 2
+            val right = left + height
+            srcRect = Rect(left, 0, right, height)
+            dstRect = Rect(0, 0, height, height)
+            r = height / 2f
+        } else {
+            output = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
+            val top = (height - width) / 2
+            val bottom = top + width
+            srcRect = Rect(0, top, width, bottom)
+            dstRect = Rect(0, 0, width, width)
+            r = width / 2f
+        }
+
+        val canvas = Canvas(output)
+//        val color = 0xff424242
+        val paint = Paint()
+
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+//        paint.setColor(color)
+        canvas.drawCircle(r, r, r, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, srcRect, dstRect, paint)
+        return output
     }
 }
