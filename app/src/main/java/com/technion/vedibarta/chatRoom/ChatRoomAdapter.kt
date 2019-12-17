@@ -76,7 +76,7 @@ class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
             }
             else -> {
                 view = LayoutInflater.from(parent.context).inflate(
-                    com.technion.vedibarta.R.layout.generator_message_holder,
+                    R.layout.generator_message_holder,
                     parent,
                     false
                 )
