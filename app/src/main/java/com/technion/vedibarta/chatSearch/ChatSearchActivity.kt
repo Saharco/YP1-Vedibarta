@@ -1,7 +1,11 @@
 package com.technion.vedibarta.chatSearch
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -87,16 +91,13 @@ class ChatSearchActivity : VedibartaActivity() {
                 if(validateChosenDetails()) {
                     searchMatch()
                 }
-                else{
-                    missingDetailsDialog()
-
-                }
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun missingDetailsDialog() {
+    @Suppress("DEPRECATION")
+    private fun displayErrorMessage(message: String) {
         val title = TextView(this)
         title.setText(R.string.chat_search_wrong_details_title)
         title.textSize = 20f
@@ -106,15 +107,32 @@ class ChatSearchActivity : VedibartaActivity() {
         title.setPadding(10, 40, 10, 24)
         val builder = AlertDialog.Builder(this)
         builder.setCustomTitle(title)
-            .setMessage(R.string.chat_search_wrong_details_message)
+            .setMessage(message)
             .setPositiveButton(android.R.string.yes) { _, _ -> }
             .show()
         builder.create()
     }
 
+    private fun displayIllegalRegion() {
+        displayErrorMessage(getString(R.string.chat_search_wrong_region_message))
+    }
+
+    private fun displayIllegalSchool() {
+        displayErrorMessage(getString(R.string.chat_search_wrong_school_message))
+    }
+
+    private fun displayNoCharacteristicsChosen() {
+        displayErrorMessage(getString(R.string.chat_search_no_characteristics_chosen_message))
+    }
+
     private fun validateChosenDetails() : Boolean{
-        return (schoolsName.contains(chosenSchool)  || chosenSchool == null)
-                && (regionsName.contains(chosenRegion) || chosenRegion == null)
+        when {
+            !regionsName.contains(chosenRegion) && chosenRegion != null -> displayIllegalRegion()
+            !schoolsName.contains(chosenSchool) && chosenSchool != null -> displayIllegalSchool()
+            chosenCharacteristics.isEmpty() -> displayNoCharacteristicsChosen()
+            else -> return true
+        }
+        return false
     }
 
     private fun setupViewPager(viewPager: CustomViewPager) {
@@ -131,11 +149,12 @@ class ChatSearchActivity : VedibartaActivity() {
 
         MatcherImpl(studentsCollection, fakeStudent.characteristics.keys, chosenRegion, chosenSchool).match()
             .addOnSuccessListener(this) { students ->
-                if (students.isNotEmpty()) {
+                val filteredStudents = students.filter { it.uid != student!!.uid }
+                if (filteredStudents.isNotEmpty()) {
                     Log.d(TAG, "Matched students successfully")
 
                     val intent = Intent(this, ChatCandidatesActivity::class.java)
-                    intent.putExtra("STUDENTS", students.toTypedArray())
+                    intent.putExtra("STUDENTS", filteredStudents.toTypedArray())
                     startActivity(intent)
                     finish()
                 } else {
@@ -144,7 +163,39 @@ class ChatSearchActivity : VedibartaActivity() {
                 }
             }.addOnFailureListener(this) { exp ->
                 Log.w(TAG, "Matching students failed", exp)
+                if(!isInternetAvailable(this)) {
+                    loadTimeoutTask.run()
+                }
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun isInternetAvailable(context: Context): Boolean {
+        var result = false
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm?.run {
+                cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+                    result = when {
+                        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                        else -> false
+                    }
+                }
+            }
+        } else {
+            cm?.run {
+                cm.activeNetworkInfo?.run {
+                    if (type == ConnectivityManager.TYPE_WIFI) {
+                        result = true
+                    } else if (type == ConnectivityManager.TYPE_MOBILE) {
+                        result = true
+                    }
+                }
+            }
+        }
+        return result
     }
 }
