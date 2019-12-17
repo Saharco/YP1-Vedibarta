@@ -129,7 +129,7 @@ class ChatSearchActivity : VedibartaActivity() {
         when {
             !regionsName.contains(chosenRegion) && chosenRegion != null -> displayIllegalRegion()
             !schoolsName.contains(chosenSchool) && chosenSchool != null -> displayIllegalSchool()
-            chosenCharacteristics.isEmpty() -> displayNoCharacteristicsChosen()
+            fakeStudent.characteristics.isEmpty() -> displayNoCharacteristicsChosen()
             else -> return true
         }
         return false
