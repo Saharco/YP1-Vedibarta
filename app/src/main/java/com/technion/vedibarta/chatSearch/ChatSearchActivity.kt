@@ -143,12 +143,12 @@ class ChatSearchActivity : VedibartaActivity() {
 
         MatcherImpl(studentsCollection, chosenCharacteristics, chosenRegion, chosenSchool).match()
             .addOnSuccessListener(this) { students ->
-                if (students.isNotEmpty()) {
+                val filteredStudents = students.filter { it.uid != student!!.uid }
+                if (filteredStudents.isNotEmpty()) {
                     Log.d(TAG, "Matched students successfully")
 
                     val intent = Intent(this, ChatCandidatesActivity::class.java)
-                    students.filter { newStudent -> newStudent != student } //remove searching user from results
-                    intent.putExtra("STUDENTS", students.toTypedArray())
+                    intent.putExtra("STUDENTS", filteredStudents.toTypedArray())
                     startActivity(intent)
                     finish()
                 } else {
