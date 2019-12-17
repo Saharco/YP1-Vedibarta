@@ -5,6 +5,7 @@
     <string name="back">חזור</string>
     <string name="or">או</string>
     <string name="allowed_letters">אבגדהוזחטיכלמנסעפצקרשתץףןםך</string>
+    <string name="dismiss">הסר</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
@@ -61,6 +62,15 @@
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
     <string name="checking_document">מסתנכרן עם השרת</string>
     <string name="user_setup_dialog_message">יש לבחור בן/בת</string>
+    <string name="user_setup_male_option">בן</string>
+    <string name="user_setup_female_option">בת</string>
+    <string name="user_setup_gender_missing">יש לבחור בן/בת</string>
+    <string name="user_setup_first_name_missing">יש למלא את השדה שם פרטי</string>
+    <string name="user_setup_last_name_missing">יש למלא את השדה שם משפחה</string>
+    <string name="user_setup_school_missing">יש לבחור בית ספר מהרשימה</string>
+    <string name="user_setup_region_missing">יש לבחור מקום מגורים מהרשימה</string>
+    <string name="user_setup_characteristics_missing">יש לבחור מאפייני זהות</string>
+    <string name="user_setup_hobbies_missing">יש לבחור תחביבים</string>
 
     <!--    ChatRoom attribute   -->
     <string name="chat_room_abuse_dialog_title">דיווח</string>
@@ -96,6 +106,7 @@
     <string name="progress_dialog_loading">טוען…</string>
     <string name="sending_verification_email">שולח דוא\"ל אימות</string>
     <string name="email_sent_successfully">ההודעה נשלחה בהצלחה</string>
+    <string name="sign_in_error">שגיאה בהתחברות</string>
 
     <!--    Error Messages  -->
     <string name="something_went_wrong">אירעה שגיאה</string>
@@ -122,6 +133,14 @@
         <item>Menu Item 1</item>
         <item>Menu Item 2</item>
     </string-array>
+
+    <!-- MainActivity Chat-->
+    <string name="sent">נשלח</string>
+    <string name="just_now">הרגע</string>
+    <string name="before">לפני</string>
+    <string name="hours">שעות</string>
+    <string name="days">ימים</string>
+
 
     <!--  FCM  -->
     <string name="vedibarta_notification_channel_name">ודיברת</string>

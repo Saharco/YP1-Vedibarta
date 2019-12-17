@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -52,13 +53,14 @@ class UserSetupActivity : VedibartaActivity() {
         val dialog = ProgressDialog(this).apply {
             setMessage(getString(R.string.checking_document))
             setCancelable(false)
-            setIndeterminate(true)
+            isIndeterminate = true
             show()
         }
 
         database.students().userId().build().get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 dialog.dismiss()
+                student = document.toObject(Student::class.java)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             } else {
@@ -73,6 +75,11 @@ class UserSetupActivity : VedibartaActivity() {
             setupStudent = savedInstanceState[STUDENT_KEY] as Student
         }
 
+        schoolsName = resources.getStringArray(R.array.schoolNameList)
+        regionsName =
+            resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
+
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
         setToolbar(toolbar)
@@ -82,8 +89,6 @@ class UserSetupActivity : VedibartaActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        Log.d(TAG, "Saving Student")
-        Log.d(TAG, "Student Gender: ${setupStudent.gender}")
 
         outState.putSerializable(STUDENT_KEY, setupStudent)
         super.onSaveInstanceState(outState)
@@ -102,6 +107,7 @@ class UserSetupActivity : VedibartaActivity() {
         adapter.addFragment(ChooseCharacteristicsFragment(), "3")
         adapter.addFragment(ChooseHobbiesFragment(), "4")
         viewPager.setOnTouchListener { v, event ->
+
             if (setupStudent.gender == Gender.NONE) {
                 Toast.makeText(
                     applicationContext,
@@ -114,7 +120,8 @@ class UserSetupActivity : VedibartaActivity() {
             return@setOnTouchListener true
         }
         viewPager.adapter = adapter
-        viewPager.addOnPageChangeListener(CustomViewPageListener(this))
+        viewPager.offscreenPageLimit = 2
+//        viewPager.addOnPageChangeListener(CustomViewPageListener(this))
     }
 
     override fun onBackPressed() {
@@ -133,6 +140,7 @@ class UserSetupActivity : VedibartaActivity() {
                     setupStudent.name = "$chosenFirstName $chosenLastName"
                     database.students().userId().build().set(setupStudent)
                         .addOnSuccessListener {
+                            student = setupStudent
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
@@ -171,54 +179,45 @@ class UserSetupActivity : VedibartaActivity() {
         missingDetailsText = ""
         val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
-        Log.d(
-            TAG,
-            "Chars: ${studentsCharacteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName "
-        )
-        Log.d(
-            TAG,
-            "last name: $chosenLastName,  School: ${setupStudent.school}, Region: ${setupStudent.region}"
-        )
-
         if (setupStudent.gender == Gender.NONE) {
-            missingDetailsText += "יש לבחור בן/בת\n"
+            missingDetailsText += "${R.string.user_setup_gender_missing}\n"
             return false
         }
 
         if (chosenFirstName == "") {
-            missingDetailsText += "יש למלא את השדה שם פרטי\n"
+            missingDetailsText += "${R.string.user_setup_first_name_missing}\n"
             return false
         }
 
         if (chosenLastName == "") {
-            missingDetailsText += "יש למלא את השדה שם משפחה\n"
+            missingDetailsText += "${R.string.user_setup_last_name_missing}\n"
             return false
         }
 
         if (!schoolsName.contains(setupStudent.school)) {
-            missingDetailsText += "יש לבחור בית ספר מהרשימה\n"
+            missingDetailsText += "${R.string.user_setup_school_missing}\n"
             return false
         }
 
         if (!regionsName.contains(setupStudent.region)) {
-            missingDetailsText += "יש לבחור מקום מגורים מהרשימה\n"
+            missingDetailsText += "${R.string.user_setup_region_missing}\n"
             return false
         }
 
         if (studentsCharacteristics.isEmpty()) {
-            missingDetailsText += "יש לבחור מאפייני זהות\n"
+            missingDetailsText += "${R.string.user_setup_characteristics_missing}\n"
             return false
         }
 
         if (setupStudent.hobbies.isEmpty()) {
-            missingDetailsText += "יש לבחור תחביבים\n"
+            missingDetailsText += "${R.string.user_setup_hobbies_missing}\n"
             return false
         }
 
         return true
     }
-
-    class CustomViewPageListener(val activity: UserSetupActivity) :
+/*
+    inner class CustomViewPageListener(val activity: UserSetupActivity) :
         ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
@@ -243,5 +242,7 @@ class UserSetupActivity : VedibartaActivity() {
             }
         }
     }
+
+ */
 
 }

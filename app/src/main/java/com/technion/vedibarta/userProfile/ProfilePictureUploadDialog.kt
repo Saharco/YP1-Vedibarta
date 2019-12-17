@@ -80,7 +80,6 @@ class ProfilePictureUploadDialog private constructor() : DialogFragment() {
         }
 
         dismissButton.setOnClickListener {
-            Toast.makeText(context, "dismiss", Toast.LENGTH_SHORT).show()
             dismiss()
         }
     }

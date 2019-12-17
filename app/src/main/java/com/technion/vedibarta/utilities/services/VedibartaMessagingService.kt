@@ -6,9 +6,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.graphics.*
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
@@ -23,6 +27,7 @@ import com.technion.vedibarta.POJOs.ActivityCode
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.getCircleBitmap
 import java.util.concurrent.ExecutionException
 
 /**
@@ -37,6 +42,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "Vedibarta/messaging"
         private const val NO_PICTURE = "none"
+        private const val GROUP_KEY_CHAT = "Vedibarta/CHAT"
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -113,31 +119,22 @@ class VedibartaMessagingService : FirebaseMessagingService() {
             notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        if (senderPhotoURL != NO_PICTURE) {
-            val futureTarget = Glide.with(this)
-                .asBitmap()
-                .load(senderPhotoURL)
-                .submit()
-
-            try {
-                val bitmap = futureTarget.get()
-                builder.setLargeIcon(bitmap)
-            } catch (e: InterruptedException) { // do nothing
-            } catch (e: ExecutionException) { // do nothing
-            }
-
-            Glide.with(this).clear(futureTarget)
-        }
-
         val systemResources = Resources.getSystem()
-        val chatTitle = "${getString(R.string.notification_chat_title_prefix)}$title"
+        val chatTitle =
+            SpannableString("\u200f${getString(R.string.notification_chat_title_prefix)}$title\u200f")
+        chatTitle.setSpan(
+            StyleSpan(Typeface.BOLD),
+            getString(R.string.notification_chat_title_prefix).length + 1,
+            chatTitle.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
 
         // adding the notification's properties
         builder.setSmallIcon(R.drawable.ic_launcher)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
             .setWhen(System.currentTimeMillis())
             .setContentTitle(chatTitle)
-            .setContentText(message)
+            .setContentText("\u200f$message\u200f")
 //            .setDefaults(NotificationCompat.DEFAULT_SOUND | NotificationCompat.DEFAULT_VIBRATE)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
             .setContentIntent(notificationPendingIntent)
@@ -160,7 +157,23 @@ class VedibartaMessagingService : FirebaseMessagingService() {
 //            .setLights(resources.getColor(R.color.colorPrimary), 3000, 3000)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(VISIBILITY_PUBLIC)
+            .setGroup(GROUP_KEY_CHAT)
             .setAutoCancel(true)
+
+        if (senderPhotoURL != NO_PICTURE) {
+            val futureTarget = Glide.with(this)
+                .asBitmap()
+                .load(senderPhotoURL)
+                .submit()
+            try {
+                val bitmap = futureTarget.get()
+                builder.setLargeIcon(getCircleBitmap(bitmap))
+            } catch (e: InterruptedException) { // do nothing
+            } catch (e: ExecutionException) { // do nothing
+            }
+
+            Glide.with(this).clear(futureTarget)
+        }
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
