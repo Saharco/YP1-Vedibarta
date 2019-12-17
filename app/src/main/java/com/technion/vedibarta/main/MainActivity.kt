@@ -3,7 +3,6 @@ package com.technion.vedibarta.main
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -27,7 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.technion.vedibarta.ExtentionFunctions.getName
 import com.technion.vedibarta.ExtentionFunctions.getPartnerId
-import com.technion.vedibarta.POJOs.ChatCard
+import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -44,7 +43,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : VedibartaActivity() {
 
     private val logTag = "ChatHistory"
-    private lateinit var adapter: FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>
+    private lateinit var adapter: FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>
 
     companion object {
         const val TAG = "Vedibarta/chat-lobby"
@@ -129,8 +128,8 @@ class MainActivity : VedibartaActivity() {
 
     private fun configureAdapter() {
         val query = database.chats().build().whereArrayContains("participantsId", userId!!)
-        val options = FirestoreRecyclerOptions.Builder<ChatCard>()
-            .setQuery(query, ChatCard::class.java)
+        val options = FirestoreRecyclerOptions.Builder<Chat>()
+            .setQuery(query, Chat::class.java)
             .build()
         val chatHistory = findViewById<RecyclerView>(R.id.chat_history)
         adapter = getAdapter(options)
@@ -167,7 +166,7 @@ class MainActivity : VedibartaActivity() {
             return ""
         }
 
-        fun bind(card: ChatCard, photoUrl: String? = null, otherGender: Gender = Gender.MALE)
+        fun bind(card: Chat, photoUrl: String? = null, otherGender: Gender = Gender.MALE)
         {
             try {
                 val partnerId = card.getPartnerId(userId)
@@ -224,8 +223,8 @@ class MainActivity : VedibartaActivity() {
         }
     }
 
-    private fun getAdapter(options: FirestoreRecyclerOptions<ChatCard>): FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder> {
-        return object : FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>(options) {
+    private fun getAdapter(options: FirestoreRecyclerOptions<Chat>): FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder> {
+        return object : FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>(options) {
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int
@@ -238,7 +237,7 @@ class MainActivity : VedibartaActivity() {
             override fun onBindViewHolder(
                 holder: RecyclerView.ViewHolder,
                 position: Int,
-                card: ChatCard
+                card: Chat
             ) {
                 when (holder) {
                     is ViewHolder -> {

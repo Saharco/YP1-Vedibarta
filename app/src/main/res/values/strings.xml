@@ -132,7 +132,7 @@
         <item>Menu Item 2</item>
     </string-array>
 
-    <!-- MainActivity ChatCard-->
+    <!-- MainActivity Chat-->
     <string name="sent">נשלח</string>
     <string name="just_now">הרגע</string>
     <string name="before">לפני</string>

@@ -7,8 +7,7 @@ import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.technion.vedibarta.ExtentionFunctions.create
 import com.technion.vedibarta.ExtentionFunctions.getName
-import com.technion.vedibarta.ExtentionFunctions.getPhoto
-import com.technion.vedibarta.POJOs.ChatCard
+import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.CarouselAdapter
 import com.technion.vedibarta.POJOs.Student
@@ -34,7 +33,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
             holder.button.setOnClickListener {
                 val other = carouselAdapterItems[holder.adapterPosition]
 
-                val chat = ChatCard().create(other)
+                val chat = Chat().create(other)
                 Log.d(TAG, "chat id is: ${chat.chat}")
                 val docRef =
                     FirebaseFirestore.getInstance().collection("chats").document(chat.chat!!)
