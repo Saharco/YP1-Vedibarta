@@ -120,7 +120,8 @@ class UserSetupActivity : VedibartaActivity() {
             return@setOnTouchListener true
         }
         viewPager.adapter = adapter
-        viewPager.addOnPageChangeListener(CustomViewPageListener(this))
+        viewPager.offscreenPageLimit = 2
+//        viewPager.addOnPageChangeListener(CustomViewPageListener(this))
     }
 
     override fun onBackPressed() {
@@ -215,7 +216,7 @@ class UserSetupActivity : VedibartaActivity() {
 
         return true
     }
-
+/*
     inner class CustomViewPageListener(val activity: UserSetupActivity) :
         ViewPager.SimpleOnPageChangeListener() {
 
@@ -241,5 +242,7 @@ class UserSetupActivity : VedibartaActivity() {
             }
         }
     }
+
+ */
 
 }
