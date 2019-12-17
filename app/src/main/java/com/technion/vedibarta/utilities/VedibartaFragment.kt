@@ -113,7 +113,7 @@ open class VedibartaFragment : Fragment(){
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
 
 
-               student.characteristics[characteristics[view.id]] = false
+               student.characteristics.remove(characteristics[view.id])
             }
 
             bubbleFrame.id = view.id

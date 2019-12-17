@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.firestore.FirebaseFirestore
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
 import com.technion.vedibarta.studentsMatching.impl.MatcherImpl
@@ -33,9 +34,10 @@ class ChatSearchActivity : VedibartaActivity() {
     lateinit var regionsName: Array<String>
     lateinit var schoolTags: Array<Int>
 
-    var chosenCharacteristics = arrayListOf<String>()
     var chosenSchool: String? = null
     var chosenRegion: String? = null
+
+    var fakeStudent: Student = Student()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +46,14 @@ class ChatSearchActivity : VedibartaActivity() {
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
         if(savedInstanceState != null){
-            chosenCharacteristics = savedInstanceState.getStringArrayList("CHARS")!!
-            chosenSchool = savedInstanceState.getString("SCHOOL")!!
-            chosenRegion = savedInstanceState.getString("REGION")!!
+            fakeStudent = savedInstanceState.getSerializable("STUDENT") as Student
+            chosenSchool = savedInstanceState.getString("SCHOOL")
+            chosenRegion = savedInstanceState.getString("REGION")
         }
+
+        schoolsName = resources.getStringArray(R.array.schoolNameList)
+        regionsName = resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         setupViewPager(searchUserContainer)
         editTabs.setupWithViewPager(searchUserContainer)
@@ -56,7 +62,7 @@ class ChatSearchActivity : VedibartaActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putStringArrayList("CHARS", chosenCharacteristics)
+        outState.putSerializable("STUDENT",fakeStudent)
         outState.putString("SCHOOL", chosenSchool)
         outState.putString("REGION", chosenRegion)
         super.onSaveInstanceState(outState)
@@ -123,7 +129,7 @@ class ChatSearchActivity : VedibartaActivity() {
 
         val studentsCollection = FirebaseFirestore.getInstance().collection("students")
 
-        MatcherImpl(studentsCollection, chosenCharacteristics, chosenRegion, chosenSchool).match()
+        MatcherImpl(studentsCollection, fakeStudent.characteristics.keys, chosenRegion, chosenSchool).match()
             .addOnSuccessListener(this) { students ->
                 if (students.isNotEmpty()) {
                     Log.d(TAG, "Matched students successfully")
