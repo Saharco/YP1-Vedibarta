@@ -59,7 +59,8 @@ class ChatRoomActivity : VedibartaActivity()
         photoUrl = intent.getStringExtra("photoUrl")
         numMessages = intent.getIntExtra("numMessages", 0)
         otherGender = intent.extras?.get("otherGender") as Gender
-        
+
+        chatPartnerId = partnerId
         photoUrl ?: displayDefaultProfilePicture()
 
         setToolbar(chatToolbar)
@@ -145,6 +146,11 @@ class ChatRoomActivity : VedibartaActivity()
         supportActionBar?.setDisplayShowTitleEnabled(false) // if you want to to write your own title programmatically
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+    }
+
+    override fun onBackPressed() {
+        chatPartnerId = null // exiting chat: notify that there is no chat partner
+        super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
