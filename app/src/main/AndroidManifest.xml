@@ -67,7 +67,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.UserSetupActivity">
+
+        <activity android:name=".login.UserSetupActivity"
+            android:theme="@style/SetupBackground">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
@@ -100,7 +102,10 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".chatRoom.ChatRoomActivity" />
+
+        <activity android:name=".chatRoom.ChatRoomActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"

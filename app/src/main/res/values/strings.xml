@@ -49,7 +49,7 @@
 
     <!--    UserSetup Attributes  -->
     <string name="user_setup_title">הגדרת משתמש</string>
-    <string name="choose_gender_text">אני מזדהה בתור</string>
+    <string name="choose_gender_text">כיצד לפנות אלייך?</string>
     <string name="user_setup_characteristics_title">מאפייני זיהוי</string>
     <string name="user_setup_extra_options_title">פרטים אישיים</string>
     <string name="user_setup_hobbies_title">תחביבים</string>

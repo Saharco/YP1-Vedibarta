@@ -53,6 +53,7 @@ class ChatRoomActivity : VedibartaActivity()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_room)
+        window.setBackgroundDrawableResource(R.drawable.bg_chat_1)
 
         val chatMetaData = intent.getSerializableExtra("chatData") as ChatMetadata
 

@@ -20,7 +20,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/cardViewMale"
             android:text="@string/choose_gender_text"
-            android:textColor="@color/textPrimary"
+            android:textColor="@color/textPrimaryOnDarkSurface"
             android:textSize="26sp">
 
         </androidx.appcompat.widget.AppCompatTextView>
