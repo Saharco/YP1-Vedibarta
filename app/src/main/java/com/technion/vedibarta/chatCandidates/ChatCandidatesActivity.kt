@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import com.technion.vedibarta.ExtentionFunctions.create
-import com.technion.vedibarta.ExtentionFunctions.getName
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.CarouselAdapter

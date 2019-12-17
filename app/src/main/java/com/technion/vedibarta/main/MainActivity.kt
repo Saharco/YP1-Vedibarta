@@ -24,8 +24,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
-import com.technion.vedibarta.ExtentionFunctions.getName
-import com.technion.vedibarta.ExtentionFunctions.getPartnerId
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
