@@ -3,19 +3,13 @@ package com.technion.vedibarta.POJOs
 import java.text.SimpleDateFormat
 import java.util.*
 
-data class Message(val messageType: MessageType = MessageType.USER,
+data class Message(val sender: String = "",
+                   val receiver: String = "",
                    var text: String = "",
-                   val fullTimeStamp: Date = Date(System.currentTimeMillis()))
+                   val timestamp: Date = Date(System.currentTimeMillis()))
 {
     fun getTime(): String
     {
-        return SimpleDateFormat("HH:mma").format(fullTimeStamp)
+        return SimpleDateFormat("HH:mma").format(timestamp)
     }
-}
-
-enum class MessageType
-{
-    USER,
-    OTHER,
-    GENERATOR
 }

@@ -121,4 +121,27 @@
         <item>Menu Item 2</item>
     </string-array>
 
+    <!--  FCM  -->
+    <string name="vedibarta_notification_channel_name">ודיברת</string>
+
+    <string name="payload_display_status">display_status</string>
+    <string name="payload_admin_broadcast">admin_broadcast</string>
+    <string name="payload_data_message_title">title</string>
+    <string name="payload_data_message_body">body</string>
+    <string name="payload_data_notification_type">notification_type</string>
+    <string name="payload_data_sender_id">sender_id</string>
+    <string name="payload_data_sender_photo">sender_photo_url</string>
+    <string name="payload_data_notification_time">notification_time</string>
+    <string name="payload_data_sender_msg">sender_msg</string>
+    <string name="payload_data_sender_name">sender_name</string>
+    <string name="payload_data_chat_id">chat_id</string>
+    <string name="payload_data_photo">photo</string>
+
+    <!--  Notification messages  -->
+    <string name="notification_chat_title_prefix">הודעה חדשה מ</string>
+
+    <!--  VedibartaActivity  -->
+    <string name="dialog_timeout_title">אירעתה שגיאה</string>
+    <string name="dialog_timeout_body">התהליך לוקח יותר מדי זמן! \nיש לבדוק את חיבור האינטרנט ולנסות שוב</string>
+
 </resources>

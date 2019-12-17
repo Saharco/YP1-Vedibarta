@@ -19,11 +19,10 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
-import java.sql.Date
 import java.sql.Timestamp
 
 class UserSetupActivity : VedibartaActivity() {
@@ -36,6 +35,7 @@ class UserSetupActivity : VedibartaActivity() {
 
 
     var setupStudent = Student(
+        uid = userId!!,
         lastActivity = Timestamp(System.currentTimeMillis())
     )
 
@@ -137,11 +137,8 @@ class UserSetupActivity : VedibartaActivity() {
                             finish()
                         }
                         .addOnFailureListener {
-                            Toast.makeText(
-                                this,
-                                R.string.something_went_wrong,
-                                Toast.LENGTH_LONG
-                            )
+                            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
+                                .show()
                         }
                 } else {
                     missingDetailsDialog()

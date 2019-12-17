@@ -1,6 +1,7 @@
 package com.technion.vedibarta.chatRoom
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -13,23 +14,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.R
+import java.lang.Exception
+import java.security.spec.ECField
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
 class ChatRoomActivity : VedibartaActivity()
-    ,ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
-    ,ChatRoomAbuseReportDialog.AbuseReportDialogListener
-{
-
+    , ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
+    , ChatRoomAbuseReportDialog.AbuseReportDialogListener {
+    val systemSender = "-1"
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    private var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var chatId: String? =
+        null //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var partnerId: String? = null
     private var photoUrl: String? = null
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -37,19 +43,22 @@ class ChatRoomActivity : VedibartaActivity()
     private var numMessages = 0
 
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
-        photoUrl = intent.getStringExtra("photoUrl")
-        chatPartnerId = intent.getStringExtra("id")
-        numMessages =intent.getIntExtra("numMessages", 0)
+        setContentView(R.layout.activity_chat_room)
         val partnerName = intent.getStringExtra("name")
+        chatId = intent.getStringExtra("chatId")
+        partnerId = intent.getStringExtra("partnerId")
+        photoUrl = intent.getStringExtra("photoUrl")
+        numMessages = intent.getIntExtra("numMessages", 0)
 
         setToolbar(chatToolbar)
         configureAdapter()
         buttonChatBoxSend.setOnClickListener { sendMessage(it) }
-        popupMenu.setOnClickListener{ showPopup(it) }
+        popupMenu.setOnClickListener { showPopup(it) }
+        if (student!!.gender == Gender.FEMALE)
+            chatBox.text =
+                SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
         toolbarUserName.text = partnerName
     }
 
@@ -63,37 +72,34 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.stopListening()
     }
 
-    private fun configureAdapter()
-    {
+    private fun getChatId(userId: String, partnerId: String): String {
+        if (userId < partnerId)
+            return "$userId$partnerId"
+        return "$partnerId$userId"
+    }
+
+    private fun configureAdapter() {
         val query =
             database
-                .students()
-                .userId()
                 .chats()
-                .chatWith(chatPartnerId!!)
+                .chatId(chatId!!)
                 .messages()
-                .build().orderBy("fullTimeStamp")
+                .build().orderBy("timestamp", Query.Direction.DESCENDING)
 
         val options =
             FirestoreRecyclerOptions.Builder<Message>()
-            .setQuery(query,Message::class.java)
-            .build()
-
-        val initialChatViewPopulationListener = object: View.OnLayoutChangeListener{
-            override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int,p5: Int, p6: Int, p7: Int, p8: Int)
-            {
-                if (adapter.itemCount > 0)
-                {
-                    chatView.smoothScrollToPosition(adapter.itemCount)
-                    chatView.removeOnLayoutChangeListener(this)
-                }
-            }
-        }
+                .setQuery(query, Message::class.java)
+                .build()
 
         adapter = ChatRoomAdapter(this, options, numMessages)
+        adapter.notifyDataSetChanged() //
         chatView.adapter = adapter
-        chatView.layoutManager = LinearLayoutManager(this)
-        chatView.addOnLayoutChangeListener(initialChatViewPopulationListener)
+        adapter.notifyDataSetChanged() //
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        chatView.layoutManager = layoutManager
+        chatView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            chatView.scrollToPosition(0)
+        }
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -111,40 +117,34 @@ class ChatRoomActivity : VedibartaActivity()
         return true
     }
 
-    override fun onQuestionclick(dialog: DialogFragment, v: View)
-    {
-        try
-        {
+    override fun onQuestionclick(dialog: DialogFragment, v: View) {
+        try {
             val question = (v as TextView).text
             Toast.makeText(this, question, Toast.LENGTH_SHORT).show()
-        }
-        catch (e: ClassCastException)
-        {
+        } catch (e: ClassCastException) {
             Log.d("QuestionGenerator", e.toString())
         }
     }
 
-    override fun onAbuseTypeClick(dialog: DialogFragment)
-    {
+    override fun onAbuseTypeClick(dialog: DialogFragment) {
         TODO("need to decide what to do")
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showPopup(view: View)
-    {
+    private fun showPopup(view: View) {
         val popup = PopupMenu(this, view)
-        popup.inflate(com.technion.vedibarta.R.menu.chat_room_popup_menu)
+        popup.inflate(R.menu.chat_room_popup_menu)
 
         popup.setOnMenuItemClickListener { item: MenuItem? ->
 
             when (item!!.itemId) {
-                com.technion.vedibarta.R.id.generateQuestion -> {
+                R.id.generateQuestion -> {
                     ChatRoomQuestionGeneratorDialog().show(
                         supportFragmentManager,
                         "QuestionGeneratorFragment"
                     )
                 }
-                com.technion.vedibarta.R.id.reportAbuse -> {
+                R.id.reportAbuse -> {
                     ChatRoomAbuseReportDialog().show(
                         supportFragmentManager,
                         "ReportAbuseDialog"
@@ -157,75 +157,49 @@ class ChatRoomActivity : VedibartaActivity()
         popup.show()
     }
 
-    private fun sendMessage(v: View)
-    {
-        chatView.smoothScrollToPosition(adapter.itemCount)
-        val text: String = chatBox.text.toString()
-        if (text.isEmpty())
+    private fun sendMessage(v: View) {
+        var text = chatBox.text.toString()
+        if (text.replace(" ", "")
+                .replace("\n", "")
+                .replace("\t", "")
+                .isEmpty() )
             return
 
+        text = text.replace("[\n]+".toRegex(), "\n").trim()
+
         //TODO fix the writing to database after cloud functions implemented
-        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
-        if (lastMessageDate != null)
-        {
+        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.timestamp
+        if (lastMessageDate != null) {
             val timeGap = currentDate.time - lastMessageDate.time
-            val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
-            {
-                duplicateWrite(userId!!, chatPartnerId!!, dateFormatter.format(currentDate),true)
+            val dayGap =
+                (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
+                write(dateFormatter.format(currentDate), true)
             }
         }
-        duplicateWrite(userId!!, chatPartnerId!!, text, false)
+        write(text, false)
         chatBox.setText("")
     }
 
-    private fun duplicateWrite(userId: String, partnerId: String, text: String, isGeneratorMessage: Boolean)
-    {
+    private fun write(text: String, isGeneratorMessage: Boolean) {
         val timeSent = Date(System.currentTimeMillis())
-        var userPath  = database.students()
-                                        .userId()
-                                        .chats()
-                                        .chatWith(partnerId)
-                                        .messages()
-                                        .message(timeSent)
-                                        .build()
-        var partnerPath = database.students()
-                                                .chatWith(partnerId)
-                                                .chats()
-                                                .chatWith(userId)
-                                                .messages()
-                                                .message(timeSent)
-                                                .build()
-        var userMassageType = MessageType.USER
-        var partnerMessageType = MessageType.OTHER
-        if (isGeneratorMessage)
-        {
-            userMassageType = MessageType.GENERATOR
-            partnerMessageType = MessageType.GENERATOR
-
-            userPath = database.students()
-                .userId()
-                .chats()
-                .chatWith(partnerId)
-                .messages()
-                .systemMessage(timeSent)
-                .build()
-
-            partnerPath = database.students()
-                .chatWith(partnerId)
-                .chats()
-                .chatWith(userId)
+        var path = database.chats()
+            .chatId(chatId!!)
+            .messages()
+            .message(timeSent)
+            .build()
+        var sender = userId!!
+        if (isGeneratorMessage) {
+            sender = systemSender
+            path = database.chats()
+                .chatId(chatId!!)
                 .messages()
                 .systemMessage(timeSent)
                 .build()
         }
-        userPath.set(Message(userMassageType, text, timeSent), SetOptions.merge())
+        path.set(Message(sender, partnerId!!, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
-                Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
-            }
-        partnerPath.set(Message(partnerMessageType, text, timeSent), SetOptions.merge())
-            .addOnFailureListener {
-                Toast.makeText(this, com.technion.vedibarta.R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
     }
 }

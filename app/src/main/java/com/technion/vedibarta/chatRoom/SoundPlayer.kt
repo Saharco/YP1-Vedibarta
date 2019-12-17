@@ -3,7 +3,6 @@ package com.technion.vedibarta.chatRoom
 import android.app.Activity
 import android.media.MediaPlayer
 import android.os.Handler
-import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.R
 import java.lang.Exception
 

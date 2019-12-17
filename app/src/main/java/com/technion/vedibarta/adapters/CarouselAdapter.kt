@@ -20,7 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.Gender
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 
 open class CarouselAdapter(
@@ -31,7 +31,7 @@ open class CarouselAdapter(
 
     private val TAG = "carouselAdapter"
 
-    private var carouselAdapterItems: List<Student> = listOf()
+    protected var carouselAdapterItems: List<Student> = listOf()
     private val selectedPos = RecyclerView.NO_POSITION
 
     private val BUBBLE_WIDTH = 38

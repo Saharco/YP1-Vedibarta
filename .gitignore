@@ -24,3 +24,6 @@ local.properties
 
 # for security reasons, do not track this file
 app/google-services.json
+
+# cloud functions stuff
+**/node_modules/*

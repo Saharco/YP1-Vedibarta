@@ -1,7 +1,12 @@
 package com.technion.vedibarta.chatSearch
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -129,6 +134,7 @@ class ChatSearchActivity : VedibartaActivity() {
                     Log.d(TAG, "Matched students successfully")
 
                     val intent = Intent(this, ChatCandidatesActivity::class.java)
+                    students.filter { newStudent -> !(newStudent.equals(student)) } //remove searching user from results
                     intent.putExtra("STUDENTS", students.toTypedArray())
                     startActivity(intent)
                     finish()
@@ -138,7 +144,40 @@ class ChatSearchActivity : VedibartaActivity() {
                 }
             }.addOnFailureListener(this) { exp ->
                 Log.w(TAG, "Matching students failed", exp)
+                if(!isInternetAvailable(this)) {
+                    loadTimeoutTask.run()
+                }
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
+    }
+
+
+    @Suppress("DEPRECATION")
+    private fun isInternetAvailable(context: Context): Boolean {
+        var result: Boolean = false
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm?.run {
+                cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+                    result = when {
+                        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                        else -> false
+                    }
+                }
+            }
+        } else {
+            cm?.run {
+                cm.activeNetworkInfo?.run {
+                    if (type == ConnectivityManager.TYPE_WIFI) {
+                        result = true
+                    } else if (type == ConnectivityManager.TYPE_MOBILE) {
+                        result = true
+                    }
+                }
+            }
+        }
+        return result
     }
 }
