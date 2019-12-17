@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import java.text.SimpleDateFormat
@@ -36,14 +37,14 @@ class ChatRoomActivity : VedibartaActivity()
     , ChatRoomAbuseReportDialog.AbuseReportDialogListener {
     val systemSender = "-1"
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    private var chatId: String? = null
-    private var partnerId: String? = null
+    lateinit var chatId: String
+    lateinit var partnerId: String
+    private var numMessages = 0
     private var photoUrl: String? = null
     private var otherGender: Gender? = null
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
-    private var numMessages = 0
 
     companion object {
         private const val TAG = "Vedibarta/chat"
@@ -52,12 +53,16 @@ class ChatRoomActivity : VedibartaActivity()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_room)
-        val partnerName = intent.getStringExtra("name")
-        chatId = intent.getStringExtra("chatId")
-        partnerId = intent.getStringExtra("partnerId")
-        photoUrl = intent.getStringExtra("photoUrl")
-        numMessages = intent.getIntExtra("numMessages", 0)
-        otherGender = intent.extras?.get("otherGender") as Gender
+
+        val chatMetaData = intent.getSerializableExtra("chatData") as ChatMetadata
+
+        val partnerName = chatMetaData.partnerName
+        chatId = chatMetaData.chatId
+        partnerId = chatMetaData.partnerId
+        numMessages = chatMetaData.numMessages
+
+        otherGender = chatMetaData.partnerGender
+        photoUrl = chatMetaData.partnerPhotoUrl
 
         chatPartnerId = partnerId
         photoUrl ?: displayDefaultProfilePicture()
@@ -110,17 +115,11 @@ class ChatRoomActivity : VedibartaActivity()
 
     }
 
-    private fun getChatId(userId: String, partnerId: String): String {
-        if (userId < partnerId)
-            return "$userId$partnerId"
-        return "$partnerId$userId"
-    }
-
     private fun configureAdapter() {
         val query =
             database
                 .chats()
-                .chatId(chatId!!)
+                .chatId(chatId)
                 .messages()
                 .build().orderBy("timestamp", Query.Direction.DESCENDING)
 

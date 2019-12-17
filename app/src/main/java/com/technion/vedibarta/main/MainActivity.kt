@@ -3,6 +3,7 @@ package com.technion.vedibarta.main
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +26,10 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
-import com.technion.vedibarta.POJOs.Chat
+import com.technion.vedibarta.ExtentionFunctions.getName
+import com.technion.vedibarta.ExtentionFunctions.getPartnerId
+import com.technion.vedibarta.POJOs.ChatCard
+import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -34,6 +39,7 @@ import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -41,7 +47,10 @@ import java.util.concurrent.TimeUnit
 class MainActivity : VedibartaActivity() {
 
     private val logTag = "ChatHistory"
-    private lateinit var adapter: FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>
+    private var searchKeyword: String? = null
+    private lateinit var adapter: FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>
+
+    private val chatPartnersMap = HashMap<String, ChatMetadata>()
 
     companion object {
         const val TAG = "Vedibarta/chat-lobby"
@@ -68,13 +77,13 @@ class MainActivity : VedibartaActivity() {
                     .update("tokens", FieldValue.arrayUnion(token))
             })
 
-        configureAdapter()
-
         if (Intent.ACTION_SEARCH == intent.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
                 doMySearch(query)
             }
         }
+
+        configureAdapter()
 
         extendedFloatingActionButton.setOnClickListener {
             startActivity(Intent(this, ChatSearchActivity::class.java))
@@ -103,13 +112,16 @@ class MainActivity : VedibartaActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        (menu.findItem(R.id.search).actionView as SearchView).apply {
-            // Assumes current activity is the searchable activity
-            setSearchableInfo(searchManager.getSearchableInfo(componentName))
-            isIconifiedByDefault = false // Do not iconify the widget; expand it by default
-        }
+        searchView.setMenuItem(menu.findItem(R.id.search))
         return true
+    }
+
+
+    override fun onBackPressed() {
+        if (searchView.isSearchOpen)
+            searchView.closeSearch()
+        else
+            super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -121,13 +133,15 @@ class MainActivity : VedibartaActivity() {
     }
 
     private fun doMySearch(query: String) {
-        Log.d("Yuval", "Searching for something...")
+        Log.d(TAG, "Searching for something...")
+        if (query.isNotEmpty())
+            searchKeyword = query
     }
 
     private fun configureAdapter() {
-        val query = database.chats().build().whereArrayContains("participantsId", userId!!)
-        val options = FirestoreRecyclerOptions.Builder<Chat>()
-            .setQuery(query, Chat::class.java)
+        val adapterQuery = database.chats().build().whereArrayContains("participantsId", userId!!)
+        val options = FirestoreRecyclerOptions.Builder<ChatCard>()
+            .setQuery(adapterQuery, ChatCard::class.java)
             .build()
         val chatHistory = findViewById<RecyclerView>(R.id.chat_history)
         adapter = getAdapter(options)
@@ -136,41 +150,39 @@ class MainActivity : VedibartaActivity() {
     }
 
     private class ViewHolder(val view: View, val userId: String, val context: Context) :
-        RecyclerView.ViewHolder(view)
-    {
-        private fun getString(x: Int): String
-        {
+        RecyclerView.ViewHolder(view) {
+        private fun getString(x: Int): String {
             return context.resources.getString(x)
         }
 
-        private fun calcRelativeTime(time: Date): String
-        {
+        private fun calcRelativeTime(time: Date): String {
             try {
                 val current = Date(System.currentTimeMillis())
                 val timeGap = current.time - time.time
                 val hoursGap = TimeUnit.HOURS.convert(timeGap, TimeUnit.MILLISECONDS)
-                when(hoursGap)
-                {
+                when (hoursGap) {
                     in 0..1 -> return getString(R.string.just_now)
-                    in 2..24 -> return "${getString(R.string.sent)} ${getString(R.string.before)} $hoursGap ${getString(R.string.hours)}"
-                    in 2..168 -> return "${getString(R.string.sent)} ${getString(R.string.before)} ${hoursGap/24} ${getString(R.string.days)}"
+                    in 2..24 -> return "${getString(R.string.sent)} ${getString(R.string.before)} $hoursGap ${getString(
+                        R.string.hours
+                    )}"
+                    in 2..168 -> return "${getString(R.string.sent)} ${getString(R.string.before)} ${hoursGap / 24} ${getString(
+                        R.string.days
+                    )}"
                     else -> return SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(time)
                 }
-            }
-            catch (e: Exception)
-            {
+            } catch (e: Exception) {
                 com.technion.vedibarta.utilities.error(e, "calc")
             }
             return ""
         }
 
-        fun bind(card: Chat, photoUrl: String? = null, otherGender: Gender = Gender.MALE)
-        {
+        fun bind(card: ChatCard, photoUrl: String? = null, otherGender: Gender = Gender.MALE) {
             try {
                 val partnerId = card.getPartnerId(userId)
                 itemView.findViewById<TextView>(R.id.user_name).text = card.getName(partnerId)
                 itemView.findViewById<TextView>(R.id.last_message).text = card.lastMessage
-                itemView.findViewById<TextView>(R.id.relative_timestamp).text = calcRelativeTime(card.lastMessageTimestamp)
+                itemView.findViewById<TextView>(R.id.relative_timestamp).text =
+                    calcRelativeTime(card.lastMessageTimestamp)
                 val profilePicture = itemView.findViewById<ImageView>(R.id.user_picture)
 
                 if (photoUrl == null)
@@ -221,8 +233,8 @@ class MainActivity : VedibartaActivity() {
         }
     }
 
-    private fun getAdapter(options: FirestoreRecyclerOptions<Chat>): FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder> {
-        return object : FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>(options) {
+    private fun getAdapter(options: FirestoreRecyclerOptions<ChatCard>): FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder> {
+        return object : FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>(options) {
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int
@@ -235,7 +247,7 @@ class MainActivity : VedibartaActivity() {
             override fun onBindViewHolder(
                 holder: RecyclerView.ViewHolder,
                 position: Int,
-                card: Chat
+                card: ChatCard
             ) {
                 when (holder) {
                     is ViewHolder -> {
@@ -251,27 +263,42 @@ class MainActivity : VedibartaActivity() {
                                     Gender.FEMALE
 
                                 holder.bind(card, otherStudentPhotoUrl, otherGender)
+                                val partnerId = card.getPartnerId(userId!!)
+                                val chatMetadata = ChatMetadata(
+                                    card.chat!!,
+                                    partnerId,
+                                    card.getName(partnerId),
+                                    card.numMessages,
+                                    card.lastMessage,
+                                    card.lastMessageTimestamp,
+                                    otherGender,
+                                    otherStudentPhotoUrl
+                                )
+
+                                chatPartnersMap[chatMetadata.partnerName] = chatMetadata
 
                                 holder.view.setOnClickListener {
-                                    val partnerId = card.getPartnerId(userId!!)
                                     val i = Intent(this@MainActivity, ChatRoomActivity::class.java)
-                                    i.putExtra("chatId", card.chat)
-                                    i.putExtra("partnerId", partnerId)
-                                    i.putExtra("name", card.getName(partnerId))
-                                    i.putExtra("photoUrl", otherStudentPhotoUrl)
-                                    i.putExtra("otherGender", otherGender)
-                                    i.putExtra("numMessages", card.numMessages)
+                                    i.putExtra("chatData", chatMetadata)
                                     startActivity(i)
                                 }
                             }.addOnFailureListener {
                                 holder.bind(card)
+                                val partnerId = card.getPartnerId(userId!!)
+                                val chatMetadata = ChatMetadata(
+                                    card.chat!!,
+                                    partnerId,
+                                    card.getName(partnerId),
+                                    card.numMessages,
+                                    card.lastMessage,
+                                    card.lastMessageTimestamp
+                                )
+
+                                chatPartnersMap[chatMetadata.partnerName] = chatMetadata
+
                                 holder.view.setOnClickListener {
-                                    val partnerId = card.getPartnerId(userId!!)
                                     val i = Intent(this@MainActivity, ChatRoomActivity::class.java)
-                                    i.putExtra("chatId", card.chat)
-                                    i.putExtra("partnerId", partnerId)
-                                    i.putExtra("name", card.getName(partnerId))
-                                    i.putExtra("numMessages", card.numMessages)
+                                    i.putExtra("chatData", chatMetadata)
                                     startActivity(i)
                                 }
                             }
