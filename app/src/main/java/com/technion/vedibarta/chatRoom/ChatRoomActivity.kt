@@ -43,7 +43,6 @@ class ChatRoomActivity : VedibartaActivity()
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
-    private val currentDate = Date(System.currentTimeMillis())
     private var numMessages = 0
 
     companion object {
@@ -212,13 +211,16 @@ class ChatRoomActivity : VedibartaActivity()
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
 
-        //TODO fix the writing to database after cloud functions implemented
-        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.timestamp
-        if (lastMessageDate != null) {
+        val lastMessageDate: Date? = adapter.snapshots.firstOrNull()?.timestamp
+        if (lastMessageDate != null)
+        {
+            val currentDate = Date(System.currentTimeMillis())
             val timeGap = currentDate.time - lastMessageDate.time
             val dayGap =
                 (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
+
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
+            {
                 write(dateFormatter.format(currentDate), true)
             }
         }
