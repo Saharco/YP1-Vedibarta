@@ -45,7 +45,8 @@ class ChatCandidatesActivity : VedibartaActivity() {
                         intent.putExtra("chatId", chat.chat)
                         intent.putExtra("partnerId", other.uid)
                         intent.putExtra("name", chat.getName(other.uid))
-                        intent.putExtra("photoUrl", chat.getPhoto(other.uid))
+                        intent.putExtra("photoUrl", other.photo)
+                        intent.putExtra("otherGender", other.gender)
                         intent.putExtra("numMessages", chat.numMessages)
 
                         startActivity(intent)
