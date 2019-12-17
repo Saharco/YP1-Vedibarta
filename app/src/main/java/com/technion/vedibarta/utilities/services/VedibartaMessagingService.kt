@@ -27,6 +27,7 @@ import com.technion.vedibarta.POJOs.ActivityCode
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.getCircleBitmap
 import java.util.concurrent.ExecutionException
 
 /**
@@ -41,6 +42,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "Vedibarta/messaging"
         private const val NO_PICTURE = "none"
+        private const val GROUP_KEY_CHAT = "Vedibarta/CHAT"
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -117,22 +119,6 @@ class VedibartaMessagingService : FirebaseMessagingService() {
             notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        if (senderPhotoURL != NO_PICTURE) {
-            val futureTarget = Glide.with(this)
-                .asBitmap()
-                .load(senderPhotoURL)
-                .submit()
-
-            try {
-                val bitmap = futureTarget.get()
-                builder.setLargeIcon(getCircleBitmap(bitmap))
-            } catch (e: InterruptedException) { // do nothing
-            } catch (e: ExecutionException) { // do nothing
-            }
-
-            Glide.with(this).clear(futureTarget)
-        }
-
         val systemResources = Resources.getSystem()
         val chatTitle =
             SpannableString("\u200f${getString(R.string.notification_chat_title_prefix)}$title\u200f")
@@ -171,7 +157,23 @@ class VedibartaMessagingService : FirebaseMessagingService() {
 //            .setLights(resources.getColor(R.color.colorPrimary), 3000, 3000)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(VISIBILITY_PUBLIC)
+            .setGroup(GROUP_KEY_CHAT)
             .setAutoCancel(true)
+
+        if (senderPhotoURL != NO_PICTURE) {
+            val futureTarget = Glide.with(this)
+                .asBitmap()
+                .load(senderPhotoURL)
+                .submit()
+            try {
+                val bitmap = futureTarget.get()
+                builder.setLargeIcon(getCircleBitmap(bitmap))
+            } catch (e: InterruptedException) { // do nothing
+            } catch (e: ExecutionException) { // do nothing
+            }
+
+            Glide.with(this).clear(futureTarget)
+        }
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -221,42 +223,5 @@ class VedibartaMessagingService : FirebaseMessagingService() {
             db.collection("students").document(user.uid)
                 .update("tokens", FieldValue.arrayUnion(token))
         }
-    }
-
-    private fun getCircleBitmap(bitmap: Bitmap): Bitmap {
-        val output: Bitmap
-        val srcRect: Rect
-        val dstRect: Rect
-        val r: Float
-        val width = bitmap.width
-        val height = bitmap.height
-
-        if (width > height) {
-            output = Bitmap.createBitmap(height, height, Bitmap.Config.ARGB_8888)
-            val left = (width - height) / 2
-            val right = left + height
-            srcRect = Rect(left, 0, right, height)
-            dstRect = Rect(0, 0, height, height)
-            r = height / 2f
-        } else {
-            output = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
-            val top = (height - width) / 2
-            val bottom = top + width
-            srcRect = Rect(0, top, width, bottom)
-            dstRect = Rect(0, 0, width, width)
-            r = width / 2f
-        }
-
-        val canvas = Canvas(output)
-//        val color = 0xff424242
-        val paint = Paint()
-
-        paint.isAntiAlias = true
-        canvas.drawARGB(0, 0, 0, 0)
-//        paint.setColor(color)
-        canvas.drawCircle(r, r, r, paint)
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-        canvas.drawBitmap(bitmap, srcRect, dstRect, paint)
-        return output
     }
 }

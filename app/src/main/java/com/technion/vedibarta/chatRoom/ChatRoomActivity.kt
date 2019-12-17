@@ -1,5 +1,7 @@
 package com.technion.vedibarta.chatRoom
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
@@ -12,6 +14,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -21,8 +26,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
-import java.lang.Exception
-import java.security.spec.ECField
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -33,15 +36,19 @@ class ChatRoomActivity : VedibartaActivity()
     , ChatRoomAbuseReportDialog.AbuseReportDialogListener {
     val systemSender = "-1"
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    private var chatId: String? =
-        null //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var chatId: String? = null
     private var partnerId: String? = null
     private var photoUrl: String? = null
+    private var otherGender: Gender? = null
+
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
     private val currentDate = Date(System.currentTimeMillis())
     private var numMessages = 0
 
+    companion object {
+        private const val TAG = "Vedibarta/chat"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +58,9 @@ class ChatRoomActivity : VedibartaActivity()
         partnerId = intent.getStringExtra("partnerId")
         photoUrl = intent.getStringExtra("photoUrl")
         numMessages = intent.getIntExtra("numMessages", 0)
+        otherGender = intent.extras?.get("otherGender") as Gender
+        
+        photoUrl ?: displayDefaultProfilePicture()
 
         setToolbar(chatToolbar)
         configureAdapter()
@@ -60,6 +70,31 @@ class ChatRoomActivity : VedibartaActivity()
             chatBox.text =
                 SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
         toolbarUserName.text = partnerName
+        Glide.with(applicationContext)
+            .asBitmap()
+            .load(photoUrl)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    toolbarProfileImage.setImageBitmap(resource)
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    displayDefaultProfilePicture()
+                }
+            })
+
+    }
+
+    private fun displayDefaultProfilePicture() {
+        when (otherGender) {
+            null -> return
+            Gender.MALE -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_man)
+            Gender.FEMALE -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_girl)
+            else -> Log.d(TAG, "other student is neither male nor female??")
+        }
     }
 
     override fun onStart() {
@@ -162,7 +197,8 @@ class ChatRoomActivity : VedibartaActivity()
         if (text.replace(" ", "")
                 .replace("\n", "")
                 .replace("\t", "")
-                .isEmpty() )
+                .isEmpty()
+        )
             return
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()

@@ -11,19 +11,12 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:adjustViewBounds="true"
         android:id="@+id/user_picture"
         android:layout_height="55dp"
         android:layout_width="55dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/dolphin"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +25,6 @@
         android:id="@+id/last_message"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="Dolphin sounds"
         android:textColor="@android:color/darker_gray"
         android:textSize="14sp"
         android:layout_marginStart="10dp"
