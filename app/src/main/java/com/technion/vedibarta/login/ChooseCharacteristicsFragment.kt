@@ -17,8 +17,8 @@ import android.widget.TextView
 import androidx.core.view.get
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 
 /**
  * A simple [Fragment] subclass.
@@ -39,11 +39,13 @@ class ChooseCharacteristicsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_characteristics, container, false)
+        if ((activity as UserSetupActivity).setupStudent.gender != Gender.FEMALE)
+            characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        else
+            characteristics = resources.getStringArray(R.array.characteristicsFemale_hebrew)
 
-        characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
         table = view.findViewById(R.id.searchCharacteristics) as TableLayout
         populateCharacteristicsTable()
-
 
         return view
     }
@@ -133,8 +135,7 @@ class ChooseCharacteristicsFragment : Fragment() {
 
             Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
 
-            act.setupStudent.characteristics =
-                act.setupStudent.characteristics.plusElement(characteristics[view.id])
+            act.setupStudent.characteristics[characteristics[view.id]] = true
 
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
@@ -147,8 +148,7 @@ class ChooseCharacteristicsFragment : Fragment() {
 
             Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
 
-            act.setupStudent.characteristics =
-                act.setupStudent.characteristics.filter { element -> element != characteristics[view.id] }
+            act.setupStudent.characteristics[characteristics[view.id]] = false
         }
 
         bubbleFrame.id = view.id

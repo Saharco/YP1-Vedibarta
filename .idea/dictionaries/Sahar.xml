@@ -2,6 +2,8 @@
   <dictionary name="Sahar">
     <words>
       <w>firebase</w>
+      <w>firestore</w>
+      <w>snackbar</w>
       <w>technion</w>
       <w>textview</w>
       <w>vedibarta</w>

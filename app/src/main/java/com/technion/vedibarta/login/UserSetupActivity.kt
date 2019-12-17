@@ -5,6 +5,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.Gravity
 import android.view.Menu
@@ -17,10 +18,12 @@ import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
-import com.technion.vedibarta.utilities.*
+import com.technion.vedibarta.utilities.CustomViewPager
+import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.utilities.SectionsPageAdapter
+import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import java.sql.Timestamp
-import java.util.*
 
 class UserSetupActivity : VedibartaActivity() {
 
@@ -28,15 +31,12 @@ class UserSetupActivity : VedibartaActivity() {
     private val STUDENT_KEY = "student"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
+    private var missingDetailsText = ""
+
+
     var setupStudent = Student(
-        "",
-        null,
-        "",
-        "",
-        Gender.NONE,
-        Timestamp(System.currentTimeMillis()),
-        characteristics = listOf(),
-        hobbies = listOf()
+        uid = userId!!,
+        lastActivity = Timestamp(System.currentTimeMillis())
     )
 
     lateinit var schoolsName: Array<String>
@@ -46,8 +46,7 @@ class UserSetupActivity : VedibartaActivity() {
     var chosenFirstName = ""
     var chosenLastName = ""
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val dialog = ProgressDialog(this).apply {
@@ -58,11 +57,13 @@ class UserSetupActivity : VedibartaActivity() {
         }
 
         database.students().userId().build().get().addOnSuccessListener { document ->
-            if (document != null && document.exists())
-            {
+            if (document != null && document.exists()) {
                 dialog.dismiss()
+                student = document.toObject(Student::class.java)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
+            } else {
+                dialog.dismiss()
             }
         }
 
@@ -105,7 +106,7 @@ class UserSetupActivity : VedibartaActivity() {
             if (setupStudent.gender == Gender.NONE) {
                 Toast.makeText(
                     applicationContext,
-                    "Please Choose Gender",
+                    R.string.user_setup_dialog_message,
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
@@ -130,12 +131,17 @@ class UserSetupActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionDoneSetup -> {
                 if (validateUserInput()) {
+                    setupStudent.name = "$chosenFirstName $chosenLastName"
                     database.students().userId().build().set(setupStudent)
                         .addOnSuccessListener {
+                            student = setupStudent
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
-                        .addOnFailureListener { Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG) }
+                        .addOnFailureListener {
+                            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
+                                .show()
+                        }
                 } else {
                     missingDetailsDialog()
                 }
@@ -147,6 +153,7 @@ class UserSetupActivity : VedibartaActivity() {
 
     private fun missingDetailsDialog() {
         val title = TextView(this)
+        val message = Html.fromHtml("<b><small>$missingDetailsText</small></b>")
         title.setText(R.string.user_setup_missing_details_dialog_title)
         title.textSize = 20f
         title.setTypeface(null, Typeface.BOLD)
@@ -155,7 +162,7 @@ class UserSetupActivity : VedibartaActivity() {
         title.setPadding(10, 40, 10, 24)
         val builder = AlertDialog.Builder(this)
         builder.setCustomTitle(title)
-            .setMessage(R.string.user_setup_missing_details_message)
+            .setMessage(message)
             .setPositiveButton(android.R.string.yes) { _, _ -> }
             .show()
         builder.create()
@@ -163,35 +170,61 @@ class UserSetupActivity : VedibartaActivity() {
 
     private fun validateUserInput(): Boolean {
 
+        missingDetailsText = ""
+        val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
+
         Log.d(
             TAG,
-            "Chars: ${setupStudent.characteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName "
+            "Chars: ${studentsCharacteristics.isNotEmpty()}, hobbies: ${setupStudent.hobbies.isNotEmpty()}, first name: $chosenFirstName "
         )
         Log.d(
             TAG,
             "last name: $chosenLastName,  School: ${setupStudent.school}, Region: ${setupStudent.region}"
         )
 
-        return setupStudent.characteristics.isNotEmpty() && setupStudent.hobbies.isNotEmpty() && chosenFirstName != ""
-                && chosenLastName != "" && schoolsName.contains(setupStudent.school) && regionsName.contains(
-            setupStudent.region
-        )
+        if (setupStudent.gender == Gender.NONE) {
+            missingDetailsText += "יש לבחור בן/בת\n"
+            return false
+        }
+
+        if (chosenFirstName == "") {
+            missingDetailsText += "יש למלא את השדה שם פרטי\n"
+            return false
+        }
+
+        if (chosenLastName == "") {
+            missingDetailsText += "יש למלא את השדה שם משפחה\n"
+            return false
+        }
+
+        if (!schoolsName.contains(setupStudent.school)) {
+            missingDetailsText += "יש לבחור בית ספר מהרשימה\n"
+            return false
+        }
+
+        if (!regionsName.contains(setupStudent.region)) {
+            missingDetailsText += "יש לבחור מקום מגורים מהרשימה\n"
+            return false
+        }
+
+        if (studentsCharacteristics.isEmpty()) {
+            missingDetailsText += "יש לבחור מאפייני זהות\n"
+            return false
+        }
+
+        if (setupStudent.hobbies.isEmpty()) {
+            missingDetailsText += "יש לבחור תחביבים\n"
+            return false
+        }
+
+        return true
     }
-}
 
     class CustomViewPageListener(val activity: UserSetupActivity) :
         ViewPager.SimpleOnPageChangeListener() {
 
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
-            if (activity.setupStudent.gender == Gender.NONE) {
-                Toast.makeText(
-                    activity.applicationContext,
-                    "Please Choose Gender",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return
-            }
             when (position) {
                 0 -> {
                     activity.toolbarTitle.text =
@@ -213,3 +246,4 @@ class UserSetupActivity : VedibartaActivity() {
         }
     }
 
+}

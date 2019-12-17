@@ -42,7 +42,8 @@ class Storage(private val userId: String?)
 interface ICollectionPath
 {
     fun userId():IDocumentPath
-    fun chatWith(partnerId: String): IDocumentPath
+    fun otherUserId(id: String): IDocumentPath
+    fun chatId(chatId: String): IDocumentPath
     fun message(d: Date): IDocumentPath
     fun systemMessage(d: Date): IDocumentPath
     fun build(): CollectionReference
@@ -50,7 +51,6 @@ interface ICollectionPath
 }
 interface IDocumentPath
 {
-    fun chats(): ICollectionPath
     fun messages(): ICollectionPath
     fun build(): DocumentReference
 }
@@ -63,20 +63,19 @@ class DocumentsCollections(private val userId: String?)
 private class CollectionPath(private val c: CollectionReference, private val userId: String?):ICollectionPath
 {
     override fun systemMessage(d: Date): IDocumentPath = DocumentPath(c.document("sys$d"), userId)
-
-    override fun chatWith(partnerId: String): IDocumentPath = DocumentPath(c.document(partnerId), userId)
+    override fun chatId(chatId: String): IDocumentPath = DocumentPath(c.document(chatId), userId)
     override fun userId() = DocumentPath(c.document("$userId"), userId)
+    override fun otherUserId(id: String): IDocumentPath = DocumentPath(c.document(id), userId)
     override fun message(d: Date): IDocumentPath = DocumentPath(c.document(d.toString()), userId)
     override fun build(): CollectionReference = c
 }
 private class DocumentPath(private val d: DocumentReference, private val userId: String?): IDocumentPath
 {
-    override fun chats(): ICollectionPath = CollectionPath(d.collection("chats"), userId)
     override fun messages(): ICollectionPath = CollectionPath(d.collection("messages"), userId)
     override fun build(): DocumentReference = d
 }
 
-fun error(e: Exception)
+fun error(e: Exception, additional: String = "")
 {
-    Log.d("wtf", "${e.message}, cause: ${e.cause?.message}")
+    Log.d("wtf", "$additional ${e.message}, cause: ${e.cause?.message}")
 }

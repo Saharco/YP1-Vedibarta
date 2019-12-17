@@ -11,11 +11,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
 
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.utilities.Gender
-import com.technion.vedibarta.utilities.SectionsPageAdapter
-import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_user_setup.*
+import com.technion.vedibarta.POJOs.Gender
 
 /**
  * A simple [Fragment] subclass.

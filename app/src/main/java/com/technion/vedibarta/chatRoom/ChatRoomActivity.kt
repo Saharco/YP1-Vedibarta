@@ -1,11 +1,12 @@
 package com.technion.vedibarta.chatRoom
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
@@ -13,13 +14,17 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.POJOs.MessageType
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,54 +32,112 @@ import java.util.concurrent.TimeUnit
 
 
 class ChatRoomActivity : VedibartaActivity()
-    ,ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
-    ,ChatRoomAbuseReportDialog.AbuseReportDialogListener
-{
-
+    , ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
+    , ChatRoomAbuseReportDialog.AbuseReportDialogListener {
+    val systemSender = "-1"
     private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    var chatPartnerId: String? = "hNApDXaHOUi7lRB5qYNs" //TODO(this only temporary value, set this right on activity creation before adapter is configured)
+    private var chatId: String? = null
+    private var partnerId: String? = null
+    private var photoUrl: String? = null
+    private var otherGender: Gender? = null
+
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
     private val currentDate = Date(System.currentTimeMillis())
+    private var numMessages = 0
 
+    companion object {
+        private const val TAG = "Vedibarta/chat"
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.technion.vedibarta.R.layout.activity_chat_room)
+        setContentView(R.layout.activity_chat_room)
+        val partnerName = intent.getStringExtra("name")
+        chatId = intent.getStringExtra("chatId")
+        partnerId = intent.getStringExtra("partnerId")
+        photoUrl = intent.getStringExtra("photoUrl")
+        numMessages = intent.getIntExtra("numMessages", 0)
+        otherGender = intent.extras?.get("otherGender") as Gender
+        
+        photoUrl ?: displayDefaultProfilePicture()
 
         setToolbar(chatToolbar)
         configureAdapter()
         buttonChatBoxSend.setOnClickListener { sendMessage(it) }
-        popupMenu.setOnClickListener{ showPopup(it) }
+        popupMenu.setOnClickListener { showPopup(it) }
+        if (student!!.gender == Gender.FEMALE)
+            chatBox.text =
+                SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
+        toolbarUserName.text = partnerName
+        Glide.with(applicationContext)
+            .asBitmap()
+            .load(photoUrl)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    toolbarProfileImage.setImageBitmap(resource)
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    displayDefaultProfilePicture()
+                }
+            })
+
     }
 
-    override fun onStart() {
+    private fun displayDefaultProfilePicture() {
+        when (otherGender) {
+            null -> return
+            Gender.MALE -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_man)
+            Gender.FEMALE -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_girl)
+            else -> Log.d(TAG, "other student is neither male nor female??")
+        }
+    }
+
+    override fun onStart()
+    {
         super.onStart()
         adapter.startListening()
     }
 
-    override fun onStop() {
+    override fun onStop()
+    {
         super.onStop()
         adapter.stopListening()
+
     }
 
-    private fun configureAdapter()
-    {
-        //TODO(for testing, must delete later)
-        var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
-        if (userId == partner)
-        {
-            partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
-        }
-        val query = database.students().userId().chats().chatWith(partner).messages()
-                                    .build().orderBy("fullTimeStamp")
-        val options = FirestoreRecyclerOptions.Builder<Message>()
-            .setQuery(query,Message::class.java)
-            .build()
-        adapter = getChatAdapter(options)
-        chatView.layoutManager = LinearLayoutManager(this)
+    private fun getChatId(userId: String, partnerId: String): String {
+        if (userId < partnerId)
+            return "$userId$partnerId"
+        return "$partnerId$userId"
+    }
+
+    private fun configureAdapter() {
+        val query =
+            database
+                .chats()
+                .chatId(chatId!!)
+                .messages()
+                .build().orderBy("timestamp", Query.Direction.DESCENDING)
+
+        val options =
+            FirestoreRecyclerOptions.Builder<Message>()
+                .setQuery(query, Message::class.java)
+                .build()
+
+        adapter = ChatRoomAdapter(this, options, numMessages)
+        adapter.notifyDataSetChanged() //
         chatView.adapter = adapter
+        adapter.notifyDataSetChanged() //
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        chatView.layoutManager = layoutManager
+        chatView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            chatView.scrollToPosition(0)
+        }
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -92,145 +155,21 @@ class ChatRoomActivity : VedibartaActivity()
         return true
     }
 
-    override fun onQuestionclick(dialog: DialogFragment, v: View)
-    {
-        try
-        {
+    override fun onQuestionclick(dialog: DialogFragment, v: View) {
+        try {
             val question = (v as TextView).text
             Toast.makeText(this, question, Toast.LENGTH_SHORT).show()
-        }
-        catch (e: ClassCastException)
-        {
+        } catch (e: ClassCastException) {
             Log.d("QuestionGenerator", e.toString())
         }
     }
 
-    override fun onAbuseTypeClick(dialog: DialogFragment)
-    {
+    override fun onAbuseTypeClick(dialog: DialogFragment) {
         TODO("need to decide what to do")
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
     }
 
-    private fun getChatAdapter(options: FirestoreRecyclerOptions<Message>): FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
-    {
-       return  object: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options)
-        {
-            override fun getItemViewType(position: Int): Int
-            {
-                return this.snapshots[position].messageType.ordinal
-            }
-
-            override fun onDataChanged()
-            {
-                super.onDataChanged()
-                val lastVisiblePosition = (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-                if (this.itemCount - lastVisiblePosition <= 2)
-                    chatView.smoothScrollToPosition(this.itemCount)
-            }
-            
-            override fun onCreateViewHolder(
-                parent: ViewGroup,
-                viewType: Int
-            ): RecyclerView.ViewHolder {
-                var view: View? = null
-                when (viewType) {
-                    MessageType.USER.ordinal -> {
-                        view = LayoutInflater.from(parent.context).inflate(
-                            R.layout.sent_message_holder,
-                            parent,
-                            false
-                        )
-                        return SentMessageViewHolder(view)
-                    }
-                    MessageType.OTHER.ordinal -> {
-                        view = LayoutInflater.from(parent.context).inflate(
-                            R.layout.received_message_holder,
-                            parent,
-                            false
-                        )
-                        return ReceivedMessageViewHolder(view)
-                    }
-                    else -> {
-                        view = LayoutInflater.from(parent.context).inflate(
-                            R.layout.generator_message_holder,
-                            parent,
-                            false
-                        )
-                        return GeneratorMessageViewHolder(view)
-                    }
-                }
-            }
-
-            override fun onBindViewHolder(
-                holder: RecyclerView.ViewHolder,
-                position: Int,
-                message: Message
-            ) {
-                when (holder) {
-                    is SentMessageViewHolder -> holder.bind(message)
-                    is ReceivedMessageViewHolder -> holder.bind(message)
-                    is GeneratorMessageViewHolder -> holder.bind(message)
-                }
-            }
-        }
-    }
-
-    private class SentMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
-        fun bind(message: Message) {
-            itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.getTime()
-        }
-    }
-
-    private class ReceivedMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
-        fun bind(message: Message) {
-            itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.getTime()
-        }
-    }
-    private class GeneratorMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
-        fun bind(message: Message) {
-            itemView.findViewById<TextView>(R.id.generatorMessageBody).text = message.text
-        }
-    }
-
-    private fun sendMessage(v: View)
-    {
-        chatView.smoothScrollToPosition(adapter.itemCount)
-        val text: String = chatBox.text.toString()
-        if (text.isEmpty())
-            return
-
-
-        //TODO(duplicate and hardcoded for testing must delete later)
-        var partner = "hUMw9apo4cPzwAExgqo1gYM56aK2"
-        if (userId == partner)
-        {
-            partner = "dlXdQwKlOkQ5PWatYVQvlEOlKpy1"
-        }
-
-        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.fullTimeStamp
-        if (lastMessageDate != null)
-        {
-            val timeGap = currentDate.time - lastMessageDate.time
-            val dayGap = (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
-            {
-                duplicateWrite(userId!!, partner, dateFormatter.format(currentDate),true)
-            }
-        }
-        duplicateWrite(userId!!, partner, text, false)
-        chatBox.setText("")
-    }
-
-    private fun showPopup(view: View)
-    {
+    private fun showPopup(view: View) {
         val popup = PopupMenu(this, view)
         popup.inflate(R.menu.chat_room_popup_menu)
 
@@ -256,51 +195,48 @@ class ChatRoomActivity : VedibartaActivity()
         popup.show()
     }
 
-    private fun duplicateWrite(userId: String, partnerId: String, text: String, isGeneratorMessage: Boolean)
-    {
+    private fun sendMessage(v: View) {
+        var text = chatBox.text.toString()
+        if (text.replace(" ", "")
+                .replace("\n", "")
+                .replace("\t", "")
+                .isEmpty()
+        )
+            return
+
+        text = text.replace("[\n]+".toRegex(), "\n").trim()
+
+        //TODO fix the writing to database after cloud functions implemented
+        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.timestamp
+        if (lastMessageDate != null) {
+            val timeGap = currentDate.time - lastMessageDate.time
+            val dayGap =
+                (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
+                write(dateFormatter.format(currentDate), true)
+            }
+        }
+        write(text, false)
+        chatBox.setText("")
+    }
+
+    private fun write(text: String, isGeneratorMessage: Boolean) {
         val timeSent = Date(System.currentTimeMillis())
-        var userPath  = database.students()
-                                        .userId()
-                                        .chats()
-                                        .chatWith(partnerId)
-                                        .messages()
-                                        .message(timeSent)
-                                        .build()
-        var partnerPath = database.students()
-                                                .chatWith(partnerId)
-                                                .chats()
-                                                .chatWith(userId)
-                                                .messages()
-                                                .message(timeSent)
-                                                .build()
-        var userMassageType = MessageType.USER
-        var partnerMessageType = MessageType.OTHER
-        if (isGeneratorMessage)
-        {
-            userMassageType = MessageType.GENERATOR
-            partnerMessageType = MessageType.GENERATOR
-
-            userPath = database.students()
-                .userId()
-                .chats()
-                .chatWith(partnerId)
-                .messages()
-                .systemMessage(timeSent)
-                .build()
-
-            partnerPath = database.students()
-                .chatWith(partnerId)
-                .chats()
-                .chatWith(userId)
+        var path = database.chats()
+            .chatId(chatId!!)
+            .messages()
+            .message(timeSent)
+            .build()
+        var sender = userId!!
+        if (isGeneratorMessage) {
+            sender = systemSender
+            path = database.chats()
+                .chatId(chatId!!)
                 .messages()
                 .systemMessage(timeSent)
                 .build()
         }
-        userPath.set(Message(userMassageType, text, timeSent), SetOptions.merge())
-            .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
-            }
-        partnerPath.set(Message(partnerMessageType, text, timeSent), SetOptions.merge())
+        path.set(Message(sender, partnerId!!, text, timeSent), SetOptions.merge())
             .addOnFailureListener {
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }

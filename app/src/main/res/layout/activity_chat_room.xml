@@ -41,17 +41,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/toolbarProfileImage"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    app:srcCompat="@drawable/ic_photo_default_profile_girl"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="VectorDrawableCompat" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/toolbarUserName"
@@ -62,7 +62,6 @@
                     android:layout_marginBottom="8dp"
                     android:gravity="start"
                     android:maxLines="1"
-                    android:text="זמני"
                     android:textAlignment="viewStart"
                     android:textColor="@android:color/white"
                     android:textSize="20sp"
@@ -86,6 +85,8 @@
         android:id="@+id/chatView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:windowSoftInputMode="adjustResize"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/chatBoxLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,31 +95,32 @@
     <LinearLayout
         android:id="@+id/chatBoxLayout"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:minHeight="48dp"
         android:background="#00ffffff"
         android:gravity="center"
         android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/chatView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/chatBox"
-            android:hint="@string/enterMessage"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:hint="@string/chat_room_enter_message_m"
             android:background="@drawable/round_chat_box"
             android:layout_gravity="center"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:padding="10dp"
             android:inputType="textMultiLine"
             android:maxLength="256"
             android:maxLines="6"
-            android:padding="10dp"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonChatBoxSend"
@@ -129,6 +131,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginEnd="8dp"
+            app:elevation="0dp"
             app:fabCustomSize="40dp"
             app:srcCompat="@drawable/ic_send_white"/>
 

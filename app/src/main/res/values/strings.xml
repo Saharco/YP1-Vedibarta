@@ -19,8 +19,9 @@
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
     <string name="action_logout_title">התנתקות</string>
-    <string name="user_profile_dialog_title_suffix">, תעלה תמונה שלך</string>
-    <string name="user_profile_dialog_description">בחר תוכן ראוי בלבד\nתוכן לא ראוי יימחק</string>
+    <string name="user_profile_dialog_title_suffix_m">, תעלה תמונה שלך</string>
+    <string name="user_profile_dialog_title_suffix_f">, תעלי תמונה שלך</string>
+    <string name="user_profile_dialog_description">יש לבחור תוכן ראוי בלבד\nתוכן לא ראוי יימחק</string>
     <string name="user_profile_dialog_camera_button">מצלמה</string>
     <string name="user_profile_dialog_gallery_button">מהגלריה</string>
     <string name="user_profile_dialog_dismiss_button">ביטול</string>
@@ -31,14 +32,17 @@
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">בחירת שותף</string>
+    <string name="chat_candidate_accept_button_m">בוא נדבר</string>
     <string name="chat_candidate_accept_button_f">בואי נדבר</string>
-
 
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
-    <string name="filter_by_school_text">חיפוש לפי בית ספר</string>
-    <string name="filter_by_region_text">חיפוש לפי מקום מגורים</string>
+    <string name="filter_by_school_text">סינון לפי בית ספר</string>
+    <string name="filter_by_region_text">סינון לפי מקום מגורים</string>
     <string name="chat_search_button">חפש</string>
+    <string name="chat_search_wrong_details_title">פרטים שגויים</string>
+    <string name="chat_search_wrong_details_message">יש לבחור רק בתי ספר ומקומות מגורים הנמצאים ברשימה</string>
+    <string name="no_matching_students">לא נימצאו תלמידים</string>
 
     <!--    UserSetup Attributes  -->
     <string name="user_setup_title">הגדרת משתמש</string>
@@ -51,16 +55,24 @@
     <string name="user_setup_first_name_title">שם פרטי</string>
     <string name="user_setup_last_name_title">שם משפחה</string>
     <string name="user_setup_done_title">סיים</string>
-    <string name="user_setup_gender_next_button_text">הבא</string>
-    <string name="text_field_hint">רק אותיות בעברית</string>
+    <string name="text_field_hint">עברית/ערבית בלבד</string>
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
-    <string name="user_setup_missing_details_message">אנא מלא את כל הפרטים החסרים</string>
     <string name="checking_document">מסתנכרן עם השרת</string>
+    <string name="user_setup_dialog_message">יש לבחור בן/בת</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="enterMessage">כתוב הודעה</string>
-
+    <!--    ChatRoom attribute   -->
+    <string name="chat_room_abuse_dialog_title">דיווח</string>
+    <string name="chat_room_abuse_dialog_message">יש לסמן את הסיבות לדיווח</string>
+    <string name="chat_room_abuse_dialog_option1">אלימות מילולית</string>
+    <string name="chat_room_abuse_dialog_option2">הטרדה מינית</string>
+    <string name="chat_room_abuse_dialog_option3">תוכן פוגעני</string>
+    <string name="chat_room_abuse_dialog_report_button_m">דווח</string>
+    <string name="chat_room_abuse_dialog_report_button_f">דווחי</string>
+    <string name="chat_room_abuse_dialog_back_button">ביטול</string>
+    <string name="chat_room_question_generator_title">מחולל השאלות</string>
+    <string name="chat_room_question_generator_question_title">שאלות לדוגמא:</string>
+    <string name="chat_room_enter_message_m">כתוב הודעה</string>
+    <string name="chat_room_enter_message_f">כתבי הודעה</string>
 
     <!--    LoginScreen attribute   -->
     <string name="facebook_app_id">3227815763959885</string>
@@ -90,6 +102,7 @@
     <string name="short_password_error">על הסיסמה להכיל לפחות 8 תווים</string>
     <string name="wrong_password_repeat">הסיסמאות לא זהות</string>
     <string name="email_not_verified_error">אנא אמת דוא\"ל</string>
+    <string name="timeout_error">שגיאה: הפעולה נמשכת זמן רב מידי</string>
 
     <!-- MainActivity attributes-->
     <string name="main_title">ודיברת</string>
@@ -107,5 +120,28 @@
         <item>Menu Item 1</item>
         <item>Menu Item 2</item>
     </string-array>
+
+    <!--  FCM  -->
+    <string name="vedibarta_notification_channel_name">ודיברת</string>
+
+    <string name="payload_display_status">display_status</string>
+    <string name="payload_admin_broadcast">admin_broadcast</string>
+    <string name="payload_data_message_title">title</string>
+    <string name="payload_data_message_body">body</string>
+    <string name="payload_data_notification_type">notification_type</string>
+    <string name="payload_data_sender_id">sender_id</string>
+    <string name="payload_data_sender_photo">sender_photo_url</string>
+    <string name="payload_data_notification_time">notification_time</string>
+    <string name="payload_data_sender_msg">sender_msg</string>
+    <string name="payload_data_sender_name">sender_name</string>
+    <string name="payload_data_chat_id">chat_id</string>
+    <string name="payload_data_photo">photo</string>
+
+    <!--  Notification messages  -->
+    <string name="notification_chat_title_prefix">הודעה חדשה מ</string>
+
+    <!--  VedibartaActivity  -->
+    <string name="dialog_timeout_title">אירעתה שגיאה</string>
+    <string name="dialog_timeout_body">התהליך לוקח יותר מדי זמן! \nיש לבדוק את חיבור האינטרנט ולנסות שוב</string>
 
 </resources>

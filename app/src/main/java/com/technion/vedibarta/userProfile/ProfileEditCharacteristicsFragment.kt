@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.core.view.get
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 
@@ -38,7 +39,11 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             R.layout.fragment_profile_edit_characteristics, container,
             false
         )
-        characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        if (student!!.gender != Gender.FEMALE)
+            characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        else
+            characteristics = resources.getStringArray(R.array.characteristicsFemale_hebrew)
+
         table = view.findViewById(R.id.editCharacteristicsTable) as TableLayout
         populateCharacteristicsTable()
         return view
@@ -63,6 +68,7 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             return
         }
 
+        val studentsCharacteristics = student!!.characteristics.filter { it.value }.keys.toList()
         val steps = calculateBubblesInRow()
         (characteristics.indices step steps).forEach { i ->
             val tableRow = TableRow(activity)
@@ -75,7 +81,7 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             for (j in 0 until steps) {
                 if (i + j >= characteristics.size)
                     break
-                if (student!!.characteristics.contains(characteristics[i + j])) {
+                if (studentsCharacteristics.contains(characteristics[i + j])) {
                     bubbleFrame = LayoutInflater.from(activity).inflate(
                         R.layout.user_profile_bubble_blue,
                         null
@@ -125,7 +131,7 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             bubbleFrame.alpha = 1f
             bubbleFrame.tag = SELECTED_BUBBLE
             Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
-            (activity as ProfileEditActivity).editedCharacteristics.add(characteristics[view.id])
+            (activity as ProfileEditActivity).editedCharacteristics[characteristics[view.id]] = true
         } else {
             bubbleFrame = LayoutInflater.from(activity).inflate(
                 R.layout.user_profile_bubble_blue_selected,
@@ -134,7 +140,7 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             bubbleFrame.alpha = 0.6f
             bubbleFrame.tag = NON_SELECTED_BUBBLE
             Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
-            (activity as ProfileEditActivity).editedCharacteristics.remove(characteristics[view.id])
+            (activity as ProfileEditActivity).editedCharacteristics[characteristics[view.id]] = false
         }
 
         bubbleFrame.id = view.id
