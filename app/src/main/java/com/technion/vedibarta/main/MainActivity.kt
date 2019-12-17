@@ -154,6 +154,7 @@ class MainActivity : VedibartaActivity() {
                 when(hoursGap)
                 {
                     0L -> return "just now"
+                    in 1..24 -> return "sent $hoursGap hours ago"
                     in 1..168 -> return "sent ${hoursGap/24} days ago"
                     else -> return SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(time)
                 }
