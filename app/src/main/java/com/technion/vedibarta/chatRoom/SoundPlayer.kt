@@ -11,6 +11,22 @@ class SoundPlayer(private val activity: Activity, private var numMessages: Int)
     private val MESSAGE_SOUND_INTERVAL: Long = 2000
     private val soundHandler = Handler()
     private val soundTask = Runnable { soundHandler.removeMessages(0) }
+    var sendPlayer =  MediaPlayer.create(activity, R.raw.message_sent_audio)
+    var receivePlayer = MediaPlayer.create(activity, R.raw.message_received_audio)
+
+    fun release()
+    {
+        sendPlayer.stop()
+        receivePlayer.stop()
+        sendPlayer.release()
+        receivePlayer.release()
+    }
+
+    fun init()
+    {
+        sendPlayer =  MediaPlayer.create(activity, R.raw.message_sent_audio)
+        receivePlayer = MediaPlayer.create(activity, R.raw.message_received_audio)
+    }
 
     fun playMessageSound(type: MessageType, count: Int): Boolean
     {
@@ -42,14 +58,16 @@ class SoundPlayer(private val activity: Activity, private var numMessages: Int)
 
             if (type == MessageType.USER)
             {
-                val mp = MediaPlayer.create(activity, R.raw.message_sent_audio);
-                mp.start()
-                return true
-            } else {
-                val mp = MediaPlayer.create(activity, R.raw.message_received_audio);
-                mp.start()
-                return true
+                if (!sendPlayer.isPlaying)
+                    sendPlayer.start()
             }
+            else
+            {
+                if (!receivePlayer.isPlaying)
+                    receivePlayer.start()
+            }
+            return true
+
         }
         return false
     }

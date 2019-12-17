@@ -97,14 +97,17 @@ class ChatRoomActivity : VedibartaActivity()
         }
     }
 
-    override fun onStart() {
+    override fun onStart()
+    {
         super.onStart()
         adapter.startListening()
     }
 
-    override fun onStop() {
+    override fun onStop()
+    {
         super.onStop()
         adapter.stopListening()
+
     }
 
     private fun getChatId(userId: String, partnerId: String): String {
