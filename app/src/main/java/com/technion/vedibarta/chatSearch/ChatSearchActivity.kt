@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -86,16 +85,13 @@ class ChatSearchActivity : VedibartaActivity() {
                 if(validateChosenDetails()) {
                     searchMatch()
                 }
-                else{
-                    missingDetailsDialog()
-
-                }
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun missingDetailsDialog() {
+    @Suppress("DEPRECATION")
+    private fun displayErrorMessage(message: String) {
         val title = TextView(this)
         title.setText(R.string.chat_search_wrong_details_title)
         title.textSize = 20f
@@ -105,15 +101,32 @@ class ChatSearchActivity : VedibartaActivity() {
         title.setPadding(10, 40, 10, 24)
         val builder = AlertDialog.Builder(this)
         builder.setCustomTitle(title)
-            .setMessage(R.string.chat_search_wrong_details_message)
+            .setMessage(message)
             .setPositiveButton(android.R.string.yes) { _, _ -> }
             .show()
         builder.create()
     }
 
+    private fun displayIllegalRegion() {
+        displayErrorMessage(getString(R.string.chat_search_wrong_region_message))
+    }
+
+    private fun displayIllegalSchool() {
+        displayErrorMessage(getString(R.string.chat_search_wrong_school_message))
+    }
+
+    private fun displayNoCharacteristicsChosen() {
+        displayErrorMessage(getString(R.string.chat_search_no_characteristics_chosen_message))
+    }
+
     private fun validateChosenDetails() : Boolean{
-        return (schoolsName.contains(chosenSchool)  || chosenSchool == null)
-                && (regionsName.contains(chosenRegion) || chosenRegion == null)
+        when {
+            !regionsName.contains(chosenRegion) && chosenRegion != null -> displayIllegalRegion()
+            !schoolsName.contains(chosenSchool) && chosenSchool != null -> displayIllegalSchool()
+            chosenCharacteristics.isEmpty() -> displayNoCharacteristicsChosen()
+            else -> return true
+        }
+        return false
     }
 
     private fun setupViewPager(viewPager: CustomViewPager) {
@@ -134,7 +147,7 @@ class ChatSearchActivity : VedibartaActivity() {
                     Log.d(TAG, "Matched students successfully")
 
                     val intent = Intent(this, ChatCandidatesActivity::class.java)
-                    students.filter { newStudent -> !(newStudent.equals(student)) } //remove searching user from results
+                    students.filter { newStudent -> newStudent != student } //remove searching user from results
                     intent.putExtra("STUDENTS", students.toTypedArray())
                     startActivity(intent)
                     finish()
@@ -151,10 +164,9 @@ class ChatSearchActivity : VedibartaActivity() {
             }
     }
 
-
     @Suppress("DEPRECATION")
     private fun isInternetAvailable(context: Context): Boolean {
-        var result: Boolean = false
+        var result = false
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cm?.run {

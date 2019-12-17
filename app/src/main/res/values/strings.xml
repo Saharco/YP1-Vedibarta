@@ -41,7 +41,9 @@
     <string name="filter_by_region_text">סינון לפי מקום מגורים</string>
     <string name="chat_search_button">חפש</string>
     <string name="chat_search_wrong_details_title">פרטים שגויים</string>
-    <string name="chat_search_wrong_details_message">יש לבחור רק בתי ספר ומקומות מגורים הנמצאים ברשימה</string>
+    <string name="chat_search_wrong_region_message">יש לבחור מקום מגורים הנמצא ברשימה</string>
+    <string name="chat_search_wrong_school_message">יש לבחור בית ספר הנמצא ברשימה</string>
+    <string name="chat_search_no_characteristics_chosen_message">יש לבחור מאפיין זהות אחד לפחות</string>
     <string name="no_matching_students">לא נימצאו תלמידים</string>
 
     <!--    UserSetup Attributes  -->
