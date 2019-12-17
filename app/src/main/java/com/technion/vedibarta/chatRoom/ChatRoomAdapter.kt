@@ -22,6 +22,18 @@ class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
     private val uid = chatRoomActivity.userId
     private val systemSender = chatRoomActivity.systemSender
 
+    override fun startListening()
+    {
+        super.startListening()
+        soundPlayer.init()
+    }
+
+    override fun stopListening()
+    {
+        super.stopListening()
+        soundPlayer.release()
+    }
+
     override fun getItemViewType(position: Int): Int
     {
         val sender = snapshots[position].sender
