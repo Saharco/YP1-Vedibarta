@@ -3,8 +3,8 @@ package com.technion.vedibarta.main
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,19 +19,14 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.technion.vedibarta.ExtentionFunctions.getName
 import com.technion.vedibarta.ExtentionFunctions.getPartnerId
-import com.technion.vedibarta.ExtentionFunctions.getPhoto
 import com.technion.vedibarta.POJOs.ChatCard
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
@@ -40,8 +35,10 @@ import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_chat_room.*
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : VedibartaActivity() {
@@ -144,14 +141,37 @@ class MainActivity : VedibartaActivity() {
     }
 
     private class ViewHolder(val view: View, val userId: String, val context: Context) :
-        RecyclerView.ViewHolder(view) {
-        fun bind(card: ChatCard, photoUrl: String? = null, otherGender: Gender = Gender.MALE) {
-            Log.d("wtf", "bind")
+        RecyclerView.ViewHolder(view)
+    {
+        private fun calcRelativeTime(time: Date): String
+        {
+            try {
+                Log.d("wtf", "calcRelativeTime")
+                val current = Date(System.currentTimeMillis())
+                val timeGap = current.time - time.time
+                val hoursGap = TimeUnit.HOURS.convert(timeGap, TimeUnit.MILLISECONDS)
+                Log.d("wtf", "2")
+                when(hoursGap)
+                {
+                    0L -> return "just now"
+                    in 1..168 -> return "sent ${hoursGap/24} days ago"
+                    else -> return SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(time)
+                }
+            }
+            catch (e: Exception)
+            {
+                com.technion.vedibarta.utilities.error(e, "calc")
+            }
+            return ""
+        }
+
+        fun bind(card: ChatCard, photoUrl: String? = null, otherGender: Gender = Gender.MALE)
+        {
             try {
                 val partnerId = card.getPartnerId(userId)
                 itemView.findViewById<TextView>(R.id.user_name).text = card.getName(partnerId)
                 itemView.findViewById<TextView>(R.id.last_message).text = card.lastMessage
-                itemView.findViewById<TextView>(R.id.relative_timestamp).text = card.relativeTime
+                itemView.findViewById<TextView>(R.id.relative_timestamp).text = calcRelativeTime(card.lastMessageTimestamp)
                 val profilePicture = itemView.findViewById<ImageView>(R.id.user_picture)
 
                 if (photoUrl == null)
@@ -208,7 +228,6 @@ class MainActivity : VedibartaActivity() {
                 parent: ViewGroup,
                 viewType: Int
             ): ViewHolder {
-                Log.d("wtf", "onCreateViewHolder")
                 val userNameView =
                     LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
                 return ViewHolder(userNameView, userId!!, applicationContext)
@@ -219,7 +238,6 @@ class MainActivity : VedibartaActivity() {
                 position: Int,
                 card: ChatCard
             ) {
-                Log.d("wtf", "onBindViewHolder")
                 when (holder) {
                     is ViewHolder -> {
                         Log.d(TAG, "student is: $student")

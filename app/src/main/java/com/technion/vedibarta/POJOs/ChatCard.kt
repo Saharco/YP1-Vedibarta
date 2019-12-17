@@ -9,9 +9,8 @@ data class ChatCard (
     var participantsName: List<String> = emptyList(),
     var participantsId: List<String> = emptyList(),
     var lastMessage: String = "",
-    val relativeTime: String = "",
+    var lastMessageTimestamp: Date = Date(System.currentTimeMillis()),
     val numMessages: Int = 0,
-    val date: String = "",
     var chat: String? = null
 ): Serializable
 

@@ -121,6 +121,11 @@
         <item>Menu Item 2</item>
     </string-array>
 
+    <!-- MainActivity ChatCard-->
+    <string name="sent">נשלח</string>
+    <string name="just_now">הרגע</string>
+    <string name="before">לפני</string>
+
     <!--  FCM  -->
     <string name="vedibarta_notification_channel_name">ודיברת</string>
 
