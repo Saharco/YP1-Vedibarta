@@ -34,12 +34,14 @@ class ChatCandidatesActivity : VedibartaActivity() {
             holder.button.setOnClickListener {
                 val other = carouselAdapterItems[holder.adapterPosition]
 
-                val chat = ChatCard().create(student!!, other)
+                val chat = ChatCard().create(other)
                 Log.d(TAG, "chat id is: ${chat.chat}")
-                val docRef = FirebaseFirestore.getInstance().collection("chats").document(chat.chat!!)
+                val docRef =
+                    FirebaseFirestore.getInstance().collection("chats").document(chat.chat!!)
                 docRef.set(chat)
                     .addOnSuccessListener {
-                        val intent = Intent(this@ChatCandidatesActivity, ChatRoomActivity::class.java)
+                        val intent =
+                            Intent(this@ChatCandidatesActivity, ChatRoomActivity::class.java)
                         intent.putExtra("chatId", chat.chat)
                         intent.putExtra("partnerId", other.uid)
                         intent.putExtra("name", chat.getName(other.uid))
@@ -50,7 +52,11 @@ class ChatCandidatesActivity : VedibartaActivity() {
                         finish()
                     }.addOnFailureListener {
                         Log.d(TAG, "failed to create chat document")
-                        Toast.makeText(applicationContext, "Failed to open chat", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "Failed to open chat",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
             }
         }

@@ -59,6 +59,7 @@ class UserSetupActivity : VedibartaActivity() {
         database.students().userId().build().get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
                 dialog.dismiss()
+                student = document.toObject(Student::class.java)
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
             } else {
@@ -133,6 +134,7 @@ class UserSetupActivity : VedibartaActivity() {
                     setupStudent.name = "$chosenFirstName $chosenLastName"
                     database.students().userId().build().set(setupStudent)
                         .addOnSuccessListener {
+                            student = setupStudent
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
