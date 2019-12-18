@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
@@ -24,9 +23,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.miguelcatalan.materialsearchview.MaterialSearchView
-import com.technion.vedibarta.ExtentionFunctions.getName
-import com.technion.vedibarta.ExtentionFunctions.getPartnerId
-import com.technion.vedibarta.POJOs.ChatCard
+import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
@@ -42,7 +39,7 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : VedibartaActivity() {
 
-    private lateinit var adapter: FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>
+    private lateinit var adapter: FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>
     private lateinit var searchAdapter: RecyclerView.Adapter<ViewHolder>
 
     private val chatPartnersMap = HashMap<String, ChatMetadata>()
@@ -130,6 +127,7 @@ class MainActivity : VedibartaActivity() {
 
             override fun onBindViewHolder(holder: ViewHolder, position: Int) {
                 val chatMetadata = filteredMap.getValue(holder.adapterPosition)
+                Log.d(TAG, "Binding chat with the following data: $chatMetadata")
                 holder.bind(chatMetadata)
                 holder.view.setOnClickListener {
                     val intent = Intent(this@MainActivity, ChatRoomActivity::class.java)
@@ -146,8 +144,8 @@ class MainActivity : VedibartaActivity() {
         Log.d(TAG, "showing all chat results")
 
         val adapterQuery = database.chats().build().whereArrayContains("participantsId", userId!!)
-        val options = FirestoreRecyclerOptions.Builder<ChatCard>()
-            .setQuery(adapterQuery, ChatCard::class.java)
+        val options = FirestoreRecyclerOptions.Builder<Chat>()
+            .setQuery(adapterQuery, Chat::class.java)
             .build()
         adapter = getAdapter(options)
         chat_history.layoutManager = LinearLayoutManager(this)
@@ -158,8 +156,8 @@ class MainActivity : VedibartaActivity() {
 
     override fun onStart() {
         super.onStart()
-        adapter.startListening()
         showAllChats()
+        adapter.startListening()
     }
 
     override fun onStop() {
@@ -260,7 +258,7 @@ class MainActivity : VedibartaActivity() {
             }
         }
 
-        fun bind(card: ChatCard, photoUrl: String? = null, otherGender: Gender = Gender.MALE) {
+        fun bind(card: Chat, photoUrl: String? = null, otherGender: Gender = Gender.MALE) {
             try {
                 val partnerId = card.getPartnerId(userId)
                 itemView.findViewById<TextView>(R.id.user_name).text = card.getName(partnerId)
@@ -317,8 +315,8 @@ class MainActivity : VedibartaActivity() {
         }
     }
 
-    private fun getAdapter(options: FirestoreRecyclerOptions<ChatCard>): FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder> {
-        return object : FirestoreRecyclerAdapter<ChatCard, RecyclerView.ViewHolder>(options) {
+    private fun getAdapter(options: FirestoreRecyclerOptions<Chat>): FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder> {
+        return object : FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>(options) {
             override fun onCreateViewHolder(
                 parent: ViewGroup,
                 viewType: Int
@@ -331,20 +329,20 @@ class MainActivity : VedibartaActivity() {
             override fun onBindViewHolder(
                 holder: RecyclerView.ViewHolder,
                 position: Int,
-                card: ChatCard
+                card: Chat
             ) {
                 when (holder) {
                     is ViewHolder -> {
-                        Log.d(TAG, "student is: $student")
                         FirebaseFirestore.getInstance().collection("students")
-                            .document(card.getPartnerId(student!!.name))
+                            .document(card.getPartnerId(student!!.uid))
                             .get()
                             .addOnSuccessListener { otherStudent ->
+                                Log.d(TAG, "$otherStudent\n has the following photo: ${otherStudent["photo"]}")
                                 val otherStudentPhotoUrl = otherStudent["photo"] as String?
-                                val otherGender = if (otherStudent["gender"] as String == "MALE")
-                                    Gender.MALE
-                                else
+                                val otherGender = if (otherStudent["gender"] as String == "FEMALE")
                                     Gender.FEMALE
+                                else
+                                    Gender.MALE
 
                                 holder.bind(card, otherStudentPhotoUrl, otherGender)
                                 val partnerId = card.getPartnerId(userId!!)
@@ -358,6 +356,8 @@ class MainActivity : VedibartaActivity() {
                                     otherGender,
                                     otherStudentPhotoUrl
                                 )
+
+                                Log.d(TAG, "Binding chat with the following data: $chatMetadata")
 
                                 chatPartnersMap[chatMetadata.partnerName] = chatMetadata
 
