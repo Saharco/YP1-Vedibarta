@@ -25,7 +25,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.technion.vedibarta.POJOs.ActivityCode
 import com.technion.vedibarta.R
-import com.technion.vedibarta.main.MainActivity
+import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.getCircleBitmap
 import java.util.concurrent.ExecutionException
@@ -98,7 +98,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
             applicationContext,
             getString(R.string.vedibarta_notification_channel_name)
         )
-        val notificationIntent = Intent(applicationContext, MainActivity::class.java)
+        val notificationIntent = Intent(applicationContext, LoginActivity::class.java)
         notificationIntent.flags =
             (Intent.FLAG_ACTIVITY_NEW_TASK and Intent.FLAG_ACTIVITY_CLEAR_TASK
                     and Intent.FLAG_ACTIVITY_CLEAR_TOP)
