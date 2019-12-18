@@ -5,13 +5,14 @@
     android:id="@+id/splashRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DC121212"
+    android:background="@color/backgroundSplash"
     tools:context=".SplashActivity">
 
     <com.skyfishjy.library.RippleBackground
         android:id="@+id/rippleBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="104dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

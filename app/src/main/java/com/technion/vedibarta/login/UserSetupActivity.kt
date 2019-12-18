@@ -1,21 +1,17 @@
 package com.technion.vedibarta.login
 
 import android.annotation.SuppressLint
-import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
@@ -28,12 +24,9 @@ import java.sql.Timestamp
 
 class UserSetupActivity : VedibartaActivity() {
 
-    private val TAG = "UserSetupActivity"
-    private val STUDENT_KEY = "student"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
     private var missingDetailsText = ""
-
 
     var setupStudent = Student(
         uid = userId!!,
@@ -47,27 +40,12 @@ class UserSetupActivity : VedibartaActivity() {
     var chosenFirstName = ""
     var chosenLastName = ""
 
+    companion object {
+        const val STUDENT_KEY = "student"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val dialog = ProgressDialog(this).apply {
-            setMessage(getString(R.string.checking_document))
-            setCancelable(false)
-            isIndeterminate = true
-            show()
-        }
-
-        database.students().userId().build().get().addOnSuccessListener { document ->
-            if (document != null && document.exists()) {
-                dialog.dismiss()
-                student = document.toObject(Student::class.java)
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            } else {
-                dialog.dismiss()
-            }
-        }
-
         setContentView(R.layout.activity_user_setup)
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 

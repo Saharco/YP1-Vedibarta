@@ -15,7 +15,9 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.technion.vedibarta.POJOs.ActivityCode
 import com.technion.vedibarta.R
+import com.technion.vedibarta.SplashActivity
 
 
 private const val REQ_GOOGLE_SIGN_IN = 1
@@ -196,7 +198,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     fun updateUIForCurrentUser(user: FirebaseUser?) {
         if (user != null && user.isEmailVerified) {
-            startActivity(Intent(this, UserSetupActivity::class.java))
+            val intent = Intent(this, SplashActivity::class.java)
+            intent.putExtra("loadSuccess", ActivityCode.ActivityMain)
+            intent.putExtra("loadFail", ActivityCode.ActivityUserSetup)
+            startActivity(intent)
             finish()
         }
     }

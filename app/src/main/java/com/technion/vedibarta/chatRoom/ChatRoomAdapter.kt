@@ -1,7 +1,5 @@
 package com.technion.vedibarta.chatRoom
 
-import android.media.MediaPlayer
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,29 +11,27 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
 
-class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
-                      options: FirestoreRecyclerOptions<Message>,
-                      numMessages: Int): FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options)
-{
+class ChatRoomAdapter(
+    chatRoomActivity: ChatRoomActivity,
+    options: FirestoreRecyclerOptions<Message>,
+    numMessages: Int
+) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options) {
     private val soundPlayer = SoundPlayer(chatRoomActivity, numMessages)
-    private val chatView= chatRoomActivity.findViewById<RecyclerView>(R.id.chatView)
+    private val chatView = chatRoomActivity.findViewById<RecyclerView>(R.id.chatView)
     private val uid = chatRoomActivity.userId
     private val systemSender = chatRoomActivity.systemSender
 
-    override fun startListening()
-    {
+    override fun startListening() {
         super.startListening()
         soundPlayer.init()
     }
 
-    override fun stopListening()
-    {
+    override fun stopListening() {
         super.stopListening()
         soundPlayer.release()
     }
 
-    override fun getItemViewType(position: Int): Int
-    {
+    override fun getItemViewType(position: Int): Int {
         val sender = snapshots[position].sender
         if (sender == systemSender)
             return MessageType.SYSTEM.ordinal
@@ -44,10 +40,10 @@ class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
         return MessageType.OTHER.ordinal
     }
 
-    override fun onDataChanged()
-    {
+    override fun onDataChanged() {
         super.onDataChanged()
-        val lastVisiblePosition = (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+        val lastVisiblePosition =
+            (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
         if (this.itemCount - lastVisiblePosition <= 2)
             chatView.smoothScrollToPosition(this.itemCount)
     }
@@ -56,7 +52,7 @@ class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
-        var view: View? = null
+        val view: View?
         when (viewType) {
             MessageType.USER.ordinal -> {
                 view = LayoutInflater.from(parent.context).inflate(
@@ -126,6 +122,7 @@ class ChatRoomAdapter(chatRoomActivity: ChatRoomActivity,
             itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.getTime()
         }
     }
+
     private class GeneratorMessageViewHolder(view: View) :
         RecyclerView.ViewHolder(view) {
 
