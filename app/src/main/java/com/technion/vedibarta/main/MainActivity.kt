@@ -75,7 +75,7 @@ class MainActivity : VedibartaActivity() {
         extendedFloatingActionButton.setOnClickListener {
             startActivity(Intent(this, ChatSearchActivity::class.java))
         }
-        
+
         configureSearchView()
     }
 
