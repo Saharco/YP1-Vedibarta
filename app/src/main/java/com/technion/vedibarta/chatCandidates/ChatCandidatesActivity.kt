@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.google.firebase.firestore.FirebaseFirestore
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.R
@@ -12,6 +11,7 @@ import com.technion.vedibarta.adapters.CarouselAdapter
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.adapters.ItemViewHolder
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
+import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_candidates.*
 
@@ -35,7 +35,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
                 val chat = Chat().create(other)
                 Log.d(TAG, "chat id is: ${chat.chat}")
                 val docRef =
-                    FirebaseFirestore.getInstance().collection("chats").document(chat.chat!!)
+                    DatabaseVersioning.currentVersion.instance.collection("chats").document(chat.chat!!)
                 docRef.set(chat)
                     .addOnSuccessListener {
                         val intent =

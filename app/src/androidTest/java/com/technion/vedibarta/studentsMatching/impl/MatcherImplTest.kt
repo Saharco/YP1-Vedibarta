@@ -2,8 +2,8 @@ package com.technion.vedibarta.studentsMatching.impl
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.FirebaseFirestore
 import com.technion.vedibarta.POJOs.Student
+import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.studentsMatching.Matcher
 import org.junit.After
 import org.junit.Before
@@ -14,8 +14,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MatcherImplTest {
-    private val studentsCollection = FirebaseFirestore.getInstance()
-        .collection("Tests").document("MatcherImplTest")
+    private val studentsCollection = DatabaseVersioning.getTestVersion("MatcherImplTest").instance
         .collection("students")
 
     @Before

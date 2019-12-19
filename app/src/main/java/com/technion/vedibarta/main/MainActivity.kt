@@ -20,7 +20,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import com.technion.vedibarta.POJOs.Chat
@@ -29,6 +28,7 @@ import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
+import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -63,7 +63,7 @@ class MainActivity : VedibartaActivity() {
                 }
                 val token = task.result!!.token
                 Log.d(TAG, "Token is: $token")
-                FirebaseFirestore.getInstance()
+                DatabaseVersioning.currentVersion.instance
                     .collection("students")
                     .document(userId!!)
                     .update("tokens", FieldValue.arrayUnion(token))
@@ -333,7 +333,7 @@ class MainActivity : VedibartaActivity() {
             ) {
                 when (holder) {
                     is ViewHolder -> {
-                        FirebaseFirestore.getInstance().collection("students")
+                        DatabaseVersioning.currentVersion.instance.collection("students")
                             .document(card.getPartnerId(student!!.uid))
                             .get()
                             .addOnSuccessListener { otherStudent ->

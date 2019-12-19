@@ -15,10 +15,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import com.google.firebase.firestore.FirebaseFirestore
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
+import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.studentsMatching.impl.MatcherImpl
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
@@ -145,7 +145,7 @@ class ChatSearchActivity : VedibartaActivity() {
     private fun searchMatch() {
         Log.d(TAG, "Searching a match")
 
-        val studentsCollection = FirebaseFirestore.getInstance().collection("students")
+        val studentsCollection = DatabaseVersioning.currentVersion.instance.collection("students")
 
         MatcherImpl(studentsCollection, fakeStudent.characteristics.keys, chosenRegion, chosenSchool).match()
             .addOnSuccessListener(this) { students ->
