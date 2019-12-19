@@ -17,17 +17,17 @@ enum class VersionType {
 }
 
 internal interface Version {
-    val getReference: DocumentReference
+    val instance: DocumentReference
 }
 
 class TestVersion
 internal constructor(val name: String): Version {
-    override val getReference: DocumentReference
+    override val instance: DocumentReference
         get() = FirebaseFirestore.getInstance().collection("Tests").document(name)
 }
 
 class RegularVersion
 internal constructor(private val type: VersionType, val name: String): Version {
-    override val getReference: DocumentReference
+    override val instance: DocumentReference
         get() = FirebaseFirestore.getInstance().collection(type.toString()).document(name)
 }
