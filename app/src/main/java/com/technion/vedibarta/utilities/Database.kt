@@ -3,8 +3,8 @@ package com.technion.vedibarta.utilities
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.*
+import com.technion.vedibarta.database.DatabaseVersioning
 import java.lang.Exception
 import java.util.*
 
@@ -56,7 +56,7 @@ interface IDocumentPath
 }
 class DocumentsCollections(private val userId: String?)
 {
-    private val database = FirebaseFirestore.getInstance()
+    private val database = DatabaseVersioning.currentVersion.instance
     fun students():ICollectionPath = CollectionPath(database.collection("students"), userId)
     fun chats():ICollectionPath = CollectionPath(database.collection("chats"), userId)
 }

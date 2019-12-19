@@ -228,23 +228,19 @@ class ChatRoomActivity : VedibartaActivity()
         chatBox.setText("")
     }
 
-    private fun write(text: String, isGeneratorMessage: Boolean) {
+    private fun write(text: String, isGeneratorMessage: Boolean)
+    {
         val timeSent = Date(System.currentTimeMillis())
-        var path = database.chats()
-            .chatId(chatId!!)
-            .messages()
-            .message(timeSent)
-            .build()
         var sender = userId!!
-        if (isGeneratorMessage) {
+        if (isGeneratorMessage)
+        {
             sender = systemSender
-            path = database.chats()
-                .chatId(chatId!!)
-                .messages()
-                .systemMessage(timeSent)
-                .build()
         }
-        path.set(Message(sender, partnerId!!, text, timeSent), SetOptions.merge())
+        val path = database.chats()
+                .chatId(chatId)
+                .messages()
+                .build()
+        path.add(Message(sender, partnerId, text, timeSent))
             .addOnFailureListener {
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }

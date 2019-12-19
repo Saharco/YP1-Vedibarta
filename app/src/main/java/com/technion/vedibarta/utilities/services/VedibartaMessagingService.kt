@@ -20,11 +20,11 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.technion.vedibarta.POJOs.ActivityCode
 import com.technion.vedibarta.R
+import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.getCircleBitmap
@@ -217,7 +217,7 @@ class VedibartaMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String) {
-        val db = FirebaseFirestore.getInstance()
+        val db = DatabaseVersioning.currentVersion.instance
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
             db.collection("students").document(user.uid)
