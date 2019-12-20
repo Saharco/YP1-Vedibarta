@@ -27,6 +27,9 @@ import kotlinx.android.synthetic.main.activity_chat_search.*
 
 class ChatSearchActivity : VedibartaActivity() {
 
+    var isSplashing: Boolean = false
+    var tempResult: List<Student>? = null
+
     companion object {
         private const val MATCHING_TIMEOUT = 10L
         private const val TAG = "ChatSearchActivity"
@@ -71,6 +74,33 @@ class ChatSearchActivity : VedibartaActivity() {
         outState.putString("REGION", chosenRegion)
         super.onSaveInstanceState(outState)
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (this.isSplashing) { // first we need to check that we were even splashing
+            if(this.tempResult!= null) // we managed to complete the query before the user closed the app
+                if(this.tempResult!!.isEmpty()){ // send this to showCandidates
+                    val intent = Intent(this, ChatCandidatesActivity::class.java)
+                    intent.putExtra("STUDENTS", this.tempResult!!.toTypedArray())
+                    this.isSplashing = false
+                    this.tempResult = null
+                    startActivity(intent)
+                    finish()
+                }
+                else {
+                    Log.d(TAG, "No matching students founds")
+                    this.isSplashing = false
+                    this.tempResult = null
+                    Toast.makeText(this, R.string.no_matching_students, Toast.LENGTH_LONG).show()
+                }
+            else { // didn't manage to terminate the query return to the search
+                this.isSplashing = false
+                this.tempResult = null
+                this.searchMatch()
+            }
+        }
+    }
+
 
     private fun setToolbar(tb: Toolbar) {
         setSupportActionBar(tb)
@@ -142,27 +172,36 @@ class ChatSearchActivity : VedibartaActivity() {
         viewPager.adapter = adapter
     }
 
+
     private fun searchMatch() {
         Log.d(TAG, "Searching a match")
+        this.isSplashing = true
 
         val studentsCollection = DatabaseVersioning.currentVersion.instance.collection("students")
 
         MatcherImpl(studentsCollection, fakeStudent.characteristics.keys, chosenRegion, chosenSchool).match()
             .addOnSuccessListener(this) { students ->
                 val filteredStudents = students.filter { it.uid != student!!.uid }
+                this.tempResult = filteredStudents
                 if (filteredStudents.isNotEmpty()) {
                     Log.d(TAG, "Matched students successfully")
 
                     val intent = Intent(this, ChatCandidatesActivity::class.java)
                     intent.putExtra("STUDENTS", filteredStudents.toTypedArray())
+                    this.isSplashing = false
+                    this.tempResult = null
                     startActivity(intent)
                     finish()
                 } else {
                     Log.d(TAG, "No matching students founds")
+                    this.isSplashing = false
+                    this.tempResult = null
                     Toast.makeText(this, R.string.no_matching_students, Toast.LENGTH_LONG).show()
                 }
             }.addOnFailureListener(this) { exp ->
                 Log.w(TAG, "Matching students failed", exp)
+                this.isSplashing = false
+                this.tempResult = null
                 if(!isInternetAvailable(this)) {
                     loadTimeoutTask.run()
                 }
@@ -199,3 +238,4 @@ class ChatSearchActivity : VedibartaActivity() {
         return result
     }
 }
+

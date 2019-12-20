@@ -5,18 +5,90 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 const db = functions.region('europe-west1').firestore;
 
+const development = 'development';
+const production = 'production';
+
 
 // ------------------------------ Cloud functions' path triggers ------------------------------
 
 
-exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+// -------------------- GENERAL: --------------------
+
+/**
+ * HTTP trigger for new messages
+ * @see onMessageSent
+ * @type {CloudFunction<DocumentSnapshot>}
+ */
+exports.generalOnMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
     return onMessageSent(snap, context, admin.firestore());
 });
 
-
-exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+/**
+ * HTTP trigger for firing notifications for new messages
+ * @see onMessageSent
+ * @type {CloudFunction<DocumentSnapshot>}
+ */
+exports.generalOnMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
     return onMessageSentNotify(snap, context, admin.firestore());
 });
+
+// -------------------- DEVELOPMENT: --------------------
+
+/**
+ * HTTP trigger for new messages in the *development* path in the database
+ * @see onMessageSent
+ * @type {CloudFunction<DocumentSnapshot>}
+ */
+exports.developmentOnMessageSent = db.document('development/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = admin.firestore()
+        .collection(development)
+        .doc(context.params.version);
+
+    return onMessageSent(snap, context, root);
+});
+
+/**
+ * HTTP trigger for firing notifications for new messages in the *development* path in the database
+ * @see onMessageSent
+ * @type {CloudFunction<DocumentSnapshot>}
+ */
+exports.developmentOnMessageSentNotify = db.document('development/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = admin.firestore()
+        .collection(development)
+        .doc(context.params.version);
+
+    return onMessageSentNotify(snap, context, root);
+});
+
+// -------------------- PRODUCTION: --------------------
+
+/**
+ * HTTP trigger for new messages in the *production* path in the database
+ * @see onMessageSent
+ * @type {CloudFunction<DocumentSnapshot>}
+ */
+exports.productionOnMessageSent = db.document('production/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = admin.firestore()
+        .collection(production)
+        .doc(context.params.version);
+
+    return onMessageSent(snap, context, root);
+});
+
+
+/**
+ * HTTP trigger for firing notifications for new messages in the *production* path in the database
+ * @see onMessageSent
+ * @type {CloudFunction<DocumentSnapshot>}
+ */
+exports.productionOnMessageSentNotify = db.document('production/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = admin.firestore()
+        .collection(production)
+        .doc(context.params.version);
+
+    return onMessageSentNotify(snap, context, root);
+});
+
 
 
 // ------------------------------ Cloud functions' logic ------------------------------
@@ -34,7 +106,7 @@ function onMessageSent(snap, context, root) {
         .collection('chats')
         .doc(context.params.chatId);
 
-    return root.runTransaction(function (transaction) {
+    return admin.firestore().runTransaction(function (transaction) {
         return transaction.get(chatDocRef).then(function (chatDoc) {
             if (!chatDoc.exists) {
                 console.log("Error: chat room does not exist");
@@ -66,18 +138,15 @@ function onMessageSent(snap, context, root) {
  * @type {CloudFunction<DocumentSnapshot>}
  */
 function onMessageSentNotify(snap, context, root) {
-    return root
-        .collection('students')
+    return root.collection('students')
         .doc(snap.data().receiver)
         .get()
         .then(receiverDoc => {
-            return root
-                .collection('students')
+            return root.collection('students')
                 .doc(snap.data().sender)
                 .get()
                 .then(senderDoc => {
-                    return root
-                        .collection('chats')
+                    return root.collection('chats')
                         .doc(context.params.chatId)
                         .get()
                         .then(chatDoc => {
