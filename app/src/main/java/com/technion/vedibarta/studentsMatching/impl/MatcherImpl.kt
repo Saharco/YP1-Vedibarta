@@ -5,9 +5,9 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.studentsMatching.Matcher
+import com.technion.vedibarta.utilities.extensions.randomCycling
 
 const val STUDENTS_LIMIT = 10
 const val TAG = "Matcher"
@@ -42,13 +42,13 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
     private fun getDocs(): Task<Set<DocumentSnapshot>> {
         return matchWithGivenCharacteristics(STUDENTS_LIMIT, characteristics)
             .continueWithTask { task ->
-                val docList = task.result!!.documents.toSet()
+                val docsSet = task.result!!
 
-                if ((docList.size < STUDENTS_LIMIT) and (characteristics.size > 1)) {
-                    tryWithOneLessCharacteristic(STUDENTS_LIMIT - docList.size)
-                        .continueWith { docList.union(it.result!!) }
+                if ((docsSet.size < STUDENTS_LIMIT) and (characteristics.size > 1)) {
+                    tryWithOneLessCharacteristic(STUDENTS_LIMIT - docsSet.size)
+                        .continueWith { docsSet.union(it.result!!) }
                 } else {
-                    Tasks.call { docList }
+                    Tasks.call { docsSet }
                 }
             }
     }
@@ -66,7 +66,7 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
                 amount,
                 newCharacteristics,
                 listOf(characteristicsList[i])
-            ).continueWith { results.addAll(it.result!!.documents) }
+            ).continueWith { results.addAll(it.result!!) }
         }).continueWith {
             results.shuffled().take(amount).toSet()
         }
@@ -76,7 +76,7 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
         amount: Int,
         characteristics: Iterable<String>,
         disallowedCharacteristics: Iterable<String> = emptyList()
-    ): Task<QuerySnapshot> {
+    ): Task<Set<DocumentSnapshot>> {
         assert(characteristics.intersect(disallowedCharacteristics).isEmpty()) {
             "characteristics and disallowedCharacteristics shouldn't share any members"
         }
@@ -98,6 +98,6 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
             query = query.whereEqualTo("characteristics.$characteristic", false)
         }
 
-        return query.limit(amount.toLong()).get()
+        return query.randomCycling("uid", amount.toLong())
     }
 }
