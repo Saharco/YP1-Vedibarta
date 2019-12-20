@@ -1,35 +1,54 @@
+// ------------------------------ Initialization ------------------------------
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 const db = functions.region('europe-west1').firestore;
 
-// -- End of initialization --
+
+// ------------------------------ Cloud functions' path triggers ------------------------------
+
+
+exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    return onMessageSent(snap, context, admin.firestore());
+});
+
+
+exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    return onMessageSentNotify(snap, context, admin.firestore());
+});
+
+
+// ------------------------------ Cloud functions' logic ------------------------------
+
 
 /**
  * *Listens to new messages*.
  * - Increases a counter that represents the amount of messages in this chat room.
  * - Updates the timestamp of the last received message in this chat room.
+ *
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    const chatDocRef = admin.firestore()
+function onMessageSent(snap, context, root) {
+    const chatDocRef = root
         .collection('chats')
         .doc(context.params.chatId);
 
-    return admin.firestore().runTransaction(function (transaction) {
+    return root.runTransaction(function (transaction) {
         return transaction.get(chatDocRef).then(function (chatDoc) {
             if (!chatDoc.exists) {
-                throw new "Chat room does not exist";
+                console.log("Error: chat room does not exist");
+                return null;
             }
-			
-			let newNumMessages = chatDoc.data().numMessages + 1;
-			let newLastMessageTimestamp = snap.data().timestamp;
-			let newLastMessage = snap.data().text;
-			
-            transaction.update(chatDocRef, { numMessages: newNumMessages });
-            transaction.update(chatDocRef, { lastMessageTimestamp: newLastMessageTimestamp });
-			transaction.update(chatDocRef, { lastMessage: newLastMessage });
-			return null;
+
+            let newNumMessages = chatDoc.data().numMessages + 1;
+            let newLastMessageTimestamp = snap.data().timestamp;
+            let newLastMessage = snap.data().text;
+
+            transaction.update(chatDocRef, {numMessages: newNumMessages});
+            transaction.update(chatDocRef, {lastMessageTimestamp: newLastMessageTimestamp});
+            transaction.update(chatDocRef, {lastMessage: newLastMessage});
+            return null;
         });
     }).then(function () {
         console.log("Updated messages counter");
@@ -38,9 +57,7 @@ exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCre
         console.log("Error updating messages counter: ", error);
         return null;
     });
-
-});
-
+}
 
 /**
  * *Listens to new messages.*
@@ -48,18 +65,18 @@ exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCre
  *
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    return admin.firestore()
+function onMessageSentNotify(snap, context, root) {
+    return root
         .collection('students')
         .doc(snap.data().receiver)
         .get()
         .then(receiverDoc => {
-            return admin.firestore()
+            return root
                 .collection('students')
                 .doc(snap.data().sender)
                 .get()
                 .then(senderDoc => {
-                    return admin.firestore()
+                    return root
                         .collection('chats')
                         .doc(context.params.chatId)
                         .get()
@@ -98,4 +115,4 @@ exports.onMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}')
                         });
                 });
         });
-});
+}
