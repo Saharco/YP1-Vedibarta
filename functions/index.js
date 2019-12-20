@@ -21,10 +21,15 @@ exports.onMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCre
             if (!chatDoc.exists) {
                 throw new "Chat room does not exist";
             }
-            transaction.update(chatDocRef, {numMessages: chatDoc.data().numMessages + 1});
-            transaction.update(chatDocRef, {lastMessageTimestamp: snap.data().lastMessageTimestamp});
-			transaction.update(chatDocRef, {lastMessage: snap.data().text});
-            return null;
+			
+			let newNumMessages = chatDoc.data().numMessages + 1;
+			let newLastMessageTimestamp = snap.data().timestamp;
+			let newLastMessage = snap.data().text;
+			
+            transaction.update(chatDocRef, { numMessages: newNumMessages });
+            transaction.update(chatDocRef, { lastMessageTimestamp: newLastMessageTimestamp });
+			transaction.update(chatDocRef, { lastMessage: newLastMessage });
+			return null;
         });
     }).then(function () {
         console.log("Updated messages counter");
