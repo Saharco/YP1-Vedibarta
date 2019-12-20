@@ -91,8 +91,21 @@ class ChooseExtraOptionsFragment : VedibartaFragment() {
         val firstName: TextInputEditText = v.findViewById(R.id.textFieldFirstName)
         val lastName: TextInputEditText = v.findViewById(R.id.textFieldLastName)
 
-        firstName.doOnTextChanged { text, _, _, _ -> act.chosenFirstName = text.toString() }
-        lastName.doOnTextChanged { text, _, _, _ -> act.chosenLastName = text.toString() }
+        firstName.doOnTextChanged { text, _, _, _ ->
+            if (text!!.matches(resources.getString(R.string.allowed_letters_regex).toRegex()) || text.isBlank())
+                act.chosenFirstName = text.toString()
+            else {
+                firstName.text = SpannableStringBuilder("")
+            }
+        }
+
+        lastName.doOnTextChanged { text, _, _, _ ->
+            if (text!!.matches(resources.getString(R.string.allowed_letters_regex).toRegex()) || text.isBlank())
+                act.chosenLastName = text.toString()
+            else {
+                lastName.text = SpannableStringBuilder("")
+            }
+        }
 
         //---DropDownList Views---
         schoolTextViewAuto = v.findViewById(R.id.schoolListSpinner)

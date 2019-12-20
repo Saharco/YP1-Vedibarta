@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -42,6 +43,7 @@ class UserSetupActivity : VedibartaActivity() {
 
     companion object {
         const val STUDENT_KEY = "student"
+        private const val TAG = "UserSetupActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -158,37 +160,39 @@ class UserSetupActivity : VedibartaActivity() {
         val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
         if (setupStudent.gender == Gender.NONE) {
-            missingDetailsText += "${R.string.user_setup_gender_missing}\n"
+            missingDetailsText += "${resources.getString(R.string.user_setup_gender_missing)}\n"
             return false
         }
 
+        Log.d(TAG,"first: $chosenFirstName last: $chosenLastName")
+
         if (chosenFirstName == "") {
-            missingDetailsText += "${R.string.user_setup_first_name_missing}\n"
+            missingDetailsText += "${resources.getString(R.string.user_setup_first_name_missing)}\n"
             return false
         }
 
         if (chosenLastName == "") {
-            missingDetailsText += "${R.string.user_setup_last_name_missing}\n"
+            missingDetailsText += "${resources.getString(R.string.user_setup_last_name_missing)}\n"
             return false
         }
 
         if (!schoolsName.contains(setupStudent.school)) {
-            missingDetailsText += "${R.string.user_setup_school_missing}\n"
+            missingDetailsText += "${resources.getString(R.string.user_setup_school_missing)}\n"
             return false
         }
 
         if (!regionsName.contains(setupStudent.region)) {
-            missingDetailsText += "${R.string.user_setup_region_missing}\n"
+            missingDetailsText += "${resources.getString(R.string.user_setup_region_missing)}\n"
             return false
         }
 
         if (studentsCharacteristics.isEmpty()) {
-            missingDetailsText += "${R.string.user_setup_characteristics_missing}\n"
+            missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
             return false
         }
 
         if (setupStudent.hobbies.isEmpty()) {
-            missingDetailsText += "${R.string.user_setup_hobbies_missing}\n"
+            missingDetailsText += "${resources.getString(R.string.user_setup_hobbies_missing)}\n"
             return false
         }
 

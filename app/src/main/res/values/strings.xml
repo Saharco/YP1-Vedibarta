@@ -4,6 +4,7 @@
     <!--    General shared attributes   -->
     <string name="back">חזור</string>
     <string name="or">או</string>
+    <string name="allowed_letters_regex">[אבגדהוזחטיכלמנסעפצקרשתץףןםך]+</string>
     <string name="allowed_letters">אבגדהוזחטיכלמנסעפצקרשתץףןםך</string>
     <string name="dismiss">הסר</string>
 
