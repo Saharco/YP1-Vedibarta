@@ -13,6 +13,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
@@ -123,22 +124,46 @@ class ChatRoomActivity : VedibartaActivity()
                 .chats()
                 .chatId(chatId)
                 .messages()
-                .build().orderBy("timestamp", Query.Direction.DESCENDING)
+                .build().orderBy("timestamp")
 
         val options =
             FirestoreRecyclerOptions.Builder<Message>()
                 .setQuery(query, Message::class.java)
                 .build()
 
+        val initialAdapterPopulationListener = object: View.OnLayoutChangeListener{
+            override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int,p5: Int, p6: Int, p7: Int, p8: Int)
+            {
+                Log.d("wtf", "initialAdapterPopulationListener ${adapter.itemCount}")
+                if (adapter.itemCount > 0)
+                {
+                    chatView.smoothScrollToPosition(adapter.itemCount)
+                    chatView.removeOnLayoutChangeListener(this)
+                }
+            }
+        }
+
+        val initialScrollingStoppedListener = object: RecyclerView.OnScrollListener()
+        {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int)
+            {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+                {
+                    chatView.visibility = View.VISIBLE
+                    chatView.removeOnScrollListener(this)
+                }
+            }
+        }
+
         adapter = ChatRoomAdapter(this, options, numMessages)
-        adapter.notifyDataSetChanged() //
         chatView.adapter = adapter
         adapter.notifyDataSetChanged() //
-        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         chatView.layoutManager = layoutManager
-        chatView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            chatView.scrollToPosition(0)
-        }
+        chatView.visibility = View.INVISIBLE
+        chatView.addOnLayoutChangeListener(initialAdapterPopulationListener)
+        chatView.addOnScrollListener(initialScrollingStoppedListener)
     }
 
     private fun setToolbar(tb: Toolbar) {
