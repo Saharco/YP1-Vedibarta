@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -137,7 +138,14 @@ class ChatRoomActivity : VedibartaActivity()
                 Log.d("wtf", "initialAdapterPopulationListener ${adapter.itemCount}")
                 if (adapter.itemCount > 0)
                 {
-                    chatView.smoothScrollToPosition(adapter.itemCount)
+                    val linearSmoothScroller = object: LinearSmoothScroller(chatView.context){
+                        override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
+                            Log.d("wtf", displayMetrics.toString())
+                            return 1f/(displayMetrics?.densityDpi ?: adapter.itemCount)
+                        }
+                    }
+                    linearSmoothScroller.setTargetPosition(adapter.itemCount)
+                    chatView.layoutManager!!.startSmoothScroll(linearSmoothScroller)
                     chatView.removeOnLayoutChangeListener(this)
                 }
             }
