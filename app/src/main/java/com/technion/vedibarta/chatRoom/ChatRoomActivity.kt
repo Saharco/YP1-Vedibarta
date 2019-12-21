@@ -22,6 +22,7 @@ import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.POJOs.ChatMetadata
@@ -212,9 +213,9 @@ class ChatRoomActivity : VedibartaActivity()
         text = text.replace("[\n]+".toRegex(), "\n").trim()
 
         val lastMessageDate: Date? = adapter.snapshots.firstOrNull()?.timestamp
+        val currentDate = Date(System.currentTimeMillis())
         if (lastMessageDate != null)
         {
-            val currentDate = Date(System.currentTimeMillis())
             val timeGap = currentDate.time - lastMessageDate.time
             val dayGap =
                 (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
@@ -223,6 +224,10 @@ class ChatRoomActivity : VedibartaActivity()
             {
                 write(dateFormatter.format(currentDate), true)
             }
+        }
+        else
+        {
+            write(dateFormatter.format(currentDate), true)
         }
         write(text, false)
         chatBox.setText("")
