@@ -16,6 +16,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -135,43 +136,25 @@ class ChatRoomActivity : VedibartaActivity()
         val initialAdapterPopulationListener = object: View.OnLayoutChangeListener{
             override fun onLayoutChange(p0: View?, p1: Int, p2: Int, p3: Int, p4: Int,p5: Int, p6: Int, p7: Int, p8: Int)
             {
-                Log.d("wtf", "initialAdapterPopulationListener ${adapter.itemCount}")
                 if (adapter.itemCount > 0)
                 {
-                    val linearSmoothScroller = object: LinearSmoothScroller(chatView.context){
-                        override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
-                            Log.d("wtf", displayMetrics.toString())
-                            return 1f/(displayMetrics?.densityDpi ?: adapter.itemCount)
-                        }
-                    }
-                    linearSmoothScroller.setTargetPosition(adapter.itemCount)
-                    chatView.layoutManager!!.startSmoothScroll(linearSmoothScroller)
+                    chatView.smoothScrollToPosition(adapter.itemCount)
                     chatView.removeOnLayoutChangeListener(this)
                 }
             }
         }
 
-        val initialScrollingStoppedListener = object: RecyclerView.OnScrollListener()
-        {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int)
-            {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE)
-                {
-                    chatView.visibility = View.VISIBLE
-                    chatView.removeOnScrollListener(this)
-                }
-            }
-        }
-
         adapter = ChatRoomAdapter(this, options, numMessages)
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        layoutManager.stackFromEnd = true
+        chatView.layoutManager = layoutManager
+        chatView.addOnLayoutChangeListener(initialAdapterPopulationListener)
+        chatView.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+            if (bottom < oldBottom)
+                chatView.smoothScrollToPosition(adapter.itemCount - 1)
+        }
         chatView.adapter = adapter
         adapter.notifyDataSetChanged() //
-        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        chatView.layoutManager = layoutManager
-        chatView.visibility = View.INVISIBLE
-        chatView.addOnLayoutChangeListener(initialAdapterPopulationListener)
-        chatView.addOnScrollListener(initialScrollingStoppedListener)
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -245,7 +228,7 @@ class ChatRoomActivity : VedibartaActivity()
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
 
-        val lastMessageDate: Date? = adapter.snapshots.firstOrNull()?.timestamp
+        val lastMessageDate: Date? = adapter.snapshots.lastOrNull()?.timestamp
         val currentDate = Date(System.currentTimeMillis())
         if (lastMessageDate != null)
         {

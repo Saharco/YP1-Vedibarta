@@ -1,5 +1,6 @@
 package com.technion.vedibarta.chatRoom
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +46,13 @@ class ChatRoomAdapter(
         val lastVisiblePosition =
             (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
         if (this.itemCount - lastVisiblePosition <= 2)
+        {
             chatView.smoothScrollToPosition(this.itemCount)
+        }
+        else
+        {
+            chatView.smoothScrollToPosition(lastVisiblePosition + 3)
+        }
     }
 
     override fun onCreateViewHolder(
