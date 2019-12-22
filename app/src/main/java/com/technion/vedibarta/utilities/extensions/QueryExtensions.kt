@@ -1,5 +1,6 @@
 package com.technion.vedibarta.utilities.extensions
 
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.Query
 import kotlin.random.Random
 
@@ -15,10 +16,15 @@ import kotlin.random.Random
 fun Query.randomCycling(field: String, limit: Long) =
     this.whereGreaterThanOrEqualTo(field, randomId()).orderBy(field).limit(limit).get()
         .continueWithTask { task1 ->
-            this.orderBy(field).limit(limit - task1.result!!.size()).get()
-                .continueWith { task2 ->
-                    task1.result!!.documents.union(task2.result!!.documents)
-                }
+            val docSet = task1.result!!.documents.toSet()
+            if (docSet.size < limit) {
+                this.orderBy(field).limit(limit - task1.result!!.size()).get()
+                    .continueWith { task2 ->
+                        task1.result!!.documents.union(task2.result!!.documents)
+                    }
+            } else {
+                Tasks.call { docSet }
+            }
         }
 
 private fun randomId(): String {
