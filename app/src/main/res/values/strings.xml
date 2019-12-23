@@ -141,6 +141,7 @@
     <string name="before">לפני</string>
     <string name="hours">שעות</string>
     <string name="days">ימים</string>
+    <string name="yesterday">אתמול</string>
 
 
     <!--  FCM  -->

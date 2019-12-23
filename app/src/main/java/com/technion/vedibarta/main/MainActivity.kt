@@ -20,6 +20,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Query
 import com.google.firebase.iid.FirebaseInstanceId
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import com.technion.vedibarta.POJOs.Chat
@@ -143,10 +144,16 @@ class MainActivity : VedibartaActivity() {
     private fun showAllChats() {
         Log.d(TAG, "showing all chat results")
 
-        val adapterQuery = database.chats().build().whereArrayContains("participantsId", userId!!)
+        val adapterQuery = database
+            .chats()
+            .build()
+            .whereArrayContains("participantsId", userId!!)
+            .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
+
         val options = FirestoreRecyclerOptions.Builder<Chat>()
             .setQuery(adapterQuery, Chat::class.java)
             .build()
+
         adapter = getAdapter(options)
         chat_history.layoutManager = LinearLayoutManager(this)
         chat_history.adapter = adapter
@@ -195,25 +202,18 @@ class MainActivity : VedibartaActivity() {
             return context.resources.getString(x)
         }
 
-        private fun calcRelativeTime(time: Date): String {
-            try {
+        private fun calcRelativeTime(time: Date): String
+        {
                 val current = Date(System.currentTimeMillis())
                 val timeGap = current.time - time.time
-                return when (val hoursGap =
-                    TimeUnit.HOURS.convert(timeGap, TimeUnit.MILLISECONDS)) {
+                return when (val hoursGap = TimeUnit.HOURS.convert(timeGap, TimeUnit.MILLISECONDS))
+                {
                     in 0..1 -> getString(R.string.just_now)
-                    in 2..24 -> "${getString(R.string.sent)} ${getString(R.string.before)} $hoursGap ${getString(
-                        R.string.hours
-                    )}"
-                    in 2..168 -> "${getString(R.string.sent)} ${getString(R.string.before)} ${hoursGap / 24} ${getString(
-                        R.string.days
-                    )}"
+                    in 2..24 -> "${getString(R.string.sent)} ${getString(R.string.before)} $hoursGap ${getString(R.string.hours)}"
+                    in 24..48 -> "${getString(R.string.sent)} ${getString(R.string.yesterday)}"
+                    in 48..168 -> "${getString(R.string.sent)} ${getString(R.string.before)} ${hoursGap / 24} ${getString(R.string.days)}"
                     else -> SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(time)
                 }
-            } catch (e: Exception) {
-                com.technion.vedibarta.utilities.error(e, "calc")
-            }
-            return ""
         }
 
         fun bind(chatMetadata: ChatMetadata) {
