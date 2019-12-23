@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator
 import android.content.Context
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.os.Handler
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
@@ -32,6 +33,7 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
     var scrollingPosition = 0
 
     private val scrollSpeedRatio = 0.125f
+    private val listFreezeDuration = 200L
 
     fun <T : ViewHolder> initialize(newAdapter: Adapter<T>) {
         layoutManager = CarouselLinearLayoutManager(context, HORIZONTAL, false)
@@ -52,6 +54,17 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
         })
         adapter = newAdapter
         smoothScrollToPosition(position)
+        isNestedScrollingEnabled = false
+
+        Handler().postDelayed({
+            val child = getChildAt(position)
+            if (childCount == 1) {
+                child.scaleX = 2f
+                child.scaleY = 2f
+                colorView(child, 2f)
+            }
+            isNestedScrollingEnabled = true
+        }, listFreezeDuration)
     }
 
     private fun onScrollChanged() {
@@ -121,7 +134,8 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
         if (state == SCROLL_STATE_IDLE) {
             updatePosition()
         }
-        scrollingPosition = (layoutManager as CarouselLinearLayoutManager).findFirstVisibleItemPosition()
+        scrollingPosition =
+            (layoutManager as CarouselLinearLayoutManager).findFirstVisibleItemPosition()
     }
 
     private fun updatePosition() {

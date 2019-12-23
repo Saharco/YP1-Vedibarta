@@ -76,5 +76,6 @@ class ChatCandidatesActivity : VedibartaActivity() {
         carousel.initialize(carouselAdapter)
         carousel.setViewsToChangeColor(listOf()) // TODO: change color of pushed-back cards
         carouselAdapter.setItems(students)
+        carousel.smoothScrollToPosition(0)
     }
 }
