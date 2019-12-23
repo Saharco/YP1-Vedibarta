@@ -1,12 +1,13 @@
 package com.technion.vedibarta.login
 
-import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -15,9 +16,12 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.technion.vedibarta.POJOs.ActivityCode
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.SplashActivity
+import com.technion.vedibarta.main.MainActivity
+import com.technion.vedibarta.utilities.DocumentsCollections
+import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.extensions.isInForeground
 
 
 private const val REQ_GOOGLE_SIGN_IN = 1
@@ -32,6 +36,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+
+    companion object {
+        const val MINIMUM_LOAD_TIME = 1000L
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +56,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         // If activity is being restored from a previous state, then do nothing.
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             return
         }
 
@@ -108,12 +116,16 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Log.w(TAG, "Failed to send verification email")
-                    Toast.makeText(this, getString(R.string.something_went_wrong),
-                        Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this, getString(R.string.something_went_wrong),
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     Log.w(TAG, "Verification email sent")
-                    Toast.makeText(this, getString(R.string.email_sent_successfully),
-                        Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this, getString(R.string.email_sent_successfully),
+                        Toast.LENGTH_LONG
+                    ).show()
                     onBackButtonClick()
                 }
 
@@ -132,8 +144,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                     if (user!!.isEmailVerified) {
                         updateUIForCurrentUser(user)
                     } else {
-                        Toast.makeText(this, getString(R.string.email_not_verified_error),
-                            Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this, getString(R.string.email_not_verified_error),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
@@ -198,11 +212,32 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     fun updateUIForCurrentUser(user: FirebaseUser?) {
         if (user != null && user.isEmailVerified) {
-            val intent = Intent(this, SplashActivity::class.java)
-            intent.putExtra("loadSuccess", ActivityCode.ActivityMain)
-            intent.putExtra("loadFail", ActivityCode.ActivityUserSetup)
-            startActivity(intent)
-            finish()
+            val database = DocumentsCollections(user.uid)
+            database.students().userId().build().get().addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    VedibartaActivity.student = document.toObject(Student::class.java)
+
+                    Handler().postDelayed({
+                        if (this@LoginActivity.isInForeground()) {
+                            startActivity(Intent(this, MainActivity::class.java))
+                            finish()
+                        }
+                    }, MINIMUM_LOAD_TIME)
+                } else {
+                    Handler().postDelayed({
+                        if (this@LoginActivity.isInForeground()) {
+                            startActivity(Intent(this, UserSetupActivity::class.java))
+                            finish()
+                        }
+                    }, MINIMUM_LOAD_TIME)
+                }
+            }
+
+            // drops current layout
+            VedibartaActivity.showSplash(
+                this,
+                getString(R.string.default_loading_message)
+            )
         }
     }
 }

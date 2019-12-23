@@ -166,4 +166,8 @@
     <string name="dialog_timeout_title">אירעתה שגיאה</string>
     <string name="dialog_timeout_body">התהליך לוקח יותר מדי זמן! \nיש לבדוק את חיבור האינטרנט ולנסות שוב</string>
 
+    <!--  Splash  -->
+    <string name="chat_search_loading_message">מחפשים חברים!</string>
+    <string name="default_loading_message">מכניסים את האחר לכיתה</string>
+
 </resources>

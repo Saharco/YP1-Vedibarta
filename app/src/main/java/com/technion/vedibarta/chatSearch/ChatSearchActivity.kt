@@ -7,14 +7,20 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.os.postDelayed
+import androidx.lifecycle.Lifecycle
+import com.skyfishjy.library.RippleBackground
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
@@ -23,12 +29,14 @@ import com.technion.vedibarta.studentsMatching.impl.MatcherImpl
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.extensions.isInForeground
 import kotlinx.android.synthetic.main.activity_chat_search.*
 
 class ChatSearchActivity : VedibartaActivity() {
 
     companion object {
         private const val MATCHING_TIMEOUT = 10L
+        private const val MINIMUM_TRANSITION_TIME = 900L
         private const val TAG = "ChatSearchActivity"
     }
 
@@ -49,14 +57,15 @@ class ChatSearchActivity : VedibartaActivity() {
         Log.d(TAG, "ChatSearchActivity Created")
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             fakeStudent = savedInstanceState.getSerializable("STUDENT") as Student
             chosenSchool = savedInstanceState.getString("SCHOOL")
             chosenRegion = savedInstanceState.getString("REGION")
         }
 
         schoolsName = resources.getStringArray(R.array.schoolNameList)
-        regionsName = resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+        regionsName =
+            resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
         schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         setupViewPager(searchUserContainer)
@@ -66,7 +75,7 @@ class ChatSearchActivity : VedibartaActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("STUDENT",fakeStudent)
+        outState.putSerializable("STUDENT", fakeStudent)
         outState.putString("SCHOOL", chosenSchool)
         outState.putString("REGION", chosenRegion)
         super.onSaveInstanceState(outState)
@@ -88,7 +97,7 @@ class ChatSearchActivity : VedibartaActivity() {
         when (item.itemId) {
             R.id.actionChatSearch -> {
                 //TODO pass the chosen filters to database/other activity fo rmatching
-                if(validateChosenDetails()) {
+                if (validateChosenDetails()) {
                     searchMatch()
                 }
             }
@@ -125,7 +134,7 @@ class ChatSearchActivity : VedibartaActivity() {
         displayErrorMessage(getString(R.string.chat_search_no_characteristics_chosen_message))
     }
 
-    private fun validateChosenDetails() : Boolean{
+    private fun validateChosenDetails(): Boolean {
         when {
             !regionsName.contains(chosenRegion) && chosenRegion != null -> displayIllegalRegion()
             !schoolsName.contains(chosenSchool) && chosenSchool != null -> displayIllegalSchool()
@@ -147,7 +156,12 @@ class ChatSearchActivity : VedibartaActivity() {
 
         val studentsCollection = DatabaseVersioning.currentVersion.instance.collection("students")
 
-        MatcherImpl(studentsCollection, fakeStudent.characteristics.keys, chosenRegion, chosenSchool).match()
+        MatcherImpl(
+            studentsCollection,
+            fakeStudent.characteristics.keys,
+            chosenRegion,
+            chosenSchool
+        ).match()
             .addOnSuccessListener(this) { students ->
                 val filteredStudents = students.filter { it.uid != student!!.uid }
                 if (filteredStudents.isNotEmpty()) {
@@ -155,19 +169,30 @@ class ChatSearchActivity : VedibartaActivity() {
 
                     val intent = Intent(this, ChatCandidatesActivity::class.java)
                     intent.putExtra("STUDENTS", filteredStudents.toTypedArray())
-                    startActivity(intent)
-                    finish()
+
+                    Handler().postDelayed({
+                        if (this@ChatSearchActivity.isInForeground()) {
+                            startActivity(intent)
+                            finish()
+                        }
+                    }, MINIMUM_TRANSITION_TIME)
+
                 } else {
                     Log.d(TAG, "No matching students founds")
                     Toast.makeText(this, R.string.no_matching_students, Toast.LENGTH_LONG).show()
                 }
             }.addOnFailureListener(this) { exp ->
                 Log.w(TAG, "Matching students failed", exp)
-                if(!isInternetAvailable(this)) {
-                    loadTimeoutTask.run()
+                if (this@ChatSearchActivity.isInForeground()) {
+                    if (isInternetAvailable(this@ChatSearchActivity))
+                        //TODO: retry search!
+                    else
+                        onBackPressed()
                 }
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
+
+        showSplash(this, getString(R.string.chat_search_loading_message)) // drops current layout
     }
 
     @Suppress("DEPRECATION")

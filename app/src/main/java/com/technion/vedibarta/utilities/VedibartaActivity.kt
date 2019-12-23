@@ -14,13 +14,16 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.skyfishjy.library.RippleBackground
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.login.LoginActivity
@@ -29,8 +32,7 @@ import com.technion.vedibarta.login.LoginActivity
  * This is a utility activity with no GUI
  */
 @SuppressLint("Registered")
-open class VedibartaActivity : AppCompatActivity()
-{
+open class VedibartaActivity : AppCompatActivity() {
     val user = FirebaseAuth.getInstance().currentUser
     val userId = user?.uid
     val storage = Storage(userId)
@@ -104,6 +106,46 @@ open class VedibartaActivity : AppCompatActivity()
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
+        /**
+         * Changes the activity's layout to the splash screen's.
+         * This should *only* be called when there's a background task that starts a new activity when finished!
+         *
+         * @param loadMessage: the message to be displayed on the splash screen
+         */
+        @SuppressLint("InflateParams")
+        fun showSplash(activity: Activity, loadMessage: String) {
+            val splashView = activity.layoutInflater.inflate(R.layout.activity_splash, null, false)
+            splashView.startAnimation(
+                AnimationUtils.loadAnimation(
+                    activity,
+                    android.R.anim.fade_in
+                )
+            )
+            activity.setContentView(splashView)
+
+            val rippleBackground = splashView.findViewById<RippleBackground>(R.id.rippleBackground)
+            val splashText = splashView.findViewById<TextView>(R.id.splashText)
+            changeStatusBarColor(
+                activity,
+                ContextCompat.getColor(activity, R.color.backgroundSplash)
+            )
+            splashText.text = loadMessage
+            rippleBackground.startRippleAnimation()
+        }
+
+        /**
+         * Changes the status bar's color (only works on API 21+)
+         *
+         * @param activity: current running activity
+         * @param color: the selected color for the status bar
+         */
+        fun changeStatusBarColor(activity: Activity, color: Int) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val window = activity.window
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                window.statusBarColor = color
+            }
+        }
     }
 
     override fun onStart() {
@@ -124,8 +166,7 @@ open class VedibartaActivity : AppCompatActivity()
         setVisible(false)
     }
 
-    private fun tryRedirectToLogin()
-    {
+    private fun tryRedirectToLogin() {
         if (user == null || !user.isEmailVerified) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -140,18 +181,6 @@ open class VedibartaActivity : AppCompatActivity()
     fun Float.dpToPx(): Float =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, resources.displayMetrics)
 
-    /**
-     * Changes the status bar's color (only works on API 21+)
-     *
-     * @param color: the selected color for the status bar
-     */
-    protected fun changeStatusBarColor(color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = color
-        }
-    }
 
     /**
      * Shows a highlighted text (colored in yellow) in a snackbar.
@@ -166,6 +195,19 @@ open class VedibartaActivity : AppCompatActivity()
             snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
         textView.setTextColor(Color.YELLOW)
         snackbar.show()
+    }
+
+    /**
+     * Changes the status bar's color (only works on API 21+)
+     *
+     * @param color: the selected color for the status bar
+     */
+    protected fun changeStatusBarColor(color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val window = window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = color
+        }
     }
 
     /**
