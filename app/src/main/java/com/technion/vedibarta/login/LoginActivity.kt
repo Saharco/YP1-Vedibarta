@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.Lifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,6 +21,7 @@ import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.DocumentsCollections
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.extensions.isInForeground
+import kotlinx.android.synthetic.main.activity_login.*
 
 
 private const val REQ_GOOGLE_SIGN_IN = 1
@@ -64,6 +64,9 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         fm.beginTransaction().apply {
             add(R.id.login_screen_fragment, LoginOptionsFragment())
         }.commit()
+
+        viewFlipper.setInAnimation(this, android.R.anim.fade_in)
+        viewFlipper.setOutAnimation(this, android.R.anim.fade_out)
     }
 
     override fun onStart() {
@@ -233,7 +236,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 }
             }
 
-            // drops current layout
+            viewFlipper.showNext()
             VedibartaActivity.showSplash(
                 this,
                 getString(R.string.default_loading_message)

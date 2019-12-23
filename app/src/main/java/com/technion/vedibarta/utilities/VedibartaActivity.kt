@@ -108,29 +108,33 @@ open class VedibartaActivity : AppCompatActivity() {
 
         /**
          * Changes the activity's layout to the splash screen's.
-         * This should *only* be called when there's a background task that starts a new activity when finished!
+         * The splash's screen must be *included* into the activity's layout.
+         * This should be called when there's a background task that starts a new activity when finished.
          *
+         * @param activity: current context
          * @param loadMessage: the message to be displayed on the splash screen
          */
-        @SuppressLint("InflateParams")
         fun showSplash(activity: Activity, loadMessage: String) {
-            val splashView = activity.layoutInflater.inflate(R.layout.activity_splash, null, false)
-            splashView.startAnimation(
-                AnimationUtils.loadAnimation(
-                    activity,
-                    android.R.anim.fade_in
-                )
-            )
-            activity.setContentView(splashView)
+            try {
+                val rippleBackground = activity.findViewById<RippleBackground>(R.id.rippleBackground)
+                val splashText = activity.findViewById<TextView>(R.id.splashText)
+                changeStatusBarColor(activity, ContextCompat.getColor(activity, R.color.backgroundSplash))
+                splashText.text = loadMessage
+                rippleBackground.startRippleAnimation()
 
-            val rippleBackground = splashView.findViewById<RippleBackground>(R.id.rippleBackground)
-            val splashText = splashView.findViewById<TextView>(R.id.splashText)
-            changeStatusBarColor(
-                activity,
-                ContextCompat.getColor(activity, R.color.backgroundSplash)
-            )
-            splashText.text = loadMessage
-            rippleBackground.startRippleAnimation()
+            } catch (e: Exception) {
+            }
+        }
+
+        /**
+         * Cancels the splash's animation and returns the status bar color back to its default color
+         *
+         * @param activity: current context
+         */
+        fun hideSplash(activity: Activity) {
+            changeStatusBarColor(activity, ContextCompat.getColor(activity, R.color.colorPrimaryDark))
+            val rippleBackground = activity.findViewById<RippleBackground>(R.id.rippleBackground)
+            rippleBackground.stopRippleAnimation()
         }
 
         /**
@@ -241,5 +245,33 @@ open class VedibartaActivity : AppCompatActivity() {
         if (progress == null || !progress!!.isShowing) return
         progress!!.dismiss()
         progressHandler?.removeCallbacks(loadTimeoutTask)
+    }
+
+    /**
+     * Changes the activity's layout to the splash screen's.
+     * The splash's screen must be *included* into the activity's layout.
+     * This should be called when there's a background task that starts a new activity when finished.
+     *
+     * @param loadMessage: the message to be displayed on the splash screen
+     */
+    fun showSplash(loadMessage: String) {
+        try {
+            val rippleBackground = this.findViewById<RippleBackground>(R.id.rippleBackground)
+            val splashText = this.findViewById<TextView>(R.id.splashText)
+            changeStatusBarColor(this, ContextCompat.getColor(this, R.color.backgroundSplash))
+            splashText.text = loadMessage
+            rippleBackground.startRippleAnimation()
+
+        } catch (e: Exception) {
+        }
+    }
+
+    /**
+     * Cancels the splash's animation and returns the status bar color back to its default color
+     */
+    fun hideSplash() {
+        changeStatusBarColor(this, ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        val rippleBackground = this.findViewById<RippleBackground>(R.id.rippleBackground)
+        rippleBackground.stopRippleAnimation()
     }
 }

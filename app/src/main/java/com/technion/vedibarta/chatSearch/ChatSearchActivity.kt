@@ -12,15 +12,10 @@ import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.core.os.postDelayed
-import androidx.lifecycle.Lifecycle
-import com.skyfishjy.library.RippleBackground
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
@@ -72,6 +67,9 @@ class ChatSearchActivity : VedibartaActivity() {
         editTabs.setupWithViewPager(searchUserContainer)
         setToolbar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
+
+        viewFlipper.setInAnimation(this, android.R.anim.fade_in)
+        viewFlipper.setOutAnimation(this, android.R.anim.fade_out)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -178,8 +176,12 @@ class ChatSearchActivity : VedibartaActivity() {
                     }, MINIMUM_TRANSITION_TIME)
 
                 } else {
-                    Log.d(TAG, "No matching students founds")
+                    Log.d(TAG, "No matching students found")
                     Toast.makeText(this, R.string.no_matching_students, Toast.LENGTH_LONG).show()
+                    if (this@ChatSearchActivity.isInForeground()) {
+                        hideSplash()
+                        viewFlipper.showPrevious()
+                    }
                 }
             }.addOnFailureListener(this) { exp ->
                 Log.w(TAG, "Matching students failed", exp)
@@ -192,7 +194,8 @@ class ChatSearchActivity : VedibartaActivity() {
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
 
-        showSplash(this, getString(R.string.chat_search_loading_message)) // drops current layout
+        viewFlipper.showNext()
+        showSplash(getString(R.string.chat_search_loading_message))
     }
 
     @Suppress("DEPRECATION")
