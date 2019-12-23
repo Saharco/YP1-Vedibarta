@@ -47,12 +47,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.net.URI
 
 
 class UserProfileActivity : VedibartaActivity(),
@@ -671,6 +674,7 @@ class UserProfileActivity : VedibartaActivity(),
             this,
             "$packageName.provider", selectedImageFile!!
         )
+
         Log.d(TAG, "fetched selected image: $selectedImage")
         intent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImage)
         Log.d(TAG, "Activating camera")
@@ -686,17 +690,29 @@ class UserProfileActivity : VedibartaActivity(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "got result from upload activity")
+
         if (resultCode == Activity.RESULT_OK) {
+
             when (requestCode) {
-                REQUEST_CAMERA -> if (selectedImage != null) {
+                REQUEST_CAMERA -> if (selectedImage != null && validateImage(selectedImage!!)) {
                     uploadPhoto(selectedImage!!)
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
-                    uploadPhoto(selectedImage!!)
+                    if (validateImage(selectedImage!!))
+                        uploadPhoto(selectedImage!!)
                 }
             }
         }
+    }
+
+    private fun validateImage(imageUriForVision : Uri) : Boolean {
+        val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
+        val labeler = FirebaseVision.getInstance().onDeviceImageLabeler.processImage(image)
+            .addOnSuccessListener{labels -> Log.d(TAG, labels.toString())}
+            .addOnFailureListener { Log.d(TAG, it.message!!) }.result
+
+        return true
     }
 
     private fun uploadPhoto(imagePath: Uri) {
