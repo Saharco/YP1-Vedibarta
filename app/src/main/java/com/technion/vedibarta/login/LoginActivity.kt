@@ -1,11 +1,13 @@
 package com.technion.vedibarta.login
 
+import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
@@ -23,6 +25,7 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.DocumentsCollections
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -48,6 +51,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        Log.d(TAG, "onCreate: Invoked")
 
         auth = FirebaseAuth.getInstance()
 
@@ -108,6 +112,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpWithEmailButtonClick() {
+        hideKeyboard(this@LoginActivity)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.login_screen_fragment, SignUpWithEmailFragment())
             addToBackStack(null)
@@ -115,6 +120,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpButtonClick(email: String, password: String) {
+        hideKeyboard(this@LoginActivity)
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -156,6 +162,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onLoginButtonClick(email: String, password: String) {
+        hideKeyboard(this@LoginActivity)
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -241,18 +248,16 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                     Handler().postDelayed({
                         Log.d(TAG, "document exists. redirecting to main activity")
                         if (this@LoginActivity.isInForeground()) {
-                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                            this@LoginActivity.finish()
+                            startActivity(Intent(this, MainActivity::class.java))
+                            finish()
                         }
                     }, MINIMUM_LOAD_TIME)
                 } else {
                     Handler().postDelayed({
                         Log.d(TAG, "document doesn't exist. redirecting to user setup")
                         if (this@LoginActivity.isInForeground()) {
-                            val intent = Intent(this@LoginActivity, UserSetupActivity::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            this@LoginActivity.startActivity(intent)
-                            //this@LoginActivity.finish()
+                            startActivity(Intent(this, UserSetupActivity::class.java))
+                            finish()
                         }
                     }, MINIMUM_LOAD_TIME)
                 }

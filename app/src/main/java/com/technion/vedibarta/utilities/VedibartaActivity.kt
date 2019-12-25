@@ -171,7 +171,7 @@ open class VedibartaActivity : AppCompatActivity() {
     }
 
     private fun tryRedirectToLogin() {
-        if (user == null || !user.isEmailVerified) {
+        if (user == null) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
