@@ -59,7 +59,6 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
         }
 
         questionGeneratorDismissButton.setOnClickListener {
-            Toast.makeText(context, R.string.dismiss, Toast.LENGTH_SHORT).show()
             dismiss()
         }
     }

@@ -6,7 +6,6 @@
     <string name="or">או</string>
     <string name="allowed_letters_regex">[אבגדהוזחטיכלמנסעפצקרשתץףןםך]+</string>
     <string name="allowed_letters">אבגדהוזחטיכלמנסעפצקרשתץףןםך</string>
-    <string name="dismiss">הסר</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
@@ -122,11 +121,7 @@
     <string name="main_title">ודיברת</string>
     <string name="main_fab_title">מוצאים חברים</string>
     <string name="main_menu_search_title">חיפוש</string>
-    <string name="open">drawer open</string>
-    <string name="close">drawer close</string>
-    <string name="settings_action_title">Settings</string>
-    <string name="user_profile_action_title">Profile</string>
-    <string name="search_hint">Search</string>
+    <string name="user_profile_action_title">פרופיל</string>
     <string name="app_label">Vedibarta</string>
 
     <string-array name="menuitems">

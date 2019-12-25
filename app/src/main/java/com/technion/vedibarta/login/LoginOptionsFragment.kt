@@ -28,6 +28,7 @@ class LoginOptionsFragment : Fragment() {
     private lateinit var signInListener : OnSignInButtonClickListener
     private lateinit var signUpWithEmailListener: OnSignUpWithEmailButtonClickListener
     private lateinit var continueWithGoogleListener: OnContinueWithGoogleButtonClickListener
+    private lateinit var continueWithFacebookCallback: OnContinueWithFacebookCallback
 
     private lateinit var auth: FirebaseAuth
 
@@ -61,19 +62,7 @@ class LoginOptionsFragment : Fragment() {
         val signInWithFacebookButton = view.findViewById<LoginButton>(R.id.facebook_login_button)
         signInWithFacebookButton.fragment = this
         signInWithFacebookButton.setPermissions("email")
-        signInWithFacebookButton.registerCallback(callbackManager, object :
-            FacebookCallback<LoginResult> {
-            override fun onSuccess(loginResult: LoginResult) {
-                Log.d(TAG, "facebook:onSuccess $loginResult")
-                handleFacebookAccessToken(loginResult.accessToken)
-            }
-            override fun onCancel() {
-                Log.d(TAG, "facebook:onCancel")
-            }
-            override fun onError(e: FacebookException) {
-                Log.d(TAG, "facebook:onError", e)
-            }
-        })
+        signInWithFacebookButton.registerCallback(callbackManager, getFacebookCallbackForLogin())
 
         return view
     }
@@ -87,6 +76,8 @@ class LoginOptionsFragment : Fragment() {
                 throw ClassCastException("$context must implement ${OnSignUpWithEmailButtonClickListener::class}")
         continueWithGoogleListener = context as? OnContinueWithGoogleButtonClickListener ?:
                 throw ClassCastException("$context must implement ${OnContinueWithGoogleButtonClickListener::class}")
+        continueWithFacebookCallback = context as? OnContinueWithFacebookCallback ?:
+                throw ClassCastException("$context must implement ${OnContinueWithFacebookCallback::class}")
     }
 
     private fun signIn() {
@@ -95,6 +86,10 @@ class LoginOptionsFragment : Fragment() {
 
     private fun continueWithGoogle() {
         continueWithGoogleListener.onContinueWithGoogleButtonClick()
+    }
+
+    private fun getFacebookCallbackForLogin() : FacebookCallback<LoginResult> {
+        return continueWithFacebookCallback.getCallbackForLogin()
     }
 
     private fun signUpWithEmail() {
@@ -109,6 +104,10 @@ class LoginOptionsFragment : Fragment() {
         fun onContinueWithGoogleButtonClick()
     }
 
+    interface OnContinueWithFacebookCallback {
+        fun getCallbackForLogin(): FacebookCallback<LoginResult>
+    }
+
     interface OnSignUpWithEmailButtonClickListener {
         fun onSignUpWithEmailButtonClick()
     }
@@ -119,46 +118,4 @@ class LoginOptionsFragment : Fragment() {
         //super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d(TAG, "handleFacebookAccessToken: ${token.token}")
-        val authCredential = FacebookAuthProvider.getCredential(token.token)
-        auth.signInWithCredential(authCredential)
-            .addOnCompleteListener(activity!!) {
-                if (it.isSuccessful) {
-                    Log.d(TAG, "signInWithCredential: success")
-                    (activity as LoginActivity).updateUIForCurrentUser(auth.currentUser)
-                } else {
-                    try {
-                        throw it.exception!!
-                    } catch (e: FirebaseAuthInvalidCredentialsException) {
-                        Log.d(TAG, "Credentials has been malformed or expired")
-                        Toast.makeText(activity, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
-                    } catch (e: FirebaseAuthUserCollisionException) {
-                        Log.d(TAG, "User with same credentials already exists")
-                        Toast.makeText(activity, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
-                        val email = authCredential.signInMethod
-                        var provider = ""; var providers: List<String>? = null
-                        try {
-                            val resultTask = auth.fetchSignInMethodsForEmail(email)
-                            if (!it.isSuccessful)
-                                Log.w(TAG, "Task is not successful")
-                            else {
-                                providers = resultTask.result!!.signInMethods
-                            }
-                        } catch (nullptrEx: NullPointerException) {
-                            Log.w(TAG, "NullPointerException from getSignInMethods")
-                        }
-                        if (providers == null || providers.isEmpty())
-                            Log.w(TAG, "No existing sign in providers")
-                        auth.signOut()
-                        LoginManager.getInstance().logOut()
-                    } catch (e: Exception) {
-                        Log.d(TAG, "Authentication failed")
-                        Toast.makeText(activity, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
-                    }
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithCredential:failure", it.exception)
-                }
-            }
-    }
 }
