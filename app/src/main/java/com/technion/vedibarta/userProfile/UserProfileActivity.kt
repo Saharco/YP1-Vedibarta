@@ -55,6 +55,7 @@ import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.Exception
 import java.net.URI
 
 
@@ -707,10 +708,26 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun validateImage(imageUriForVision : Uri) : Boolean {
-        val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
-        val labeler = FirebaseVision.getInstance().onDeviceImageLabeler.processImage(image)
-            .addOnSuccessListener{labels -> Log.d(TAG, labels.toString())}
-            .addOnFailureListener { Log.d(TAG, it.message!!) }.result
+        try
+        {
+            val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
+            val labeler = FirebaseVision.getInstance().onDeviceImageLabeler.processImage(image)
+//                .addOnSuccessListener{labels -> Log.d(TAG, labels.toString())}
+//                .addOnFailureListener { Log.d(TAG, it.message!!) }.
+            while (!labeler.isComplete){
+
+            }
+            Log.d(TAG,"${labeler.result?.toString()}")
+            if (labeler.isSuccessful){
+                for (label in labeler.result!!){
+                    Log.d("wtf", "Label: ${label.text} confidence: ${label.confidence}")
+                }
+            }
+        }
+        catch (e: Exception)
+        {
+            Log.d(TAG, "validateImage ${e.message}, cause: ${e.cause?.message}")
+        }
 
         return true
     }
