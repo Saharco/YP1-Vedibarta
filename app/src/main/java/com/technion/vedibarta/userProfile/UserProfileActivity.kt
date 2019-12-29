@@ -696,12 +696,14 @@ class UserProfileActivity : VedibartaActivity(),
 
             when (requestCode) {
                 REQUEST_CAMERA -> if (selectedImage != null && validateImage(selectedImage!!)) {
-                    uploadPhoto(selectedImage!!)
+                    //uploadPhoto(selectedImage!!)
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
                     if (validateImage(selectedImage!!))
-                        uploadPhoto(selectedImage!!)
+                    {
+                        //uploadPhoto(selectedImage!!)
+                    }
                 }
             }
         }
@@ -719,7 +721,9 @@ class UserProfileActivity : VedibartaActivity(),
             }
             Log.d(TAG,"${labeler.result?.toString()}")
             if (labeler.isSuccessful){
-                for (label in labeler.result!!){
+                Log.d("wtf", "---------------------------------------------")
+                for (label in labeler.result!!)
+                {
                     Log.d("wtf", "Label: ${label.text} confidence: ${label.confidence}")
                 }
             }
