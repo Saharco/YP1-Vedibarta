@@ -1,26 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="hobbies_hebrew">
-        <item>הוראה</item>
+        <item>ספורט</item>
+        <item>מוסיקה</item>
+        <item>מחשבים</item>
         <item>משחקי מחשב</item>
-        <item>תכנות</item>
+        <item>קולנוע</item>
+        <item>תאטרון</item>
+        <item>קריאת ספרים</item>
+        <item>שופינג</item>
+        <item>חברים</item>
+        <item>אוכל</item>
+        <item>ריקוד</item>
+        <item>אומנות</item>
+        <item>רובוטיקה</item>
+        <item>מדעים</item>
+        <item>מתמטיקה</item>
         <item>כדורגל</item>
         <item>כדורסל</item>
         <item>טניס</item>
-        <item>סרטים</item>
-        <item>ספרים</item>
-        <item>ציור</item>
-        <item>אומנות</item>
-        <item>מוסיקה</item>
-        <item>צילום</item>
-        <item>שופינג</item>
-        <item>רובוטיקה</item>
+        <item>שחייה</item>
         <item>טיולים</item>
-        <item>מדע</item>
-        <item>ספורט</item>
-        <item>ריקוד</item>
-        <item>כושר</item>
-        <item>מתמטיקה</item>
-        <item>גלישת גלים</item>
+        <item>טבע</item>
+        <item>צילום</item>
+        <item>ציור</item>
+        <item>פוליטיקה</item>
+        <item>סדרות- נטפליקס</item>
+        <item>בישול</item>
+        <item>תנועות נוער</item>
+        <item>אופנה</item>
+        <item>אופניים</item>
+        <item>אומנויות לחימה</item>
+        <item>משחקי לוח</item>
+
+    </array>
+    <array name="hobbies_arabic">
+        <item>رياضة</item>
+        <item>موسيقى</item>
+        <item>حاسوب</item>
+        <item>العاب الحاسوب</item>
+        <item>سينما</item>
+        <item>مسرح</item>
+        <item>قرائة كتب</item>
+        <item>التسوق</item>
+        <item>الأصدقاء</item>
+        <item>الأكل</item>
+        <item>الرقص</item>
+        <item>الفن</item>
+        <item>روبوتيكا</item>
+        <item>العلوم</item>
+        <item>الرياضيات</item>
+        <item>كرة القدم</item>
+        <item>كرة السلة</item>
+        <item>التنيس</item>
+        <item>السباحة</item>
+        <item>الرحلات</item>
+        <item>الطبيعة</item>
+        <item>التصوير</item>
+        <item>الرسم</item>
+        <item>السياسة</item>
+        <item>مسلسلات نتفليكس</item>
+        <item>الطبخ</item>
+        <item>حركات الشبيبة</item>
+        <item>الموضة</item>
+        <item>الدراجات</item>
+        <item>فنون القتال</item>
+        <item>العاب اللوح</item>
     </array>
 </resources>
