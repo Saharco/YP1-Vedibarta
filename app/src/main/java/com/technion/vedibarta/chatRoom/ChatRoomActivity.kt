@@ -74,7 +74,7 @@ class ChatRoomActivity : VedibartaActivity()
         buttonChatBoxSend.setOnClickListener { sendMessage(it) }
         popupMenu.setOnClickListener { showPopup(it) }
         if (student!!.gender == Gender.FEMALE)
-            chatBox.text =
+            chatBox.hint =
                 SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
         toolbarUserName.text = partnerName
         Glide.with(applicationContext)

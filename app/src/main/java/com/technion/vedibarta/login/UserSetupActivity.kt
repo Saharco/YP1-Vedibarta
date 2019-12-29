@@ -86,8 +86,8 @@ class UserSetupActivity : VedibartaActivity() {
         adapter.addFragment(ChooseExtraOptionsFragment(), "2")
         adapter.addFragment(ChooseCharacteristicsFragment(), "3")
         adapter.addFragment(ChooseHobbiesFragment(), "4")
-        viewPager.setOnTouchListener { v, event ->
 
+        viewPager.setOnTouchListener { v, event ->
             if (setupStudent.gender == Gender.NONE) {
                 Toast.makeText(
                     applicationContext,
@@ -95,12 +95,14 @@ class UserSetupActivity : VedibartaActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+                adapter.replaceFragment(2, ChooseCharacteristicsFragment())
                 v.onTouchEvent(event)
             }
             return@setOnTouchListener true
         }
+
         viewPager.adapter = adapter
-        viewPager.offscreenPageLimit = 2
+        viewPager.offscreenPageLimit = 1
 //        viewPager.addOnPageChangeListener(CustomViewPageListener(this))
     }
 
