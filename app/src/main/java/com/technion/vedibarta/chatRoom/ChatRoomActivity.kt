@@ -3,6 +3,7 @@ package com.technion.vedibarta.chatRoom
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.MenuItem
@@ -25,6 +26,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
@@ -37,7 +39,7 @@ class ChatRoomActivity : VedibartaActivity()
     , ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
     , ChatRoomAbuseReportDialog.AbuseReportDialogListener {
     val systemSender = "-1"
-    private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
+    private lateinit var adapter: ChatRoomAdapter
     lateinit var chatId: String
     lateinit var partnerId: String
     private var numMessages = 0
@@ -107,13 +109,13 @@ class ChatRoomActivity : VedibartaActivity()
     override fun onStart()
     {
         super.onStart()
-        adapter.startListening()
+        adapter.fireStoreAdapter.startListening()
     }
 
     override fun onStop()
     {
         super.onStop()
-        adapter.stopListening()
+        adapter.fireStoreAdapter.stopListening()
 
     }
 
@@ -136,9 +138,9 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.notifyDataSetChanged() //
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         chatView.layoutManager = layoutManager
-        chatView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            chatView.scrollToPosition(0)
-        }
+        chatView.addOnLayoutChangeListener(scrollToBottomOnKeyboardOpening())
+        adapter.registerAdapterDataObserver(automiaticScroller())
+        chatView.adapter = adapter
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -212,7 +214,7 @@ class ChatRoomActivity : VedibartaActivity()
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
 
-        val lastMessageDate: Date? = adapter.snapshots.firstOrNull()?.timestamp
+        val lastMessageDate: Date? = adapter.getFirstMessageOrNull()?.timestamp
         val currentDate = Date(System.currentTimeMillis())
         if (lastMessageDate != null)
         {
@@ -249,5 +251,35 @@ class ChatRoomActivity : VedibartaActivity()
             .addOnFailureListener {
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun automiaticScroller(): RecyclerView.AdapterDataObserver
+    {
+        return object: RecyclerView.AdapterDataObserver()
+        {
+            override fun onChanged()
+            {
+                super.onChanged()
+
+                val firstVisiblePosition =
+                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                if (firstVisiblePosition <= 1)
+                    chatView.scrollToPosition(0)
+                else
+                {
+                    chatView.scrollToPosition(firstVisiblePosition + 1)
+                }
+            }
+        }
+    }
+
+    private fun scrollToBottomOnKeyboardOpening(): View.OnLayoutChangeListener {
+        return View.OnLayoutChangeListener { _, _, _, bottom, _, _, _, _, oldBottom ->
+            if (bottom < oldBottom) {
+                Handler().postDelayed({
+                    chatView.scrollToPosition(0)
+                }, 0)
+            }
+        }
     }
 }
