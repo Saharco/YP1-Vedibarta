@@ -38,7 +38,7 @@ class ProfileEditHobbiesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile_edit_hobbies, container, false)
-        hobbies = resources.getStringArray(R.array.hobbies_hebrew)
+        hobbies = resources.getStringArray(R.array.hobbies)
         table = view.findViewById(R.id.editHobbiesTable) as TableLayout
         populateHobbiesTable()
         return view

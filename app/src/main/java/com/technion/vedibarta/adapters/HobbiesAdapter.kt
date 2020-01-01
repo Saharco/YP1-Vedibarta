@@ -42,9 +42,13 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Studen
             table = itemView.findViewById(R.id.hobbiesTables)
 
             header.text = hobbyCard.title
-            VedibartaFragment.populateHobbiesTable(itemView.context, table, hobbyCard.hobbies.map { it.second }.toTypedArray(), student)
+            VedibartaFragment.populateHobbiesTable(
+                itemView.context,
+                table,
+                hobbyCard.hobbies,
+                student
+            )
 
-            //TODO: populate the names of the bubble in the hobbies list with hobbyCard.hobbies
             //TODO: populate the photos of the bubble in the hobbies list with hobbyCard.hobbies
             //TODO: attach listener to each hobby in the hobbies list
 

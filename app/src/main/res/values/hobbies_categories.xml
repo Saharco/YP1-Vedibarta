@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="hobbies_categories">
+        <item>אומנות</item>
+        <item>ספורט</item>
+        <item>טכנולוגייה</item>
+        <item>בילויים</item>
+        <item>משחקים</item>
+        <item>אחר</item>
+    </array>
+</resources>

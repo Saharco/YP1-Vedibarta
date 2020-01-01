@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
@@ -145,7 +146,7 @@ class UserSetupActivity : VedibartaActivity() {
         title.setText(R.string.user_setup_missing_details_dialog_title)
         title.textSize = 20f
         title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(resources.getColor(R.color.textPrimary))
+        title.setTextColor(ContextCompat.getColor(this,R.color.textPrimary))
         title.gravity = Gravity.CENTER
         title.setPadding(10, 40, 10, 24)
         val builder = AlertDialog.Builder(this)

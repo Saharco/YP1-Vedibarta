@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="hobbies">
+        <!--    art    -->
+        <item>موسيقى</item>
+        <item>سينما</item>
+        <item>الأكل</item>
+        <item>التصوير</item>
+        <item>الرسم</item>
+
+        <!--    sports    -->
+        <item>كرة القدم</item>
+        <item>كرة السلة</item>
+        <item>التنيس</item>
+        <item>السباحة</item>
+        <item>الرحلات</item>
+        <item>الدراجات</item>
+        <item>فنون القتال</item>
+
+        <!--    technology    -->
+        <item>روبوتيكا</item>
+        <item>العلوم</item>
+        <item>الرياضيات</item>
+        <item>حاسوب</item>
+
+        <!--    hangouts    -->
+        <item>مسرح</item>
+        <item>التسوق</item>
+        <item>الأصدقاء</item>
+        <item>الرقص</item>
+        <item>سلسله</item>
+        <item>حركات الشبيبة</item>
+        <item>الموضة</item>
+
+        <!--    games    -->
+        <item>العاب الحاسوب</item>
+        <item>العاب اللوح</item>
+
+        <!--    other    -->
+        <item>قرائة كتب</item>
+        <item>الطبيعة</item>
+        <item>السياسة</item>
+        <item>الطبخ</item>
+    </array>
+</resources>

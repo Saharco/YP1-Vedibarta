@@ -25,7 +25,7 @@ class ChooseHobbiesFragment : VedibartaFragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_hobbies, container, false)
 
-        val hobbies = resources.getStringArray(R.array.hobbies_hebrew)
+        val hobbies = resources.getStringArray(R.array.hobbies)
         val table = view.findViewById(R.id.chooseHobbiesTable) as TableLayout
 
         populateHobbiesTable(activity as VedibartaActivity,table,hobbies,(activity as UserSetupActivity).setupStudent)
