@@ -1,5 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <array name="hobbies_id_link">
+        <item>@array/hobbies_art</item>
+        <item>@array/hobbies_sports</item>
+        <item>@array/hobbies_technology</item>
+        <item>@array/hobbies_hangouts</item>
+        <item>@array/hobbies_games</item>
+        <item>@array/hobbies_other</item>
+    </array>
+
+    <array name="hobbies_art">
+        <item>موسيقى</item>
+        <item>سينما</item>
+        <item>الأكل</item>
+        <item>التصوير</item>
+        <item>الرسم</item>
+    </array>
+
+    <array name="hobbies_sports">
+        <item>كرة القدم</item>
+        <item>كرة السلة</item>
+        <item>التنيس</item>
+        <item>السباحة</item>
+        <item>الرحلات</item>
+        <item>الدراجات</item>
+        <item>فنون القتال</item>
+    </array>
+
+    <array name="hobbies_technology">
+        <item>روبوتيكا</item>
+        <item>العلوم</item>
+        <item>الرياضيات</item>
+        <item>حاسوب</item>
+    </array>
+
+    <array name="hobbies_hangouts">
+        <item>مسرح</item>
+        <item>التسوق</item>
+        <item>الأصدقاء</item>
+        <item>الرقص</item>
+        <item>سلسله</item>
+        <item>حركات الشبيبة</item>
+        <item>الموضة</item>
+    </array>
+
+    <array name="hobbies_games">
+        <item>العاب الحاسوب</item>
+        <item>العاب اللوح</item>
+    </array>
+
+    <array name="hobbies_other">
+        <item>قرائة كتب</item>
+        <item>الطبيعة</item>
+        <item>السياسة</item>
+        <item>الطبخ</item>
+    </array>
+
     <array name="hobbies">
         <!--    art    -->
         <item>موسيقى</item>
@@ -42,4 +99,7 @@
         <item>السياسة</item>
         <item>الطبخ</item>
     </array>
+
+
+
 </resources>
