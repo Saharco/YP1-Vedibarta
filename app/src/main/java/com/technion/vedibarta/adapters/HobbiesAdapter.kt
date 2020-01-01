@@ -26,7 +26,7 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Studen
     }
 
     override fun onBindViewHolder(holder: HobbyCardViewHolder, position: Int) {
-        holder.bind(hobbyCard[position], student)
+        holder.bind(hobbyCard[holder.adapterPosition], student)
     }
 
     class HobbyCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -40,6 +40,7 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Studen
         ) {
             header = itemView.findViewById(R.id.hobbyCardTitle)
             table = itemView.findViewById(R.id.hobbiesTables)
+            table.removeAllViews()
 
             header.text = hobbyCard.title
             VedibartaFragment.populateHobbiesTable(
@@ -48,9 +49,6 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Studen
                 hobbyCard.hobbies,
                 student
             )
-
-            //TODO: populate the photos of the bubble in the hobbies list with hobbyCard.hobbies
-            //TODO: attach listener to each hobby in the hobbies list
 
         }
     }

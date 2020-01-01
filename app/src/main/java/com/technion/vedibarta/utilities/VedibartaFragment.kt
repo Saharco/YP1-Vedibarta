@@ -177,8 +177,7 @@ open class VedibartaFragment : Fragment() {
             hobbies: Array<String>,
             student: Student
         ) {
-
-            val hobbies = context.resources.getStringArray(R.array.hobbies)
+            val allHobbies = context.resources.getStringArray(R.array.hobbies)
 
             val tableRowParams = TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
@@ -209,7 +208,7 @@ open class VedibartaFragment : Fragment() {
                         null
                     ) as ConstraintLayout
                     val bubblePhoto = bubbleFrame.findViewById(R.id.hobbyPhoto) as CircleImageView
-                    bubblePhoto.setImageDrawable(hobbyToPhoto(context, hobbies[i + j], hobbies))
+                    bubblePhoto.setImageDrawable(hobbyToPhoto(context, hobbies[i + j], allHobbies))
 
                     val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
 
@@ -282,7 +281,7 @@ open class VedibartaFragment : Fragment() {
             return ContextCompat.getDrawable(context, hobbyPhotoId)
         }
 
-        private fun hobbyToCategory(hobby: String, hobbies: Array<String>, categories: Array<String>): String {
+        fun hobbyToCategory(hobby: String, hobbies: Array<String>, categories: Array<String>): String {
             return when (hobbies.indexOf(hobby)) {
                 in 0..4 -> categories[0]
                 in 5..11 -> categories[1]

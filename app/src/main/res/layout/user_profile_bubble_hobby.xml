@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/hobbyText"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="80dp"
         android:gravity="center"
         android:maxLines="3"
