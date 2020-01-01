@@ -18,18 +18,15 @@ import androidx.core.view.get
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
+import com.technion.vedibarta.utilities.VedibartaFragment
 
-class ProfileEditCharacteristicsFragment : Fragment() {
+class ProfileEditCharacteristicsFragment : VedibartaFragment() {
 
     private val TAG = "CharFragment@Edit"
 
-    private val SELECTED_BUBBLE = 1
-    private val NON_SELECTED_BUBBLE = 0
-
-    private lateinit var characteristics: Array<String>
-    private lateinit var table: TableLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,120 +36,120 @@ class ProfileEditCharacteristicsFragment : Fragment() {
             R.layout.fragment_profile_edit_characteristics, container,
             false
         )
+        val characteristics : Array<String>
         if (student!!.gender != Gender.FEMALE)
             characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
         else
             characteristics = resources.getStringArray(R.array.characteristicsFemale_hebrew)
 
-        table = view.findViewById(R.id.editCharacteristicsTable) as TableLayout
-        populateCharacteristicsTable()
+        val table = view.findViewById(R.id.editCharacteristicsTable) as TableLayout
+        populateCharacteristicsTable(this.context!!, table, characteristics, student!!)
         return view
     }
 
-    @SuppressLint("InflateParams")
-    private fun populateCharacteristicsTable() {
+//    private fun populateCharacteristicsTable() {
+//
+//        val tableRowParams = TableLayout.LayoutParams(
+//            TableLayout.LayoutParams.MATCH_PARENT,
+//            TableLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        tableRowParams.topMargin = 40 // in pixels
+//
+//        val bubbleParams =
+//            TableRow.LayoutParams(
+//                TableRow.LayoutParams.WRAP_CONTENT,
+//                TableRow.LayoutParams.WRAP_CONTENT
+//            )
+//
+//        if (student == null || characteristics.isEmpty()) {
+//            return
+//        }
+//
+//        val studentsCharacteristics = student!!.characteristics.filter { it.value }.keys.toList()
+//        val steps = calculateBubblesInRow()
+//        (characteristics.indices step steps).forEach { i ->
+//            val tableRow = TableRow(activity)
+//            tableRow.id = i
+//            tableRow.layoutParams = tableRowParams
+//            tableRow.gravity = Gravity.CENTER_HORIZONTAL
+//
+//            var bubbleFrame: FrameLayout
+//
+//            for (j in 0 until steps) {
+//                if (i + j >= characteristics.size)
+//                    break
+//                if (studentsCharacteristics.contains(characteristics[i + j])) {
+//                    bubbleFrame = LayoutInflater.from(activity).inflate(
+//                        R.layout.user_profile_bubble_blue,
+//                        null
+//                    ) as FrameLayout
+//                    bubbleFrame.alpha = 1f
+//                    bubbleFrame.tag = SELECTED_BUBBLE
+//                } else {
+//                    bubbleFrame = LayoutInflater.from(activity).inflate(
+//                        R.layout.user_profile_bubble_blue_selected,
+//                        null
+//                    ) as FrameLayout
+//                    bubbleFrame.alpha = 0.6f
+//                    bubbleFrame.tag = NON_SELECTED_BUBBLE
+//                }
+//                bubbleFrame.id = i + j
+//                bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
+//                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
+//                bubble.text = characteristics[i + j]
+//                bubbleFrame.layoutParams = bubbleParams
+//                tableRow.addView(bubbleFrame)
+//            }
+//
+//            table.addView(tableRow)
+//        }
+//    }
 
-        val tableRowParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.MATCH_PARENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-        tableRowParams.topMargin = 40 // in pixels
+//    private fun calculateBubblesInRow(): Int =
+//        ((Resources.getSystem().displayMetrics.widthPixels - dpToPx(resources, 48f)) / dpToPx(
+//            resources,
+//            100f
+//        )).toInt()
 
-        val bubbleParams =
-            TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-            )
-
-        if (student == null || characteristics.isEmpty()) {
-            return
-        }
-
-        val studentsCharacteristics = student!!.characteristics.filter { it.value }.keys.toList()
-        val steps = calculateBubblesInRow()
-        (characteristics.indices step steps).forEach { i ->
-            val tableRow = TableRow(activity)
-            tableRow.id = i
-            tableRow.layoutParams = tableRowParams
-            tableRow.gravity = Gravity.CENTER_HORIZONTAL
-
-            var bubbleFrame: FrameLayout
-
-            for (j in 0 until steps) {
-                if (i + j >= characteristics.size)
-                    break
-                if (studentsCharacteristics.contains(characteristics[i + j])) {
-                    bubbleFrame = LayoutInflater.from(activity).inflate(
-                        R.layout.user_profile_bubble_blue,
-                        null
-                    ) as FrameLayout
-                    bubbleFrame.alpha = 1f
-                    bubbleFrame.tag = SELECTED_BUBBLE
-                } else {
-                    bubbleFrame = LayoutInflater.from(activity).inflate(
-                        R.layout.user_profile_bubble_blue_selected,
-                        null
-                    ) as FrameLayout
-                    bubbleFrame.alpha = 0.6f
-                    bubbleFrame.tag = NON_SELECTED_BUBBLE
-                }
-                bubbleFrame.id = i + j
-                bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
-                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = characteristics[i + j]
-                bubbleFrame.layoutParams = bubbleParams
-                tableRow.addView(bubbleFrame)
-            }
-
-            table.addView(tableRow)
-        }
-    }
-
-    private fun calculateBubblesInRow(): Int =
-        ((Resources.getSystem().displayMetrics.widthPixels - dpToPx(resources, 48f)) / dpToPx(
-            resources,
-            100f
-        )).toInt()
-
-    private fun characteristicsItemClickHandler(view: View) {
-        val steps = calculateBubblesInRow()
-        val row = view.id / steps
-        val tableRow = table[row] as TableRow
-        val bubbleFrame: FrameLayout
-        val viewPos = view.id % steps
-
-        Log.d(TAG, "row: $row, View: ${view.id}")
-
-        if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
-            bubbleFrame = LayoutInflater.from(activity).inflate(
-                R.layout.user_profile_bubble_blue,
-                null
-            ) as FrameLayout
-            bubbleFrame.alpha = 1f
-            bubbleFrame.tag = SELECTED_BUBBLE
-            Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
-            (activity as ProfileEditActivity).editedCharacteristics[characteristics[view.id]] = true
-        } else {
-            bubbleFrame = LayoutInflater.from(activity).inflate(
-                R.layout.user_profile_bubble_blue_selected,
-                null
-            ) as FrameLayout
-            bubbleFrame.alpha = 0.6f
-            bubbleFrame.tag = NON_SELECTED_BUBBLE
-            Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
-            (activity as ProfileEditActivity).editedCharacteristics[characteristics[view.id]] = false
-        }
-
-        bubbleFrame.id = view.id
-        bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
-
-        Log.d(TAG, "Copying Text ${characteristics[view.id]}, View Id: ${view.id}, Row: $row")
-
-        val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
-        bubble.text = characteristics[view.id]
-        bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
-
-        tableRow.removeViewAt(viewPos)
-        tableRow.addView(bubbleFrame, viewPos)
-    }
+//    private fun characteristicsItemClickHandler(view: View) {
+//        val steps = calculateBubblesInRow()
+//        val row = view.id / steps
+//        val tableRow = table[row] as TableRow
+//        val bubbleFrame: FrameLayout
+//        val viewPos = view.id % steps
+//
+//        Log.d(TAG, "row: $row, View: ${view.id}")
+//
+//        if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
+//            bubbleFrame = LayoutInflater.from(activity).inflate(
+//                R.layout.user_profile_bubble_blue,
+//                null
+//            ) as FrameLayout
+//            bubbleFrame.alpha = 1f
+//            bubbleFrame.tag = SELECTED_BUBBLE
+//            Log.d(TAG, "Adding ${characteristics[view.id]} to the set")
+//            (activity as ProfileEditActivity).editedCharacteristics[characteristics[view.id]] = true
+//        } else {
+//            bubbleFrame = LayoutInflater.from(activity).inflate(
+//                R.layout.user_profile_bubble_blue_selected,
+//                null
+//            ) as FrameLayout
+//            bubbleFrame.alpha = 0.6f
+//            bubbleFrame.tag = NON_SELECTED_BUBBLE
+//            Log.d(TAG, "Removing ${characteristics[view.id]} from the set")
+//            (activity as ProfileEditActivity).editedCharacteristics[characteristics[view.id]] = false
+//        }
+//
+//        bubbleFrame.id = view.id
+//        bubbleFrame.setOnClickListener { characteristicsItemClickHandler(it) }
+//
+//        Log.d(TAG, "Copying Text ${characteristics[view.id]}, View Id: ${view.id}, Row: $row")
+//
+//        val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
+//        bubble.text = characteristics[view.id]
+//        bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
+//
+//        tableRow.removeViewAt(viewPos)
+//        tableRow.addView(bubbleFrame, viewPos)
+//    }
 }

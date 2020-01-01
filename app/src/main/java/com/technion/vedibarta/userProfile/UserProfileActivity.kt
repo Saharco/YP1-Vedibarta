@@ -6,34 +6,33 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Bundle
-import android.provider.MediaStore
-import kotlinx.android.synthetic.main.activity_user_profile.*
-import android.widget.*
-import android.widget.TableLayout
-
-import androidx.fragment.app.DialogFragment
-import com.technion.vedibarta.R
-import androidx.core.content.FileProvider
-import android.net.Uri
-import android.util.Log
-import java.io.File
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
-
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.AsyncTask
+import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.view.forEach
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -47,11 +46,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.iid.FirebaseInstanceId
-import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.R
+import com.technion.vedibarta.adapters.HobbiesAdapter
+import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaFragment
+import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 
 
@@ -81,6 +85,7 @@ class UserProfileActivity : VedibartaActivity(),
         setContentView(R.layout.activity_user_profile)
         Log.d(TAG, "created UserProfileActivity")
         initWidgets()
+
     }
 
     override fun onStart() {
@@ -92,6 +97,7 @@ class UserProfileActivity : VedibartaActivity(),
     private fun resetTables() {
         characteristicsTable.removeAllViews()
         hobbiesTable.removeAllViews()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -137,7 +143,7 @@ class UserProfileActivity : VedibartaActivity(),
         title.setText(R.string.dialog_logout_title)
         title.textSize = 20f
         title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(resources.getColor(R.color.textPrimary))
+        title.setTextColor(ContextCompat.getColor(this,R.color.textPrimary))
         title.gravity = Gravity.CENTER
         title.setPadding(10, 40, 10, 24)
 
@@ -178,7 +184,7 @@ class UserProfileActivity : VedibartaActivity(),
     private fun initWidgets() {
         setToolbar(toolbar)
         enlargedToolbar.title = student!!.name
-        enlargedToolbar.setTitleTextColor(resources.getColor(android.R.color.white))
+        enlargedToolbar.setTitleTextColor(ContextCompat.getColor(this,android.R.color.white))
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()
@@ -202,7 +208,8 @@ class UserProfileActivity : VedibartaActivity(),
 
     private fun loadUserData() {
         populateCharacteristicsTable()
-        populateHobbiesTable()
+        VedibartaFragment.populateHobbiesTable(this,hobbiesTable, student!!.hobbies.toTypedArray(), student!!)
+        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable=false } }
         populateProfilePicture()
         populateUsername()
         populateUserRegion()
@@ -279,7 +286,7 @@ class UserProfileActivity : VedibartaActivity(),
         displayUserProfilePicture()
     }
 
-    @SuppressLint("InflateParams")
+
     private fun populateCharacteristicsTable() {
         val studentsCharacteristics = student!!.characteristics.filter { it.value }.keys.toList()
 
@@ -295,8 +302,7 @@ class UserProfileActivity : VedibartaActivity(),
                 TableRow.LayoutParams.WRAP_CONTENT
             )
 
-        if (student == null || studentsCharacteristics.isEmpty()) {
-            handleNoCharacteristics()
+        if (student == null) {
             return
         }
 
@@ -333,59 +339,51 @@ class UserProfileActivity : VedibartaActivity(),
     private fun calculateBubblesInRow(): Int =
         ((Resources.getSystem().displayMetrics.widthPixels - 48f.dpToPx()) / (100f.dpToPx())).toInt()
 
-    private fun handleNoCharacteristics() {
-        //TODO: add some behavior for the scenario where the user has no characteristics
-    }
-
     @SuppressLint("InflateParams")
-    private fun populateHobbiesTable() {
-
-        val tableRowParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.MATCH_PARENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-        tableRowParams.topMargin = 40 // in pixels
-
-        val bubbleParams =
-            TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-            )
-
-        if (student == null || student!!.hobbies.isEmpty()) {
-            handleNoHobbies()
-            return
-        }
-
-        val steps = calculateBubblesInRow()
-        (student!!.hobbies.indices step steps).forEach { i ->
-            val tableRow = TableRow(this)
-            tableRow.layoutParams = tableRowParams
-            tableRow.gravity = Gravity.CENTER_HORIZONTAL
-
-            for (j in 0 until steps) {
-                if (i + j >= student!!.hobbies.size)
-                    break
-
-                val bubbleFrame = LayoutInflater.from(this).inflate(
-                    R.layout.user_profile_bubble_orange,
-                    null
-                ) as FrameLayout
-
-                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = student!!.hobbies[i + j]
-                bubbleFrame.layoutParams = bubbleParams
-
-                tableRow.addView(bubbleFrame)
-            }
-
-            hobbiesTable.addView(tableRow)
-        }
-    }
-
-    private fun handleNoHobbies() {
-        //TODO: add some behavior for the scenario where the user has no characteristics
-    }
+//    private fun populateHobbiesTable() {
+//
+//        val tableRowParams = TableLayout.LayoutParams(
+//            TableLayout.LayoutParams.MATCH_PARENT,
+//            TableLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        tableRowParams.topMargin = 40 // in pixels
+//
+//        val bubbleParams =
+//            TableRow.LayoutParams(
+//                TableRow.LayoutParams.WRAP_CONTENT,
+//                TableRow.LayoutParams.WRAP_CONTENT
+//            )
+//
+//        if (student == null || student!!.hobbies.isEmpty()) {
+//            handleNoHobbies()
+//            return
+//        }
+//
+//        val steps = calculateBubblesInRow()
+//        (student!!.hobbies.indices step steps).forEach { i ->
+//            val tableRow = TableRow(this)
+//            tableRow.layoutParams = tableRowParams
+//            tableRow.gravity = Gravity.CENTER_HORIZONTAL
+//
+//            for (j in 0 until steps) {
+//                if (i + j >= student!!.hobbies.size)
+//                    break
+//
+//                val bubbleFrame = LayoutInflater.from(this).inflate(
+//                    R.layout.user_profile_bubble_orange,
+//                    null
+//                ) as FrameLayout
+//
+//                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
+//                bubble.text = student!!.hobbies[i + j]
+//                bubbleFrame.layoutParams = bubbleParams
+//
+//                tableRow.addView(bubbleFrame)
+//            }
+//
+//            hobbiesTable.addView(tableRow)
+//        }
+//    }
 
     private fun setToolbar(tb: Toolbar) {
         setSupportActionBar(tb)
@@ -401,7 +399,7 @@ class UserProfileActivity : VedibartaActivity(),
             toolbar.visibility = View.VISIBLE
             setToolbar(toolbar)
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            changeStatusBarColor(resources.getColor(R.color.colorPrimaryDark))
+            changeStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark))
         } else {
             Log.d(TAG, "toggleToolbars: setting the fake toolbar")
             toolbar.visibility = View.GONE
@@ -409,7 +407,7 @@ class UserProfileActivity : VedibartaActivity(),
             setToolbar(enlargedToolbar)
             supportActionBar?.setDisplayShowTitleEnabled(true)
             supportActionBar?.title = student!!.name
-            changeStatusBarColor(resources.getColor(android.R.color.black))
+            changeStatusBarColor(ContextCompat.getColor(this,android.R.color.black))
         }
     }
 
@@ -614,8 +612,8 @@ class UserProfileActivity : VedibartaActivity(),
         divider1.visibility = View.VISIBLE
         changeProfilePictureButton.visibility = View.VISIBLE
 
-        root.setBackgroundColor(resources.getColor(android.R.color.white))
-        scrollViewLayout.setBackgroundColor(resources.getColor(android.R.color.white))
+        root.setBackgroundColor(ContextCompat.getColor(this,android.R.color.white))
+        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this,android.R.color.white))
 
         mCurrentAnimator = null
     }
@@ -624,8 +622,8 @@ class UserProfileActivity : VedibartaActivity(),
         fullscreenImage.visibility = View.VISIBLE
         fullscreenImageContainer.visibility = View.VISIBLE
 
-        root.setBackgroundColor(resources.getColor(android.R.color.black))
-        scrollViewLayout.setBackgroundColor(resources.getColor(android.R.color.black))
+        root.setBackgroundColor(ContextCompat.getColor(this,android.R.color.black))
+        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this,android.R.color.black))
 
         scrollViewLayout.visibility = View.GONE
         titlePicture.visibility = View.GONE

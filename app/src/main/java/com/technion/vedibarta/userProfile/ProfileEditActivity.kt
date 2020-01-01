@@ -21,8 +21,8 @@ class ProfileEditActivity : VedibartaActivity() {
     private val TAG = "ProfileEditActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    var editedCharacteristics = student!!.characteristics.toMutableMap()
-    var editedHobbies = student!!.hobbies.toMutableSet()
+    private var editedCharacteristics = student!!.characteristics.toMutableMap()
+    private var editedHobbies = student!!.hobbies.toMutableSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +63,8 @@ class ProfileEditActivity : VedibartaActivity() {
     private fun commitEditChanges() {
         Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
         //TODO: push to the database first!
-        student!!.characteristics = editedCharacteristics
-        student!!.hobbies = editedHobbies.toList()
+         editedCharacteristics = student!!.characteristics
+        editedHobbies = student!!.hobbies.toMutableSet()
         database.students().userId().build().set(student!!).addOnSuccessListener {
             Log.d("profileEdit", "saved profile changes")
             onBackPressed()

@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TableLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.adapters.HobbiesAdapter
 import com.technion.vedibarta.utilities.VedibartaFragment
 
 /**
@@ -24,13 +26,15 @@ class ChooseHobbiesFragment : VedibartaFragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_choose_hobbies, container, false)
-
-        val hobbies = resources.getStringArray(R.array.hobbies)
-        val table = view.findViewById(R.id.chooseHobbiesTable) as TableLayout
-
-        populateHobbiesTable(activity as VedibartaActivity,table,hobbies,(activity as UserSetupActivity).setupStudent)
+        val hobbyCards = loadHobbies(this.context!!)
+        val hobbyTitlesList = view.findViewById(R.id.hobbyTitlesList) as RecyclerView
+        hobbyTitlesList.adapter = HobbiesAdapter(hobbyCards, (activity as UserSetupActivity).setupStudent)
+        hobbyTitlesList.layoutManager = LinearLayoutManager(this.context)
 
         return view
     }
+
+
+
 
 }

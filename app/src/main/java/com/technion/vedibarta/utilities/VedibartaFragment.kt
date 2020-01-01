@@ -14,6 +14,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import de.hdodenhof.circleimageview.CircleImageView
@@ -40,7 +41,7 @@ open class VedibartaFragment : Fragment() {
 
         //---Characteristics Functions---
         fun populateCharacteristicsTable(
-            activity: VedibartaActivity,
+            context: Context,
             table: TableLayout,
             characteristics: Array<String>,
             student: Student
@@ -62,9 +63,9 @@ open class VedibartaFragment : Fragment() {
                 return
             }
 
-            val steps = calculateBubblesInRow(activity)
+            val steps = calculateBubblesInRow(context)
             (characteristics.indices step steps).forEach { i ->
-                val tableRow = TableRow(activity)
+                val tableRow = TableRow(context)
                 tableRow.id = i
                 tableRow.layoutParams = tableRowParams
                 tableRow.gravity = Gravity.CENTER_HORIZONTAL
@@ -75,14 +76,14 @@ open class VedibartaFragment : Fragment() {
                     if (i + j >= characteristics.size)
                         break
                     if (student.characteristics.contains(characteristics[i + j])) {
-                        bubbleFrame = LayoutInflater.from(activity).inflate(
+                        bubbleFrame = LayoutInflater.from(context).inflate(
                             R.layout.user_profile_bubble_blue,
                             null
                         ) as FrameLayout
                         bubbleFrame.alpha = 1f
                         bubbleFrame.tag = SELECTED_BUBBLE
                     } else {
-                        bubbleFrame = LayoutInflater.from(activity).inflate(
+                        bubbleFrame = LayoutInflater.from(context).inflate(
                             R.layout.user_profile_bubble_blue_selected,
                             null
                         ) as FrameLayout
@@ -93,7 +94,7 @@ open class VedibartaFragment : Fragment() {
                     bubbleFrame.setOnClickListener {
                         characteristicsTableItemClickHandler(
                             it,
-                            activity,
+                            context,
                             characteristics,
                             table,
                             student
@@ -111,12 +112,12 @@ open class VedibartaFragment : Fragment() {
 
         private fun characteristicsTableItemClickHandler(
             view: View,
-            activity: VedibartaActivity,
+            context: Context,
             characteristics: Array<String>,
             table: TableLayout,
             student: Student
         ) {
-            val steps = calculateBubblesInRow(activity)
+            val steps = calculateBubblesInRow(context)
             val row = view.id / steps
             val tableRow = table[row] as TableRow
             val bubbleFrame: FrameLayout
@@ -124,7 +125,7 @@ open class VedibartaFragment : Fragment() {
 
 
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
-                bubbleFrame = LayoutInflater.from(activity).inflate(
+                bubbleFrame = LayoutInflater.from(context).inflate(
                     R.layout.user_profile_bubble_blue,
                     null
                 ) as FrameLayout
@@ -136,7 +137,7 @@ open class VedibartaFragment : Fragment() {
                 student.characteristics[characteristics[view.id]] = true
 
             } else {
-                bubbleFrame = LayoutInflater.from(activity).inflate(
+                bubbleFrame = LayoutInflater.from(context).inflate(
                     R.layout.user_profile_bubble_blue_selected,
                     null
                 ) as FrameLayout
@@ -152,7 +153,7 @@ open class VedibartaFragment : Fragment() {
             bubbleFrame.setOnClickListener {
                 characteristicsTableItemClickHandler(
                     it,
-                    activity,
+                    context,
                     characteristics,
                     table,
                     student
@@ -281,16 +282,20 @@ open class VedibartaFragment : Fragment() {
             return ContextCompat.getDrawable(context, hobbyPhotoId)
         }
 
-        fun hobbyToCategory(hobby: String, hobbies: Array<String>, categories: Array<String>): String {
-            return when (hobbies.indexOf(hobby)) {
-                in 0..4 -> categories[0]
-                in 5..11 -> categories[1]
-                in 12..15 -> categories[2]
-                in 16..22 -> categories[3]
-                in 23..24 -> categories[4]
-                in 25..28 -> categories[5]
-                else -> categories[5]
+        fun loadHobbies(context: Context): List<HobbyCard> {
+            val hobbiesLinkArray = context.resources.obtainTypedArray(R.array.hobbies_id_link)
+            val categories = context.resources.getStringArray(R.array.hobbies_categories)
+            // these are the final indexes of each category for all hobbies
+
+            val hobbyCards = mutableListOf<HobbyCard>()
+
+            categories.forEachIndexed { index, category ->
+                val hobbyId = hobbiesLinkArray.getResourceId(index,-1)
+                hobbyCards.add(index, HobbyCard(category, context.resources.getStringArray(hobbyId)))
             }
+
+            hobbiesLinkArray.recycle()
+            return hobbyCards
         }
 
         private fun hobbiesItemClickHandler(
