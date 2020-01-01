@@ -7,9 +7,11 @@ import android.widget.TableLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.POJOs.HobbyCard
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.VedibartaFragment
 
-class HobbiesAdapter(private val hobbyCard: List<HobbyCard>) :
+class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Student) :
     RecyclerView.Adapter<HobbiesAdapter.HobbyCardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HobbyCardViewHolder {
@@ -24,7 +26,7 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>) :
     }
 
     override fun onBindViewHolder(holder: HobbyCardViewHolder, position: Int) {
-        holder.bind(hobbyCard[position])
+        holder.bind(hobbyCard[position], student)
     }
 
     class HobbyCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,14 +34,20 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>) :
         lateinit var header: TextView
         lateinit var table: TableLayout
 
-        fun bind(hobbyCard: HobbyCard) {
+        fun bind(
+            hobbyCard: HobbyCard,
+            student: Student
+        ) {
             header = itemView.findViewById(R.id.hobbyCardTitle)
             table = itemView.findViewById(R.id.hobbiesTables)
 
             header.text = hobbyCard.title
+            VedibartaFragment.populateHobbiesTable(itemView.context, table, hobbyCard.hobbies.map { it.second }.toTypedArray(), student)
 
-            //TODO: populate the hobbies list with hobbyCard.hobbies
+            //TODO: populate the names of the bubble in the hobbies list with hobbyCard.hobbies
+            //TODO: populate the photos of the bubble in the hobbies list with hobbyCard.hobbies
             //TODO: attach listener to each hobby in the hobbies list
+
         }
     }
 }

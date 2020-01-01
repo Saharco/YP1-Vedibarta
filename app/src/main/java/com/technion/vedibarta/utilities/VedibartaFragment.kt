@@ -1,11 +1,13 @@
 package com.technion.vedibarta.utilities
 
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.get
@@ -131,7 +133,7 @@ open class VedibartaFragment : Fragment(){
 
         //---Hobbies Functions---
 
-        fun populateHobbiesTable(activity: VedibartaActivity, table: TableLayout, hobbies: Array<String>, student: Student) {
+        fun populateHobbiesTable(context: Context, table: TableLayout, hobbies: Array<String>, student: Student) {
 
             val tableRowParams = TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
@@ -145,9 +147,9 @@ open class VedibartaFragment : Fragment(){
                     TableRow.LayoutParams.WRAP_CONTENT
                 )
 
-            val steps = calculateBubblesInRow(activity)
+            val steps = calculateBubblesInRow(context)
             (hobbies.indices step steps).forEach { i ->
-                val tableRow = TableRow(activity)
+                val tableRow = TableRow(context)
                 tableRow.id = i
                 tableRow.layoutParams = tableRowParams
                 tableRow.gravity = Gravity.CENTER_HORIZONTAL
@@ -158,14 +160,14 @@ open class VedibartaFragment : Fragment(){
                     if (i + j >= hobbies.size)
                         break
                     if (student.hobbies.contains(hobbies[i + j])) {
-                        bubbleFrame = LayoutInflater.from(activity).inflate(
+                        bubbleFrame = LayoutInflater.from(context).inflate(
                             R.layout.user_profile_bubble_orange,
                             null
                         ) as FrameLayout
                         bubbleFrame.alpha = 1f
                         bubbleFrame.tag = SELECTED_BUBBLE
                     } else {
-                        bubbleFrame = LayoutInflater.from(activity).inflate(
+                        bubbleFrame = LayoutInflater.from(context).inflate(
                             R.layout.user_profile_bubble_orange_selected,
                             null
                         ) as FrameLayout
@@ -173,7 +175,7 @@ open class VedibartaFragment : Fragment(){
                         bubbleFrame.tag = NON_SELECTED_BUBBLE
                     }
                     bubbleFrame.id = i + j
-                    bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it,activity,hobbies,table,student) }
+                    bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it,context,hobbies,table,student) }
                     val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
                     bubble.text = hobbies[i + j]
                     bubbleFrame.layoutParams = bubbleParams
@@ -184,8 +186,8 @@ open class VedibartaFragment : Fragment(){
             }
         }
 
-        private fun hobbiesItemClickHandler(view: View, activity: VedibartaActivity, hobbies: Array<String>, table: TableLayout, student: Student) {
-            val steps = calculateBubblesInRow(activity)
+        private fun hobbiesItemClickHandler(view: View, context: Context, hobbies: Array<String>, table: TableLayout, student: Student) {
+            val steps = calculateBubblesInRow(context)
             val row = view.id / steps
             val tableRow = table[row] as TableRow
             val bubbleFrame: FrameLayout
@@ -193,7 +195,7 @@ open class VedibartaFragment : Fragment(){
 
 
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
-                bubbleFrame = LayoutInflater.from(activity).inflate(
+                bubbleFrame = LayoutInflater.from(context).inflate(
                     R.layout.user_profile_bubble_orange,
                     null
                 ) as FrameLayout
@@ -205,7 +207,7 @@ open class VedibartaFragment : Fragment(){
                 student.hobbies = student.hobbies.plusElement(hobbies[view.id])
 
             } else {
-                bubbleFrame = LayoutInflater.from(activity).inflate(
+                bubbleFrame = LayoutInflater.from(context).inflate(
                     R.layout.user_profile_bubble_orange_selected,
                     null
                 ) as FrameLayout
@@ -217,7 +219,7 @@ open class VedibartaFragment : Fragment(){
             }
 
             bubbleFrame.id = view.id
-            bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it, activity, hobbies, table, student) }
+            bubbleFrame.setOnClickListener { hobbiesItemClickHandler(it, context, hobbies, table, student) }
 
             val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
             bubble.text = hobbies[view.id]
@@ -237,12 +239,12 @@ open class VedibartaFragment : Fragment(){
 
         //Calculate the number of bubbles that can fit in the table
         //The Function calculates according to current screen size
-        private fun calculateBubblesInRow(activity: VedibartaActivity): Int =
+        private fun calculateBubblesInRow(context: Context): Int =
             ((Resources.getSystem().displayMetrics.widthPixels - VedibartaActivity.dpToPx(
-                activity.resources,
+                context.resources,
                 48f
             )) / VedibartaActivity.dpToPx(
-                activity.resources,
+                context.resources,
                 100f
             )).toInt()
     }
