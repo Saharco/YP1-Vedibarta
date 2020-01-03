@@ -212,6 +212,7 @@ open class VedibartaFragment : Fragment() {
                     bubblePhoto.setImageDrawable(hobbyToPhoto(context, hobbies[i + j], allHobbies))
 
                     val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
+                    bubbleText.text = hobbies[i + j]
 
                     if (student.hobbies.contains(hobbies[i + j])) {
                         bubblePhoto.alpha = 1f
@@ -219,7 +220,7 @@ open class VedibartaFragment : Fragment() {
                         bubbleText.visibility = View.GONE
                     } else {
                         bubbleFrame.tag = NON_SELECTED_BUBBLE
-                        bubbleText.text = hobbies[i + j]
+                        bubbleText.visibility = View.VISIBLE
                     }
                     bubbleFrame.id = i + j
                     bubbleFrame.setOnClickListener {
