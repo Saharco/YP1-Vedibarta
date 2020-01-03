@@ -726,6 +726,10 @@ class UserProfileActivity : VedibartaActivity(),
                 {
                     Log.d("wtf", "Label: ${label.text} confidence: ${label.confidence}")
                 }
+                val labels = labeler.result!!.map { it.text }
+                val res = labels.intersect(listOf("Flesh", "Skin", "Swimwear")).isEmpty()
+                Log.d("wtf", "res = $res")
+                return res
             }
         }
         catch (e: Exception)
@@ -733,7 +737,7 @@ class UserProfileActivity : VedibartaActivity(),
             Log.d(TAG, "validateImage ${e.message}, cause: ${e.cause?.message}")
         }
 
-        return true
+        return false
     }
 
     private fun uploadPhoto(imagePath: Uri) {
