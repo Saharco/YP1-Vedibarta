@@ -15,7 +15,9 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.utilities.VedibartaActivity
+import java.lang.Exception
 import java.util.HashMap
+import kotlin.math.abs
 
 internal class MainAdapter(private val userId: String?,
                           private val applicationContext: Context,
@@ -25,6 +27,7 @@ internal class MainAdapter(private val userId: String?,
 {
     var chatsList: List<Chat> = listOf()
     val firestoreAdapter = getFireStoreAdapter(options,this)
+    val TAG = "MainAdapter"
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -109,8 +112,38 @@ internal class MainAdapter(private val userId: String?,
             override fun onDataChanged()
             {
                 super.onDataChanged()
-                chatsList = this.snapshots.sortedByDescending { it.lastMessageTimestamp }
-                mainAdapter.notifyDataSetChanged()
+
+                val newList = this.snapshots.sortedByDescending { it.lastMessageTimestamp }
+
+                // onDataChange should be called on every change and as such there shouldn't be more then 1 change at a time to the list
+                if (newList.size > chatsList.size)
+                {
+                    chatsList = newList
+                    mainAdapter.notifyItemInserted(0)
+                }
+                else if (newList.size < chatsList.size)
+                {
+                    val removedChat = chatsList.subtract(newList).firstOrNull()
+                    val removedPosition = chatsList.indexOf(removedChat)
+                    if (removedPosition == -1)
+                    {
+                        Log.d(TAG, "moved chat is not in list")
+                        return
+                    }
+                    chatsList = newList
+                    mainAdapter.notifyItemRemoved(removedPosition)
+                }
+                else
+                {
+                    val originalPosition = chatsList.indexOf(newList[0])
+                    if (originalPosition == -1)
+                    {
+                        Log.d(TAG, "moved chat is not in list")
+                        return
+                    }
+                    chatsList = newList
+                    mainAdapter.notifyItemMoved(originalPosition, 0)
+                }
             }
 
             override fun onCreateViewHolder(

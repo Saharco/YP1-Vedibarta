@@ -38,5 +38,12 @@ data class Chat (
             return this.participantsName[0]
         return participantsName[1]
     }
+
+    override fun equals(other: Any?): Boolean
+    {
+        if (other is Chat)
+            return this.participantsId.containsAll(other.participantsId)
+        return false
+    }
 }
 
