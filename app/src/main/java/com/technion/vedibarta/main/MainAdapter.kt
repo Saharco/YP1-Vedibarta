@@ -135,7 +135,7 @@ internal class MainAdapter(private val userId: String?,
                 }
                 else
                 {
-                    val originalPosition = chatsList.indexOf(newList[0])
+                    val originalPosition = chatsList.indexOf(newList.firstOrNull())
                     if (originalPosition == -1)
                     {
                         Log.d(TAG, "moved chat is not in list")

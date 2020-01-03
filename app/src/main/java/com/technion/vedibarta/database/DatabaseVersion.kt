@@ -5,7 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 object DatabaseVersioning {
     private val VERSION_TYPE = VersionType.development
-    private const val VERSION_NUMBER = "1.0.0"
+    private const val VERSION_NUMBER = "1.0.1"
 
     val currentVersion = RegularVersion(VERSION_TYPE, VERSION_NUMBER)
     fun getTestVersion(name: String) = TestVersion(name)
