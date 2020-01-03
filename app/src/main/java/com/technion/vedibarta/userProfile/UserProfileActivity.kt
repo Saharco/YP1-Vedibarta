@@ -726,6 +726,10 @@ class UserProfileActivity : VedibartaActivity(),
                 {
                     Log.d("wtf", "Label: ${label.text} confidence: ${label.confidence}")
                 }
+                val labels = labeler.result!!.map { it.text }
+                val res = labels.intersect(listOf("Flesh", "Skin", "Swimwear")).isEmpty()&& textValidate(imageUriForVision)
+                Log.d("wtf", "res = $res")
+                return res
             }
         }
         catch (e: Exception)
@@ -733,7 +737,21 @@ class UserProfileActivity : VedibartaActivity(),
             Log.d(TAG, "validateImage ${e.message}, cause: ${e.cause?.message}")
         }
 
-        return true
+        return false
+    }
+
+    private fun textValidate(imageUriForVision: Uri) : Boolean{
+        val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
+        val detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer()
+        var recognizedText:String = ""
+        val result = detector.processImage(image).addOnSuccessListener{
+            recognizedText = it.text
+        }
+            .addOnFailureListener{
+                    e-> Log.d(TAG, "validateImage ${e.message}, cause: ${e.cause?.message}")
+                recognizedText = "failed"
+            }
+        return recognizedText.isEmpty()
     }
 
     private fun uploadPhoto(imagePath: Uri) {
