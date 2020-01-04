@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="general_questions">
+        <item>האם אתה רוצה לחיות בישראל בהמשך?</item>
+        <item>ספר על המשפחה שלך?</item>
+        <item>תאר/י לי את החג שאתה הכי אוהב- למה?</item>
+        <item>איזה מרכיב בזהות שלך הכי חשוב לך? למה?</item>
+        <item>מה החלום שלך לעתיד?</item>
+        <item>מה תרצה להיות כשתהיה גדול?</item>
+        <item>מה המקצוע האהוב עליך בבית ספר? למה?</item>
+        <item>מה המקצוע השנוא עליך? למה?</item>
+        <item>איפה היית רוצה לטייל בעולם?</item>
+        <item>אילו היה לך כח- על, איזה כח היית רוצה?</item>
+        <item>מי האדם הכי קרוב אליך? למה?</item>
+        <item>מהו אחוז האקדמאיים בחברה שלך?</item>
+        <item>איך אתה מבלה בשעות הפנאי שלך?</item>
+    </array>
+
+    <array name="hobbies_categories_questions_linker">
+        <item>@array/art_questions</item>
+        <item>@array/sport_questions</item>
+        <item>@array/technology_questions</item>
+        <item>@array/hangout_questions</item>
+        <item>@array/games_questions</item>
+        <item>@array/other_questions</item>
+    </array>
+
+    <array name="sport_questions">
+        <item>@array/sports_football_questions</item>
+        <item>@array/sports_basketball_questions</item>
+        <item>@array/sports_tennis_questions</item>
+        <item>@array/sports_swimming_questions</item>
+        <item>@array/sports_trip_questions</item>
+        <item>@array/sports_biking_questions</item>
+        <item>@array/sports_martial_arts_questions</item>
+    </array>
+
+
+    <array name="art_questions">
+        <item>@array/arts_music_questions</item>
+        <item>@array/arts_theater_questions</item>
+        <item>@array/arts_dance_questions</item>
+        <item>@array/arts_filming_questions</item>
+        <item>@array/arts_painting_questions</item>
+    </array>
+
+    <array name="technology_questions">
+        <item>@array/technology_robotics_questions</item>
+        <item>@array/technology_science_questions</item>
+        <item>@array/technology_mathematics_questions</item>
+        <item>@array/technology_computers_questions</item>
+    </array>
+
+    <array name="hangout_questions">
+        <item>@array/hangouts_theater_questions</item>
+        <item>@array/hangouts_shopping_questions</item>
+        <item>@array/hangouts_friends_questions</item>
+        <item>@array/hangouts_food_questions</item>
+        <item>@array/hangouts_series_questions</item>
+        <item>@array/hangouts_scouts_questions</item>
+        <item>@array/hangouts_fashion_questions</item>
+    </array>
+
+    <array name="games_questions">
+        <item>@array/games_computer_questions</item>
+        <item>@array/games_board_questions</item>
+    </array>
+
+    <array name="other_questions">
+        <item>@array/other_books_questions</item>
+        <item>@array/other_nature_questions</item>
+        <item>@array/other_politics_questions</item>
+        <item>@array/other_cooking_questions</item>
+    </array>
+
+    <!--    arts related questions by hobbies in arts category-->
+    <array name="arts_music_questions">
+        <item>איזה סגנון מוזיקה את/ה אוהב/ת?</item>
+        <item>הופעה אחרונה שראית ?</item>
+        <item>זמר/ת אהוב/ה?</item>
+        <item>להקה אהובה?</item>
+        <item>האם את/ה מנגן/ת?</item>
+        <item>האם את/ה יוצר/ת מוזיקה? שר/ה ?</item>
+        <item>מהו השיר שאת/ה הכי אוהב/ת?</item>
+    </array>
+
+    <array name="arts_theater_questions">
+        <item>האם את/ה במגמת תאטרון?</item>
+        <item>איזו הצגה ראית לאחרונה?</item>
+        <item>איזה מחזה את/ה הכי אוהב/ת?</item>
+    </array>
+
+    <array name="arts_dance_questions">
+
+    </array>
+
+    <array name="arts_filming_questions">
+
+    </array>
+
+    <array name="arts_painting_questions">
+
+    </array>
+
+    <!--    sports related questions by hobbies in sports category-->
+    <array name="sports_football_questions">
+        <item>מי הספורטאי הנערץ עליך?</item>
+
+    </array>
+    <array name="sports_basketball_questions">
+        <item>מי הספורטאי הנערץ עליך?</item>
+
+    </array>
+    <array name="sports_tennis_questions">
+        <item>כמה פעמים בשבוע אתה מתאמן?</item>
+        <item>מי הספורטאי הנערץ עליך?</item>
+        <item>האם אתה משתתף בתחרויות?</item>
+
+    </array>
+    <array name="sports_swimming_questions">
+        <item>כמה פעמים בשבוע אתה מתאמן?</item>
+        <item>מי הספורטאי הנערץ עליך?</item>
+        <item>האם אתה משתתף בתחרויות?</item>
+        <item>מה האירוע ספורט האחרון בו השתתפת?</item>
+    </array>
+    <array name="sports_trip_questions">
+        <item>איפה אתה אוהב לטייל?</item>
+        <item>לאן אתה חולם לנסוע לטייל?</item>
+        <item>עם מי אתה אוהב לטייל בדרך כלל?</item>
+        <item>מה המקום הכי יפה שטיילת בו?</item>
+        <item>מה הטיול האחרון שעשית?</item>
+        <item>איזה סיפור הכי מטורף/ מגניב קרה לך במהלך טיול?</item>
+    </array>
+    <array name="sports_biking_questions">
+        <item>מי הספורטאי הנערץ עליך?</item>
+        <item>האם אתה משתתף בתחרויות?</item>
+        <item>מה האירוע ספורט האחרון בו השתתפת?</item>
+
+    </array>
+    <array name="sports_martial_arts_questions">
+        <item>כמה פעמים בשבוע אתה מתאמן?</item>
+        <item>מי הספורטאי הנערץ עליך?</item>
+        <item>האם אתה משתתף בתחרויות?</item>
+        <item>מה האירוע ספורט האחרון בו השתתפת?</item>
+
+    </array>
+
+    <!--    technology related questions by hobbies in technology category-->
+    <array name="technology_robotics_questions">
+
+    </array>
+
+    <array name="technology_science_questions">
+
+    </array>
+
+    <array name="technology_mathematics_questions">
+
+    </array>
+
+    <array name="technology_computers_questions">
+
+    </array>
+
+    <!--    hangouts related questions by hobbies in hangouts category-->
+    <array name="hangouts_theater_questions">
+        <item>איזה ז'אנר של סרטים אתה מעדיף?</item>
+        <item>מה הסרט האהוב עליך? שאתה מסוגל לצפות בו שוב ושוב?</item>
+        <item>מה הסרט האחרון שצפית בו בקולנוע?</item>
+        <item>עם איזה שחקן/ שחקנית היית רוצה להיפגש? למה?</item>
+        <item>האם היית הולך לסרט לבד?</item>
+    </array>
+
+    <array name="hangouts_shopping_questions">
+        <item>עם מי אתה הכי אוהב לעשות שופינג?</item>
+        <item>מהי החנות המועדפת עליך?</item>
+        <item>עושה קניות - און ליין או בחנות?</item>
+        <item>מה הדבר שאתה הכי אוהב לקנות?</item>
+    </array>
+
+    <array name="hangouts_friends_questions">
+
+    </array>
+
+    <array name="hangouts_food_questions">
+        <item>האם אתה מבשל או אופה?</item>
+        <item>מהו המאכל האהוב עליך?</item>
+        <item>מי מכין את האוכל הכי טעים בעיניך?</item>
+        <item>איזה מאכל לא היית אוכל לעולם?</item>
+        <item>איזה אוכל לא טעמת והיית רוצה לטעום?</item>
+        <item>מה סגנון האוכל המועדף עליך?</item>
+        <item>האם אתה צופה גם בריאלטי שקשור באוכל?</item>
+        <item>האם היית יושב במסעדה לבד?</item>
+        <item>איזה אוכל הכי מאפיין את הבית שלך?</item>
+    </array>
+
+    <array name="hangouts_series_questions">
+
+    </array>
+
+    <array name="hangouts_scouts_questions">
+
+    </array>
+
+    <array name="hangouts_fashion_questions">
+
+    </array>
+
+    <!--    games related questions by hobbies in games category-->
+    <array name="games_board_questions">
+
+    </array>
+
+    <array name="games_computer_questions">
+
+    </array>
+
+    <!--    other related questions by hobbies in other category-->
+    <array name="other_books_questions">
+        <item>איזה ז'אנר ספרותי אתה אוהב לקרוא?</item>
+        <item>איזה ספר אתה הכי אוהב?</item>
+        <item>עם איזה דמות מספר או סופר היית רוצה להיפגש?</item>
+        <item>האם אתה כותב בעצמך?</item>
+        <item>איך את/ה קורא- ספר? או דרך אפליקציות שונות?</item>
+        <item>האם הקריאו לך הרבה ספרים כשהיית קטן?</item>
+        <item>ממתי התחלת לאהוב לקרוא?</item>
+    </array>
+
+    <array name="other_nature_questions">
+
+    </array>
+
+    <array name="other_politics_questions">
+        <item>מה מידת המעורבות הפוליטית שלך?</item>
+        <item>האם תרצה להיות פוליטקאי בהמשך?</item>
+        <item>באיזה מפלגה אתה תומך? למה?</item>
+        <item>האם הדעה הפוליטית שלך היא כמו של ההורים/ המשפחה שלך?</item>
+    </array>
+    <array name="other_cooking_questions">
+
+    </array>
+</resources>
