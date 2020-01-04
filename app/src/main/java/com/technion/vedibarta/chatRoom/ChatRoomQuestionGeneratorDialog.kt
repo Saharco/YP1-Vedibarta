@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.R
+import com.technion.vedibarta.adapters.QuestionGeneratorCategoryAdapter
 import kotlinx.android.synthetic.main.profile_picture_dialog.dismissButton
 import kotlinx.android.synthetic.main.question_generator_dialog.*
 
@@ -42,22 +45,8 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        questionExample1.setOnClickListener {
-            listener.onQuestionclick(this, it)
-            dismiss()
-        }
-
-        questionExample2.setOnClickListener {
-            listener.onQuestionclick(this, it)
-            dismiss()
-        }
-
-        questionExample3.setOnClickListener {
-            listener.onQuestionclick(this, it)
-            dismiss()
-        }
-
+        questionCategoriesList.adapter = QuestionGeneratorCategoryAdapter(resources.getStringArray(R.array.hobbies_categories))
+        questionCategoriesList.layoutManager = LinearLayoutManager(this.context)
         questionGeneratorDismissButton.setOnClickListener {
             dismiss()
         }

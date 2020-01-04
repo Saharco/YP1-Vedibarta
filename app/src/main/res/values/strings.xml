@@ -82,7 +82,8 @@
     <string name="chat_room_abuse_dialog_report_button_f">דווחי</string>
     <string name="chat_room_abuse_dialog_back_button">ביטול</string>
     <string name="chat_room_question_generator_title">מחולל השאלות</string>
-    <string name="chat_room_question_generator_question_title">שאלות לדוגמא:</string>
+    <string name="chat_room_question_generator_question_title">מתקשה למצוא נושא לשיחה?</string>
+    <string name="chat_room_question_generator_question_title2">בחר אחד מהנושאים הבאים:</string>
     <string name="chat_room_enter_message_m">כתוב הודעה</string>
     <string name="chat_room_enter_message_f">כתבי הודעה</string>
 
