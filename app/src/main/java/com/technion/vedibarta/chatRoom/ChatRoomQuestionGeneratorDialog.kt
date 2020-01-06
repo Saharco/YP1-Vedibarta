@@ -37,8 +37,8 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        hobbies = savedInstanceState!!.getStringArray("hobbies")!!
-        partnerHobbies = savedInstanceState.getStringArray("partnerHobbies")!!
+        hobbies = arguments!!.getStringArray("hobbies")!!
+        partnerHobbies = arguments!!.getStringArray("partnerHobbies")!!
     }
 
     override fun onCreateView(
@@ -72,7 +72,8 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
     private fun getCategoriesInCommon(): Array<String> {
         val commonHobbies = hobbies.filter { partnerHobbies.contains(it) }
         val hobbyIdToCategory = resources.getStringArray(R.array.hobbiesId_to_category)
-        val commonCategories = commonHobbies.mapIndexed { index, _ -> hobbyIdToCategory[index] }
+        val hobbies = resources.getStringArray(R.array.hobbies)
+        val commonCategories = commonHobbies.map { hobbyIdToCategory[hobbies.indexOf(it)] }
         return commonCategories.plusElement("כללי").toTypedArray()
     }
 }
