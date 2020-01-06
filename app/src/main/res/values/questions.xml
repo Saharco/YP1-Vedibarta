@@ -165,7 +165,7 @@
 
     <!--    hangouts related questions by hobbies in hangouts category-->
     <array name="hangouts_theater_questions">
-        <item>איזה ז'אנר של סרטים אתה מעדיף?</item>
+        <item>איזה זאנר של סרטים אתה מעדיף?</item>
         <item>מה הסרט האהוב עליך? שאתה מסוגל לצפות בו שוב ושוב?</item>
         <item>מה הסרט האחרון שצפית בו בקולנוע?</item>
         <item>עם איזה שחקן/ שחקנית היית רוצה להיפגש? למה?</item>
@@ -218,7 +218,7 @@
 
     <!--    other related questions by hobbies in other category-->
     <array name="other_books_questions">
-        <item>איזה ז'אנר ספרותי אתה אוהב לקרוא?</item>
+        <item>איזה זאנר ספרותי אתה אוהב לקרוא?</item>
         <item>איזה ספר אתה הכי אוהב?</item>
         <item>עם איזה דמות מספר או סופר היית רוצה להיפגש?</item>
         <item>האם אתה כותב בעצמך?</item>

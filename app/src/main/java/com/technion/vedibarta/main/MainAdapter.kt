@@ -70,7 +70,8 @@ internal class MainAdapter(private val userId: String?,
                             chat.lastMessage,
                             chat.lastMessageTimestamp,
                             otherGender,
-                            otherStudentPhotoUrl
+                            otherStudentPhotoUrl,
+                            otherStudent["hobbies"] as Array<String>
                         )
 
                         Log.d(MainActivity.TAG, "Binding chat with the following data: $chatMetadata")

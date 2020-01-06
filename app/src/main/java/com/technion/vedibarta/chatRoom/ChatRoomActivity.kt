@@ -45,6 +45,7 @@ class ChatRoomActivity : VedibartaActivity()
     private var numMessages = 0
     private var photoUrl: String? = null
     private var otherGender: Gender? = null
+    private var partnerHobbies: Array<String> = emptyArray()
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -70,6 +71,8 @@ class ChatRoomActivity : VedibartaActivity()
 
         chatPartnerId = partnerId
         photoUrl ?: displayDefaultProfilePicture()
+
+        partnerHobbies = chatMetaData.partnerHobbies
 
         setToolbar(chatToolbar)
         configureAdapter()
@@ -185,7 +188,7 @@ class ChatRoomActivity : VedibartaActivity()
 
             when (item!!.itemId) {
                 R.id.generateQuestion -> {
-                    ChatRoomQuestionGeneratorDialog().show(
+                    ChatRoomQuestionGeneratorDialog.newInstance(student!!.hobbies.toTypedArray(), partnerHobbies).show(
                         supportFragmentManager,
                         "QuestionGeneratorFragment"
                     )

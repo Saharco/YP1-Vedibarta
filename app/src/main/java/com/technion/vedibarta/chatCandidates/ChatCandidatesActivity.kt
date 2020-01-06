@@ -49,7 +49,8 @@ class ChatCandidatesActivity : VedibartaActivity() {
                             chat.lastMessage,
                             chat.lastMessageTimestamp,
                             other.gender,
-                            other.photo
+                            other.photo,
+                            other.hobbies.toTypedArray()
                         )
 
                         intent.putExtra("chatData", chatMetadata)
