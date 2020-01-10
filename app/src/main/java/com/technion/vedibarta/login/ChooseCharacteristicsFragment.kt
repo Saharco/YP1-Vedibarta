@@ -29,10 +29,18 @@ class ChooseCharacteristicsFragment : VedibartaFragment() {
     override fun onStart() {
         super.onStart()
         val characteristics = if ((activity as UserSetupActivity).setupStudent.gender != Gender.FEMALE)
-            resources.getStringArray(R.array.characteristicsMale_hebrew)
+            resources.getStringArray(R.array.characteristicsMale)
         else
-            resources.getStringArray(R.array.characteristicsFemale_hebrew)
+            resources.getStringArray(R.array.characteristicsFemale)
         populateCharacteristicsTable(activity as UserSetupActivity, searchCharacteristics, characteristics.toList().shuffled().toTypedArray(), (activity as UserSetupActivity).setupStudent)
+
+        //val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
+
+        //populateCharacteristicsTable(activity as UserSetupActivity, table, characteristics, (activity as UserSetupActivity).setupStudent)
+
+//        return view
+//            resources.getStringArray(R.array.characteristicsFemale)
+//        populateCharacteristicsTable(activity as UserSetupActivity, searchCharacteristics, characteristics.toList().shuffled().toTypedArray(), (activity as UserSetupActivity).setupStudent)
     }
 
 }

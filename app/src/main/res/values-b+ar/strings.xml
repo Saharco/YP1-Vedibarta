@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Vedibarta</string>
+    <string name="app_name">لتعارفوا</string>
 
     <!--    General shared attributes   -->
     <string name="back">ارجع</string>
     <string name="or">او</string>
-    <string name="allowed_letters_regex">[ابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ]+</string>
-    <string name="allowed_letters">ابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ</string>
+    <string name="allowed_letters_regex">[چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ]+</string>
+    <string name="allowed_letters">چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">البروفيل الشخصي</string>

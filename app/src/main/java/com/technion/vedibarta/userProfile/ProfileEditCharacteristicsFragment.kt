@@ -37,9 +37,9 @@ class ProfileEditCharacteristicsFragment : VedibartaFragment() {
             false
         )
         val characteristics : Array<String> = if (student!!.gender != Gender.FEMALE)
-            resources.getStringArray(R.array.characteristicsMale_hebrew)
+            resources.getStringArray(R.array.characteristicsMale)
         else
-            resources.getStringArray(R.array.characteristicsFemale_hebrew)
+            resources.getStringArray(R.array.characteristicsFemale)
 
         val table = view.findViewById(R.id.editCharacteristicsTable) as TableLayout
 

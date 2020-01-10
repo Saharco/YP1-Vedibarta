@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <array name="characteristics_base">
         <item>דתי</item>
         <item>חילוני</item>
@@ -26,7 +25,7 @@
         <item>פלסטיני</item>
     </array>
 
-    <array name="characteristicsMale_hebrew">
+    <array name="characteristicsMale">
         <item>דתי</item>
         <item>חילוני</item>
         <item>ימני</item>
@@ -50,7 +49,7 @@
         <item>ערבי</item>
         <item>פלסטיני</item>
     </array>
-    <array name="characteristicsFemale_hebrew">
+    <array name="characteristicsFemale">
         <item>דתיה</item>
         <item>חילונית</item>
         <item>ימנית</item>

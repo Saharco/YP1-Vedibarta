@@ -35,11 +35,10 @@ class SearchCharacteristicsFragment : VedibartaFragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search_characteristics, container, false)
         val act = (activity as ChatSearchActivity)
-
         val characteristics : Array<String> = if (VedibartaActivity.student!!.gender != Gender.FEMALE)
-            resources.getStringArray(R.array.characteristicsMale_hebrew)
+            resources.getStringArray(R.array.characteristicsMale)
         else
-            resources.getStringArray(R.array.characteristicsFemale_hebrew)
+            resources.getStringArray(R.array.characteristicsFemale)
         val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
         populateCharacteristicsTable(act, table, characteristics.toMutableList().shuffled().toTypedArray(), act.fakeStudent)
 
