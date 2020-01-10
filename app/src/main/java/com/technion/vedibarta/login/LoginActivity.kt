@@ -237,12 +237,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             }
     }
 
-    private fun isUserVerified(user: FirebaseUser): Boolean {
-        return user.providerData.any {
-            val providerIsEmail = it.providerId == EmailAuthProvider.PROVIDER_ID
-            !providerIsEmail || (providerIsEmail && it.isEmailVerified)
-        }
-    }
+    private fun isUserVerified(user: FirebaseUser) =
+        user.providerData.any {
+            it.providerId !in listOf(EmailAuthProvider.PROVIDER_ID, FirebaseAuthProvider.PROVIDER_ID)
+        } || user.isEmailVerified
 
     private fun updateUIForCurrentUser(user: FirebaseUser?) = user?.let {
         if (isUserVerified(user)) {
