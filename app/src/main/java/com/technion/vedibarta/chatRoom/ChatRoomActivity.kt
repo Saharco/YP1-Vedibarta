@@ -216,38 +216,25 @@ class ChatRoomActivity : VedibartaActivity()
 
         val lastMessageDate: Date? = adapter.getFirstMessageOrNull()?.timestamp
         val currentDate = Date(System.currentTimeMillis())
-        if (lastMessageDate != null)
-        {
+        if (lastMessageDate != null) {
             val timeGap = currentDate.time - lastMessageDate.time
             val dayGap =
                 (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
 
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
-            {
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
                 write(dateFormatter.format(currentDate), true)
             }
-        }
-        else
-        {
+        } else {
             write(dateFormatter.format(currentDate), true)
         }
         write(text, false)
         chatBox.setText("")
     }
 
-    fun write(text: String, isGeneratorMessage: Boolean)
-    {
-        val timeSent = Date(System.currentTimeMillis())
-        var sender = userId!!
-        if (isGeneratorMessage)
-        {
-            sender = systemSender
-        }
-        val path = database.chats()
-                .chatId(chatId)
-                .messages()
-                .build()
-        path.add(Message(sender, partnerId, text, timeSent))
+    private fun write(text: String, isGeneratorMessage: Boolean) {
+        val sender = if (isGeneratorMessage) systemSender else userId!!
+        val path = database.chats().chatId(chatId).messages().build()
+        path.add(Message(sender, partnerId, text))
             .addOnFailureListener {
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }

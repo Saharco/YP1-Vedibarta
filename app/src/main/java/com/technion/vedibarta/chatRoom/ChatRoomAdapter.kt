@@ -13,6 +13,8 @@ import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.activity_chat_room.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChatRoomAdapter(
     chatRoomActivity: ChatRoomActivity,
@@ -103,8 +105,9 @@ class ChatRoomAdapter(
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
+            val dateString = dateToString(message.timestamp ?: Date())
             itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.sentMessageTime).text = dateString
         }
     }
 
@@ -112,8 +115,9 @@ class ChatRoomAdapter(
         RecyclerView.ViewHolder(view) {
 
         fun bind(message: Message) {
+            val dateString = dateToString(message.timestamp!!)
             itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = dateString
         }
     }
 
@@ -130,7 +134,9 @@ class ChatRoomAdapter(
             override fun onDataChanged()
             {
                 super.onDataChanged()
-                messageList = this.snapshots.sortedByDescending { it.timestamp }
+                messageList = this.snapshots.sortedWith(
+                    compareByDescending<Message, Date?>(nullsLast()) { it.timestamp }
+                )
                 chatRoomAdapter.notifyDataSetChanged()
             }
 
@@ -161,3 +167,5 @@ class ChatRoomAdapter(
         }
     }
 }
+
+fun dateToString(date: Date): String = SimpleDateFormat("HH:mma").format(date)

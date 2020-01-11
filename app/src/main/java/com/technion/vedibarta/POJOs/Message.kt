@@ -1,15 +1,12 @@
 package com.technion.vedibarta.POJOs
 
-import java.text.SimpleDateFormat
+import com.google.firebase.firestore.ServerTimestamp
 import java.util.*
 
-data class Message(val sender: String = "",
-                   val receiver: String = "",
-                   var text: String = "",
-                   val timestamp: Date = Date(System.currentTimeMillis()))
-{
-    fun getTime(): String
-    {
-        return SimpleDateFormat("HH:mma").format(timestamp)
-    }
-}
+data class Message(
+    val sender: String = "",
+    val receiver: String = "",
+    var text: String = "",
+    @ServerTimestamp
+    var timestamp: Date? = null
+)
