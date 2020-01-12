@@ -42,7 +42,8 @@ class ProfileEditCharacteristicsFragment : VedibartaFragment() {
             resources.getStringArray(R.array.characteristicsFemale_hebrew)
 
         val table = view.findViewById(R.id.editCharacteristicsTable) as TableLayout
-        populateCharacteristicsTable(this.context!!, table, characteristics, student!!)
+
+        populateCharacteristicsTable(this.context!!, table, characteristics.toList().shuffled().toTypedArray(), student!!)
         return view
     }
 }

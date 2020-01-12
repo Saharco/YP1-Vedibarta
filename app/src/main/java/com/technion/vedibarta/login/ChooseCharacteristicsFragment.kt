@@ -31,7 +31,7 @@ class ChooseCharacteristicsFragment : VedibartaFragment() {
 
         val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
 
-        populateCharacteristicsTable(activity as UserSetupActivity, table, characteristics, (activity as UserSetupActivity).setupStudent)
+        populateCharacteristicsTable(activity as UserSetupActivity, table, characteristics.toList().shuffled().toTypedArray(), (activity as UserSetupActivity).setupStudent)
 
         return view
     }
