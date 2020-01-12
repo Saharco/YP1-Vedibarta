@@ -82,9 +82,13 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
 
     private fun questionsLayoutInit(category: String) {
         questionsLayoutTitle.text = category
-        questionList.adapter = QuestionGeneratorCategoryAdapter(getQuestions(category))
+        questionList.adapter = QuestionGeneratorCategoryAdapter(getQuestions(category)) { str -> onQuestionSelect(str) }
         questionList.layoutManager = LinearLayoutManager(this.context)
         backButton.setOnClickListener { onBackButton() }
+    }
+
+    private fun onQuestionSelect(question: String) {
+        //TODO send a 3rd party message in chat with the appropriate question
     }
 
     private fun getCategoriesInCommon(): Array<String> {
