@@ -9,7 +9,7 @@ import com.technion.vedibarta.R
 
 
 
-class QuestionGeneratorCategoryAdapter(private val categoryList: Array<String>) : RecyclerView.Adapter<QuestionGeneratorCategoryAdapter.CategoryViewHolder>(){
+class QuestionGeneratorCategoryAdapter(private val categoryList: Array<String>, private val onClick: (String)->Unit = {}) : RecyclerView.Adapter<QuestionGeneratorCategoryAdapter.CategoryViewHolder>(){
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -32,14 +32,16 @@ class QuestionGeneratorCategoryAdapter(private val categoryList: Array<String>) 
         holder: CategoryViewHolder,
         position: Int
     ) {
-        holder.bind(categoryList[holder.adapterPosition])
+        holder.bind(categoryList[holder.adapterPosition], onClick)
     }
 
 
     class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        fun bind(category: String){
+        fun bind(category: String, onClick: (String) -> Unit){
             val header :TextView= itemView.findViewById(R.id.categoryText)
             header.text = category
+            header.width = View.MeasureSpec.EXACTLY
+            header.setOnClickListener { onClick(category) }
         }
     }
 }
