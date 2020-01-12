@@ -135,6 +135,10 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
             questionList.visibility = View.GONE
             emptyQuestionList.visibility = View.VISIBLE
         }
+        else{
+            questionList.visibility = View.VISIBLE
+            emptyQuestionList.visibility = View.GONE
+        }
 
         return questions.toTypedArray()
     }
