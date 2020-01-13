@@ -1,5 +1,6 @@
 package com.technion.vedibarta.userProfile
 
+import android.app.Activity
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
@@ -7,14 +8,14 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_profile_edit.*
-import androidx.viewpager.widget.ViewPager
 
 class ProfileEditActivity : VedibartaActivity() {
 
@@ -61,13 +62,14 @@ class ProfileEditActivity : VedibartaActivity() {
     }
 
     private fun commitEditChanges() {
-        Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
+//        Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
         //TODO: push to the database first!
          editedCharacteristics = student!!.characteristics
         editedHobbies = student!!.hobbies.toMutableSet()
         database.students().userId().build().set(student!!).addOnSuccessListener {
             Log.d("profileEdit", "saved profile changes")
-            onBackPressed()
+            setResult(Activity.RESULT_OK)
+            finish()
         }.addOnFailureListener {
             Log.d("profileEdit", "${it.message}, cause: ${it.cause?.message}")
         }
@@ -79,13 +81,14 @@ class ProfileEditActivity : VedibartaActivity() {
     }
 
     override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
         if (changesOccurred()) {
             Log.d(TAG, "Found changes")
             val title = TextView(this)
             title.setText(R.string.edit_discard_changes_title)
             title.textSize = 20f
             title.setTypeface(null, Typeface.BOLD)
-            title.setTextColor(resources.getColor(R.color.textPrimary))
+            title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
             title.gravity = Gravity.CENTER
             title.setPadding(10, 40, 10, 24)
             val builder = AlertDialog.Builder(this)

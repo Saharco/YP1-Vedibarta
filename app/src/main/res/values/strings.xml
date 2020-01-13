@@ -17,6 +17,7 @@
     <string name="user_profile_characteristics">אני מזדהה בתור</string>
     <string name="action_edit_profile_title">ערוך פרופיל</string>
     <string name="action_save_profile_edit">שמור שינויים</string>
+    <string name="edit_changes_saved_successfully">השינויים בוצעו בהצלחה</string>
     <string name="edit_discard_changes_title">ביטול שינויים</string>
     <string name="edit_discard_changes_message">בטוח שברצונך לבטל את השינויים?</string>
     <string name="action_logout_title">התנתקות</string>

@@ -5,7 +5,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,7 +31,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -42,13 +40,13 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.login.LoginManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.iid.FirebaseInstanceId
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
-import com.technion.vedibarta.adapters.HobbiesAdapter
 import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -67,6 +65,7 @@ class UserProfileActivity : VedibartaActivity(),
     private val APP_PERMISSION_REQUEST_CAMERA = 100
     private val REQUEST_CAMERA = 1
     private val SELECT_IMAGE = 2
+    private val EDIT_PROFILE = 3
 
     private var selectedImageFile: File? = null
     private var selectedImage: Uri? = null
@@ -119,12 +118,13 @@ class UserProfileActivity : VedibartaActivity(),
                     super.onBackPressed()
                 }
             R.id.actionEditProfile ->
-                startActivity(Intent(this, ProfileEditActivity::class.java))
+                startActivityForResult(Intent(this, ProfileEditActivity::class.java), EDIT_PROFILE)
             R.id.actionLogOut ->
                 onLogoutClick()
         }
         return super.onOptionsItemSelected(item)
     }
+
 
     override fun onBackPressed() {
         if (isImageFullscreen) {
@@ -338,52 +338,6 @@ class UserProfileActivity : VedibartaActivity(),
 
     private fun calculateBubblesInRow(): Int =
         ((Resources.getSystem().displayMetrics.widthPixels - 48f.dpToPx()) / (100f.dpToPx())).toInt()
-
-    @SuppressLint("InflateParams")
-//    private fun populateHobbiesTable() {
-//
-//        val tableRowParams = TableLayout.LayoutParams(
-//            TableLayout.LayoutParams.MATCH_PARENT,
-//            TableLayout.LayoutParams.WRAP_CONTENT
-//        )
-//        tableRowParams.topMargin = 40 // in pixels
-//
-//        val bubbleParams =
-//            TableRow.LayoutParams(
-//                TableRow.LayoutParams.WRAP_CONTENT,
-//                TableRow.LayoutParams.WRAP_CONTENT
-//            )
-//
-//        if (student == null || student!!.hobbies.isEmpty()) {
-//            handleNoHobbies()
-//            return
-//        }
-//
-//        val steps = calculateBubblesInRow()
-//        (student!!.hobbies.indices step steps).forEach { i ->
-//            val tableRow = TableRow(this)
-//            tableRow.layoutParams = tableRowParams
-//            tableRow.gravity = Gravity.CENTER_HORIZONTAL
-//
-//            for (j in 0 until steps) {
-//                if (i + j >= student!!.hobbies.size)
-//                    break
-//
-//                val bubbleFrame = LayoutInflater.from(this).inflate(
-//                    R.layout.user_profile_bubble_orange,
-//                    null
-//                ) as FrameLayout
-//
-//                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-//                bubble.text = student!!.hobbies[i + j]
-//                bubbleFrame.layoutParams = bubbleParams
-//
-//                tableRow.addView(bubbleFrame)
-//            }
-//
-//            hobbiesTable.addView(tableRow)
-//        }
-//    }
 
     private fun setToolbar(tb: Toolbar) {
         setSupportActionBar(tb)
@@ -692,6 +646,12 @@ class UserProfileActivity : VedibartaActivity(),
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
                     uploadPhoto(selectedImage!!)
+                }
+                EDIT_PROFILE -> {
+                    val snackbar = Snackbar.make(toolbar, resources.getString(R.string.edit_changes_saved_successfully), Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(ContextCompat.getColor(this, R.color.colorAccentDark))
+                    snackbar.view.layoutDirection = View.LAYOUT_DIRECTION_RTL
+                    snackbar.show()
                 }
             }
         }
