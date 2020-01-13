@@ -1,13 +1,11 @@
 package com.technion.vedibarta.login
 
-import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
@@ -80,8 +78,9 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     override fun onStart() {
         super.onStart()
 
-        val currentUser = auth.currentUser
-        updateUIForCurrentUser(currentUser)
+        auth.currentUser?.reload()?.addOnSuccessListener {
+            updateUIForCurrentUser(auth.currentUser)
+        }
     }
 
     override fun onSignInButtonClick() {
@@ -112,7 +111,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpWithEmailButtonClick() {
-        hideKeyboard(this@LoginActivity)
+        hideKeyboard(this)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.login_screen_fragment, SignUpWithEmailFragment())
             addToBackStack(null)
@@ -120,7 +119,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpButtonClick(email: String, password: String) {
-        hideKeyboard(this@LoginActivity)
+        hideKeyboard(this)
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -162,7 +161,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onLoginButtonClick(email: String, password: String) {
-        hideKeyboard(this@LoginActivity)
+        hideKeyboard(this)
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -238,8 +237,13 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             }
     }
 
-    private fun updateUIForCurrentUser(user: FirebaseUser?) {
-        if (user != null) {
+    private fun isUserVerified(user: FirebaseUser) =
+        user.providerData.any {
+            it.providerId !in listOf(EmailAuthProvider.PROVIDER_ID, FirebaseAuthProvider.PROVIDER_ID)
+        } || user.isEmailVerified
+
+    private fun updateUIForCurrentUser(user: FirebaseUser?) = user?.let {
+        if (isUserVerified(user)) {
             val database = DocumentsCollections(user.uid)
             database.students().userId().build().get().addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
@@ -247,7 +251,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
                     Handler().postDelayed({
                         Log.d(TAG, "document exists. redirecting to main activity")
-                        if (this@LoginActivity.isInForeground()) {
+                        if (this.isInForeground()) {
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
@@ -255,7 +259,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 } else {
                     Handler().postDelayed({
                         Log.d(TAG, "document doesn't exist. redirecting to user setup")
-                        if (this@LoginActivity.isInForeground()) {
+                        if (this.isInForeground()) {
                             startActivity(Intent(this, UserSetupActivity::class.java))
                             finish()
                         }

@@ -37,7 +37,7 @@ class SearchCharacteristicsFragment : VedibartaFragment() {
         val characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
         val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
 
-        populateCharacteristicsTable(act, table, characteristics, act.fakeStudent)
+        populateCharacteristicsTable(act, table, characteristics.toMutableList().shuffled().toTypedArray(), act.fakeStudent)
 
         return view
     }

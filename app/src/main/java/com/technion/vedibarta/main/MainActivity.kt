@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -132,6 +134,7 @@ class MainActivity : VedibartaActivity() {
         Log.d(TAG, "showing all chat results")
 
         mainAdapter = getMainAdapter()
+        mainAdapter.registerAdapterDataObserver(onChatPopulate())
         chat_history.layoutManager = LinearLayoutManager(this)
         chat_history.adapter = mainAdapter
         mainAdapter.firestoreAdapter.startListening()
@@ -140,8 +143,21 @@ class MainActivity : VedibartaActivity() {
 
     override fun onStart() {
         super.onStart()
+        emptyListMessage.visibility = View.VISIBLE
+        chat_history.visibility = View.GONE
         showAllChats()
         mainAdapter.firestoreAdapter.startListening()
+    }
+
+    private fun onChatPopulate(): RecyclerView.AdapterDataObserver {
+        return object: RecyclerView.AdapterDataObserver()
+        {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                emptyListMessage.visibility = View.GONE
+                chat_history.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onStop() {
