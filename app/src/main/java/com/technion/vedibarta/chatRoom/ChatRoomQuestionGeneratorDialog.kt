@@ -88,7 +88,8 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
     }
 
     private fun onQuestionSelect(question: String) {
-        //TODO send a 3rd party message in chat with the appropriate question
+        (activity as ChatRoomActivity).write(question, true)
+        dismiss()
     }
 
     private fun getCategoriesInCommon(): Array<String> {

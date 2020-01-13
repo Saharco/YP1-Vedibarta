@@ -18,18 +18,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.SetOptions
-import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.activity_chat_room.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -238,7 +234,7 @@ class ChatRoomActivity : VedibartaActivity()
         chatBox.setText("")
     }
 
-    private fun write(text: String, isGeneratorMessage: Boolean)
+    fun write(text: String, isGeneratorMessage: Boolean)
     {
         val timeSent = Date(System.currentTimeMillis())
         var sender = userId!!
