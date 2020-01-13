@@ -110,8 +110,11 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
     }
 
     private fun getQuestions(category: String): Array<String> {
-        if (category == "כללי")
+        if (category == "כללי") {
+            questionList.visibility = View.VISIBLE
+            emptyQuestionList.visibility = View.GONE
             return resources.getStringArray(R.array.general_questions)
+        }
         val commonHobbies = hobbies.intersect(partnerHobbies.asIterable())
         val hobbiesCategories = resources.getStringArray(R.array.hobbies_categories)
         val hobbiesLinkArray = resources.obtainTypedArray(R.array.hobbies_id_link)
