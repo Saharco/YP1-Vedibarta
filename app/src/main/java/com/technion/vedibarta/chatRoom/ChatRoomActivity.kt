@@ -138,6 +138,7 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.notifyDataSetChanged() //
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         chatView.layoutManager = layoutManager
+        chatView.layoutManager = layoutManager
         chatView.addOnLayoutChangeListener(scrollToBottomOnKeyboardOpening())
         adapter.registerAdapterDataObserver(automiaticScroller())
         chatView.adapter = adapter

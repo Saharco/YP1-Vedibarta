@@ -57,6 +57,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <TextView
+                android:id="@+id/emptyListMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textSecondary"
+                android:visibility="gone"
+                android:layout_marginTop="32dp"
+                android:textSize="32sp"
+                android:gravity="center"
+                android:text="@string/empty_chat_list_message_m"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/chat_history"
