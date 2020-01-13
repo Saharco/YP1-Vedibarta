@@ -231,7 +231,7 @@ class ChatRoomActivity : VedibartaActivity()
         chatBox.setText("")
     }
 
-    private fun write(text: String, isGeneratorMessage: Boolean) {
+    fun write(text: String, isGeneratorMessage: Boolean) {
         val sender = if (isGeneratorMessage) systemSender else userId!!
         val path = database.chats().chatId(chatId).messages().build()
         path.add(Message(sender, partnerId, text))
