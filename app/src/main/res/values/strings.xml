@@ -86,6 +86,7 @@
     <string name="chat_room_question_generator_empty_list_message">אין שאלות עבור הנושא"</string>
     <string name="chat_room_enter_message_m">כתוב הודעה</string>
     <string name="chat_room_enter_message_f">כתבי הודעה</string>
+    <string name="sending_message">שולח..</string>
 
     <!--    LoginScreen attribute   -->
     <string name="facebook_app_id">3227815763959885</string>

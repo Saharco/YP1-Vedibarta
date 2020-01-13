@@ -101,19 +101,16 @@ class ChatRoomAdapter(
         soundPlayer.playMessageSound(type, this.itemCount)
     }
 
-    private class SentMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class SentMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
-            val dateString = dateToString(message.timestamp ?: Date())
+            val dateString = message.timestamp?.let { dateToString(it) }
+                ?: itemView.context.getString(R.string.sending_message)
             itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
             itemView.findViewById<TextView>(R.id.sentMessageTime).text = dateString
         }
     }
 
-    private class ReceivedMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class ReceivedMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
             val dateString = dateToString(message.timestamp!!)
             itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
@@ -121,9 +118,7 @@ class ChatRoomAdapter(
         }
     }
 
-    private class GeneratorMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class GeneratorMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
             itemView.findViewById<TextView>(R.id.generatorMessageBody).text = message.text
         }
