@@ -102,8 +102,12 @@ class MainActivity : VedibartaActivity() {
         mainAdapter.firestoreAdapter.stopListening()
 
         var i = 0
-        val filteredMap = chatPartnersMap.filterKeys { it.startsWith(query, ignoreCase = true) }
-            .mapKeys { i++ }.toList().sortedByDescending { it.second.lastMessageTimestamp }
+        val filteredMap = chatPartnersMap.filterKeys {
+            val splitedName = it.split(" ")
+            val firstName = splitedName[0]
+            val lastName = splitedName[1]
+            firstName.startsWith(query, ignoreCase = true) || lastName.startsWith(query, ignoreCase = true)
+        }.mapKeys { i++ }.toList().sortedByDescending { it.second.lastMessageTimestamp }
 
         searchAdapter = object : RecyclerView.Adapter<ViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
