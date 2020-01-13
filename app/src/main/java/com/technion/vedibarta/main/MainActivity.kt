@@ -18,6 +18,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
@@ -143,6 +144,8 @@ class MainActivity : VedibartaActivity() {
 
     override fun onStart() {
         super.onStart()
+        if (student!!.gender == Gender.FEMALE)
+            emptyListMessage.text = resources.getString(R.string.empty_chat_list_message_f)
         emptyListMessage.visibility = View.VISIBLE
         chat_history.visibility = View.GONE
         showAllChats()

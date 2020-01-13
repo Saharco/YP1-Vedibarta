@@ -139,6 +139,8 @@
     <string name="days">ימים</string>
     <string name="yesterday">אתמול</string>
     <string name="empty_chat_list_message_m">אתה לא שותף באף שיחה.\nקדימה, חפש חברים</string>
+    <string name="empty_chat_list_message_f">אתת לא שותפה באף שיחה.\nקדימה, חפשי חברים</string>
+
 
 
     <!--  FCM  -->
