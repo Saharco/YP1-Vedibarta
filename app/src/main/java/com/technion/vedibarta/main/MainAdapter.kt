@@ -145,6 +145,7 @@ internal class MainAdapter(private val userId: String?,
                     }
                     chatsList = newList
                     mainAdapter.notifyItemMoved(originalPosition, 0)
+                    mainAdapter.notifyItemChanged(0)
                 }
             }
 
