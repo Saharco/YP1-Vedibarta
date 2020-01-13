@@ -28,10 +28,12 @@ class ChatRoomAdapter(
     private var messageList: List<Message> = listOf()
     val fireStoreAdapter = getFireStoreAdapter(options, this)
 
-    fun getFirstMessageOrNull(): Message?
-    {
+    fun getFirstMessageOrNull(): Message? {
         return messageList.firstOrNull()
     }
+
+    val hasNoMessages
+            get() = messageList.isEmpty()
 
     override fun getItemViewType(position: Int): Int {
         val sender = messageList[position].sender

@@ -213,10 +213,11 @@ class ChatRoomActivity : VedibartaActivity()
             return
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
-
-        val lastMessageDate: Date? = adapter.getFirstMessageOrNull()?.timestamp
-        val currentDate = Date(System.currentTimeMillis())
-        if (lastMessageDate != null) {
+        val currentDate = Date()
+        if (adapter.hasNoMessages) {
+            write(dateFormatter.format(currentDate), true)
+        } else {
+            val lastMessageDate: Date = adapter.getFirstMessageOrNull()?.timestamp ?: Date()
             val timeGap = currentDate.time - lastMessageDate.time
             val dayGap =
                 (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
@@ -224,8 +225,6 @@ class ChatRoomActivity : VedibartaActivity()
             if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
                 write(dateFormatter.format(currentDate), true)
             }
-        } else {
-            write(dateFormatter.format(currentDate), true)
         }
         write(text, false)
         chatBox.setText("")
