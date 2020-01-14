@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_onboarding">
+    android:background="@android:color/transparent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         tools:context=".login.ChooseExtraOptionsFragment">
 
         <androidx.cardview.widget.CardView
@@ -20,73 +19,99 @@
             android:layout_marginStart="56dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="56dp"
+            android:animateLayoutChanges="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
             app:layout_constraintBottom_toTopOf="@id/cardViewSchool"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
-                android:padding="24dp">
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/textViewFirstNameTitle"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/personalInfoButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/user_setup_first_name_title"
+                    android:layout_marginEnd="8dp"
+                    android:drawableEnd="@drawable/ic_person"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:padding="8dp"
+                    android:text="@string/user_setup_extra_options_title"
                     android:textColor="@color/textPrimary"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:textSize="20sp" />
 
-                </androidx.appcompat.widget.AppCompatTextView>
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textFieldFirstName"
-                    android:layout_width="0dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardViewNameBody"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:digits="@string/allowed_letters"
-                    android:hint="@string/text_field_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:textSize="15sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textViewFirstNameTitle">
+                    android:animateLayoutChanges="true"
+                    android:padding="24dp"
+                    android:visibility="gone">
 
-                </com.google.android.material.textfield.TextInputEditText>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textViewFirstNameTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/user_setup_first_name_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/textViewLastNameTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/user_setup_last_name_title"
-                    android:textColor="@color/textPrimary"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textFieldFirstName">
+                    </androidx.appcompat.widget.AppCompatTextView>
 
-                </androidx.appcompat.widget.AppCompatTextView>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldFirstName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:digits="@string/allowed_letters"
+                        android:hint="@string/text_field_hint"
+                        android:imeOptions="flagNoExtractUi"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textViewFirstNameTitle">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textFieldLastName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:digits="@string/allowed_letters"
-                    android:hint="@string/text_field_hint"
-                    android:imeOptions="flagNoExtractUi"
-                    android:textSize="15sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textViewLastNameTitle">
+                    </com.google.android.material.textfield.TextInputEditText>
 
-                </com.google.android.material.textfield.TextInputEditText>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textViewLastNameTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/user_setup_last_name_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textFieldFirstName">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.appcompat.widget.AppCompatTextView>
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldLastName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:digits="@string/allowed_letters"
+                        android:hint="@string/text_field_hint"
+                        android:imeOptions="flagNoExtractUi"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textViewLastNameTitle">
+
+                    </com.google.android.material.textfield.TextInputEditText>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
 
         </androidx.cardview.widget.CardView>
 
@@ -97,92 +122,104 @@
             android:layout_marginStart="56dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="56dp"
+            android:layout_marginBottom="40dp"
+            android:animateLayoutChanges="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardViewName">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
-                android:padding="24dp">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/schoolFilterSwitchText"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/schoolInfoButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/user_setup_school_title"
+                    android:layout_marginEnd="8dp"
+                    android:drawableEnd="@drawable/ic_school"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:padding="8dp"
+                    android:text="@string/user_setup_school_info_title"
                     android:textColor="@color/textPrimary"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="20sp" />
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/schoolListSpinner"
-                    android:layout_width="0dp"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardViewSchoolBody"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:completionThreshold="0"
-                    android:imeOptions="flagNoExtractUi"
-                    android:visibility="visible"
-                    app:autoSizeMaxTextSize="13sp"
-                    app:autoSizeMinTextSize="11sp"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/schoolFilterSwitchText" />
+                    android:animateLayoutChanges="true"
+                    android:padding="24dp"
+                    android:visibility="gone">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/schoolFilterSwitchText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/user_setup_school_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/schoolListSpinner"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewRegion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="56dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardViewSchool">
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/schoolListSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:completionThreshold="0"
+                        android:imeOptions="flagNoExtractUi"
+                        android:visibility="visible"
+                        app:autoSizeMaxTextSize="13sp"
+                        app:autoSizeMinTextSize="11sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintBottom_toTopOf="@id/regionFilterSwitchText"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/schoolFilterSwitchText" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:padding="24dp">
+                    <TextView
+                        android:id="@+id/regionFilterSwitchText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/user_setup_region_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/schoolListSpinner"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/regionListSpinner"
+                        >
 
-                <TextView
-                    android:id="@+id/regionFilterSwitchText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/user_setup_region_title"
-                    android:textColor="@color/textPrimary"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    </TextView>
 
-                </TextView>
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/regionListSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:completionThreshold="0"
+                        android:dropDownHeight="150dp"
+                        android:imeOptions="flagNoExtractUi"
+                        android:visibility="visible"
+                        app:autoSizeMaxTextSize="13sp"
+                        app:autoSizeMinTextSize="11sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/regionFilterSwitchText" />
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/regionListSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:completionThreshold="0"
-                    android:dropDownHeight="150dp"
-                    android:imeOptions="flagNoExtractUi"
-                    android:visibility="visible"
-                    app:autoSizeMaxTextSize="13sp"
-                    app:autoSizeMinTextSize="11sp"
-                    app:autoSizeTextType="uniform"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/regionFilterSwitchText" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
 
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>

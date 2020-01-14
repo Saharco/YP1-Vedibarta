@@ -1,88 +1,308 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_onboarding"
-    tools:context=".login.ChooseGenderFragment">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@android:color/transparent">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/genderText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/choose_gender_text"
-        android:textColor="@color/textPrimaryOnDarkSurface"
-        android:textSize="26sp"
-        app:layout_constraintBottom_toTopOf="@id/genderLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </androidx.appcompat.widget.AppCompatTextView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/genderLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        tools:context=".login.ChooseGenderFragment">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageFemale"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            app:srcCompat="@drawable/ic_photo_default_profile_girl"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/imageMale"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/genderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:text="@string/choose_gender_text"
+            android:textColor="@color/textPrimaryOnDarkSurface"
+            android:textSize="26sp"
+            app:layout_constraintBottom_toTopOf="@id/genderLayout"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+        </androidx.appcompat.widget.AppCompatTextView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/genderLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toTopOf="@id/cardViewName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageFemale"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                app:srcCompat="@drawable/ic_photo_default_profile_girl"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/imageMale"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageMale"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            app:srcCompat="@drawable/ic_photo_default_profile_man"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageMale"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                app:srcCompat="@drawable/ic_photo_default_profile_man"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageFemale"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textOptionFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_setup_female_option"
+                android:layout_marginTop="16dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/imageFemale"
+                app:layout_constraintStart_toStartOf="@id/imageFemale"
+                app:layout_constraintTop_toBottomOf="@id/imageFemale" />
+
+            <TextView
+                android:id="@+id/textOptionMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_setup_male_option"
+                android:textStyle="bold"
+                android:textColor="@color/background"
+                android:layout_marginTop="16dp"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/imageMale"
+                app:layout_constraintStart_toStartOf="@id/imageMale"
+                app:layout_constraintTop_toBottomOf="@id/imageMale" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="56dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="56dp"
+            android:animateLayoutChanges="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
+            app:layout_constraintBottom_toTopOf="@id/cardViewSchool"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/genderLayout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/personalInfoButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:drawableEnd="@drawable/ic_person"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:padding="8dp"
+                    android:text="@string/user_setup_extra_options_title"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="20sp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardViewNameBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:padding="24dp"
+                    android:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textViewFirstNameTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/user_setup_first_name_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                    </androidx.appcompat.widget.AppCompatTextView>
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldFirstName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:digits="@string/allowed_letters"
+                        android:hint="@string/text_field_hint"
+                        android:imeOptions="flagNoExtractUi"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textViewFirstNameTitle">
+
+                    </com.google.android.material.textfield.TextInputEditText>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/textViewLastNameTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/user_setup_last_name_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textFieldFirstName">
+
+                    </androidx.appcompat.widget.AppCompatTextView>
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textFieldLastName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:digits="@string/allowed_letters"
+                        android:hint="@string/text_field_hint"
+                        android:imeOptions="flagNoExtractUi"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textViewLastNameTitle">
+
+                    </com.google.android.material.textfield.TextInputEditText>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewSchool"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="56dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="56dp"
+            android:layout_marginBottom="40dp"
+            android:animateLayoutChanges="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imageFemale"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardViewName">
 
-        <TextView
-            android:id="@+id/textOptionFemale"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/user_setup_female_option"
-            android:layout_marginTop="16dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/imageFemale"
-            app:layout_constraintStart_toStartOf="@id/imageFemale"
-            app:layout_constraintTop_toBottomOf="@id/imageFemale" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textOptionMale"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/user_setup_male_option"
-            android:textStyle="bold"
-            android:textColor="@color/background"
-            android:layout_marginTop="16dp"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/imageMale"
-            app:layout_constraintStart_toStartOf="@id/imageMale"
-            app:layout_constraintTop_toBottomOf="@id/imageMale" />
+                <TextView
+                    android:id="@+id/schoolInfoButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:drawableEnd="@drawable/ic_school"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:padding="8dp"
+                    android:text="@string/user_setup_school_info_title"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="20sp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cardViewSchoolBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:padding="24dp"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/schoolFilterSwitchText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/user_setup_school_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/schoolListSpinner"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/schoolListSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:completionThreshold="0"
+                        android:imeOptions="flagNoExtractUi"
+                        android:visibility="visible"
+                        app:autoSizeMaxTextSize="13sp"
+                        app:autoSizeMinTextSize="11sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintBottom_toTopOf="@id/regionFilterSwitchText"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/schoolFilterSwitchText" />
+
+                    <TextView
+                        android:id="@+id/regionFilterSwitchText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/user_setup_region_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/schoolListSpinner"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toTopOf="@id/regionListSpinner"
+                        >
+
+                    </TextView>
+
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                        android:id="@+id/regionListSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:completionThreshold="0"
+                        android:dropDownHeight="150dp"
+                        android:imeOptions="flagNoExtractUi"
+                        android:visibility="visible"
+                        app:autoSizeMaxTextSize="13sp"
+                        app:autoSizeMinTextSize="11sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/regionFilterSwitchText" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

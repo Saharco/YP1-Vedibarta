@@ -8,6 +8,7 @@
     <string name="allowed_letters">אבגדהוזחטיכלמנסעפצקרשתץףןםך</string>
     <string name="yes">כן</string>
     <string name="no">לא</string>
+    <string name="ok">אישור</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
@@ -55,8 +56,9 @@
     <string name="choose_gender_text">כיצד לפנות אלייך?</string>
     <string name="user_setup_characteristics_title">מאפייני זיהוי</string>
     <string name="user_setup_extra_options_title">פרטים אישיים</string>
+    <string name="user_setup_school_info_title">פרטי בית הספר</string>
     <string name="user_setup_hobbies_title">תחביבים</string>
-    <string name="user_setup_region_title">עיר מגורים</string>
+    <string name="user_setup_region_title">מיקום בית ספר</string>
     <string name="user_setup_school_title">בית ספר</string>
     <string name="user_setup_first_name_title">שם פרטי</string>
     <string name="user_setup_last_name_title">שם משפחה</string>
