@@ -21,8 +21,8 @@ class ProfileEditActivity : VedibartaActivity() {
     private val TAG = "ProfileEditActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    private var editedCharacteristics = student!!.characteristics.toMutableMap()
-    private var editedHobbies = student!!.hobbies.toMutableSet()
+    private var startingCharacteristics = student!!.characteristics.toMutableMap()
+    private var startingHobbies = student!!.hobbies.toMutableSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +63,8 @@ class ProfileEditActivity : VedibartaActivity() {
     private fun commitEditChanges() {
         Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
         //TODO: push to the database first!
-         editedCharacteristics = student!!.characteristics
-        editedHobbies = student!!.hobbies.toMutableSet()
+         startingCharacteristics = student!!.characteristics
+        startingHobbies = student!!.hobbies.toMutableSet()
         database.students().userId().build().set(student!!).addOnSuccessListener {
             Log.d("profileEdit", "saved profile changes")
             onBackPressed()
@@ -91,7 +91,10 @@ class ProfileEditActivity : VedibartaActivity() {
             val builder = AlertDialog.Builder(this)
             builder.setCustomTitle(title)
                 .setMessage(R.string.edit_discard_changes_message)
-                .setPositiveButton(android.R.string.yes) { _, _ -> super.onBackPressed() }
+                .setPositiveButton(android.R.string.yes) { _, _ ->
+                    student!!.hobbies = startingHobbies.toList()
+                    student!!.characteristics = startingCharacteristics
+                    super.onBackPressed() }
                 .setNegativeButton(android.R.string.no) { _, _ -> }
                 .show()
             builder.create()
@@ -102,10 +105,10 @@ class ProfileEditActivity : VedibartaActivity() {
     }
 
     private fun changesOccurred(): Boolean {
-        if (editedCharacteristics.filter { it.value } != student!!.characteristics.filter { it.value })
+        if (startingCharacteristics.filter { it.value } != student!!.characteristics.filter { it.value })
             return true
-        if (!(editedHobbies.containsAll(student!!.hobbies.toSet()) &&
-                    student!!.hobbies.toSet().containsAll(editedHobbies))
+        if (!(startingHobbies.containsAll(student!!.hobbies.toSet()) &&
+                    student!!.hobbies.toSet().containsAll(startingHobbies))
         )
             return true
         return false
