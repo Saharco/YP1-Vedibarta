@@ -91,11 +91,11 @@ class ProfileEditActivity : VedibartaActivity() {
             val builder = AlertDialog.Builder(this)
             builder.setCustomTitle(title)
                 .setMessage(R.string.edit_discard_changes_message)
-                .setPositiveButton(android.R.string.yes) { _, _ ->
+                .setPositiveButton(R.string.yes) { _, _ ->
                     student!!.hobbies = startingHobbies.toList()
                     student!!.characteristics = startingCharacteristics
                     super.onBackPressed() }
-                .setNegativeButton(android.R.string.no) { _, _ -> }
+                .setNegativeButton(R.string.no) { _, _ -> }
                 .show()
             builder.create()
             return
