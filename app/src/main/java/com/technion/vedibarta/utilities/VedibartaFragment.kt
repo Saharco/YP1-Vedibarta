@@ -14,10 +14,14 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import de.hdodenhof.circleimageview.CircleImageView
+import com.bumptech.glide.request.RequestOptions
+
+
 
 open class VedibartaFragment : Fragment() {
 
@@ -209,8 +213,13 @@ open class VedibartaFragment : Fragment() {
                         null
                     ) as ConstraintLayout
                     val bubblePhoto = bubbleFrame.findViewById(R.id.hobbyPhoto) as CircleImageView
-                    bubblePhoto.setImageDrawable(hobbyToPhoto(context, hobbies[i + j], allHobbies))
-
+//                    bubblePhoto.setImageDrawable(hobbyToPhoto(context, hobbies[i + j], allHobbies))
+                    val myOptions = RequestOptions().override(100, 100)
+                    Glide.with(context)
+                        .asBitmap()
+                        .apply(myOptions)
+                        .load(hobbyToPhoto(context, hobbies[i + j], allHobbies))
+                        .into(bubblePhoto)
                     val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
                     bubbleText.text = hobbies[i + j]
 
@@ -240,7 +249,7 @@ open class VedibartaFragment : Fragment() {
             }
         }
 
-        private fun hobbyToPhoto(context: Context, hobby: String, hobbies: Array<String>): Drawable? {
+        private fun hobbyToPhoto(context: Context, hobby: String, hobbies: Array<String>): Int{
             val hobbyPhotoId = when (hobby) {
                 hobbies[0] -> R.drawable.music
                 hobbies[1] -> R.drawable.theatre
@@ -280,7 +289,7 @@ open class VedibartaFragment : Fragment() {
                 else -> android.R.drawable.ic_menu_help
             }
 
-            return ContextCompat.getDrawable(context, hobbyPhotoId)
+            return hobbyPhotoId
         }
 
         fun loadHobbies(context: Context): List<HobbyCard> {

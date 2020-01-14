@@ -16,13 +16,11 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.utilities.VedibartaActivity
-import java.lang.Exception
 import java.util.HashMap
-import kotlin.math.abs
 
 internal class MainAdapter(private val userId: String?,
                           private val applicationContext: Context,
-                          private val chatPartnersMap: HashMap<String, ChatMetadata>,
+                          private val chatPartnersMap: HashMap<String, ArrayList<ChatMetadata>>,
                           private val mainActivity: MainActivity,
                            options: FirestoreRecyclerOptions<Chat>): RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
@@ -77,7 +75,9 @@ internal class MainAdapter(private val userId: String?,
 
                         Log.d(MainActivity.TAG, "Binding chat with the following data: $chatMetadata")
 
-                        chatPartnersMap[chatMetadata.partnerName] = chatMetadata
+                        if (chatPartnersMap[chatMetadata.partnerName] == null)
+                            chatPartnersMap[chatMetadata.partnerName] = ArrayList()
+                        chatPartnersMap[chatMetadata.partnerName]!!.add(chatMetadata)
 
                         holder.view.setOnClickListener {
                             val i = Intent(mainActivity, ChatRoomActivity::class.java)
@@ -96,7 +96,9 @@ internal class MainAdapter(private val userId: String?,
                             chat.lastMessageTimestamp
                         )
 
-                        chatPartnersMap[chatMetadata.partnerName] = chatMetadata
+                        if (chatPartnersMap[chatMetadata.partnerName] == null)
+                            chatPartnersMap[chatMetadata.partnerName] = ArrayList()
+                        chatPartnersMap[chatMetadata.partnerName]!!.add(chatMetadata)
 
                         holder.view.setOnClickListener {
                             val i = Intent(mainActivity, ChatRoomActivity::class.java)
