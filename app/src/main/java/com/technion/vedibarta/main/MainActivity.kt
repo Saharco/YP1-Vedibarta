@@ -1,14 +1,10 @@
 package com.technion.vedibarta.main
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isEmpty
-import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -34,7 +30,7 @@ class MainActivity : VedibartaActivity() {
     private lateinit var mainAdapter: MainAdapter
     private lateinit var searchAdapter: RecyclerView.Adapter<ViewHolder>
 
-    private val chatPartnersMap = HashMap<String, ChatMetadata>()
+    private val chatPartnersMap = HashMap<String, ArrayList<ChatMetadata>>()
 
     companion object {
         const val TAG = "Vedibarta/chat-lobby"
@@ -86,8 +82,7 @@ class MainActivity : VedibartaActivity() {
                     override fun onQueryTextChange(newText: String?): Boolean {
                         if (newText == null || newText == "") {
                             showAllChats()
-                        }
-                        else
+                        } else
                             showFilteredChats(newText)
                         return false
                     }
@@ -101,13 +96,14 @@ class MainActivity : VedibartaActivity() {
 
         mainAdapter.firestoreAdapter.stopListening()
 
-        var i = 0
-        val filteredMap = chatPartnersMap.filterKeys {
-            val splitedName = it.split(" ")
-            val firstName = splitedName[0]
-            val lastName = splitedName[1]
-            firstName.startsWith(query, ignoreCase = true) || lastName.startsWith(query, ignoreCase = true)
-        }.mapKeys { i++ }.toList().sortedByDescending { it.second.lastMessageTimestamp }
+        val filteredList = chatPartnersMap.filterKeys {
+            it.startsWith(
+                query,
+                ignoreCase = true
+            ) || it.split(" ")[1].startsWith(query, ignoreCase = true)
+        }.values
+            .flatten()
+            .sortedBy { it.lastMessageTimestamp } // observe that that Date implements Comparable!
 
         searchAdapter = object : RecyclerView.Adapter<ViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -117,11 +113,11 @@ class MainActivity : VedibartaActivity() {
             }
 
             override fun getItemCount(): Int {
-                return filteredMap.size
+                return filteredList.size
             }
 
             override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-                val chatMetadata = filteredMap[holder.adapterPosition].second
+                val chatMetadata = filteredList[holder.adapterPosition]
                 Log.d(TAG, "Binding chat with the following data: $chatMetadata")
                 holder.bind(chatMetadata)
                 holder.view.setOnClickListener {
@@ -157,8 +153,7 @@ class MainActivity : VedibartaActivity() {
     }
 
     private fun onChatPopulate(): RecyclerView.AdapterDataObserver {
-        return object: RecyclerView.AdapterDataObserver()
-        {
+        return object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
                 emptyListMessage.visibility = View.GONE
@@ -195,8 +190,7 @@ class MainActivity : VedibartaActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMainAdapter(): MainAdapter
-    {
+    private fun getMainAdapter(): MainAdapter {
         val adapterQuery = database
             .chats()
             .build()
