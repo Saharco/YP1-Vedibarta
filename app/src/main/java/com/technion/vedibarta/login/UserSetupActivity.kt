@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.viewpager.widget.ViewPager
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
@@ -87,17 +89,18 @@ class UserSetupActivity : VedibartaActivity() {
         adapter.addFragment(ChooseExtraOptionsFragment(), "2")
         adapter.addFragment(ChooseCharacteristicsFragment(), "3")
         adapter.addFragment(ChooseHobbiesFragment(), "4")
-
+        val toast = Toast.makeText(
+            applicationContext,
+            R.string.user_setup_dialog_message,
+            Toast.LENGTH_SHORT
+        )
         viewPager.setOnTouchListener { v, event ->
-            if (setupStudent.gender == Gender.NONE) {
-                Toast.makeText(
-                    applicationContext,
-                    R.string.user_setup_dialog_message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
+            if (setupStudent.gender != Gender.NONE) {
                 adapter.replaceFragment(2, ChooseCharacteristicsFragment())
                 v.onTouchEvent(event)
+            } else {
+                if(!toast.view.isShown)
+                    toast.show()
             }
             return@setOnTouchListener true
         }
@@ -146,7 +149,7 @@ class UserSetupActivity : VedibartaActivity() {
         title.setText(R.string.user_setup_missing_details_dialog_title)
         title.textSize = 20f
         title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(ContextCompat.getColor(this,R.color.textPrimary))
+        title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
         title.gravity = Gravity.CENTER
         title.setPadding(10, 40, 10, 24)
         val builder = AlertDialog.Builder(this)
@@ -167,7 +170,7 @@ class UserSetupActivity : VedibartaActivity() {
             return false
         }
 
-        Log.d(TAG,"first: $chosenFirstName last: $chosenLastName")
+        Log.d(TAG, "first: $chosenFirstName last: $chosenLastName")
 
         if (chosenFirstName == "") {
             missingDetailsText += "${resources.getString(R.string.user_setup_first_name_missing)}\n"
@@ -201,33 +204,42 @@ class UserSetupActivity : VedibartaActivity() {
 
         return true
     }
-/*
-    inner class CustomViewPageListener(val activity: UserSetupActivity) :
-        ViewPager.SimpleOnPageChangeListener() {
-
-        override fun onPageSelected(position: Int) {
-            super.onPageSelected(position)
-            when (position) {
-                0 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_title)
-                }
-                1 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_extra_options_title)
-                }
-                2 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_characteristics_title)
-                }
-                3 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_hobbies_title)
-                }
-            }
-        }
-    }
-
- */
-
 }
+//    inner class CustomViewPageListener() :
+//        ViewPager.SimpleOnPageChangeListener() {
+//
+//        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+//
+//            if (setupStudent.gender != Gender.NONE){
+//                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+//            }
+//            else{
+//                Toast.makeText(
+//                    applicationContext,
+//                    R.string.user_setup_dialog_message,
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        }
+//
+//        override fun onPageScrollStateChanged(state: Int) {
+//            if (setupStudent.gender != Gender.NONE){
+//                super.onPageScrollStateChanged(state)
+//            }
+//        }
+//
+//        override fun onPageSelected(position: Int) {
+//            if (setupStudent.gender == Gender.NONE){
+//                Toast.makeText(
+//                    applicationContext,
+//                    R.string.user_setup_dialog_message,
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//            else {
+//                super.onPageSelected(position)
+//            }
+//        }
+//    }
+//
+//}

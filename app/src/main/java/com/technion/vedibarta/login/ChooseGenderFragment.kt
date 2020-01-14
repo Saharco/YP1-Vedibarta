@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
@@ -35,16 +36,21 @@ class ChooseGenderFragment : VedibartaFragment() {
 
     private fun onButtonFemaleClickListener() {
 
-        cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
-        cardViewMale.setCardBackgroundColor(resources.getColor(R.color.background))
+        cardViewFemale.setCardBackgroundColor(
+            ContextCompat.getColor(
+                context!!,
+                R.color.colorAccent
+            )
+        )
+        cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.background))
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
     }
 
     private fun onButtonMaleClickListener() {
 
-        cardViewMale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
-        cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.background))
+        cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.colorAccent))
+        cardViewFemale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.background))
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
     }
@@ -53,8 +59,8 @@ class ChooseGenderFragment : VedibartaFragment() {
         super.setupAndInitViews(v)
 
         //---Buttons---
-        val buttonMale : AppCompatButton = v.findViewById(R.id.buttonMale)
-        val buttonFemale : AppCompatButton = v.findViewById(R.id.buttonFemale)
+        val buttonMale: AppCompatButton = v.findViewById(R.id.buttonMale)
+        val buttonFemale: AppCompatButton = v.findViewById(R.id.buttonFemale)
 
         buttonMale.setOnClickListener { onButtonMaleClickListener() }
         buttonFemale.setOnClickListener { onButtonFemaleClickListener() }
@@ -69,12 +75,12 @@ class ChooseGenderFragment : VedibartaFragment() {
 
         when ((activity as UserSetupActivity).setupStudent.gender) {
             Gender.MALE -> {
-                cardViewMale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
-                cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.background))
+                cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.colorAccent))
+                cardViewFemale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.background))
             }
             Gender.FEMALE -> {
-                cardViewFemale.setCardBackgroundColor(resources.getColor(R.color.colorAccent))
-                cardViewMale.setCardBackgroundColor(resources.getColor(R.color.background))
+                cardViewFemale.setCardBackgroundColor(ContextCompat.getColor(context!!,R.color.colorAccent))
+                cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!,R.color.background))
             }
             Gender.NONE -> {
             }

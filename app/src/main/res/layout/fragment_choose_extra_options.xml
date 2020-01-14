@@ -2,14 +2,15 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_onboarding">
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_onboarding"
+
         tools:context=".login.ChooseExtraOptionsFragment">
 
         <androidx.cardview.widget.CardView
@@ -37,8 +38,8 @@
                     android:text="@string/user_setup_first_name_title"
                     android:textColor="@color/textPrimary"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                 </androidx.appcompat.widget.AppCompatTextView>
 
@@ -51,10 +52,9 @@
                     android:hint="@string/text_field_hint"
                     android:imeOptions="flagNoExtractUi"
                     android:textSize="15sp"
-                    app:layout_constraintTop_toBottomOf="@id/textViewFirstNameTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/textViewFirstNameTitle">
 
                 </com.google.android.material.textfield.TextInputEditText>
 
@@ -66,9 +66,8 @@
                     android:text="@string/user_setup_last_name_title"
                     android:textColor="@color/textPrimary"
                     android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@id/textFieldFirstName"
                     app:layout_constraintEnd_toEndOf="parent"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/textFieldFirstName">
 
                 </androidx.appcompat.widget.AppCompatTextView>
 
@@ -81,10 +80,9 @@
                     android:hint="@string/text_field_hint"
                     android:imeOptions="flagNoExtractUi"
                     android:textSize="15sp"
-                    app:layout_constraintTop_toBottomOf="@id/textViewLastNameTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/textViewLastNameTitle">
 
                 </com.google.android.material.textfield.TextInputEditText>
 
@@ -189,4 +187,5 @@
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
+
 
