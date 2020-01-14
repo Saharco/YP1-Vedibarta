@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -16,6 +18,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.miguelcatalan.materialsearchview.MaterialSearchView
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
@@ -99,8 +102,12 @@ class MainActivity : VedibartaActivity() {
         mainAdapter.firestoreAdapter.stopListening()
 
         var i = 0
-        val filteredMap = chatPartnersMap.filterKeys { it.startsWith(query, ignoreCase = true) }
-            .mapKeys { i++ }.toList().sortedByDescending { it.second.lastMessageTimestamp }
+        val filteredMap = chatPartnersMap.filterKeys {
+            val splitedName = it.split(" ")
+            val firstName = splitedName[0]
+            val lastName = splitedName[1]
+            firstName.startsWith(query, ignoreCase = true) || lastName.startsWith(query, ignoreCase = true)
+        }.mapKeys { i++ }.toList().sortedByDescending { it.second.lastMessageTimestamp }
 
         searchAdapter = object : RecyclerView.Adapter<ViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -132,6 +139,7 @@ class MainActivity : VedibartaActivity() {
         Log.d(TAG, "showing all chat results")
 
         mainAdapter = getMainAdapter()
+        mainAdapter.registerAdapterDataObserver(onChatPopulate())
         chat_history.layoutManager = LinearLayoutManager(this)
         chat_history.adapter = mainAdapter
         mainAdapter.firestoreAdapter.startListening()
@@ -140,8 +148,23 @@ class MainActivity : VedibartaActivity() {
 
     override fun onStart() {
         super.onStart()
+        if (student!!.gender == Gender.FEMALE)
+            emptyListMessage.text = resources.getString(R.string.empty_chat_list_message_f)
+        emptyListMessage.visibility = View.VISIBLE
+        chat_history.visibility = View.GONE
         showAllChats()
         mainAdapter.firestoreAdapter.startListening()
+    }
+
+    private fun onChatPopulate(): RecyclerView.AdapterDataObserver {
+        return object: RecyclerView.AdapterDataObserver()
+        {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                emptyListMessage.visibility = View.GONE
+                chat_history.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onStop() {

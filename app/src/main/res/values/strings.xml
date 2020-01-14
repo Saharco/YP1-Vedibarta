@@ -6,6 +6,8 @@
     <string name="or">או</string>
     <string name="allowed_letters_regex">[אבגדהוזחטיכלמנסעפצקרשתץףןםך]+</string>
     <string name="allowed_letters">אבגדהוזחטיכלמנסעפצקרשתץףןםך</string>
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
@@ -83,9 +85,11 @@
     <string name="chat_room_abuse_dialog_report_button_f">דווחי</string>
     <string name="chat_room_abuse_dialog_back_button">ביטול</string>
     <string name="chat_room_question_generator_title">מחולל השאלות</string>
-    <string name="chat_room_question_generator_question_title">שאלות לדוגמא:</string>
+    <string name="chat_room_question_generator_question_title">מתקשה למצוא נושא לשיחה?\nבחר אחד מהנושאים הבאים:</string>
+    <string name="chat_room_question_generator_empty_list_message">אין שאלות עבור הנושא"</string>
     <string name="chat_room_enter_message_m">כתוב הודעה</string>
     <string name="chat_room_enter_message_f">כתבי הודעה</string>
+    <string name="sending_message">שולח..</string>
 
     <!--    LoginScreen attribute   -->
     <string name="facebook_app_id">3227815763959885</string>
@@ -138,6 +142,9 @@
     <string name="hours">שעות</string>
     <string name="days">ימים</string>
     <string name="yesterday">אתמול</string>
+    <string name="empty_chat_list_message_m">אתה לא שותף באף שיחה.\nקדימה, חפש חברים</string>
+    <string name="empty_chat_list_message_f">אתת לא שותפה באף שיחה.\nקדימה, חפשי חברים</string>
+
 
 
     <!--  FCM  -->
@@ -166,5 +173,8 @@
     <!--  Splash  -->
     <string name="chat_search_loading_message">מחפשים חברים!</string>
     <string name="default_loading_message">מכניסים את האחר לכיתה</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

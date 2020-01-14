@@ -13,6 +13,8 @@ import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.activity_chat_room.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChatRoomAdapter(
     chatRoomActivity: ChatRoomActivity,
@@ -26,10 +28,12 @@ class ChatRoomAdapter(
     private var messageList: List<Message> = listOf()
     val fireStoreAdapter = getFireStoreAdapter(options, this)
 
-    fun getFirstMessageOrNull(): Message?
-    {
+    fun getFirstMessageOrNull(): Message? {
         return messageList.firstOrNull()
     }
+
+    val hasNoMessages
+            get() = messageList.isEmpty()
 
     override fun getItemViewType(position: Int): Int {
         val sender = messageList[position].sender
@@ -99,27 +103,24 @@ class ChatRoomAdapter(
         soundPlayer.playMessageSound(type, this.itemCount)
     }
 
-    private class SentMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class SentMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
+            val dateString = message.timestamp?.let { dateToString(it) }
+                ?: itemView.context.getString(R.string.sending_message)
             itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.sentMessageTime).text = dateString
         }
     }
 
-    private class ReceivedMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class ReceivedMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
+            val dateString = dateToString(message.timestamp!!)
             itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = dateString
         }
     }
 
-    private class GeneratorMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class GeneratorMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
             itemView.findViewById<TextView>(R.id.generatorMessageBody).text = message.text
         }
@@ -130,7 +131,9 @@ class ChatRoomAdapter(
             override fun onDataChanged()
             {
                 super.onDataChanged()
-                messageList = this.snapshots.sortedByDescending { it.timestamp }
+                messageList = this.snapshots.sortedWith(
+                    compareByDescending<Message, Date?>(nullsLast()) { it.timestamp }
+                )
                 chatRoomAdapter.notifyDataSetChanged()
             }
 
@@ -161,3 +164,5 @@ class ChatRoomAdapter(
         }
     }
 }
+
+fun dateToString(date: Date): String = SimpleDateFormat("HH:mma").format(date)

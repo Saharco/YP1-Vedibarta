@@ -11,6 +11,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.database.DatabaseVersioning
@@ -70,7 +71,8 @@ internal class MainAdapter(private val userId: String?,
                             chat.lastMessage,
                             chat.lastMessageTimestamp,
                             otherGender,
-                            otherStudentPhotoUrl
+                            otherStudentPhotoUrl,
+                            otherStudent.toObject(Student::class.java)!!.hobbies.toTypedArray()
                         )
 
                         Log.d(MainActivity.TAG, "Binding chat with the following data: $chatMetadata")
@@ -143,6 +145,7 @@ internal class MainAdapter(private val userId: String?,
                     }
                     chatsList = newList
                     mainAdapter.notifyItemMoved(originalPosition, 0)
+                    mainAdapter.notifyItemChanged(0)
                 }
             }
 

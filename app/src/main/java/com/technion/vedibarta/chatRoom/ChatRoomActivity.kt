@@ -18,18 +18,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.SetOptions
-import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.activity_chat_room.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -45,6 +41,7 @@ class ChatRoomActivity : VedibartaActivity()
     private var numMessages = 0
     private var photoUrl: String? = null
     private var otherGender: Gender? = null
+    private var partnerHobbies: Array<String> = emptyArray()
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -70,6 +67,8 @@ class ChatRoomActivity : VedibartaActivity()
 
         chatPartnerId = partnerId
         photoUrl ?: displayDefaultProfilePicture()
+
+        partnerHobbies = chatMetaData.partnerHobbies
 
         setToolbar(chatToolbar)
         configureAdapter()
@@ -138,6 +137,7 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.notifyDataSetChanged() //
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         chatView.layoutManager = layoutManager
+        chatView.layoutManager = layoutManager
         chatView.addOnLayoutChangeListener(scrollToBottomOnKeyboardOpening())
         adapter.registerAdapterDataObserver(automiaticScroller())
         chatView.adapter = adapter
@@ -185,7 +185,7 @@ class ChatRoomActivity : VedibartaActivity()
 
             when (item!!.itemId) {
                 R.id.generateQuestion -> {
-                    ChatRoomQuestionGeneratorDialog().show(
+                    ChatRoomQuestionGeneratorDialog.newInstance(student!!.hobbies.toTypedArray(), partnerHobbies).show(
                         supportFragmentManager,
                         "QuestionGeneratorFragment"
                     )
@@ -213,41 +213,27 @@ class ChatRoomActivity : VedibartaActivity()
             return
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
-
-        val lastMessageDate: Date? = adapter.getFirstMessageOrNull()?.timestamp
-        val currentDate = Date(System.currentTimeMillis())
-        if (lastMessageDate != null)
-        {
+        val currentDate = Date()
+        if (adapter.hasNoMessages) {
+            write(dateFormatter.format(currentDate), true)
+        } else {
+            val lastMessageDate: Date = adapter.getFirstMessageOrNull()?.timestamp ?: Date()
             val timeGap = currentDate.time - lastMessageDate.time
             val dayGap =
                 (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
 
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
-            {
+            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
                 write(dateFormatter.format(currentDate), true)
             }
-        }
-        else
-        {
-            write(dateFormatter.format(currentDate), true)
         }
         write(text, false)
         chatBox.setText("")
     }
 
-    private fun write(text: String, isGeneratorMessage: Boolean)
-    {
-        val timeSent = Date(System.currentTimeMillis())
-        var sender = userId!!
-        if (isGeneratorMessage)
-        {
-            sender = systemSender
-        }
-        val path = database.chats()
-                .chatId(chatId)
-                .messages()
-                .build()
-        path.add(Message(sender, partnerId, text, timeSent))
+    fun write(text: String, isGeneratorMessage: Boolean) {
+        val sender = if (isGeneratorMessage) systemSender else userId!!
+        val path = database.chats().chatId(chatId).messages().build()
+        path.add(Message(sender, partnerId, text))
             .addOnFailureListener {
                 Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
