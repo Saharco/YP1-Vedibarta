@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatButton
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
+import kotlinx.android.synthetic.main.fragment_choose_gender.*
 
 /**
  * A simple [Fragment] subclass.
@@ -20,67 +20,56 @@ class ChooseGenderFragment : VedibartaFragment() {
 
 
     private val TAG = "GenderFragment@Setup"
-
-    lateinit var cardViewFemale: CardView
-    lateinit var cardViewMale: CardView
-
+    private val BORDER_WIDTH = 10
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_choose_gender, container, false)
-        setupAndInitViews(view)
-        return view
+        return inflater.inflate(R.layout.fragment_choose_gender, container, false)
     }
 
     private fun onButtonFemaleClickListener() {
 
-        cardViewFemale.setCardBackgroundColor(
-            ContextCompat.getColor(
-                context!!,
-                R.color.colorAccent
-            )
-        )
-        cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.background))
+        imageFemale.borderWidth = BORDER_WIDTH
+        imageFemale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+        imageMale.borderWidth = 0
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
     }
 
     private fun onButtonMaleClickListener() {
 
-        cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.colorAccent))
-        cardViewFemale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.background))
+        imageMale.borderWidth = BORDER_WIDTH
+        imageMale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+        imageFemale.borderWidth = 0
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupAndInitViews(view)
+
+    }
+
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
-
-        //---Buttons---
-        val buttonMale: AppCompatButton = v.findViewById(R.id.buttonMale)
-        val buttonFemale: AppCompatButton = v.findViewById(R.id.buttonFemale)
-
-        buttonMale.setOnClickListener { onButtonMaleClickListener() }
-        buttonFemale.setOnClickListener { onButtonFemaleClickListener() }
-
-        //---Card Views---
-        cardViewMale = v.findViewById(R.id.cardViewMale)
-        cardViewFemale = v.findViewById(R.id.cardViewFemale)
-
-        cardViewMale.setOnClickListener { onButtonMaleClickListener() }
-        cardViewFemale.setOnClickListener { onButtonFemaleClickListener() }
-
+        Glide.with(context!!).load(R.drawable.ic_photo_default_profile_man).into(imageMale)
+        Glide.with(context!!).load(R.drawable.ic_photo_default_profile_girl).into(imageFemale)
+        imageMale.setOnClickListener { onButtonMaleClickListener() }
+        imageFemale.setOnClickListener { onButtonFemaleClickListener() }
 
         when ((activity as UserSetupActivity).setupStudent.gender) {
             Gender.MALE -> {
-                cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.colorAccent))
-                cardViewFemale.setCardBackgroundColor(ContextCompat.getColor(context!!, R.color.background))
+                imageMale.borderWidth = BORDER_WIDTH
+                imageMale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+                imageFemale.borderWidth = 0
             }
             Gender.FEMALE -> {
-                cardViewFemale.setCardBackgroundColor(ContextCompat.getColor(context!!,R.color.colorAccent))
-                cardViewMale.setCardBackgroundColor(ContextCompat.getColor(context!!,R.color.background))
+                imageFemale.borderWidth = BORDER_WIDTH
+                imageFemale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+                imageMale.borderWidth = 0
             }
             Gender.NONE -> {
             }

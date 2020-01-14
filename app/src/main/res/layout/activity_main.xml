@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="@string/main_fab_title"
-        app:icon="@drawable/ic_search_24dp"
+        app:icon="@drawable/ic_find_friends"
         app:layout_anchor="@id/toolbarContainer"
         app:layout_anchorGravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,121 +10,79 @@
     android:background="@drawable/bg_onboarding"
     tools:context=".login.ChooseGenderFragment">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/genderText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/genderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/choose_gender_text"
+        android:textColor="@color/textPrimaryOnDarkSurface"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toTopOf="@id/genderLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.appcompat.widget.AppCompatTextView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/genderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageFemale"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            app:srcCompat="@drawable/ic_photo_default_profile_girl"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageMale"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/cardViewMale"
-            android:text="@string/choose_gender_text"
-            android:textColor="@color/textPrimaryOnDarkSurface"
-            android:textSize="26sp">
-
-        </androidx.appcompat.widget.AppCompatTextView>
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <View
-        android:id="@+id/setupView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/genderText"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/cardViewMale">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageMale"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            app:srcCompat="@drawable/ic_photo_default_profile_man"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageFemale"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </View>
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewFemale"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardViewMale"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/genderText">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:padding="20dp">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/buttonFemale"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/ic_photo_default_profile_girl"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </androidx.appcompat.widget.AppCompatButton>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/user_setup_female_option"
-                android:textColor="@color/textPrimary"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="@+id/buttonFemale"
-                app:layout_constraintStart_toStartOf="@+id/buttonFemale"
-                app:layout_constraintTop_toBottomOf="@+id/buttonFemale">
-
-            </androidx.appcompat.widget.AppCompatTextView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewMale"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/cardViewFemale"
-        app:layout_constraintTop_toBottomOf="@id/genderText">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/textOptionFemale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:text="@string/user_setup_female_option"
+            android:layout_marginTop="16dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/imageFemale"
+            app:layout_constraintStart_toStartOf="@id/imageFemale"
+            app:layout_constraintTop_toBottomOf="@id/imageFemale" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/buttonMale"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:background="@drawable/ic_photo_default_profile_man"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/textOptionMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/user_setup_male_option"
+            android:textStyle="bold"
+            android:textColor="@color/background"
+            android:layout_marginTop="16dp"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/imageMale"
+            app:layout_constraintStart_toStartOf="@id/imageMale"
+            app:layout_constraintTop_toBottomOf="@id/imageMale" />
 
-            </androidx.appcompat.widget.AppCompatButton>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="bottom|center"
-                android:layout_marginTop="15dp"
-                android:text="@string/user_setup_male_option"
-                android:textColor="@color/textPrimary"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="@+id/buttonMale"
-                app:layout_constraintStart_toStartOf="@+id/buttonMale"
-                app:layout_constraintTop_toBottomOf="@+id/buttonMale">
-
-            </androidx.appcompat.widget.AppCompatTextView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
