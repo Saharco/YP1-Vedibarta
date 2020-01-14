@@ -8,5 +8,6 @@
         style="@style/UserProfileBubbleSelected"
         app:autoSizeMaxTextSize="16sp"
         app:autoSizeMinTextSize="10sp"
+        android:maxLines="1"
         app:autoSizeTextType="uniform"/>
 </FrameLayout>
