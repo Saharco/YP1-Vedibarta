@@ -1,13 +1,15 @@
 package com.technion.vedibarta.chatRoom
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Handler
 import android.text.SpannableStringBuilder
 import android.util.Log
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
@@ -42,6 +44,7 @@ class ChatRoomActivity : VedibartaActivity()
     private var photoUrl: String? = null
     private var otherGender: Gender? = null
     private var partnerHobbies: Array<String> = emptyArray()
+    private var firstVisibleMessagePosition = 0
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
     private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
@@ -138,8 +141,9 @@ class ChatRoomActivity : VedibartaActivity()
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         chatView.layoutManager = layoutManager
         chatView.layoutManager = layoutManager
-        chatView.addOnLayoutChangeListener(scrollToBottomOnKeyboardOpening())
-        adapter.registerAdapterDataObserver(automiaticScroller())
+        chatView.addOnScrollListener(firstVisibleMessageTracker())
+        chatRoomRootView.viewTreeObserver.addOnGlobalLayoutListener(scrollToBottomOnKeyboardOpening())
+        adapter.registerAdapterDataObserver(automaticScroller())
         chatView.adapter = adapter
     }
 
@@ -216,7 +220,9 @@ class ChatRoomActivity : VedibartaActivity()
         val currentDate = Date()
         if (adapter.hasNoMessages) {
             write(dateFormatter.format(currentDate), true)
-        } else {
+        }
+        else
+        {
             val lastMessageDate: Date = adapter.getFirstMessageOrNull()?.timestamp ?: Date()
             val timeGap = currentDate.time - lastMessageDate.time
             val dayGap =
@@ -239,14 +245,23 @@ class ChatRoomActivity : VedibartaActivity()
             }
     }
 
-    private fun automiaticScroller(): RecyclerView.AdapterDataObserver
+    private fun firstVisibleMessageTracker(): RecyclerView.OnScrollListener {
+        return object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState ==  RecyclerView.SCROLL_STATE_IDLE)
+                    firstVisibleMessagePosition = (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    Log.d("wtf", "firstvisible = $firstVisibleMessagePosition")
+            }
+        }
+    }
+
+    private fun automaticScroller(): RecyclerView.AdapterDataObserver
     {
         return object: RecyclerView.AdapterDataObserver()
         {
-            override fun onChanged()
-            {
-                super.onChanged()
-
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
                 val firstVisiblePosition =
                     (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                 if (firstVisiblePosition <= 1)
@@ -256,15 +271,41 @@ class ChatRoomActivity : VedibartaActivity()
                     chatView.scrollToPosition(firstVisiblePosition + 1)
                 }
             }
+
+            override fun onChanged() {
+                super.onChanged()
+                val firstVisiblePosition =
+                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                chatView.scrollToPosition(firstVisiblePosition)
+            }
         }
     }
 
-    private fun scrollToBottomOnKeyboardOpening(): View.OnLayoutChangeListener {
-        return View.OnLayoutChangeListener { _, _, _, bottom, _, _, _, _, oldBottom ->
-            if (bottom < oldBottom) {
-                Handler().postDelayed({
-                    chatView.scrollToPosition(0)
-                }, 0)
+    private fun scrollToBottomOnKeyboardOpening(): ViewTreeObserver.OnGlobalLayoutListener
+    {
+
+        return object : ViewTreeObserver.OnGlobalLayoutListener {
+            private var isKeyBoardVisible = false
+            override fun onGlobalLayout()
+            {
+                val activityRootView: View = findViewById(R.id.chatRoomRootView)
+                val heightDiff = activityRootView.rootView.height - activityRootView.height;
+                if (heightDiff > dpToPx(this@ChatRoomActivity, 200f) && !isKeyBoardVisible)
+                {
+                    isKeyBoardVisible = true
+                    if (firstVisibleMessagePosition == 0)
+                        chatView.scrollToPosition(0)
+                }
+                else if (heightDiff < dpToPx(this@ChatRoomActivity, 200f) && isKeyBoardVisible)
+                {
+                    isKeyBoardVisible = false
+                }
+            }
+
+            private fun dpToPx(context: Context, valueInDp: Float): Float
+            {
+                val metrics = context.resources.displayMetrics;
+                return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics)
             }
         }
     }

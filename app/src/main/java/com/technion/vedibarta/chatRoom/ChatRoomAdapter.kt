@@ -131,10 +131,19 @@ class ChatRoomAdapter(
             override fun onDataChanged()
             {
                 super.onDataChanged()
-                messageList = this.snapshots.sortedWith(
+                val newMessageList = this.snapshots.sortedWith(
                     compareByDescending<Message, Date?>(nullsLast()) { it.timestamp }
                 )
-                chatRoomAdapter.notifyDataSetChanged()
+                val oldMessageListSize = messageList.size
+                val newMessageListSize = newMessageList.size
+                messageList = newMessageList
+                if(newMessageListSize > oldMessageListSize)
+                    chatRoomAdapter.notifyItemInserted(0)
+                else if (newMessageListSize == oldMessageListSize)
+                {
+                    chatRoomAdapter.notifyDataSetChanged()
+                    //chatRoomAdapter.notifyDataSetChanged()
+                }
             }
 
             override fun startListening()
