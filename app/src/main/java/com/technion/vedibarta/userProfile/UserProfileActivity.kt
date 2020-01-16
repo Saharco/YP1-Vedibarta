@@ -154,10 +154,10 @@ class UserProfileActivity : VedibartaActivity(),
         val builder = AlertDialog.Builder(this)
         builder.setCustomTitle(title)
             .setMessage(msg)
-            .setPositiveButton(android.R.string.yes) {_, _ ->
+            .setPositiveButton(R.string.yes) {_, _ ->
                 performLogout()
             }
-            .setNegativeButton(android.R.string.no) {_, _ -> }
+            .setNegativeButton(R.string.no) {_, _ -> }
             .show()
         builder.create()
     }
