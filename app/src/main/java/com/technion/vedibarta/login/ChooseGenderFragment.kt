@@ -50,7 +50,6 @@ class ChooseGenderFragment : VedibartaFragment() {
         textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
-        changeCharacteristicsGender()
         reloadCharacteristics()
     }
 
@@ -63,38 +62,7 @@ class ChooseGenderFragment : VedibartaFragment() {
         textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
-        changeCharacteristicsGender()
         reloadCharacteristics()
-    }
-
-    private fun changeCharacteristicsGender() {
-        val student = (activity as UserSetupActivity).setupStudent
-        if (student.characteristics.isEmpty()) return
-
-        val maleCharacteristics =
-            context!!.resources.getStringArray(R.array.characteristicsMale_hebrew)
-        val femaleCharacteristics =
-            context!!.resources.getStringArray(R.array.characteristicsFemale_hebrew)
-        val map: MutableMap<String, Boolean> = mutableMapOf()
-
-        when (student.gender) {
-            Gender.MALE -> {
-                student.characteristics.forEach { (s, v) ->
-                    map[maleCharacteristics[femaleCharacteristics.indexOf(s)]] =
-                        v
-                }
-            }
-            Gender.FEMALE -> {
-                student.characteristics.forEach { (s, v) ->
-                    map[femaleCharacteristics[maleCharacteristics.indexOf(s)]] =
-                        v
-                }
-            }
-            else -> {
-            }
-        }
-        student.characteristics = map
-
     }
 
     private fun reloadCharacteristics() {

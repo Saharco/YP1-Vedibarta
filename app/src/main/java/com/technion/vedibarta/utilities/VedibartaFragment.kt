@@ -3,13 +3,12 @@ package com.technion.vedibarta.utilities
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.get
@@ -20,7 +19,7 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import de.hdodenhof.circleimageview.CircleImageView
 import com.bumptech.glide.request.RequestOptions
-
+import com.technion.vedibarta.POJOs.Gender
 
 
 open class VedibartaFragment : Fragment() {
@@ -79,7 +78,7 @@ open class VedibartaFragment : Fragment() {
                 for (j in 0 until steps) {
                     if (i + j >= characteristics.size)
                         break
-                    if (student.characteristics.contains(characteristics[i + j])) {
+                    if (isContained(context, student, characteristics[i + j])) {
                         bubbleFrame = LayoutInflater.from(context).inflate(
                             R.layout.user_profile_bubble_blue,
                             null
@@ -114,6 +113,30 @@ open class VedibartaFragment : Fragment() {
             }
         }
 
+        private fun isContained(
+            context: Context,
+            student: Student,
+            s: String
+        ): Boolean {
+
+            //TODO add a translation to 's' so it will always be in hebrew
+
+            val maleCharacteristics =
+                context.resources.getStringArray(R.array.characteristicsMale_hebrew)
+            val femaleCharacteristics =
+                context.resources.getStringArray(R.array.characteristicsFemale_hebrew)
+            val characteristic: String = when (student.gender) {
+                Gender.MALE -> {
+                    s
+                }
+                Gender.FEMALE -> {
+                    maleCharacteristics[femaleCharacteristics.indexOf(s)]
+                }
+                else -> ""
+            }
+            return student.characteristics.contains(characteristic)
+        }
+
         private fun characteristicsTableItemClickHandler(
             view: View,
             context: Context,
@@ -127,6 +150,10 @@ open class VedibartaFragment : Fragment() {
             val bubbleFrame: FrameLayout
             val viewPos = view.id % steps
 
+            val maleCharacteristics =
+                context.resources.getStringArray(R.array.characteristicsMale_hebrew)
+            val femaleCharacteristics =
+                context.resources.getStringArray(R.array.characteristicsFemale_hebrew)
 
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
                 bubbleFrame = LayoutInflater.from(context).inflate(
@@ -137,8 +164,13 @@ open class VedibartaFragment : Fragment() {
                 bubbleFrame.alpha = 1f
                 bubbleFrame.tag = SELECTED_BUBBLE
 
-
-                student.characteristics[characteristics[view.id]] = true
+                if (student.gender == Gender.MALE)
+                    student.characteristics[characteristics[view.id]] = true
+                else {
+                    student.characteristics[maleCharacteristics[femaleCharacteristics.indexOf(
+                        characteristics[view.id]
+                    )]] = true
+                }
 
             } else {
                 bubbleFrame = LayoutInflater.from(context).inflate(
@@ -149,8 +181,15 @@ open class VedibartaFragment : Fragment() {
                 bubbleFrame.alpha = 0.6f
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
 
+                if (student.gender == Gender.MALE)
+                    student.characteristics.remove(characteristics[view.id])
+                else
+                    student.characteristics.remove(
+                        maleCharacteristics[femaleCharacteristics.indexOf(
+                            characteristics[view.id]
+                        )]
+                    )
 
-                student.characteristics.remove(characteristics[view.id])
             }
 
             bubbleFrame.id = view.id
@@ -249,7 +288,7 @@ open class VedibartaFragment : Fragment() {
             }
         }
 
-        private fun hobbyToPhoto(context: Context, hobby: String, hobbies: Array<String>): Int{
+        private fun hobbyToPhoto(context: Context, hobby: String, hobbies: Array<String>): Int {
             val hobbyPhotoId = when (hobby) {
                 hobbies[0] -> R.drawable.music
                 hobbies[1] -> R.drawable.theatre
@@ -300,8 +339,11 @@ open class VedibartaFragment : Fragment() {
             val hobbyCards = mutableListOf<HobbyCard>()
 
             categories.forEachIndexed { index, category ->
-                val hobbyId = hobbiesLinkArray.getResourceId(index,-1)
-                hobbyCards.add(index, HobbyCard(category, context.resources.getStringArray(hobbyId)))
+                val hobbyId = hobbiesLinkArray.getResourceId(index, -1)
+                hobbyCards.add(
+                    index,
+                    HobbyCard(category, context.resources.getStringArray(hobbyId))
+                )
             }
 
             hobbiesLinkArray.recycle()
