@@ -46,8 +46,8 @@ class ChooseGenderFragment : VedibartaFragment() {
         imageFemale.borderWidth = BORDER_WIDTH
         imageFemale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
         imageMale.borderWidth = 0
-        textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
-        textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
+        textOptionMale.textSize = 24f
+        textOptionFemale.textSize = 30f
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
         changeCharacteristicsGender()
@@ -59,8 +59,8 @@ class ChooseGenderFragment : VedibartaFragment() {
         imageMale.borderWidth = BORDER_WIDTH
         imageMale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
         imageFemale.borderWidth = 0
-        textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
-        textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
+        textOptionMale.textSize = 30f
+        textOptionFemale.textSize = 24f
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
         changeCharacteristicsGender()
