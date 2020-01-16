@@ -2,10 +2,10 @@
 
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="@android:color/transparent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/frameLayout"
@@ -45,32 +45,32 @@ android:background="@android:color/transparent">
                 android:id="@+id/imageFemale"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
-                app:srcCompat="@drawable/ic_photo_default_profile_girl"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/imageMale"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_photo_default_profile_girl" />
 
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imageMale"
                 android:layout_width="128dp"
                 android:layout_height="128dp"
-                app:srcCompat="@drawable/ic_photo_default_profile_man"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageFemale"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_photo_default_profile_man" />
 
             <TextView
                 android:id="@+id/textOptionFemale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/user_setup_female_option"
                 android:layout_marginTop="16dp"
+                android:text="@string/user_setup_female_option"
+                android:textColor="@color/background"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/imageFemale"
                 app:layout_constraintStart_toStartOf="@id/imageFemale"
@@ -80,11 +80,11 @@ android:background="@android:color/transparent">
                 android:id="@+id/textOptionMale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/user_setup_male_option"
-                android:textStyle="bold"
-                android:textColor="@color/background"
                 android:layout_marginTop="16dp"
+                android:text="@string/user_setup_male_option"
+                android:textColor="@color/background"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/imageMale"
                 app:layout_constraintStart_toStartOf="@id/imageMale"
@@ -113,18 +113,35 @@ android:background="@android:color/transparent">
                 android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/personalInfoButton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:drawableEnd="@drawable/ic_person"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/user_setup_extra_options_title"
-                    android:textColor="@color/textPrimary"
-                    android:textSize="20sp" />
+                    android:orientation="horizontal">
+
+                    <com.github.zagum.expandicon.ExpandIconView
+                        android:id="@+id/nameArrowButton"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        app:eiv_color="@color/colorAccentDark"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="8dp" />
+
+                    <TextView
+                        android:id="@+id/personalInfoButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:drawableEnd="@drawable/ic_person"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
+                        android:padding="8dp"
+                        android:text="@string/user_setup_extra_options_title"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="20sp" />
+
+
+                </LinearLayout>
+
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardViewNameBody"
@@ -217,18 +234,34 @@ android:background="@android:color/transparent">
                 android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/schoolInfoButton"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:drawableEnd="@drawable/ic_school"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:padding="8dp"
-                    android:text="@string/user_setup_school_info_title"
-                    android:textColor="@color/textPrimary"
-                    android:textSize="20sp" />
+                    android:orientation="horizontal">
+
+                    <com.github.zagum.expandicon.ExpandIconView
+                        android:id="@+id/schoolArrowButton"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        app:eiv_color="@color/colorAccentDark"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="8dp" />
+
+                    <TextView
+                        android:id="@+id/schoolInfoButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:drawableEnd="@drawable/ic_school"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
+                        android:padding="8dp"
+                        android:text="@string/user_setup_school_info_title"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
+
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cardViewSchoolBody"
@@ -273,10 +306,9 @@ android:background="@android:color/transparent">
                         android:text="@string/user_setup_region_title"
                         android:textColor="@color/textPrimary"
                         android:textStyle="bold"
-                        app:layout_constraintTop_toBottomOf="@id/schoolListSpinner"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toTopOf="@id/regionListSpinner"
-                        >
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/schoolListSpinner">
 
                     </TextView>
 

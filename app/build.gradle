@@ -51,6 +51,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
+    implementation 'com.github.zagum:Android-ExpandIcon:1.2.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

@@ -71,11 +71,13 @@ class ChooseGenderFragment : VedibartaFragment() {
         val student = (activity as UserSetupActivity).setupStudent
         if (student.characteristics.isEmpty()) return
 
-        val maleCharacteristics = context!!.resources.getStringArray(R.array.characteristicsMale_hebrew)
-        val femaleCharacteristics = context!!.resources.getStringArray(R.array.characteristicsFemale_hebrew)
-        val map : MutableMap<String,Boolean> = mutableMapOf()
+        val maleCharacteristics =
+            context!!.resources.getStringArray(R.array.characteristicsMale_hebrew)
+        val femaleCharacteristics =
+            context!!.resources.getStringArray(R.array.characteristicsFemale_hebrew)
+        val map: MutableMap<String, Boolean> = mutableMapOf()
 
-        when(student.gender){
+        when (student.gender) {
             Gender.MALE -> {
                 student.characteristics.forEach { (s, v) ->
                     map[maleCharacteristics[femaleCharacteristics.indexOf(s)]] =
@@ -85,17 +87,20 @@ class ChooseGenderFragment : VedibartaFragment() {
             Gender.FEMALE -> {
                 student.characteristics.forEach { (s, v) ->
                     map[femaleCharacteristics[maleCharacteristics.indexOf(s)]] =
-                        v }
+                        v
+                }
             }
-            else -> {}
+            else -> {
+            }
         }
-        student.characteristics= map
+        student.characteristics = map
 
     }
 
-    private fun reloadCharacteristics(){
-        val frg = ((activity as UserSetupActivity).userSetupContainer.adapter as SectionsPageAdapter)
-            .getItem(1)
+    private fun reloadCharacteristics() {
+        val frg =
+            ((activity as UserSetupActivity).userSetupContainer.adapter as SectionsPageAdapter)
+                .getItem(1)
         val ft = fragmentManager!!.beginTransaction()
         ft.detach(frg)
         ft.attach(frg)
@@ -154,7 +159,7 @@ class ChooseGenderFragment : VedibartaFragment() {
         extraOptionsInit(v)
     }
 
-    private fun genderInit(v: View){
+    private fun genderInit(v: View) {
         Glide.with(context!!).load(R.drawable.ic_photo_default_profile_man).into(imageMale)
         Glide.with(context!!).load(R.drawable.ic_photo_default_profile_girl).into(imageFemale)
         imageMale.setOnClickListener { onButtonMaleClickListener() }
@@ -165,14 +170,24 @@ class ChooseGenderFragment : VedibartaFragment() {
                 imageMale.borderWidth = BORDER_WIDTH
                 imageMale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
                 imageFemale.borderWidth = 0
-                textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
+                textOptionMale.setTextColor(
+                    ContextCompat.getColor(
+                        context!!,
+                        R.color.colorAccentDark
+                    )
+                )
                 textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
             }
             Gender.FEMALE -> {
                 imageFemale.borderWidth = BORDER_WIDTH
                 imageFemale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
                 imageMale.borderWidth = 0
-                textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
+                textOptionFemale.setTextColor(
+                    ContextCompat.getColor(
+                        context!!,
+                        R.color.colorAccentDark
+                    )
+                )
                 textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
             }
             Gender.NONE -> {
@@ -180,7 +195,7 @@ class ChooseGenderFragment : VedibartaFragment() {
         }
     }
 
-    private fun extraOptionsInit(v: View){
+    private fun extraOptionsInit(v: View) {
 
         val act = (activity as UserSetupActivity)
 
@@ -235,13 +250,12 @@ class ChooseGenderFragment : VedibartaFragment() {
         schoolFilterSwitchText.markRequired()
         regionFilterSwitchText.markRequired()
 
-        Log.d(TAG, "Init Views")
-
         personalInfoButton.setOnClickListener {
             if (cardViewNameBody.visibility == View.VISIBLE)
                 cardViewNameBody.visibility = View.GONE
             else
                 cardViewNameBody.visibility = View.VISIBLE
+            nameArrowButton.switchState()
         }
 
 
@@ -250,9 +264,32 @@ class ChooseGenderFragment : VedibartaFragment() {
                 cardViewSchoolBody.visibility = View.GONE
             else
                 cardViewSchoolBody.visibility = View.VISIBLE
+            schoolArrowButton.switchState()
         }
         schoolListSpinner.text = SpannableStringBuilder(act.setupStudent.school)
         regionListSpinner.text = SpannableStringBuilder(act.setupStudent.region)
+
+        nameArrowButton.switchState()
+        schoolArrowButton.switchState()
+
+        nameArrowButton.setAnimationDuration(200)
+        schoolArrowButton.setAnimationDuration(200)
+
+        nameArrowButton.setOnClickListener {
+            if (cardViewNameBody.visibility == View.VISIBLE)
+                cardViewNameBody.visibility = View.GONE
+            else
+                cardViewNameBody.visibility = View.VISIBLE
+            nameArrowButton.switchState()
+        }
+
+        schoolArrowButton.setOnClickListener {
+            if (cardViewSchoolBody.visibility == View.VISIBLE)
+                cardViewSchoolBody.visibility = View.GONE
+            else
+                cardViewSchoolBody.visibility = View.VISIBLE
+            schoolArrowButton.switchState()
+        }
     }
 
 }
