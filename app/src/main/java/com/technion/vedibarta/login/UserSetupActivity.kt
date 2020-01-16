@@ -16,6 +16,7 @@ import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
+import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -77,7 +78,6 @@ class UserSetupActivity : VedibartaActivity() {
     fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
         adapter.addFragment(ChooseGenderFragment(), "1")
-//        adapter.addFragment(ChooseExtraOptionsFragment(), "2")
         adapter.addFragment(ChooseCharacteristicsFragment(), "2")
         adapter.addFragment(ChooseHobbiesFragment(), "3")
         val toast = Toast.makeText(
@@ -85,15 +85,16 @@ class UserSetupActivity : VedibartaActivity() {
             R.string.user_setup_dialog_message,
             Toast.LENGTH_SHORT
         )
-        viewPager.setOnTouchListener { v, event ->
+        viewPager.setPagingEnabled(false)
+        viewPager.setOnInterceptTouchEventCustomBehavior {
             if (setupStudent.gender != Gender.NONE) {
-                adapter.replaceFragment(1, ChooseCharacteristicsFragment())
-                v.onTouchEvent(event)
+                adapter.getItem(1).onStart()
+                viewPager.setPagingEnabled(true)
+                viewPager.setOnInterceptTouchEventCustomBehavior {  }
             } else {
                 if(!toast.view.isShown)
                     toast.show()
             }
-            return@setOnTouchListener true
         }
 
         viewPager.adapter = adapter
@@ -110,7 +111,7 @@ class UserSetupActivity : VedibartaActivity() {
             database.students().userId().build().set(setupStudent)
                 .addOnSuccessListener {
                     student = setupStudent
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, UserProfileActivity::class.java))
                     finish()
                 }
                 .addOnFailureListener {

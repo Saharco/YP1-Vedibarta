@@ -14,8 +14,11 @@ import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.CustomViewPager
+import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import kotlinx.android.synthetic.main.activity_user_setup.*
 import kotlinx.android.synthetic.main.fragment_choose_gender.*
 
 /**
@@ -47,6 +50,8 @@ class ChooseGenderFragment : VedibartaFragment() {
         textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
+        changeCharacteristicsGender()
+        reloadCharacteristics()
     }
 
     private fun onButtonMaleClickListener() {
@@ -58,6 +63,43 @@ class ChooseGenderFragment : VedibartaFragment() {
         textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
+        changeCharacteristicsGender()
+        reloadCharacteristics()
+    }
+
+    private fun changeCharacteristicsGender() {
+        val student = (activity as UserSetupActivity).setupStudent
+        if (student.characteristics.isEmpty()) return
+
+        val maleCharacteristics = context!!.resources.getStringArray(R.array.characteristicsMale_hebrew)
+        val femaleCharacteristics = context!!.resources.getStringArray(R.array.characteristicsFemale_hebrew)
+        val map : MutableMap<String,Boolean> = mutableMapOf()
+
+        when(student.gender){
+            Gender.MALE -> {
+                student.characteristics.forEach { (s, v) ->
+                    map[maleCharacteristics[femaleCharacteristics.indexOf(s)]] =
+                        v
+                }
+            }
+            Gender.FEMALE -> {
+                student.characteristics.forEach { (s, v) ->
+                    map[femaleCharacteristics[maleCharacteristics.indexOf(s)]] =
+                        v }
+            }
+            else -> {}
+        }
+        student.characteristics= map
+
+    }
+
+    private fun reloadCharacteristics(){
+        val frg = ((activity as UserSetupActivity).userSetupContainer.adapter as SectionsPageAdapter)
+            .getItem(1)
+        val ft = fragmentManager!!.beginTransaction()
+        ft.detach(frg)
+        ft.attach(frg)
+        ft.commit()
     }
 
     override fun onPause() {
