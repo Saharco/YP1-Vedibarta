@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -27,6 +28,7 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -44,10 +46,6 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
-
-    companion object {
-        const val MINIMUM_LOAD_TIME = 1000L
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,8 +83,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             viewFlipper.showNext()
             showSplash(this, getString(R.string.default_loading_message))
 
-            it.addOnSuccessListener {
-                if (!updateUIForCurrentUser(auth.currentUser)) {
+            it.continueWithTask {
+                updateUIForCurrentUser(auth.currentUser)
+            }.addOnSuccessListener { willRedirect ->
+                if (!willRedirect || auth.currentUser == null) {
                     hideSplash(this)
                     viewFlipper.showPrevious()
                 }
@@ -181,10 +181,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 } else {
                     val user = auth.currentUser
                     if (user!!.isEmailVerified) {
-                        if (updateUIForCurrentUser(user)) {
-                            viewFlipper.showNext()
-                            showSplash(this, getString(R.string.default_loading_message))
-                        }
+                        updateUIForCurrentUser(user, true)
                     } else {
                         Toast.makeText(
                             this, getString(R.string.email_not_verified_error),
@@ -241,10 +238,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 if (task.isSuccessful) {
                     Log.w(TAG, "signInWithCredential: success")
                     val user = auth.currentUser
-                    if (updateUIForCurrentUser(user)) {
-                        viewFlipper.showNext()
-                        showSplash(this, getString(R.string.default_loading_message))
-                    }
+                    updateUIForCurrentUser(user, true)
                 } else {
                     // Sign in failed
                     Log.w(TAG, "signInWithCredential: failure", task.exception)
@@ -262,37 +256,33 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     /**
      * Redirect the current user to its desired activity.
      * If the user doesn't exists (null) or isn't verified yet the method does nothing.
-     * The redirection will occur eventually but may not be immediately.
+     *
      * @param user the current user (null if no such user exists)
+     * @param displaySplash if true displays the splash screen (only if a redirection occurs)
      * @return if a redirection will occur
      */
-    private fun updateUIForCurrentUser(user: FirebaseUser?) = user?.let {
-        if (isUserVerified(user)) {
-            val database = DocumentsCollections(user.uid)
-            database.students().userId().build().get().addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    VedibartaActivity.student = document.toObject(Student::class.java)
-
-                    Handler().postDelayed({
-                        Log.d(TAG, "document exists. redirecting to main activity")
-                        if (this.isInForeground()) {
-                            startActivity(Intent(this, MainActivity::class.java))
-                            finish()
-                        }
-                    }, MINIMUM_LOAD_TIME)
-                } else {
-                    Handler().postDelayed({
-                        Log.d(TAG, "document doesn't exist. redirecting to user setup")
-                        if (this.isInForeground()) {
-                            startActivity(Intent(this, UserSetupActivity::class.java))
-                            finish()
-                        }
-                    }, MINIMUM_LOAD_TIME)
-                }
+    private fun updateUIForCurrentUser(user: FirebaseUser?, displaySplash: Boolean = false): Task<Boolean> =
+        if (user != null && isUserVerified(user)) {
+            if (displaySplash) {
+                viewFlipper.showNext()
+                showSplash(this, getString(R.string.default_loading_message))
             }
-            true
-        } else false
-    } ?: false
+            val database = DocumentsCollections(user.uid)
+            database.students().userId().build().get().continueWith { task ->
+                val document = task.result
+                if (document != null && document.exists()) {
+                    Log.d(TAG, "document exists. redirecting to main activity")
+                    student = document.toObject(Student::class.java)
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                } else {
+                    Log.d(TAG, "document doesn't exist. redirecting to user setup")
+                    startActivity(Intent(this, UserSetupActivity::class.java))
+                    finish()
+                }
+                true
+            }
+        } else Tasks.call { true }
 
     fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken: ${token.token}")
@@ -301,10 +291,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             .addOnCompleteListener(this) {
                 if (it.isSuccessful) {
                     Log.d(TAG, "signInWithCredential: success")
-                    if (updateUIForCurrentUser(auth.currentUser)) {
-                        viewFlipper.showNext()
-                        showSplash(this, getString(R.string.default_loading_message))
-                    }
+                    updateUIForCurrentUser(auth.currentUser, true)
                 } else {
                     try {
                         throw it.exception!!

@@ -92,7 +92,7 @@ open class VedibartaActivity : AppCompatActivity() {
 
         /**
          * Hides the virtual keyboard in the activity, if it is open
-         *
+         *`
          * @param activity: activity in which the keyboard should be hidden
          */
         fun hideKeyboard(activity: Activity) {
