@@ -86,7 +86,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             it.continueWithTask {
                 updateUIForCurrentUser(auth.currentUser)
             }.addOnSuccessListener { willRedirect ->
-                if (!willRedirect || auth.currentUser == null) {
+                if (!willRedirect) {
                     hideSplash(this)
                     viewFlipper.showPrevious()
                 }
@@ -282,7 +282,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 }
                 true
             }
-        } else Tasks.call { true }
+        } else Tasks.call { false }
 
     fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken: ${token.token}")
