@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -24,6 +25,8 @@ import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.DocumentsCollections
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -78,8 +81,16 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     override fun onStart() {
         super.onStart()
 
-        auth.currentUser?.reload()?.addOnSuccessListener {
-            updateUIForCurrentUser(auth.currentUser)
+        auth.currentUser?.reload()?.let {
+            viewFlipper.showNext()
+            showSplash(this, getString(R.string.default_loading_message))
+
+            it.addOnSuccessListener {
+                if (!updateUIForCurrentUser(auth.currentUser)) {
+                    hideSplash(this)
+                    viewFlipper.showPrevious()
+                }
+            }
         }
     }
 
@@ -170,7 +181,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 } else {
                     val user = auth.currentUser
                     if (user!!.isEmailVerified) {
-                        updateUIForCurrentUser(user)
+                        if (updateUIForCurrentUser(user)) {
+                            viewFlipper.showNext()
+                            showSplash(this, getString(R.string.default_loading_message))
+                        }
                     } else {
                         Toast.makeText(
                             this, getString(R.string.email_not_verified_error),
@@ -227,7 +241,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 if (task.isSuccessful) {
                     Log.w(TAG, "signInWithCredential: success")
                     val user = auth.currentUser
-                    updateUIForCurrentUser(user)
+                    if (updateUIForCurrentUser(user)) {
+                        viewFlipper.showNext()
+                        showSplash(this, getString(R.string.default_loading_message))
+                    }
                 } else {
                     // Sign in failed
                     Log.w(TAG, "signInWithCredential: failure", task.exception)
@@ -242,6 +259,13 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             it.providerId !in listOf(EmailAuthProvider.PROVIDER_ID, FirebaseAuthProvider.PROVIDER_ID)
         } || user.isEmailVerified
 
+    /**
+     * Redirect the current user to its desired activity.
+     * If the user doesn't exists (null) or isn't verified yet the method does nothing.
+     * The redirection will occur eventually but may not be immediately.
+     * @param user the current user (null if no such user exists)
+     * @return if a redirection will occur
+     */
     private fun updateUIForCurrentUser(user: FirebaseUser?) = user?.let {
         if (isUserVerified(user)) {
             val database = DocumentsCollections(user.uid)
@@ -266,14 +290,9 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                     }, MINIMUM_LOAD_TIME)
                 }
             }
-
-            viewFlipper.showNext()
-            VedibartaActivity.showSplash(
-                this,
-                getString(R.string.default_loading_message)
-            )
-        }
-    }
+            true
+        } else false
+    } ?: false
 
     fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken: ${token.token}")
@@ -282,7 +301,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             .addOnCompleteListener(this) {
                 if (it.isSuccessful) {
                     Log.d(TAG, "signInWithCredential: success")
-                    updateUIForCurrentUser(auth.currentUser)
+                    if (updateUIForCurrentUser(auth.currentUser)) {
+                        viewFlipper.showNext()
+                        showSplash(this, getString(R.string.default_loading_message))
+                    }
                 } else {
                     try {
                         throw it.exception!!
