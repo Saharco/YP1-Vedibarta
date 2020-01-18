@@ -14,6 +14,7 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -34,7 +35,10 @@ class SearchCharacteristicsFragment : VedibartaFragment() {
         val view = inflater.inflate(R.layout.fragment_search_characteristics, container, false)
         val act = (activity as ChatSearchActivity)
 
-        val characteristics = resources.getStringArray(R.array.characteristicsMale_hebrew)
+        val characteristics : Array<String> = if (VedibartaActivity.student!!.gender != Gender.FEMALE)
+            resources.getStringArray(R.array.characteristicsMale_hebrew)
+        else
+            resources.getStringArray(R.array.characteristicsFemale_hebrew)
         val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
 
         populateCharacteristicsTable(act, table, characteristics.toMutableList().shuffled().toTypedArray(), act.fakeStudent)

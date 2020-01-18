@@ -144,7 +144,7 @@ class UserProfileActivity : VedibartaActivity(),
         title.setText(R.string.dialog_logout_title)
         title.textSize = 20f
         title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(ContextCompat.getColor(this,R.color.textPrimary))
+        title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
         title.gravity = Gravity.CENTER
         title.setPadding(10, 40, 10, 24)
 
@@ -155,10 +155,10 @@ class UserProfileActivity : VedibartaActivity(),
         val builder = AlertDialog.Builder(this)
         builder.setCustomTitle(title)
             .setMessage(msg)
-            .setPositiveButton(R.string.yes) {_, _ ->
+            .setPositiveButton(R.string.yes) { _, _ ->
                 performLogout()
             }
-            .setNegativeButton(R.string.no) {_, _ -> }
+            .setNegativeButton(R.string.no) { _, _ -> }
             .show()
         builder.create()
     }
@@ -185,7 +185,7 @@ class UserProfileActivity : VedibartaActivity(),
     private fun initWidgets() {
         setToolbar(toolbar)
         enlargedToolbar.title = student!!.name
-        enlargedToolbar.setTitleTextColor(ContextCompat.getColor(this,android.R.color.white))
+        enlargedToolbar.setTitleTextColor(ContextCompat.getColor(this, android.R.color.white))
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()
@@ -208,9 +208,32 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun loadUserData() {
-        populateCharacteristicsTable()
-        VedibartaFragment.populateHobbiesTable(this,hobbiesTable, student!!.hobbies.toTypedArray(), student!!)
-        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable=false } }
+        val maleCharacteristics =
+            resources.getStringArray(R.array.characteristicsMale_hebrew)
+        val femaleCharacteristics =
+            resources.getStringArray(R.array.characteristicsFemale_hebrew)
+        val characteristics: Array<String> = if (student!!.gender == Gender.FEMALE)
+            student!!.characteristics.keys.map {
+                femaleCharacteristics[maleCharacteristics.indexOf(
+                    it
+                )]
+            }.toTypedArray()
+        else
+            student!!.characteristics.keys.toTypedArray()
+
+        VedibartaFragment.populateCharacteristicsTable(
+            this,
+            characteristicsTable,
+            characteristics,
+            student!!
+        )
+        VedibartaFragment.populateHobbiesTable(
+            this,
+            hobbiesTable,
+            student!!.hobbies.toTypedArray(),
+            student!!
+        )
+        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
         populateProfilePicture()
         populateUsername()
         populateUserRegion()
@@ -354,7 +377,7 @@ class UserProfileActivity : VedibartaActivity(),
             toolbar.visibility = View.VISIBLE
             setToolbar(toolbar)
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            changeStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark))
+            changeStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
         } else {
             Log.d(TAG, "toggleToolbars: setting the fake toolbar")
             toolbar.visibility = View.GONE
@@ -362,7 +385,7 @@ class UserProfileActivity : VedibartaActivity(),
             setToolbar(enlargedToolbar)
             supportActionBar?.setDisplayShowTitleEnabled(true)
             supportActionBar?.title = student!!.name
-            changeStatusBarColor(ContextCompat.getColor(this,android.R.color.black))
+            changeStatusBarColor(ContextCompat.getColor(this, android.R.color.black))
         }
     }
 
@@ -567,8 +590,8 @@ class UserProfileActivity : VedibartaActivity(),
         divider1.visibility = View.VISIBLE
         changeProfilePictureButton.visibility = View.VISIBLE
 
-        root.setBackgroundColor(ContextCompat.getColor(this,android.R.color.white))
-        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this,android.R.color.white))
+        root.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
+        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
 
         mCurrentAnimator = null
     }
@@ -577,8 +600,8 @@ class UserProfileActivity : VedibartaActivity(),
         fullscreenImage.visibility = View.VISIBLE
         fullscreenImageContainer.visibility = View.VISIBLE
 
-        root.setBackgroundColor(ContextCompat.getColor(this,android.R.color.black))
-        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this,android.R.color.black))
+        root.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black))
+        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black))
 
         scrollViewLayout.visibility = View.GONE
         titlePicture.visibility = View.GONE
@@ -649,7 +672,11 @@ class UserProfileActivity : VedibartaActivity(),
                     uploadPhoto(selectedImage!!)
                 }
                 EDIT_PROFILE -> {
-                    val snackbar = Snackbar.make(toolbar, resources.getString(R.string.edit_changes_saved_successfully), Snackbar.LENGTH_LONG)
+                    val snackbar = Snackbar.make(
+                        toolbar,
+                        resources.getString(R.string.edit_changes_saved_successfully),
+                        Snackbar.LENGTH_LONG
+                    )
                         .setBackgroundTint(ContextCompat.getColor(this, R.color.colorAccentDark))
                     snackbar.view.layoutDirection = View.LAYOUT_DIRECTION_RTL
                     snackbar.show()
