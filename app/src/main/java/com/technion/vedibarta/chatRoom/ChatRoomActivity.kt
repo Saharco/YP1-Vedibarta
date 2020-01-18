@@ -47,7 +47,7 @@ class ChatRoomActivity : VedibartaActivity()
     private var firstVisibleMessagePosition = 0
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
-    private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
+    private val reversedDateFormatter = SimpleDateFormat("yy/MM/dd", Locale.getDefault())
 
     companion object {
         private const val TAG = "Vedibarta/chat"
@@ -75,7 +75,7 @@ class ChatRoomActivity : VedibartaActivity()
 
         setToolbar(chatToolbar)
         configureAdapter()
-        buttonChatBoxSend.setOnClickListener { sendMessage(it) }
+        buttonChatBoxSend.setOnClickListener { sendMessageFromChatBox(it) }
         popupMenu.setOnClickListener { showPopup(it) }
         if (student!!.gender == Gender.FEMALE)
             chatBox.hint =
@@ -207,7 +207,7 @@ class ChatRoomActivity : VedibartaActivity()
         popup.show()
     }
 
-    private fun sendMessage(v: View) {
+    private fun sendMessageFromChatBox(v: View) {
         var text = chatBox.text.toString()
         if (text.replace(" ", "")
                 .replace("\n", "")
@@ -217,32 +217,37 @@ class ChatRoomActivity : VedibartaActivity()
             return
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
-        val currentDate = Date()
-        if (adapter.hasNoMessages) {
-            write(dateFormatter.format(currentDate), true)
-        }
-        else
-        {
-            val lastMessageDate: Date = adapter.getFirstMessageOrNull()?.timestamp ?: Date()
-            val timeGap = currentDate.time - lastMessageDate.time
-            val dayGap =
-                (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
-
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1) {
-                write(dateFormatter.format(currentDate), true)
-            }
-        }
-        write(text, false)
+        sendMessage(text, false)
         chatBox.setText("")
     }
 
-    fun write(text: String, isGeneratorMessage: Boolean) {
-        val sender = if (isGeneratorMessage) systemSender else userId!!
-        val path = database.chats().chatId(chatId).messages().build()
-        path.add(Message(sender, partnerId, text))
-            .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
-            }
+    fun sendMessage(text: String, isSystemMessage: Boolean)
+    {
+        val currentDate = Date()
+        if (adapter.hasNoMessages || hasMoreThenADayHadPassed(currentDate))
+        {
+            write(dateFormatter.format(currentDate), true)
+        }
+        write(text, isSystemMessage)
+    }
+
+    private fun hasMoreThenADayHadPassed(currentDate: Date): Boolean
+    {
+        val lastMessageDate = adapter.getFirstMessageOrNull()?.timestamp ?: Date()
+        return reversedDateFormatter.format(currentDate) > reversedDateFormatter.format(lastMessageDate)
+    }
+
+    private fun write(text: String, isSystemMessage: Boolean) {
+        val sender = if (isSystemMessage) systemSender else userId!!
+        database
+            .chats()
+            .chatId(chatId)
+            .messages()
+            .build()
+                .add(Message(sender, partnerId, text))
+                    .addOnFailureListener {
+                        Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+                    }
     }
 
     private fun firstVisibleMessageTracker(): RecyclerView.OnScrollListener {

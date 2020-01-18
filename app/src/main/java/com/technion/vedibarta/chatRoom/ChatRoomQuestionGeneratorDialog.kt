@@ -87,8 +87,9 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
         backButton.setOnClickListener { onBackButton() }
     }
 
-    private fun onQuestionSelect(question: String) {
-        (activity as ChatRoomActivity).write(question, true)
+    private fun onQuestionSelect(question: String)
+    {
+        (activity as ChatRoomActivity).sendMessage(question, true)
         dismiss()
     }
 
