@@ -98,7 +98,7 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
         val hobbyIdToCategory = resources.getStringArray(R.array.hobbiesId_to_category)
         val hobbies = resources.getStringArray(R.array.hobbies)
         val commonCategories = commonHobbies.map { hobbyIdToCategory[hobbies.indexOf(it)] }
-        return commonCategories.plusElement("כללי").toTypedArray()
+        return commonCategories.distinct().plusElement("כללי").toTypedArray()
     }
 
 
