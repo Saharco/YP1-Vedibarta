@@ -147,7 +147,6 @@ class UserSetupActivity : VedibartaActivity() {
     }
 
     private fun validateUserInput(): Boolean {
-
         missingDetailsText = ""
         val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
@@ -178,6 +177,11 @@ class UserSetupActivity : VedibartaActivity() {
             return false
         }
 
+        if(!validateSchoolAndRegionExists()){
+            missingDetailsText += "${resources.getString(R.string.user_setup_wrong_school_and_region_combination)}\n"
+            return false
+        }
+
         if (studentsCharacteristics.isEmpty()) {
             missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
             return false
@@ -189,5 +193,21 @@ class UserSetupActivity : VedibartaActivity() {
         }
 
         return true
+    }
+
+    private fun validateSchoolAndRegionExists() : Boolean{
+        val schoolAndRegionMap =
+            schoolTags.zip(schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
+                .toMap()
+        var result = false
+        schoolsName.forEachIndexed { index, name ->
+            if (name == setupStudent.school){
+                result = (schoolAndRegionMap[schoolTags[index]] ?: error("")).second == setupStudent.region
+
+                if (result)
+                    return result
+            }
+        }
+        return result
     }
 }

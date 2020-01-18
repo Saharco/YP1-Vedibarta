@@ -203,9 +203,11 @@ class ChooseGenderFragment : VedibartaFragment() {
                 v
             )
         }
+        schoolListSpinner.doOnTextChanged { text, _, _ , _ ->  (activity as UserSetupActivity).setupStudent.school=text.toString()}
 
-        regionListSpinner.doOnTextChanged { _, _, _, _ ->
+        regionListSpinner.doOnTextChanged { text, _, _, _ ->
             populateAutoTextView(act, schoolListSpinner, act.schoolsName)
+            (activity as UserSetupActivity).setupStudent.region = text.toString()
         }
 
         //---Populate DropDownLists---

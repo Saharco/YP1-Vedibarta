@@ -71,6 +71,7 @@
     <string name="user_setup_female_option">בת</string>
     <string name="user_setup_gender_missing">יש לבחור בן/בת</string>
     <string name="user_setup_first_name_missing">יש למלא את השדה שם פרטי</string>
+    <string name="user_setup_wrong_school_and_region_combination">בית הספר לא קיים במיקום שהוכנס, יש לבחור בית ספר ומיקום מהרשימה</string>
     <string name="user_setup_last_name_missing">יש למלא את השדה שם משפחה</string>
     <string name="user_setup_school_missing">יש לבחור בית ספר מהרשימה</string>
     <string name="user_setup_region_missing">יש לבחור מקום מגורים מהרשימה</string>
