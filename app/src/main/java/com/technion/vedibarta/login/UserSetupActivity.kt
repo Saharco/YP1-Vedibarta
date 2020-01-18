@@ -15,7 +15,6 @@ import androidx.core.text.bold
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
@@ -80,20 +79,12 @@ class UserSetupActivity : VedibartaActivity() {
         adapter.addFragment(ChooseGenderFragment(), "1")
         adapter.addFragment(ChooseCharacteristicsFragment(), "2")
         adapter.addFragment(ChooseHobbiesFragment(), "3")
-        val toast = Toast.makeText(
-            applicationContext,
-            R.string.user_setup_dialog_message,
-            Toast.LENGTH_SHORT
-        )
+
         viewPager.setPagingEnabled(false)
         viewPager.setOnInterceptTouchEventCustomBehavior {
             if (setupStudent.gender != Gender.NONE) {
-                adapter.getItem(1).onStart()
                 viewPager.setPagingEnabled(true)
-                viewPager.setOnInterceptTouchEventCustomBehavior {  }
-            } else {
-                if(!toast.view.isShown)
-                    toast.show()
+                viewPager.setOnInterceptTouchEventCustomBehavior { }
             }
         }
 

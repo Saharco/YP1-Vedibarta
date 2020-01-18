@@ -3,10 +3,10 @@ package com.technion.vedibarta.login
 
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
@@ -48,9 +47,16 @@ class ChooseGenderFragment : VedibartaFragment() {
         imageMale.borderWidth = 0
         textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
         textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
-
+        if ((activity as UserSetupActivity).setupStudent.gender == Gender.NONE){
+            Toast.makeText(
+                context,
+                R.string.user_setup_dialog_message_f,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
         reloadCharacteristics()
+
     }
 
     private fun onButtonMaleClickListener() {
@@ -60,7 +66,13 @@ class ChooseGenderFragment : VedibartaFragment() {
         imageFemale.borderWidth = 0
         textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
         textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
-
+        if ((activity as UserSetupActivity).setupStudent.gender == Gender.NONE){
+            Toast.makeText(
+                context,
+                R.string.user_setup_dialog_message_m,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
         reloadCharacteristics()
     }
@@ -82,7 +94,7 @@ class ChooseGenderFragment : VedibartaFragment() {
         regionListSpinner.clearFocus()
     }
 
-    private fun onSchoolSelectedListener(position: Int, view: View) {
+    private fun onSchoolSelectedListener(position: Int) {
 
         val nameList = schoolAndRegionMap.filter {
             it.value.first == schoolListSpinner.adapter.getItem(position)
@@ -98,7 +110,7 @@ class ChooseGenderFragment : VedibartaFragment() {
 
     }
 
-    private fun onRegionSelectedListener(position: Int, view: View) {
+    private fun onRegionSelectedListener(position: Int) {
 
         schoolListSpinner.text = SpannableStringBuilder("")
         val region = regionListSpinner.adapter.getItem(position).toString()
@@ -123,11 +135,11 @@ class ChooseGenderFragment : VedibartaFragment() {
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
 
-        genderInit(v)
+        genderInit()
         extraOptionsInit(v)
     }
 
-    private fun genderInit(v: View) {
+    private fun genderInit() {
         Glide.with(context!!).load(R.drawable.ic_photo_default_profile_man).into(imageMale)
         Glide.with(context!!).load(R.drawable.ic_photo_default_profile_girl).into(imageFemale)
         imageMale.setOnClickListener { onButtonMaleClickListener() }
@@ -193,14 +205,12 @@ class ChooseGenderFragment : VedibartaFragment() {
 
         schoolListSpinner.setOnItemClickListener { _, _, position, _ ->
             onSchoolSelectedListener(
-                position,
-                v
+                position
             )
         }
         regionListSpinner.setOnItemClickListener { _, _, position, _ ->
             onRegionSelectedListener(
-                position,
-                v
+                position
             )
         }
         schoolListSpinner.doOnTextChanged { text, _, _ , _ ->  (activity as UserSetupActivity).setupStudent.school=text.toString()}
