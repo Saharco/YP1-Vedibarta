@@ -48,6 +48,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.login.LoginActivity
+import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
@@ -111,11 +112,11 @@ class UserProfileActivity : VedibartaActivity(),
                 if (isImageFullscreen) {
                     Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
                     if (!minimizeFullscreenImage()) {
-                        super.onBackPressed()
+                        startActivity(Intent(this, MainActivity::class.java))
                     }
                 } else {
                     Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
-                    super.onBackPressed()
+                    startActivity(Intent(this, MainActivity::class.java))
                 }
             R.id.actionEditProfile ->
                 startActivityForResult(Intent(this, ProfileEditActivity::class.java), EDIT_PROFILE)
