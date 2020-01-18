@@ -52,6 +52,7 @@ import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.services.*
 import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -208,18 +209,12 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun loadUserData() {
-        val maleCharacteristics =
-            resources.getStringArray(R.array.characteristicsMale_hebrew)
-        val femaleCharacteristics =
-            resources.getStringArray(R.array.characteristicsFemale_hebrew)
-        val characteristics: Array<String> = if (student!!.gender == Gender.FEMALE)
-            student!!.characteristics.keys.map {
-                femaleCharacteristics[maleCharacteristics.indexOf(
-                    it
-                )]
-            }.toTypedArray()
-        else
-            student!!.characteristics.keys.toTypedArray()
+        val characteristics: Array<String> = student!!.characteristics.keys
+            .translate(this)
+                .characteristics()
+                .from(Languages.BASE)
+                .to(Languages.HEBREW, student!!.gender)
+                .execute()
 
         VedibartaFragment.populateCharacteristicsTable(
             this,
@@ -233,6 +228,7 @@ class UserProfileActivity : VedibartaActivity(),
             student!!.hobbies.toTypedArray(),
             student!!
         )
+
         hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
         populateProfilePicture()
         populateUsername()

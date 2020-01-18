@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <array name="characteristics_base">
+        <item>דתי</item>
+        <item>חילוני</item>
+        <item>ימני</item>
+        <item>שמאלני</item>
+        <item>מאמין</item>
+        <item>אתאיסט</item>
+        <item>טבעוני</item>
+        <item>צמחוני</item>
+        <item>מסורתי</item>
+        <item>אתיופי</item>
+        <item>רוסי</item>
+        <item>ישראלי</item>
+        <item>עולה חדש</item>
+        <item>מהגר</item>
+        <item>בעל מוגבלות</item>
+        <item>אשכנזי</item>
+        <item>מזרחי</item>
+        <item>דרוזי</item>
+        <item>מוסלמי</item>
+        <item>נוצרי</item>
+        <item>ערבי</item>
+        <item>פלסטיני</item>
+    </array>
+
     <array name="characteristicsMale_hebrew">
         <item>דתי</item>
         <item>חילוני</item>

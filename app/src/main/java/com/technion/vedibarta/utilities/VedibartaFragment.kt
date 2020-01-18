@@ -20,6 +20,8 @@ import com.technion.vedibarta.R
 import de.hdodenhof.circleimageview.CircleImageView
 import com.bumptech.glide.request.RequestOptions
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.utilities.services.Languages
+import com.technion.vedibarta.utilities.services.translate
 
 
 open class VedibartaFragment : Fragment() {
@@ -121,19 +123,11 @@ open class VedibartaFragment : Fragment() {
 
             //TODO add a translation to 's' so it will always be in hebrew
 
-            val maleCharacteristics =
-                context.resources.getStringArray(R.array.characteristicsMale_hebrew)
-            val femaleCharacteristics =
-                context.resources.getStringArray(R.array.characteristicsFemale_hebrew)
-            val characteristic: String = when (student.gender) {
-                Gender.MALE -> {
-                    s
-                }
-                Gender.FEMALE -> {
-                    maleCharacteristics[femaleCharacteristics.indexOf(s)]
-                }
-                else -> ""
-            }
+            val characteristic: String = s.translate(context)
+                .characteristics()
+                .from(Languages.HEBREW, student.gender)
+                .to(Languages.BASE)
+                .execute().first()
             return student.characteristics.contains(characteristic)
         }
 
@@ -150,11 +144,6 @@ open class VedibartaFragment : Fragment() {
             val bubbleFrame: FrameLayout
             val viewPos = view.id % steps
 
-            val maleCharacteristics =
-                context.resources.getStringArray(R.array.characteristicsMale_hebrew)
-            val femaleCharacteristics =
-                context.resources.getStringArray(R.array.characteristicsFemale_hebrew)
-
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
                 bubbleFrame = LayoutInflater.from(context).inflate(
                     R.layout.user_profile_bubble_blue,
@@ -164,13 +153,11 @@ open class VedibartaFragment : Fragment() {
                 bubbleFrame.alpha = 1f
                 bubbleFrame.tag = SELECTED_BUBBLE
 
-                if (student.gender == Gender.MALE)
-                    student.characteristics[characteristics[view.id]] = true
-                else {
-                    student.characteristics[maleCharacteristics[femaleCharacteristics.indexOf(
-                        characteristics[view.id]
-                    )]] = true
-                }
+                val char = characteristics[view.id].translate(context).characteristics()
+                    .from(Languages.HEBREW, student.gender)
+                    .to(Languages.BASE).execute().first()
+
+                student.characteristics[char] = true
 
             } else {
                 bubbleFrame = LayoutInflater.from(context).inflate(
@@ -181,14 +168,11 @@ open class VedibartaFragment : Fragment() {
                 bubbleFrame.alpha = 0.6f
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
 
-                if (student.gender == Gender.MALE)
-                    student.characteristics.remove(characteristics[view.id])
-                else
-                    student.characteristics.remove(
-                        maleCharacteristics[femaleCharacteristics.indexOf(
-                            characteristics[view.id]
-                        )]
-                    )
+                val char = characteristics[view.id].translate(context).characteristics()
+                    .from(Languages.HEBREW, student.gender)
+                    .to(Languages.BASE).execute().first()
+
+                student.characteristics.remove(char)
 
             }
 

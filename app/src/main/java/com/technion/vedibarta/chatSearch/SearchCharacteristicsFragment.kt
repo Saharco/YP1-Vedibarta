@@ -19,6 +19,7 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.services.TranslationServiceFactory
 
 /**
  * A simple [Fragment] subclass.
@@ -40,7 +41,6 @@ class SearchCharacteristicsFragment : VedibartaFragment() {
         else
             resources.getStringArray(R.array.characteristicsFemale_hebrew)
         val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
-
         populateCharacteristicsTable(act, table, characteristics.toMutableList().shuffled().toTypedArray(), act.fakeStudent)
 
         return view
