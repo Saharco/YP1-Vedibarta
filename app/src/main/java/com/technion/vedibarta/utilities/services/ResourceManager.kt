@@ -12,8 +12,8 @@ class ResourceManager(context: Context, type: StringType) {
         when(type){
             StringType.CHARACTERISTICS -> {
                 resourcesMap["${Languages.BASE}_${MALE}"] = context.resources.getStringArray(R.array.characteristics_base)
-                resourcesMap["${Languages.HEBREW}_$MALE"] = context.resources.getStringArray(R.array.characteristicsMale_hebrew)
-                resourcesMap["${Languages.HEBREW}_$FEMALE"] = context.resources.getStringArray(R.array.characteristicsFemale_hebrew)
+                resourcesMap["${Languages.HEBREW}_$MALE"] = context.resources.getStringArray(R.array.characteristicsMale)
+                resourcesMap["${Languages.HEBREW}_$FEMALE"] = context.resources.getStringArray(R.array.characteristicsFemale)
                 //TODO add arabic support
             }
             StringType.HOBBIES -> {
