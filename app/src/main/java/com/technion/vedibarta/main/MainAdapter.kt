@@ -24,9 +24,13 @@ internal class MainAdapter(private val userId: String?,
                           private val mainActivity: MainActivity,
                            options: FirestoreRecyclerOptions<Chat>): RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
+
+    companion object {
+        const val TAG = "MainAdapter"
+    }
+
     var chatsList: List<Chat> = listOf()
     val firestoreAdapter = getFireStoreAdapter(options,this)
-    val TAG = "MainAdapter"
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -75,9 +79,7 @@ internal class MainAdapter(private val userId: String?,
 
                         Log.d(MainActivity.TAG, "Binding chat with the following data: $chatMetadata")
 
-                        if (chatPartnersMap[chatMetadata.partnerName] == null)
-                            chatPartnersMap[chatMetadata.partnerName] = ArrayList()
-                        chatPartnersMap[chatMetadata.partnerName]!!.add(chatMetadata)
+                        registerChatForFiltering(chatMetadata)
 
                         holder.view.setOnClickListener {
                             val i = Intent(mainActivity, ChatRoomActivity::class.java)
@@ -96,9 +98,7 @@ internal class MainAdapter(private val userId: String?,
                             chat.lastMessageTimestamp
                         )
 
-                        if (chatPartnersMap[chatMetadata.partnerName] == null)
-                            chatPartnersMap[chatMetadata.partnerName] = ArrayList()
-                        chatPartnersMap[chatMetadata.partnerName]!!.add(chatMetadata)
+                        registerChatForFiltering(chatMetadata)
 
                         holder.view.setOnClickListener {
                             val i = Intent(mainActivity, ChatRoomActivity::class.java)
@@ -111,6 +111,13 @@ internal class MainAdapter(private val userId: String?,
         }
     }
 
+    private fun registerChatForFiltering(chatMetadata: ChatMetadata) {
+        if (chatPartnersMap[chatMetadata.partnerName] == null)
+            chatPartnersMap[chatMetadata.partnerName] = ArrayList()
+        if (!chatPartnersMap[chatMetadata.partnerName]!!.contains(chatMetadata))
+            chatPartnersMap[chatMetadata.partnerName]!!.add(chatMetadata)
+    }
+
     private fun getFireStoreAdapter(options: FirestoreRecyclerOptions<Chat>, mainAdapter: MainAdapter): FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder> {
         return object : FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>(options) {
             override fun onDataChanged()
@@ -120,34 +127,31 @@ internal class MainAdapter(private val userId: String?,
                 val newList = this.snapshots.sortedByDescending { it.lastMessageTimestamp }
 
                 // onDataChange should be called on every change and as such there shouldn't be more then 1 change at a time to the list
-                if (newList.size > chatsList.size)
-                {
-                    chatsList = newList
-                    mainAdapter.notifyItemInserted(0)
-                }
-                else if (newList.size < chatsList.size)
-                {
-                    val removedChat = chatsList.subtract(newList).firstOrNull()
-                    val removedPosition = chatsList.indexOf(removedChat)
-                    if (removedPosition == -1)
-                    {
-                        Log.d(TAG, "moved chat is not in list")
-                        return
+                when {
+                    newList.size > chatsList.size -> {
+                        chatsList = newList
+                        mainAdapter.notifyItemInserted(0)
                     }
-                    chatsList = newList
-                    mainAdapter.notifyItemRemoved(removedPosition)
-                }
-                else
-                {
-                    val originalPosition = chatsList.indexOf(newList.firstOrNull())
-                    if (originalPosition == -1)
-                    {
-                        Log.d(TAG, "moved chat is not in list")
-                        return
+                    newList.size < chatsList.size -> {
+                        val removedChat = chatsList.subtract(newList).firstOrNull()
+                        val removedPosition = chatsList.indexOf(removedChat)
+                        if (removedPosition == -1) {
+                            Log.d(TAG, "moved chat is not in list")
+                            return
+                        }
+                        chatsList = newList
+                        mainAdapter.notifyItemRemoved(removedPosition)
                     }
-                    chatsList = newList
-                    mainAdapter.notifyItemMoved(originalPosition, 0)
-                    mainAdapter.notifyItemChanged(0)
+                    else -> {
+                        val originalPosition = chatsList.indexOf(newList.firstOrNull())
+                        if (originalPosition == -1) {
+                            Log.d(TAG, "moved chat is not in list")
+                            return
+                        }
+                        chatsList = newList
+                        mainAdapter.notifyItemMoved(originalPosition, 0)
+                        mainAdapter.notifyItemChanged(0)
+                    }
                 }
             }
 
