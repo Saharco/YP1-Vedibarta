@@ -222,10 +222,16 @@ class UserProfileActivity : VedibartaActivity(),
             characteristics,
             student!!
         )
+        val hobbies = student!!.hobbies.toTypedArray()
+            .translate(this)
+            .hobbies()
+            .from(Languages.BASE)
+            .to(Languages.HEBREW)
+            .execute()
         VedibartaFragment.populateHobbiesTable(
             this,
             hobbiesTable,
-            student!!.hobbies.toTypedArray(),
+            hobbies,
             student!!
         )
         characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
