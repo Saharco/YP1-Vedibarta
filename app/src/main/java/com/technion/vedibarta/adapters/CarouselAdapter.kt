@@ -22,6 +22,8 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
+import com.technion.vedibarta.utilities.services.Languages
+import com.technion.vedibarta.utilities.services.translate
 
 open class CarouselAdapter(
     val context: Context,
@@ -176,7 +178,12 @@ open class CarouselAdapter(
                         ) as FrameLayout
 
                         val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                        bubble.text = studentsCharacteristics[i + j]
+                        val text = studentsCharacteristics[i + j].translate(context)
+                            .characteristics()
+                            .from(Languages.BASE)
+                            .to(Languages.HEBREW,student.gender)
+                            .execute().first()
+                        bubble.text = text
                         bubbleFrame.layoutParams = bubbleParams
                         tableRow.addView(bubbleFrame)
                     }
