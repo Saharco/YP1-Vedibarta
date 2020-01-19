@@ -149,7 +149,9 @@
     <string name="empty_chat_list_message_m">אתה לא שותף באף שיחה.\nקדימה, חפש חברים</string>
     <string name="empty_chat_list_message_f">את לא שותפה באף שיחה.\nקדימה, חפשי חברים</string>
 
-
+    <!--  Photos Filtering -->
+    <string name="image_not_allowed_message">התמונה אסורה, בחר תמונה אחרת</string>
+    <string name="texts_not_allowed_message">אנא בחר תמונה ללא טקסט</string>
 
     <!--  FCM  -->
     <string name="vedibarta_notification_channel_name">ודיברת</string>

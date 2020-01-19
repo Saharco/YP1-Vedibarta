@@ -20,10 +20,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import android.view.animation.DecelerateInterpolator
-import android.widget.FrameLayout
-import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -607,6 +604,18 @@ class UserProfileActivity : VedibartaActivity(),
         startActivityForResult(intent, SELECT_IMAGE)
     }
 
+    private fun checkImageAndUpload(image: Uri?) {
+        if (image != null) {
+            if (!validateImage(image)) {
+                Toast.makeText(this, R.string.image_not_allowed_message, Toast.LENGTH_LONG).show()
+            } else if (!textValidate(image)) {
+                Toast.makeText(this, R.string.texts_not_allowed_message, Toast.LENGTH_LONG).show()
+            } else {
+                uploadPhoto(image)
+            }
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "got result from upload activity")
@@ -614,18 +623,8 @@ class UserProfileActivity : VedibartaActivity(),
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
-                REQUEST_CAMERA -> if (selectedImage != null && validateImage(selectedImage!!)
-                    && textValidate(selectedImage!!)) {
-//                    uploadPhoto(selectedImage!!)
-                }
-                SELECT_IMAGE -> {
-                    selectedImage = data!!.data
-                    if (validateImage(selectedImage!!) && textValidate(selectedImage!!))
-                    {
-                        Log.d("wtf", "Uploading Image")
-//                        uploadPhoto(selectedImage!!)
-                    }
-                }
+                REQUEST_CAMERA -> checkImageAndUpload(selectedImage)
+                SELECT_IMAGE -> checkImageAndUpload(data!!.data)
                 EDIT_PROFILE -> {
                     val snackbar = Snackbar.make(
                         toolbar,
@@ -649,13 +648,8 @@ class UserProfileActivity : VedibartaActivity(),
             while (!labeler.isComplete){}
             Log.d(TAG,"${labeler.result?.toString()}")
             if (labeler.isSuccessful){
-//                for (label in labeler.result!!)
-//                {
-//                    Log.d("wtf", "Label: ${label.text} confidence: ${label.confidence}")
-//                }
-
                 val labels = labeler.result!!.map { it.text }
-                val res = labels.intersect(listOf("Flesh", "Skin", "Swimwear")).isEmpty()
+                val res = labels.intersect(listOf("Skin", "Swimwear")).isEmpty()
                 Log.d("wtf", "Image validation result: $res")
                 return res
             }
@@ -674,7 +668,6 @@ class UserProfileActivity : VedibartaActivity(),
 
         while (!detector.isComplete){}
         if (detector.isSuccessful){
-//            Log.d("wtf", "Text Recognized ${detector.result?.text}")
             Log.d("wtf", "Text Detector result: ${detector.result!!.text.isEmpty()}")
             return detector.result!!.text.isEmpty()
         }
