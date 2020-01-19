@@ -118,7 +118,7 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
             return resources.getStringArray(R.array.general_questions)
         }
         val commonHobbies = hobbies.intersect(partnerHobbies.asIterable())
-        val hobbiesCategories = resources.getStringArray(R.array.hobbies_categories)
+        val hobbiesCategories = resources.getStringArray(R.array.hobbies_categories_base)
         val hobbiesLinkArray = resources.obtainTypedArray(R.array.hobbies_id_link)
         val hobbiesCategoryToQuestion =
             resources.obtainTypedArray(R.array.hobbies_categories_questions_linker)
