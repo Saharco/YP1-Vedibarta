@@ -121,7 +121,8 @@ open class VedibartaFragment : Fragment() {
             s: String
         ): Boolean {
 
-            //TODO add a translation to 's' so it will always be in hebrew
+           if(student.gender == Gender.NONE)
+               return false
 
             val characteristic: String = s.translate(context)
                 .characteristics()
