@@ -6,6 +6,9 @@
     <string name="or">او</string>
     <string name="allowed_letters_regex">[چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ]+</string>
     <string name="allowed_letters">چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="ok">حسنا</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">البروفيل الشخصي</string>
@@ -17,6 +20,7 @@
     <string name="user_profile_characteristics">اعرف نفسي ك</string>
     <string name="action_edit_profile_title">اعداد البروفيل</string>
     <string name="action_save_profile_edit">إحفظ التغييرات</string>
+    <string name="edit_changes_saved_successfully">كانت التغييرات ناجحة</string>
     <string name="edit_discard_changes_title">إلغ التغييرات</string>
     <string name="edit_discard_changes_message">أكيد بدك تلغي التغييرات؟</string>
     <string name="action_logout_title">الخروج</string>
@@ -30,6 +34,8 @@
     <string name="dialog_logout_message_m">متأكد من الخروج؟</string>
     <string name="dialog_logout_message_f">متأكدة من الخروج؟</string>
     <string name="profile_edit_title">إعداد البروفيل</string>
+    <string name="characteristics_tab_title">مميزات الهوية</string>
+    <string name="hobbies_tab_title">هوايات</string>
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">إختيار شريك</string>
@@ -52,6 +58,7 @@
     <string name="choose_gender_text">كيف نتوجه اليك ؟</string>
     <string name="user_setup_characteristics_title">مميزات الهوية</string>
     <string name="user_setup_extra_options_title">تفاصيل شخصية</string>
+    <string name="user_setup_school_info_title">تفاصيل المدرسة</string>
     <string name="user_setup_hobbies_title">هوايات</string>
     <string name="user_setup_region_title">منطقة السكن</string>
     <string name="user_setup_school_title">المدرسة</string>
@@ -61,11 +68,13 @@
     <string name="text_field_hint">العبري/فقط العربية</string>
     <string name="user_setup_missing_details_dialog_title">تفاصيل ناقصة</string>
     <string name="checking_document">يتزامن مع الشبكة</string>
-    <string name="user_setup_dialog_message">يجب الاختيار ولد/بنت</string>
+    <string name="user_setup_dialog_message_m">اسحب لليسار للانتقال إلى الصفحة التالية</string>
+    <string name="user_setup_dialog_message_f">اسحب لليسار للانتقال إلى الصفحة التالية</string>
     <string name="user_setup_male_option">ولد</string>
     <string name="user_setup_female_option">بنت</string>
     <string name="user_setup_gender_missing">يجب الاختيار ولد/بنت</string>
     <string name="user_setup_first_name_missing">يجب تعبئة الاسم الشخصي </string>
+    <string name="user_setup_wrong_school_and_region_combination">المدرسة غير موجودة في الموقع المدرج ، يجب اختيار المدرسة والموقع من القائمة</string>
     <string name="user_setup_last_name_missing">يجب تعبئة اسم العائلة</string>
     <string name="user_setup_school_missing">يجب اختيار مدرسة من القائمة</string>
     <string name="user_setup_region_missing">يجب اختيار مكان السكن من القائمة</string>
@@ -82,9 +91,11 @@
     <string name="chat_room_abuse_dialog_report_button_f">بلغي</string>
     <string name="chat_room_abuse_dialog_back_button">الغاء</string>
     <string name="chat_room_question_generator_title">مقترح الأسئلة</string>
+    <string name="chat_room_question_generator_empty_list_message">لا توجد أسئلة للموضوع</string>
     <string name="chat_room_question_generator_question_title">أسئلة على سبيل المثال:</string>
     <string name="chat_room_enter_message_m">اكتب رسالة</string>
     <string name="chat_room_enter_message_f">اكتبي رسالة</string>
+    <string name="sending_message">يبعث..</string>
 
     <!--    LoginScreen attribute   -->
     <string name="facebook_app_id">3227815763959885</string>
@@ -123,6 +134,8 @@
     <string name="main_menu_search_title">البحث</string>
     <string name="user_profile_action_title">بروفيل</string>
     <string name="app_label">Vedibarta</string>
+    <string name="empty_chat_list_message_m">أنت لا تشارك أي محادثة.\nتعال، ابحث عن أصدقاء</string>
+    <string name="empty_chat_list_message_f">أنت لا تشارك أي محادثة.\nتعال، ابحث عن أصدقاء</string>
 
     <string-array name="menuitems">
         <item>Menu Item 0</item>
@@ -165,5 +178,8 @@
     <!--  Splash  -->
     <string name="chat_search_loading_message">فتش عن اصدقاء</string>
     <string name="default_loading_message">نلتقي بالآخر بالصف</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -48,8 +48,8 @@ class ProfileEditActivity : VedibartaActivity() {
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(ProfileEditCharacteristicsFragment(), "מאפייני זהות")
-        adapter.addFragment(ProfileEditHobbiesFragment(), "תחביבים")
+        adapter.addFragment(ProfileEditCharacteristicsFragment(), getString(R.string.characteristics_tab_title))
+        adapter.addFragment(ProfileEditHobbiesFragment(), getString(R.string.hobbies_tab_title))
         viewPager.adapter = adapter
     }
 

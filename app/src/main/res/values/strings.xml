@@ -34,6 +34,8 @@
     <string name="dialog_logout_message_m">בטוח שברצונך להתנתק?</string>
     <string name="dialog_logout_message_f">בטוחה שברצונך להתנתק?</string>
     <string name="profile_edit_title">עריכת פרופיל</string>
+    <string name="characteristics_tab_title">מאפייני זהות</string>
+    <string name="hobbies_tab_title">תחביבים</string>
 
     <!--    ChatCandidates attribute   -->
     <string name="chat_candidates_title">בחירת שותף</string>
@@ -54,7 +56,7 @@
     <!--    UserSetup Attributes  -->
     <string name="user_setup_title">הגדרת משתמש</string>
     <string name="choose_gender_text">כיצד לפנות אלייך?</string>
-    <string name="user_setup_characteristics_title">מאפייני זיהוי</string>
+    <string name="user_setup_characteristics_title">מאפייני זהות</string>
     <string name="user_setup_extra_options_title">פרטים אישיים</string>
     <string name="user_setup_school_info_title">פרטי בית הספר</string>
     <string name="user_setup_hobbies_title">תחביבים</string>
@@ -90,7 +92,7 @@
     <string name="chat_room_abuse_dialog_back_button">ביטול</string>
     <string name="chat_room_question_generator_title">מחולל השאלות</string>
     <string name="chat_room_question_generator_question_title">מתקשה למצוא נושא לשיחה?\nבחר אחד מהנושאים הבאים:</string>
-    <string name="chat_room_question_generator_empty_list_message">אין שאלות עבור הנושא"</string>
+    <string name="chat_room_question_generator_empty_list_message">אין שאלות עבור הנושא</string>
     <string name="chat_room_enter_message_m">כתוב הודעה</string>
     <string name="chat_room_enter_message_f">כתבי הודעה</string>
     <string name="sending_message">שולח..</string>
