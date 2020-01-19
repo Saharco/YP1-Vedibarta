@@ -15,6 +15,12 @@ import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import kotlinx.android.synthetic.main.fragment_choose_extra_options.*
+import kotlinx.android.synthetic.main.fragment_choose_extra_options.view.*
+import android.view.animation.Animation
+import android.view.animation.Transformation
+import android.widget.LinearLayout
+
 
 /**
  * A simple [Fragment] subclass.
@@ -27,34 +33,30 @@ class ChooseExtraOptionsFragment : VedibartaFragment() {
     // Tag -> (schoolName, SchoolRegion)
     private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
 
-    private lateinit var schoolTextViewAuto: AutoCompleteTextView
-    private lateinit var regionTextViewAuto: AutoCompleteTextView
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_choose_extra_options, container, false)
-        setupAndInitViews(view)
-        return view
+        return inflater.inflate(R.layout.fragment_choose_extra_options, container, false)
     }
 
     override fun onPause() {
         super.onPause()
         VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
-        schoolTextViewAuto.clearFocus()
-        regionTextViewAuto.clearFocus()
+        schoolListSpinner.clearFocus()
+        regionListSpinner.clearFocus()
     }
 
     private fun onSchoolSelectedListener(position: Int, view: View) {
 
         val nameList = schoolAndRegionMap.filter {
-                it.value.first == schoolTextViewAuto.adapter.getItem(position)}.values.toMutableList()
+            it.value.first == schoolListSpinner.adapter.getItem(position)
+        }.values.toMutableList()
         val region = nameList[position % nameList.size].second
-        val schoolName = schoolTextViewAuto.text.toString()
+        val schoolName = schoolListSpinner.text.toString()
 
-        regionTextViewAuto.text = SpannableStringBuilder(region)
+        regionListSpinner.text = SpannableStringBuilder(region)
         (activity as UserSetupActivity).setupStudent.school = schoolName
         (activity as UserSetupActivity).setupStudent.region = region
 
@@ -64,8 +66,8 @@ class ChooseExtraOptionsFragment : VedibartaFragment() {
 
     private fun onRegionSelectedListener(position: Int, view: View) {
 
-        schoolTextViewAuto.text = SpannableStringBuilder("")
-        val region = regionTextViewAuto.adapter.getItem(position).toString()
+        schoolListSpinner.text = SpannableStringBuilder("")
+        val region = regionListSpinner.adapter.getItem(position).toString()
         (activity as UserSetupActivity).setupStudent.region = region
         (activity as UserSetupActivity).setupStudent.school = ""
 
@@ -73,10 +75,15 @@ class ChooseExtraOptionsFragment : VedibartaFragment() {
             schoolAndRegionMap.filter { it.value.second == region }.values.toMutableList().unzip()
                 .first.toTypedArray()
 
-        populateAutoTextView(activity as UserSetupActivity, schoolTextViewAuto, schoolList)
+        populateAutoTextView(activity as UserSetupActivity, schoolListSpinner, schoolList)
 
         VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
 
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupAndInitViews(view)
     }
 
     override fun setupAndInitViews(v: View) {
@@ -91,7 +98,7 @@ class ChooseExtraOptionsFragment : VedibartaFragment() {
         val firstName: TextInputEditText = v.findViewById(R.id.textFieldFirstName)
         val lastName: TextInputEditText = v.findViewById(R.id.textFieldLastName)
 
-        firstName.doOnTextChanged { text, _, _, _ ->
+        textFieldFirstName.doOnTextChanged { text, _, _, _ ->
             if (text!!.matches(resources.getString(R.string.allowed_letters_regex).toRegex()) || text.isBlank())
                 act.chosenFirstName = text.toString()
             else {
@@ -99,7 +106,7 @@ class ChooseExtraOptionsFragment : VedibartaFragment() {
             }
         }
 
-        lastName.doOnTextChanged { text, _, _, _ ->
+        textFieldLastName.doOnTextChanged { text, _, _, _ ->
             if (text!!.matches(resources.getString(R.string.allowed_letters_regex).toRegex()) || text.isBlank())
                 act.chosenLastName = text.toString()
             else {
@@ -107,31 +114,52 @@ class ChooseExtraOptionsFragment : VedibartaFragment() {
             }
         }
 
-        //---DropDownList Views---
-        schoolTextViewAuto = v.findViewById(R.id.schoolListSpinner)
-        regionTextViewAuto = v.findViewById(R.id.regionListSpinner)
+        schoolListSpinner.setOnItemClickListener { _, _, position, _ ->
+            onSchoolSelectedListener(
+                position,
+                v
+            )
+        }
+        regionListSpinner.setOnItemClickListener { _, _, position, _ ->
+            onRegionSelectedListener(
+                position,
+                v
+            )
+        }
 
-        schoolTextViewAuto.setOnItemClickListener { _, _, position, _ -> onSchoolSelectedListener(position, v)}
-        regionTextViewAuto.setOnItemClickListener { _, _, position, _ -> onRegionSelectedListener(position, v)}
-
-        regionTextViewAuto.doOnTextChanged { _, _, _, _ ->
-            populateAutoTextView(act, schoolTextViewAuto, act.schoolsName)
+        regionListSpinner.doOnTextChanged { _, _, _, _ ->
+            populateAutoTextView(act, schoolListSpinner, act.schoolsName)
         }
 
         //---Populate DropDownLists---
-        populateAutoTextView(act, schoolTextViewAuto, act.schoolsName)
-        populateAutoTextView(act, regionTextViewAuto, act.regionsName)
+        populateAutoTextView(act, schoolListSpinner, act.schoolsName)
+        populateAutoTextView(act, regionListSpinner, act.regionsName)
 
 
-        v.findViewById<TextView>(R.id.textViewFirstNameTitle).markRequired()
-        v.findViewById<TextView>(R.id.textViewLastNameTitle).markRequired()
-        v.findViewById<TextView>(R.id.schoolFilterSwitchText).markRequired()
-        v.findViewById<TextView>(R.id.regionFilterSwitchText).markRequired()
+        textViewFirstNameTitle.markRequired()
+        textViewLastNameTitle.markRequired()
+        schoolFilterSwitchText.markRequired()
+        regionFilterSwitchText.markRequired()
 
         Log.d(TAG, "Init Views")
 
-        schoolTextViewAuto.text = SpannableStringBuilder(act.setupStudent.school)
-        regionTextViewAuto.text = SpannableStringBuilder(act.setupStudent.region)
+        personalInfoButton.setOnClickListener {
+            if (cardViewNameBody.visibility == View.VISIBLE)
+                cardViewNameBody.visibility = View.GONE
+            else
+                cardViewNameBody.visibility = View.VISIBLE
+        }
+
+
+        schoolInfoButton.setOnClickListener {
+            if (cardViewSchoolBody.visibility == View.VISIBLE)
+                cardViewSchoolBody.visibility = View.GONE
+            else
+                cardViewSchoolBody.visibility = View.VISIBLE
+        }
+        schoolListSpinner.text = SpannableStringBuilder(act.setupStudent.school)
+        regionListSpinner.text = SpannableStringBuilder(act.setupStudent.region)
+
     }
 
 }

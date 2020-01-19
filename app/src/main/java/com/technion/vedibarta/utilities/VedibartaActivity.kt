@@ -92,7 +92,7 @@ open class VedibartaActivity : AppCompatActivity() {
 
         /**
          * Hides the virtual keyboard in the activity, if it is open
-         *
+         *`
          * @param activity: activity in which the keyboard should be hidden
          */
         fun hideKeyboard(activity: Activity) {
@@ -171,7 +171,7 @@ open class VedibartaActivity : AppCompatActivity() {
     }
 
     private fun tryRedirectToLogin() {
-        if (user == null || !user.isEmailVerified) {
+        if (user == null) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

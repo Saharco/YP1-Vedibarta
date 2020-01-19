@@ -8,6 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.widget.addTextChangedListener
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.isEmail
@@ -48,6 +51,14 @@ class LoginFragment : Fragment() {
 
         val loginButton = view.findViewById<Button>(R.id.login_button)
         loginButton.setOnClickListener { login() }
+
+        val email = view.findViewById<TextInputEditText>(R.id.email_input_edit_text)
+        val emailLayout = view.findViewById<TextInputLayout>(R.id.email_input_layout)
+        val password = view.findViewById<TextInputEditText>(R.id.password_input_edit_text)
+        val passwordLayout = view.findViewById<TextInputLayout>(R.id.password_input_layout)
+
+        email.addTextChangedListener { emailLayout.error = null }
+        password.addTextChangedListener { passwordLayout.error = null }
 
         return view
     }

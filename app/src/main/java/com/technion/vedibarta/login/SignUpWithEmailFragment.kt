@@ -2,11 +2,17 @@ package com.technion.vedibarta.login
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.isEmail
@@ -46,6 +52,17 @@ class SignUpWithEmailFragment : Fragment() {
 
         val signUpButton = view.findViewById<Button>(R.id.sign_up_button)
         signUpButton.setOnClickListener { signUp() }
+
+        val email = view.findViewById<TextInputEditText>(R.id.email_input_edit_text)
+        val emailLayout = view.findViewById<TextInputLayout>(R.id.email_input_layout)
+        val password = view.findViewById<TextInputEditText>(R.id.password_input_edit_text)
+        val passwordLayout = view.findViewById<TextInputLayout>(R.id.password_input_layout)
+        val passwordRepeat = view.findViewById<TextInputEditText>(R.id.password_repeat_input_edit_text)
+        val passwordRepeatLayout = view.findViewById<TextInputLayout>(R.id.password_repeat_input_layout)
+
+        email.addTextChangedListener { emailLayout.error = null }
+        password.addTextChangedListener { passwordLayout.error = null }
+        passwordRepeat.addTextChangedListener { passwordRepeatLayout.error = null }
 
         return view
     }

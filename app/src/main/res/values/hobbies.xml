@@ -1,26 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="hobbies_hebrew">
-        <item>הוראה</item>
-        <item>משחקי מחשב</item>
-        <item>תכנות</item>
+    <array name="hobbies_id_link">
+        <item>@array/hobbies_art</item>
+        <item>@array/hobbies_sports</item>
+        <item>@array/hobbies_technology</item>
+        <item>@array/hobbies_hangouts</item>
+        <item>@array/hobbies_games</item>
+        <item>@array/hobbies_other</item>
+    </array>
+
+    <array name="hobbies_art">
+        <item>מוסיקה</item>
+        <item>תאטרון</item>
+        <item>ריקוד</item>
+        <item>צילום</item>
+        <item>ציור</item>
+    </array>
+
+    <array name="hobbies_sports">
         <item>כדורגל</item>
         <item>כדורסל</item>
         <item>טניס</item>
-        <item>סרטים</item>
-        <item>ספרים</item>
-        <item>ציור</item>
-        <item>אומנות</item>
-        <item>מוסיקה</item>
-        <item>צילום</item>
-        <item>שופינג</item>
-        <item>רובוטיקה</item>
+        <item>שחייה</item>
         <item>טיולים</item>
-        <item>מדע</item>
-        <item>ספורט</item>
-        <item>ריקוד</item>
-        <item>כושר</item>
+        <item>אופניים</item>
+        <item>אומנויות לחימה</item>
+    </array>
+
+    <array name="hobbies_technology">
+        <item>רובוטיקה</item>
+        <item>מדעים</item>
         <item>מתמטיקה</item>
-        <item>גלישת גלים</item>
+        <item>מחשבים</item>
+    </array>
+
+    <array name="hobbies_hangouts">
+        <item>קולנוע</item>
+        <item>שופינג</item>
+        <item>חברים</item>
+        <item>אוכל</item>
+        <item>סדרות</item>
+        <item>תנועות נוער</item>
+        <item>אופנה</item>
+    </array>
+
+    <array name="hobbies_games">
+        <item>משחקי מחשב</item>
+        <item>משחקי לוח</item>
+    </array>
+
+    <array name="hobbies_other">
+        <item>קריאת ספרים</item>  <!-- other -->
+        <item>טבע</item>  <!-- other -->
+        <item>פוליטיקה</item>  <!-- other -->
+        <item>בישול</item>  <!-- other -->
+    </array>
+
+    <array name="hobbies">
+        <!--    art    -->
+        <item>מוסיקה</item>
+        <item>תאטרון</item>
+        <item>ריקוד</item>
+        <item>צילום</item>
+        <item>ציור</item>
+
+        <!--    sports    -->
+        <item>כדורגל</item>
+        <item>כדורסל</item>
+        <item>טניס</item>
+        <item>שחייה</item>
+        <item>טיולים</item>
+        <item>אופניים</item>
+        <item>אומנויות לחימה</item>
+
+        <!--    technology    -->
+        <item>רובוטיקה</item>
+        <item>מדעים</item>
+        <item>מתמטיקה</item>
+        <item>מחשבים</item>
+
+        <!--    hangouts    -->
+        <item>קולנוע</item>
+        <item>שופינג</item>
+        <item>חברים</item>
+        <item>אוכל</item>
+        <item>סדרות</item>
+        <item>תנועות נוער</item>
+        <item>אופנה</item>
+
+        <!--    games    -->
+        <item>משחקי מחשב</item>
+        <item>משחקי לוח</item>
+
+        <!--    other    -->
+        <item>קריאת ספרים</item>  <!-- other -->
+        <item>טבע</item>  <!-- other -->
+        <item>פוליטיקה</item>  <!-- other -->
+        <item>בישול</item>  <!-- other -->
     </array>
 </resources>

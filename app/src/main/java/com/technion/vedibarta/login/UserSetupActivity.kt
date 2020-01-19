@@ -2,22 +2,21 @@ package com.technion.vedibarta.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Html
+import android.text.Layout
+import android.text.SpannableStringBuilder
+import android.text.style.AlignmentSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
-import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.main.MainActivity
+import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
@@ -62,9 +61,9 @@ class UserSetupActivity : VedibartaActivity() {
 
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
-        setToolbar(toolbar)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-
+        changeStatusBarColor(this, R.color.colorBoarding)
+        doneButton.bringToFront()
+        doneButton.setOnClickListener { onDoneClick() }
         editTabs.touchables.forEach { it.isEnabled = false }
     }
 
@@ -74,88 +73,71 @@ class UserSetupActivity : VedibartaActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun setToolbar(tb: Toolbar) {
-        setSupportActionBar(tb)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
         adapter.addFragment(ChooseGenderFragment(), "1")
-        adapter.addFragment(ChooseExtraOptionsFragment(), "2")
-        adapter.addFragment(ChooseCharacteristicsFragment(), "3")
-        adapter.addFragment(ChooseHobbiesFragment(), "4")
-        viewPager.setOnTouchListener { v, event ->
+        adapter.addFragment(ChooseCharacteristicsFragment(), "2")
+        adapter.addFragment(ChooseHobbiesFragment(), "3")
 
-            if (setupStudent.gender == Gender.NONE) {
-                Toast.makeText(
-                    applicationContext,
-                    R.string.user_setup_dialog_message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                v.onTouchEvent(event)
+        viewPager.setPagingEnabled(false)
+        viewPager.setOnInterceptTouchEventCustomBehavior {
+            if (setupStudent.gender != Gender.NONE) {
+                viewPager.setPagingEnabled(true)
+                viewPager.setOnInterceptTouchEventCustomBehavior { }
             }
-            return@setOnTouchListener true
         }
+
         viewPager.adapter = adapter
-        viewPager.offscreenPageLimit = 2
-//        viewPager.addOnPageChangeListener(CustomViewPageListener(this))
+        viewPager.offscreenPageLimit = 1
     }
 
     override fun onBackPressed() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.user_setup_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.actionDoneSetup -> {
-                if (validateUserInput()) {
-                    setupStudent.name = "$chosenFirstName $chosenLastName"
-                    database.students().userId().build().set(setupStudent)
-                        .addOnSuccessListener {
-                            student = setupStudent
-                            startActivity(Intent(this, MainActivity::class.java))
-                            finish()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
-                                .show()
-                        }
-                } else {
-                    missingDetailsDialog()
+    private fun onDoneClick(){
+        if (validateUserInput()) {
+            setupStudent.name = "$chosenFirstName $chosenLastName"
+            database.students().userId().build().set(setupStudent)
+                .addOnSuccessListener {
+                    student = setupStudent
+                    startActivity(Intent(this, UserProfileActivity::class.java))
+                    finish()
                 }
-            }
-
+                .addOnFailureListener {
+                    Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
+                        .show()
+                }
+        } else {
+            missingDetailsDialog()
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun missingDetailsDialog() {
-        val title = TextView(this)
-        val message = Html.fromHtml("<b><small>$missingDetailsText</small></b>")
-        title.setText(R.string.user_setup_missing_details_dialog_title)
-        title.textSize = 20f
-        title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(resources.getColor(R.color.textPrimary))
-        title.gravity = Gravity.CENTER
-        title.setPadding(10, 40, 10, 24)
+        val message = SpannableStringBuilder()
+            .bold { append(missingDetailsText).setSpan(RelativeSizeSpan(1f), 0, missingDetailsText.length, 0) }
+
+        val text = resources.getString(R.string.user_setup_missing_details_dialog_title)
+
+        val titleText = SpannableStringBuilder()
+            .bold { append(text).setSpan(RelativeSizeSpan(1.2f),0,text.length,0) }
+        titleText.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0,text.length,0)
+
+        val positiveButtonText = SpannableStringBuilder()
+            .bold { append(resources.getString(R.string.ok)) }
+
         val builder = AlertDialog.Builder(this)
-        builder.setCustomTitle(title)
+        builder
+            .setTitle(titleText)
+            .setIcon(ContextCompat.getDrawable(this,R.drawable.ic_error))
             .setMessage(message)
-            .setPositiveButton(android.R.string.yes) { _, _ -> }
-            .show()
-        builder.create()
+            .setPositiveButton(positiveButtonText) { _, _ -> }
+
+        builder.create().show()
     }
 
     private fun validateUserInput(): Boolean {
-
         missingDetailsText = ""
         val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
@@ -164,7 +146,7 @@ class UserSetupActivity : VedibartaActivity() {
             return false
         }
 
-        Log.d(TAG,"first: $chosenFirstName last: $chosenLastName")
+        Log.d(TAG, "first: $chosenFirstName last: $chosenLastName")
 
         if (chosenFirstName == "") {
             missingDetailsText += "${resources.getString(R.string.user_setup_first_name_missing)}\n"
@@ -186,6 +168,11 @@ class UserSetupActivity : VedibartaActivity() {
             return false
         }
 
+        if(!validateSchoolAndRegionExists()){
+            missingDetailsText += "${resources.getString(R.string.user_setup_wrong_school_and_region_combination)}\n"
+            return false
+        }
+
         if (studentsCharacteristics.isEmpty()) {
             missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
             return false
@@ -198,33 +185,20 @@ class UserSetupActivity : VedibartaActivity() {
 
         return true
     }
-/*
-    inner class CustomViewPageListener(val activity: UserSetupActivity) :
-        ViewPager.SimpleOnPageChangeListener() {
 
-        override fun onPageSelected(position: Int) {
-            super.onPageSelected(position)
-            when (position) {
-                0 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_title)
-                }
-                1 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_extra_options_title)
-                }
-                2 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_characteristics_title)
-                }
-                3 -> {
-                    activity.toolbarTitle.text =
-                        activity.resources.getString(R.string.user_setup_hobbies_title)
-                }
+    private fun validateSchoolAndRegionExists() : Boolean{
+        val schoolAndRegionMap =
+            schoolTags.zip(schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
+                .toMap()
+        var result = false
+        schoolsName.forEachIndexed { index, name ->
+            if (name == setupStudent.school){
+                result = (schoolAndRegionMap[schoolTags[index]] ?: error("")).second == setupStudent.region
+
+                if (result)
+                    return result
             }
         }
+        return result
     }
-
- */
-
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="hobbies_categories">
+        <item>אומנות</item>
+        <item>ספורט</item>
+        <item>טכנולוגייה</item>
+        <item>בילויים</item>
+        <item>משחקים</item>
+        <item>אחר</item>
+    </array>
+
+    <array name="hobbiesId_to_category">
+        <!--    art    -->
+        <item>אומנות</item>
+        <item>אומנות</item>
+        <item>אומנות</item>
+        <item>אומנות</item>
+        <item>אומנות</item>
+
+        <!--    sports    -->
+        <item>ספורט</item>
+        <item>ספורט</item>
+        <item>ספורט</item>
+        <item>ספורט</item>
+        <item>ספורט</item>
+        <item>ספורט</item>
+        <item>ספורט</item>
+
+        <!--    technology    -->
+        <item>טכנולוגייה</item>
+        <item>טכנולוגייה</item>
+        <item>טכנולוגייה</item>
+        <item>טכנולוגייה</item>
+
+        <!--    hangouts    -->
+        <item>בילויים</item>
+        <item>בילויים</item>
+        <item>בילויים</item>
+        <item>בילויים</item>
+        <item>בילויים</item>
+        <item>בילויים</item>
+        <item>בילויים</item>
+
+        <!--    games    -->
+        <item>משחקים</item>
+        <item>משחקים</item>
+
+        <!--    other    -->
+        <item>אחר</item>  <!-- other -->
+        <item>אחר</item>  <!-- other -->
+        <item>אחר</item>  <!-- other -->
+        <item>אחר</item>  <!-- other -->
+    </array>
+</resources>

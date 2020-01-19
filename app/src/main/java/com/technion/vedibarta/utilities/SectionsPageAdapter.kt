@@ -17,6 +17,10 @@ class SectionsPageAdapter(val fm: FragmentManager) :
         fragmentsTitleList.add(title)
     }
 
+    fun replaceFragment(position: Int, fragment: Fragment) {
+        fragmentsList[position] = fragment
+    }
+
     override fun getPageTitle(position: Int): CharSequence? {
         return fragmentsTitleList[position]
     }

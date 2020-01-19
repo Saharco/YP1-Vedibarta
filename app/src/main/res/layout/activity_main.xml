@@ -57,6 +57,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <TextView
+                android:id="@+id/emptyListMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textSecondary"
+                android:visibility="gone"
+                android:layout_marginTop="32dp"
+                android:textSize="32sp"
+                android:gravity="center"
+                android:text="@string/empty_chat_list_message_m"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/chat_history"
@@ -74,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="@string/main_fab_title"
-        app:icon="@drawable/ic_search_24dp"
+        app:icon="@drawable/ic_find_friends"
         app:layout_anchor="@id/toolbarContainer"
         app:layout_anchorGravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"

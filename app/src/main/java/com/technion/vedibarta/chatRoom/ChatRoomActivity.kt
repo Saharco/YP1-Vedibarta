@@ -1,12 +1,15 @@
 package com.technion.vedibarta.chatRoom
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
+import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
@@ -17,17 +20,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.database.ServerValue
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.SetOptions
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.activity_chat_room.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -37,15 +37,17 @@ class ChatRoomActivity : VedibartaActivity()
     , ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener
     , ChatRoomAbuseReportDialog.AbuseReportDialogListener {
     val systemSender = "-1"
-    private lateinit var adapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
+    private lateinit var adapter: ChatRoomAdapter
     lateinit var chatId: String
     lateinit var partnerId: String
     private var numMessages = 0
     private var photoUrl: String? = null
     private var otherGender: Gender? = null
+    private var partnerHobbies: Array<String> = emptyArray()
+    private var firstVisibleMessagePosition = 0
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
-    private val dayFormatter = SimpleDateFormat("dd", Locale.getDefault())
+    private val reversedDateFormatter = SimpleDateFormat("yy/MM/dd", Locale.getDefault())
 
     companion object {
         private const val TAG = "Vedibarta/chat"
@@ -69,12 +71,14 @@ class ChatRoomActivity : VedibartaActivity()
         chatPartnerId = partnerId
         photoUrl ?: displayDefaultProfilePicture()
 
+        partnerHobbies = chatMetaData.partnerHobbies
+
         setToolbar(chatToolbar)
         configureAdapter()
-        buttonChatBoxSend.setOnClickListener { sendMessage(it) }
+        buttonChatBoxSend.setOnClickListener { sendMessageFromChatBox(it) }
         popupMenu.setOnClickListener { showPopup(it) }
         if (student!!.gender == Gender.FEMALE)
-            chatBox.text =
+            chatBox.hint =
                 SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
         toolbarUserName.text = partnerName
         Glide.with(applicationContext)
@@ -107,13 +111,13 @@ class ChatRoomActivity : VedibartaActivity()
     override fun onStart()
     {
         super.onStart()
-        adapter.startListening()
+        adapter.fireStoreAdapter.startListening()
     }
 
     override fun onStop()
     {
         super.onStop()
-        adapter.stopListening()
+        adapter.fireStoreAdapter.stopListening()
 
     }
 
@@ -136,9 +140,11 @@ class ChatRoomActivity : VedibartaActivity()
         adapter.notifyDataSetChanged() //
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         chatView.layoutManager = layoutManager
-        chatView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            chatView.scrollToPosition(0)
-        }
+        chatView.layoutManager = layoutManager
+        chatView.addOnScrollListener(firstVisibleMessageTracker())
+        chatRoomRootView.viewTreeObserver.addOnGlobalLayoutListener(scrollToBottomOnKeyboardOpening())
+        adapter.registerAdapterDataObserver(automaticScroller())
+        chatView.adapter = adapter
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -183,7 +189,7 @@ class ChatRoomActivity : VedibartaActivity()
 
             when (item!!.itemId) {
                 R.id.generateQuestion -> {
-                    ChatRoomQuestionGeneratorDialog().show(
+                    ChatRoomQuestionGeneratorDialog.newInstance(student!!.hobbies.toTypedArray(), partnerHobbies).show(
                         supportFragmentManager,
                         "QuestionGeneratorFragment"
                     )
@@ -201,7 +207,7 @@ class ChatRoomActivity : VedibartaActivity()
         popup.show()
     }
 
-    private fun sendMessage(v: View) {
+    private fun sendMessageFromChatBox(v: View) {
         var text = chatBox.text.toString()
         if (text.replace(" ", "")
                 .replace("\n", "")
@@ -211,43 +217,101 @@ class ChatRoomActivity : VedibartaActivity()
             return
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
-
-        val lastMessageDate: Date? = adapter.snapshots.firstOrNull()?.timestamp
-        val currentDate = Date(System.currentTimeMillis())
-        if (lastMessageDate != null)
-        {
-            val timeGap = currentDate.time - lastMessageDate.time
-            val dayGap =
-                (dayFormatter.format(currentDate).toInt() - dayFormatter.format(lastMessageDate).toInt())
-
-            if (TimeUnit.DAYS.convert(timeGap, TimeUnit.MILLISECONDS) >= 1 || dayGap >= 1)
-            {
-                write(dateFormatter.format(currentDate), true)
-            }
-        }
-        else
-        {
-            write(dateFormatter.format(currentDate), true)
-        }
-        write(text, false)
+        sendMessage(text, false)
         chatBox.setText("")
     }
 
-    private fun write(text: String, isGeneratorMessage: Boolean)
+    fun sendMessage(text: String, isSystemMessage: Boolean)
     {
-        val timeSent = Date(System.currentTimeMillis())
-        var sender = userId!!
-        if (isGeneratorMessage)
+        val currentDate = Date()
+        if (adapter.hasNoMessages || hasMoreThenADayHadPassed(currentDate))
         {
-            sender = systemSender
+            write(dateFormatter.format(currentDate), true)
         }
-        val path = database.chats()
-                .chatId(chatId)
-                .messages()
-                .build()
-        path.add(Message(sender, partnerId, text, timeSent))
-            .addOnFailureListener {
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+        write(text, isSystemMessage)
+    }
+
+    private fun hasMoreThenADayHadPassed(currentDate: Date): Boolean
+    {
+        val lastMessageDate = adapter.getFirstMessageOrNull()?.timestamp ?: Date()
+        return reversedDateFormatter.format(currentDate) > reversedDateFormatter.format(lastMessageDate)
+    }
+
+    private fun write(text: String, isSystemMessage: Boolean) {
+        val sender = if (isSystemMessage) systemSender else userId!!
+        database
+            .chats()
+            .chatId(chatId)
+            .messages()
+            .build()
+                .add(Message(sender, partnerId, text))
+                    .addOnFailureListener {
+                        Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+                    }
+    }
+
+    private fun firstVisibleMessageTracker(): RecyclerView.OnScrollListener {
+        return object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState ==  RecyclerView.SCROLL_STATE_IDLE)
+                    firstVisibleMessagePosition = (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    Log.d("wtf", "firstvisible = $firstVisibleMessagePosition")
             }
+        }
+    }
+
+    private fun automaticScroller(): RecyclerView.AdapterDataObserver
+    {
+        return object: RecyclerView.AdapterDataObserver()
+        {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                val firstVisiblePosition =
+                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                if (firstVisiblePosition <= 1)
+                    chatView.scrollToPosition(0)
+                else
+                {
+                    chatView.scrollToPosition(firstVisiblePosition + 1)
+                }
+            }
+
+            override fun onChanged() {
+                super.onChanged()
+                val firstVisiblePosition =
+                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                chatView.scrollToPosition(firstVisiblePosition)
+            }
+        }
+    }
+
+    private fun scrollToBottomOnKeyboardOpening(): ViewTreeObserver.OnGlobalLayoutListener
+    {
+
+        return object : ViewTreeObserver.OnGlobalLayoutListener {
+            private var isKeyBoardVisible = false
+            override fun onGlobalLayout()
+            {
+                val activityRootView: View = findViewById(R.id.chatRoomRootView)
+                val heightDiff = activityRootView.rootView.height - activityRootView.height;
+                if (heightDiff > dpToPx(this@ChatRoomActivity, 200f) && !isKeyBoardVisible)
+                {
+                    isKeyBoardVisible = true
+                    if (firstVisibleMessagePosition == 0)
+                        chatView.scrollToPosition(0)
+                }
+                else if (heightDiff < dpToPx(this@ChatRoomActivity, 200f) && isKeyBoardVisible)
+                {
+                    isKeyBoardVisible = false
+                }
+            }
+
+            private fun dpToPx(context: Context, valueInDp: Float): Float
+            {
+                val metrics = context.resources.displayMetrics;
+                return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics)
+            }
+        }
     }
 }

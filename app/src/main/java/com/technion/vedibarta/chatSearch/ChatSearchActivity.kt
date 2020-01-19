@@ -44,7 +44,7 @@ class ChatSearchActivity : VedibartaActivity() {
     var chosenSchool: String? = null
     var chosenRegion: String? = null
 
-    var fakeStudent: Student = Student()
+    var fakeStudent: Student = Student(gender = student!!.gender)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

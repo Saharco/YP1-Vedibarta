@@ -5,35 +5,32 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Bundle
-import android.provider.MediaStore
-import kotlinx.android.synthetic.main.activity_user_profile.*
-import android.widget.*
-import android.widget.TableLayout
-
-import androidx.fragment.app.DialogFragment
-import com.technion.vedibarta.R
-import androidx.core.content.FileProvider
-import android.net.Uri
-import android.util.Log
-import java.io.File
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
-
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.AsyncTask
+import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import android.view.animation.DecelerateInterpolator
+import android.widget.FrameLayout
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.view.forEach
+import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -43,20 +40,26 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.login.LoginManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.R
+import com.technion.vedibarta.login.LoginActivity
+import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.services.Languages
+import com.technion.vedibarta.utilities.services.translate
+import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
-import java.lang.Exception
-import java.net.URI
 
 
 class UserProfileActivity : VedibartaActivity(),
@@ -67,6 +70,7 @@ class UserProfileActivity : VedibartaActivity(),
     private val APP_PERMISSION_REQUEST_CAMERA = 100
     private val REQUEST_CAMERA = 1
     private val SELECT_IMAGE = 2
+    private val EDIT_PROFILE = 3
 
     private var selectedImageFile: File? = null
     private var selectedImage: Uri? = null
@@ -85,6 +89,7 @@ class UserProfileActivity : VedibartaActivity(),
         setContentView(R.layout.activity_user_profile)
         Log.d(TAG, "created UserProfileActivity")
         initWidgets()
+
     }
 
     override fun onStart() {
@@ -96,6 +101,7 @@ class UserProfileActivity : VedibartaActivity(),
     private fun resetTables() {
         characteristicsTable.removeAllViews()
         hobbiesTable.removeAllViews()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -110,19 +116,20 @@ class UserProfileActivity : VedibartaActivity(),
                 if (isImageFullscreen) {
                     Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
                     if (!minimizeFullscreenImage()) {
-                        super.onBackPressed()
+                        startActivity(Intent(this, MainActivity::class.java))
                     }
                 } else {
                     Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
-                    super.onBackPressed()
+                    startActivity(Intent(this, MainActivity::class.java))
                 }
             R.id.actionEditProfile ->
-                startActivity(Intent(this, ProfileEditActivity::class.java))
+                startActivityForResult(Intent(this, ProfileEditActivity::class.java), EDIT_PROFILE)
             R.id.actionLogOut ->
                 onLogoutClick()
         }
         return super.onOptionsItemSelected(item)
     }
+
 
     override fun onBackPressed() {
         if (isImageFullscreen) {
@@ -141,7 +148,7 @@ class UserProfileActivity : VedibartaActivity(),
         title.setText(R.string.dialog_logout_title)
         title.textSize = 20f
         title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(resources.getColor(R.color.textPrimary))
+        title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
         title.gravity = Gravity.CENTER
         title.setPadding(10, 40, 10, 24)
 
@@ -152,10 +159,10 @@ class UserProfileActivity : VedibartaActivity(),
         val builder = AlertDialog.Builder(this)
         builder.setCustomTitle(title)
             .setMessage(msg)
-            .setPositiveButton(android.R.string.yes) {_, _ ->
+            .setPositiveButton(R.string.yes) { _, _ ->
                 performLogout()
             }
-            .setNegativeButton(android.R.string.no) {_, _ -> }
+            .setNegativeButton(R.string.no) { _, _ -> }
             .show()
         builder.create()
     }
@@ -182,7 +189,7 @@ class UserProfileActivity : VedibartaActivity(),
     private fun initWidgets() {
         setToolbar(toolbar)
         enlargedToolbar.title = student!!.name
-        enlargedToolbar.setTitleTextColor(resources.getColor(android.R.color.white))
+        enlargedToolbar.setTitleTextColor(ContextCompat.getColor(this, android.R.color.white))
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()
@@ -205,8 +212,27 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun loadUserData() {
-        populateCharacteristicsTable()
-        populateHobbiesTable()
+        val characteristics: Array<String> = student!!.characteristics.keys
+            .translate(this)
+                .characteristics()
+                .from(Languages.BASE)
+                .to(Languages.HEBREW, student!!.gender)
+                .execute()
+
+        VedibartaFragment.populateCharacteristicsTable(
+            this,
+            characteristicsTable,
+            characteristics,
+            student!!
+        )
+        VedibartaFragment.populateHobbiesTable(
+            this,
+            hobbiesTable,
+            student!!.hobbies.toTypedArray(),
+            student!!
+        )
+
+        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
         populateProfilePicture()
         populateUsername()
         populateUserRegion()
@@ -283,113 +309,6 @@ class UserProfileActivity : VedibartaActivity(),
         displayUserProfilePicture()
     }
 
-    @SuppressLint("InflateParams")
-    private fun populateCharacteristicsTable() {
-        val studentsCharacteristics = student!!.characteristics.filter { it.value }.keys.toList()
-
-        val tableRowParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.MATCH_PARENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-        tableRowParams.topMargin = 40 // in pixels
-
-        val bubbleParams =
-            TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-            )
-
-        if (student == null || studentsCharacteristics.isEmpty()) {
-            handleNoCharacteristics()
-            return
-        }
-
-        Log.d(TAG, "Screen width (in pixels): ${Resources.getSystem().displayMetrics.widthPixels}")
-
-        val steps = calculateBubblesInRow()
-
-        Log.d(TAG, "Amount of bubbles in a row: $steps")
-        (studentsCharacteristics.indices step steps).forEach { i ->
-            val tableRow = TableRow(this)
-            tableRow.layoutParams = tableRowParams
-            tableRow.gravity = Gravity.CENTER_HORIZONTAL
-
-            for (j in 0 until steps) {
-                if (i + j >= studentsCharacteristics.size)
-                    break
-
-                val bubbleFrame = LayoutInflater.from(this).inflate(
-                    R.layout.user_profile_bubble_blue,
-                    null
-                ) as FrameLayout
-
-                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = studentsCharacteristics[i + j]
-                bubbleFrame.layoutParams = bubbleParams
-
-                tableRow.addView(bubbleFrame)
-            }
-
-            characteristicsTable.addView(tableRow)
-        }
-    }
-
-    private fun calculateBubblesInRow(): Int =
-        ((Resources.getSystem().displayMetrics.widthPixels - 48f.dpToPx()) / (100f.dpToPx())).toInt()
-
-    private fun handleNoCharacteristics() {
-        //TODO: add some behavior for the scenario where the user has no characteristics
-    }
-
-    @SuppressLint("InflateParams")
-    private fun populateHobbiesTable() {
-
-        val tableRowParams = TableLayout.LayoutParams(
-            TableLayout.LayoutParams.MATCH_PARENT,
-            TableLayout.LayoutParams.WRAP_CONTENT
-        )
-        tableRowParams.topMargin = 40 // in pixels
-
-        val bubbleParams =
-            TableRow.LayoutParams(
-                TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-            )
-
-        if (student == null || student!!.hobbies.isEmpty()) {
-            handleNoHobbies()
-            return
-        }
-
-        val steps = calculateBubblesInRow()
-        (student!!.hobbies.indices step steps).forEach { i ->
-            val tableRow = TableRow(this)
-            tableRow.layoutParams = tableRowParams
-            tableRow.gravity = Gravity.CENTER_HORIZONTAL
-
-            for (j in 0 until steps) {
-                if (i + j >= student!!.hobbies.size)
-                    break
-
-                val bubbleFrame = LayoutInflater.from(this).inflate(
-                    R.layout.user_profile_bubble_orange,
-                    null
-                ) as FrameLayout
-
-                val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                bubble.text = student!!.hobbies[i + j]
-                bubbleFrame.layoutParams = bubbleParams
-
-                tableRow.addView(bubbleFrame)
-            }
-
-            hobbiesTable.addView(tableRow)
-        }
-    }
-
-    private fun handleNoHobbies() {
-        //TODO: add some behavior for the scenario where the user has no characteristics
-    }
 
     private fun setToolbar(tb: Toolbar) {
         setSupportActionBar(tb)
@@ -405,7 +324,7 @@ class UserProfileActivity : VedibartaActivity(),
             toolbar.visibility = View.VISIBLE
             setToolbar(toolbar)
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            changeStatusBarColor(resources.getColor(R.color.colorPrimaryDark))
+            changeStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
         } else {
             Log.d(TAG, "toggleToolbars: setting the fake toolbar")
             toolbar.visibility = View.GONE
@@ -413,7 +332,7 @@ class UserProfileActivity : VedibartaActivity(),
             setToolbar(enlargedToolbar)
             supportActionBar?.setDisplayShowTitleEnabled(true)
             supportActionBar?.title = student!!.name
-            changeStatusBarColor(resources.getColor(android.R.color.black))
+            changeStatusBarColor(ContextCompat.getColor(this, android.R.color.black))
         }
     }
 
@@ -618,8 +537,8 @@ class UserProfileActivity : VedibartaActivity(),
         divider1.visibility = View.VISIBLE
         changeProfilePictureButton.visibility = View.VISIBLE
 
-        root.setBackgroundColor(resources.getColor(android.R.color.white))
-        scrollViewLayout.setBackgroundColor(resources.getColor(android.R.color.white))
+        root.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
+        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
 
         mCurrentAnimator = null
     }
@@ -628,8 +547,8 @@ class UserProfileActivity : VedibartaActivity(),
         fullscreenImage.visibility = View.VISIBLE
         fullscreenImageContainer.visibility = View.VISIBLE
 
-        root.setBackgroundColor(resources.getColor(android.R.color.black))
-        scrollViewLayout.setBackgroundColor(resources.getColor(android.R.color.black))
+        root.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black))
+        scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black))
 
         scrollViewLayout.visibility = View.GONE
         titlePicture.visibility = View.GONE
@@ -695,15 +614,27 @@ class UserProfileActivity : VedibartaActivity(),
         if (resultCode == Activity.RESULT_OK) {
 
             when (requestCode) {
-                REQUEST_CAMERA -> if (selectedImage != null && validateImage(selectedImage!!)) {
-                    //uploadPhoto(selectedImage!!)
+                REQUEST_CAMERA -> if (selectedImage != null && validateImage(selectedImage!!)
+                    && textValidate(selectedImage!!)) {
+//                    uploadPhoto(selectedImage!!)
                 }
                 SELECT_IMAGE -> {
                     selectedImage = data!!.data
-                    if (validateImage(selectedImage!!))
+                    if (validateImage(selectedImage!!) && textValidate(selectedImage!!))
                     {
-                        //uploadPhoto(selectedImage!!)
+                        Log.d("wtf", "Uploading Image")
+//                        uploadPhoto(selectedImage!!)
                     }
+                }
+                EDIT_PROFILE -> {
+                    val snackbar = Snackbar.make(
+                        toolbar,
+                        resources.getString(R.string.edit_changes_saved_successfully),
+                        Snackbar.LENGTH_LONG
+                    )
+                        .setBackgroundTint(ContextCompat.getColor(this, R.color.colorAccentDark))
+                    snackbar.view.layoutDirection = View.LAYOUT_DIRECTION_RTL
+                    snackbar.show()
                 }
             }
         }
@@ -714,21 +645,18 @@ class UserProfileActivity : VedibartaActivity(),
         {
             val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
             val labeler = FirebaseVision.getInstance().onDeviceImageLabeler.processImage(image)
-//                .addOnSuccessListener{labels -> Log.d(TAG, labels.toString())}
-//                .addOnFailureListener { Log.d(TAG, it.message!!) }.
-            while (!labeler.isComplete){
 
-            }
+            while (!labeler.isComplete){}
             Log.d(TAG,"${labeler.result?.toString()}")
             if (labeler.isSuccessful){
-                Log.d("wtf", "---------------------------------------------")
-                for (label in labeler.result!!)
-                {
-                    Log.d("wtf", "Label: ${label.text} confidence: ${label.confidence}")
-                }
+//                for (label in labeler.result!!)
+//                {
+//                    Log.d("wtf", "Label: ${label.text} confidence: ${label.confidence}")
+//                }
+
                 val labels = labeler.result!!.map { it.text }
-                val res = labels.intersect(listOf("Flesh", "Skin", "Swimwear")).isEmpty()&& textValidate(imageUriForVision)
-                Log.d("wtf", "res = $res")
+                val res = labels.intersect(listOf("Flesh", "Skin", "Swimwear")).isEmpty()
+                Log.d("wtf", "Image validation result: $res")
                 return res
             }
         }
@@ -742,16 +670,15 @@ class UserProfileActivity : VedibartaActivity(),
 
     private fun textValidate(imageUriForVision: Uri) : Boolean{
         val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
-        val detector = FirebaseVision.getInstance().getOnDeviceTextRecognizer()
-        var recognizedText:String = ""
-        val result = detector.processImage(image).addOnSuccessListener{
-            recognizedText = it.text
+        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer.processImage(image)
+
+        while (!detector.isComplete){}
+        if (detector.isSuccessful){
+//            Log.d("wtf", "Text Recognized ${detector.result?.text}")
+            Log.d("wtf", "Text Detector result: ${detector.result!!.text.isEmpty()}")
+            return detector.result!!.text.isEmpty()
         }
-            .addOnFailureListener{
-                    e-> Log.d(TAG, "validateImage ${e.message}, cause: ${e.cause?.message}")
-                recognizedText = "failed"
-            }
-        return recognizedText.isEmpty()
+        return false
     }
 
     private fun uploadPhoto(imagePath: Uri) {

@@ -1,5 +1,6 @@
 package com.technion.vedibarta.chatRoom
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,31 +9,34 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
+import kotlinx.android.synthetic.main.activity_chat_room.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChatRoomAdapter(
     chatRoomActivity: ChatRoomActivity,
     options: FirestoreRecyclerOptions<Message>,
     numMessages: Int
-) : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options) {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>()
+{
     private val soundPlayer = SoundPlayer(chatRoomActivity, numMessages)
-    private val chatView = chatRoomActivity.findViewById<RecyclerView>(R.id.chatView)
     private val uid = chatRoomActivity.userId
     private val systemSender = chatRoomActivity.systemSender
+    private var messageList: List<Message> = listOf()
+    val fireStoreAdapter = getFireStoreAdapter(options, this)
 
-    override fun startListening() {
-        super.startListening()
-        soundPlayer.init()
+    fun getFirstMessageOrNull(): Message? {
+        return messageList.firstOrNull()
     }
 
-    override fun stopListening() {
-        super.stopListening()
-        soundPlayer.release()
-    }
+    val hasNoMessages
+            get() = messageList.isEmpty()
 
     override fun getItemViewType(position: Int): Int {
-        val sender = snapshots[position].sender
+        val sender = messageList[position].sender
         if (sender == systemSender)
             return MessageType.SYSTEM.ordinal
         if (sender == uid)
@@ -40,18 +44,15 @@ class ChatRoomAdapter(
         return MessageType.OTHER.ordinal
     }
 
-    override fun onDataChanged() {
-        super.onDataChanged()
-        val lastVisiblePosition =
-            (chatView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-        if (this.itemCount - lastVisiblePosition <= 2)
-            chatView.smoothScrollToPosition(this.itemCount)
+    override fun getItemCount(): Int {
+        return messageList.size
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): RecyclerView.ViewHolder {
+    ): RecyclerView.ViewHolder
+    {
         val view: View?
         when (viewType) {
             MessageType.USER.ordinal -> {
@@ -81,12 +82,9 @@ class ChatRoomAdapter(
         }
     }
 
-    override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
-        position: Int,
-        message: Message
-    ) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         var type = MessageType.USER
+        val message = messageList[position]
         when (holder) {
             is SentMessageViewHolder -> {
                 holder.bind(message)
@@ -105,29 +103,75 @@ class ChatRoomAdapter(
         soundPlayer.playMessageSound(type, this.itemCount)
     }
 
-    private class SentMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class SentMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
+            val dateString = message.timestamp?.let { dateToString(it) }
+                ?: itemView.context.getString(R.string.sending_message)
             itemView.findViewById<TextView>(R.id.sentMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.sentMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.sentMessageTime).text = dateString
         }
     }
 
-    private class ReceivedMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class ReceivedMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
+            val dateString = dateToString(message.timestamp!!)
             itemView.findViewById<TextView>(R.id.receivedMessageBody).text = message.text
-            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = message.getTime()
+            itemView.findViewById<TextView>(R.id.receivedMessageTime).text = dateString
         }
     }
 
-    private class GeneratorMessageViewHolder(view: View) :
-        RecyclerView.ViewHolder(view) {
-
+    private class GeneratorMessageViewHolder(view: View): RecyclerView.ViewHolder(view) {
         fun bind(message: Message) {
             itemView.findViewById<TextView>(R.id.generatorMessageBody).text = message.text
         }
     }
+
+    private fun getFireStoreAdapter(options: FirestoreRecyclerOptions<Message>, chatRoomAdapter: ChatRoomAdapter): FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder> {
+        return object : FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>(options) {
+            override fun onDataChanged()
+            {
+                super.onDataChanged()
+                val newMessageList = this.snapshots.sortedWith(
+                    compareByDescending<Message, Date?>(nullsLast()) { it.timestamp }
+                )
+                val oldMessageListSize = messageList.size
+                val newMessageListSize = newMessageList.size
+                messageList = newMessageList
+                if(newMessageListSize > oldMessageListSize)
+                    chatRoomAdapter.notifyItemInserted(0)
+                else if (newMessageListSize == oldMessageListSize)
+                {
+                    chatRoomAdapter.notifyDataSetChanged()
+                    //chatRoomAdapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun startListening()
+            {
+                super.startListening()
+                soundPlayer.init()
+            }
+
+            override fun stopListening()
+            {
+                super.stopListening()
+                soundPlayer.release()
+            }
+            override fun onCreateViewHolder(
+                parent: ViewGroup,
+                viewType: Int
+            ): RecyclerView.ViewHolder {
+                val userNameView =
+                    LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
+                return GeneratorMessageViewHolder(userNameView)
+            } //implemented because it must return something, this value is never used
+            override fun onBindViewHolder(
+                holder: RecyclerView.ViewHolder,
+                position: Int,
+                message: Message
+            ) {}//do nothing
+        }
+    }
 }
+
+fun dateToString(date: Date): String = SimpleDateFormat("HH:mma").format(date)

@@ -7,19 +7,28 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import com.facebook.AccessToken
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.DocumentsCollections
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -30,6 +39,7 @@ private const val TAG = "LoginActivity"
 class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener,
     LoginOptionsFragment.OnSignUpWithEmailButtonClickListener,
     LoginOptionsFragment.OnContinueWithGoogleButtonClickListener,
+    LoginOptionsFragment.OnContinueWithFacebookCallback,
     LoginFragment.OnBackButtonClickListener, LoginFragment.OnLoginButtonClickListener,
     SignUpWithEmailFragment.OnBackButtonClickListener,
     SignUpWithEmailFragment.OnSignUpButtonClickListener {
@@ -37,13 +47,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
 
-    companion object {
-        const val MINIMUM_LOAD_TIME = 1000L
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        Log.d(TAG, "onCreate: Invoked")
 
         auth = FirebaseAuth.getInstance()
 
@@ -72,8 +79,19 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     override fun onStart() {
         super.onStart()
 
-        val currentUser = auth.currentUser
-        updateUIForCurrentUser(currentUser)
+        auth.currentUser?.reload()?.let {
+            viewFlipper.showNext()
+            showSplash(this, getString(R.string.default_loading_message))
+
+            it.continueWithTask {
+                updateUIForCurrentUser(auth.currentUser)
+            }.addOnSuccessListener { willRedirect ->
+                if (!willRedirect) {
+                    hideSplash(this)
+                    viewFlipper.showPrevious()
+                }
+            }
+        }
     }
 
     override fun onSignInButtonClick() {
@@ -88,7 +106,23 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         startActivityForResult(signInIntent, REQ_GOOGLE_SIGN_IN)
     }
 
+    override fun getCallbackForLogin(): FacebookCallback<LoginResult> {
+        return object: FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                Log.d(TAG, "facebook:onSuccess $loginResult")
+                handleFacebookAccessToken(loginResult.accessToken)
+            }
+            override fun onCancel() {
+                Log.d(TAG, "facebook:onCancel")
+            }
+            override fun onError(e: FacebookException) {
+                Log.d(TAG, "facebook:onError", e)
+            }
+        }
+    }
+
     override fun onSignUpWithEmailButtonClick() {
+        hideKeyboard(this)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.login_screen_fragment, SignUpWithEmailFragment())
             addToBackStack(null)
@@ -96,6 +130,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpButtonClick(email: String, password: String) {
+        hideKeyboard(this)
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -137,6 +172,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onLoginButtonClick(email: String, password: String) {
+        hideKeyboard(this)
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -145,7 +181,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 } else {
                     val user = auth.currentUser
                     if (user!!.isEmailVerified) {
-                        updateUIForCurrentUser(user)
+                        updateUIForCurrentUser(user, true)
                     } else {
                         Toast.makeText(
                             this, getString(R.string.email_not_verified_error),
@@ -202,45 +238,92 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 if (task.isSuccessful) {
                     Log.w(TAG, "signInWithCredential: success")
                     val user = auth.currentUser
-                    updateUIForCurrentUser(user)
+                    updateUIForCurrentUser(user, true)
                 } else {
                     // Sign in failed
                     Log.w(TAG, "signInWithCredential: failure", task.exception)
-                    Toast.makeText(this, "Auth Failed", Toast.LENGTH_LONG).show()
                 }
 
                 dialog.dismiss()
             }
     }
 
-    fun updateUIForCurrentUser(user: FirebaseUser?) {
-        if (user != null && user.isEmailVerified) {
-            val database = DocumentsCollections(user.uid)
-            database.students().userId().build().get().addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    VedibartaActivity.student = document.toObject(Student::class.java)
+    private fun isUserVerified(user: FirebaseUser) =
+        user.providerData.any {
+            it.providerId !in listOf(EmailAuthProvider.PROVIDER_ID, FirebaseAuthProvider.PROVIDER_ID)
+        } || user.isEmailVerified
 
-                    Handler().postDelayed({
-                        if (this@LoginActivity.isInForeground()) {
-                            startActivity(Intent(this, MainActivity::class.java))
-                            finish()
-                        }
-                    }, MINIMUM_LOAD_TIME)
+    /**
+     * Redirect the current user to its desired activity.
+     * If the user doesn't exists (null) or isn't verified yet the method does nothing.
+     *
+     * @param user the current user (null if no such user exists)
+     * @param displaySplash if true displays the splash screen (only if a redirection occurs)
+     * @return if a redirection will occur
+     */
+    private fun updateUIForCurrentUser(user: FirebaseUser?, displaySplash: Boolean = false): Task<Boolean> =
+        if (user != null && isUserVerified(user)) {
+            if (displaySplash) {
+                viewFlipper.showNext()
+                showSplash(this, getString(R.string.default_loading_message))
+            }
+            val database = DocumentsCollections(user.uid)
+            database.students().userId().build().get().continueWith { task ->
+                val document = task.result
+                if (document != null && document.exists()) {
+                    Log.d(TAG, "document exists. redirecting to main activity")
+                    student = document.toObject(Student::class.java)
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                 } else {
-                    Handler().postDelayed({
-                        if (this@LoginActivity.isInForeground()) {
-                            startActivity(Intent(this, UserSetupActivity::class.java))
-                            finish()
+                    Log.d(TAG, "document doesn't exist. redirecting to user setup")
+                    startActivity(Intent(this, UserSetupActivity::class.java))
+                    finish()
+                }
+                true
+            }
+        } else Tasks.call { false }
+
+    fun handleFacebookAccessToken(token: AccessToken) {
+        Log.d(TAG, "handleFacebookAccessToken: ${token.token}")
+        val authCredential = FacebookAuthProvider.getCredential(token.token)
+        auth.signInWithCredential(authCredential)
+            .addOnCompleteListener(this) {
+                if (it.isSuccessful) {
+                    Log.d(TAG, "signInWithCredential: success")
+                    updateUIForCurrentUser(auth.currentUser, true)
+                } else {
+                    try {
+                        throw it.exception!!
+                    } catch (e: FirebaseAuthInvalidCredentialsException) {
+                        Log.d(TAG, "Credentials has been malformed or expired")
+                        Toast.makeText(this, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
+                    } catch (e: FirebaseAuthUserCollisionException) {
+                        Log.d(TAG, "User with same credentials already exists")
+                        Toast.makeText(this, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
+                        val email = authCredential.signInMethod
+                        var providers: List<String>? = null
+                        try {
+                            val resultTask = auth.fetchSignInMethodsForEmail(email)
+                            if (!it.isSuccessful)
+                                Log.w(TAG, "Task is not successful")
+                            else {
+                                providers = resultTask.result!!.signInMethods
+                            }
+                        } catch (nullptrEx: NullPointerException) {
+                            Log.w(TAG, "NullPointerException from getSignInMethods")
                         }
-                    }, MINIMUM_LOAD_TIME)
+                        if (providers == null || providers.isEmpty())
+                            Log.w(TAG, "No existing sign in providers")
+                        auth.signOut()
+                        LoginManager.getInstance().logOut()
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Authentication failed")
+                        Toast.makeText(this, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
+                    }
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithCredential:failure", it.exception)
                 }
             }
-
-            viewFlipper.showNext()
-            VedibartaActivity.showSplash(
-                this,
-                getString(R.string.default_loading_message)
-            )
-        }
     }
 }

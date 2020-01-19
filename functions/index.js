@@ -1,9 +1,11 @@
 // ------------------------------ Initialization ------------------------------
 
-const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const functions = require('firebase-functions');
 admin.initializeApp(functions.config().firebase);
-const db = functions.region('europe-west1').firestore;
+
+const firestoreTriggers = functions.region('europe-west1').firestore;
+const db = admin.firestore();
 
 const development = 'development';
 const production = 'production';
@@ -16,79 +18,78 @@ const production = 'production';
 
 /**
  * HTTP trigger for new messages
- * @see onMessageSent
+ * @see onMessageSentHandler
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.generalOnMessageSent = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    return onMessageSent(snap, context, admin.firestore());
+exports.generalOnMessageSent = firestoreTriggers.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    return onMessageSentHandler(snap, context, db);
 });
 
 /**
  * HTTP trigger for firing notifications for new messages
- * @see onMessageSent
+ * @see onMessageSentHandler
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.generalOnMessageSentNotify = db.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    return onMessageSentNotify(snap, context, admin.firestore());
+exports.generalOnMessageSentNotify = firestoreTriggers.document('chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    return onMessageSentNotifyHandler(snap, context, db);
 });
 
 // -------------------- DEVELOPMENT: --------------------
 
 /**
  * HTTP trigger for new messages in the *development* path in the database
- * @see onMessageSent
+ * @see onMessageSentHandler
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.developmentOnMessageSent = db.document('development/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    let root = admin.firestore()
+exports.developmentOnMessageSent = firestoreTriggers.document('development/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = db
         .collection(development)
         .doc(context.params.version);
 
-    return onMessageSent(snap, context, root);
+    return onMessageSentHandler(snap, context, root);
 });
 
 /**
  * HTTP trigger for firing notifications for new messages in the *development* path in the database
- * @see onMessageSent
+ * @see onMessageSentHandler
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.developmentOnMessageSentNotify = db.document('development/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    let root = admin.firestore()
+exports.developmentOnMessageSentNotify = firestoreTriggers.document('development/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = db
         .collection(development)
         .doc(context.params.version);
 
-    return onMessageSentNotify(snap, context, root);
+    return onMessageSentNotifyHandler(snap, context, root);
 });
 
 // -------------------- PRODUCTION: --------------------
 
 /**
  * HTTP trigger for new messages in the *production* path in the database
- * @see onMessageSent
+ * @see onMessageSentHandler
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.productionOnMessageSent = db.document('production/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    let root = admin.firestore()
+exports.productionOnMessageSent = firestoreTriggers.document('production/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = db
         .collection(production)
         .doc(context.params.version);
 
-    return onMessageSent(snap, context, root);
+    return onMessageSentHandler(snap, context, root);
 });
 
 
 /**
  * HTTP trigger for firing notifications for new messages in the *production* path in the database
- * @see onMessageSent
+ * @see onMessageSentHandler
  * @type {CloudFunction<DocumentSnapshot>}
  */
-exports.productionOnMessageSentNotify = db.document('production/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
-    let root = admin.firestore()
+exports.productionOnMessageSentNotify = firestoreTriggers.document('production/{version}/chats/{chatId}/messages/{messageId}').onCreate((snap, context) => {
+    let root = db
         .collection(production)
         .doc(context.params.version);
 
-    return onMessageSentNotify(snap, context, root);
+    return onMessageSentNotifyHandler(snap, context, root);
 });
-
 
 
 // ------------------------------ Cloud functions' logic ------------------------------
@@ -101,12 +102,12 @@ exports.productionOnMessageSentNotify = db.document('production/{version}/chats/
  *
  * @type {CloudFunction<DocumentSnapshot>}
  */
-function onMessageSent(snap, context, root) {
+function onMessageSentHandler(snap, context, root) {
     const chatDocRef = root
         .collection('chats')
         .doc(context.params.chatId);
 
-    return admin.firestore().runTransaction(function (transaction) {
+    return db.runTransaction(function (transaction) {
         return transaction.get(chatDocRef).then(function (chatDoc) {
             if (!chatDoc.exists) {
                 console.log("Error: chat room does not exist");
@@ -137,7 +138,7 @@ function onMessageSent(snap, context, root) {
  *
  * @type {CloudFunction<DocumentSnapshot>}
  */
-function onMessageSentNotify(snap, context, root) {
+function onMessageSentNotifyHandler(snap, context, root) {
     return root.collection('students')
         .doc(snap.data().receiver)
         .get()

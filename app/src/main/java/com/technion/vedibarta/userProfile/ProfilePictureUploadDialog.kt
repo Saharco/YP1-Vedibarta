@@ -64,9 +64,9 @@ class ProfilePictureUploadDialog private constructor() : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if(gender != Gender.FEMALE)
-            alertTitle.text = "$userName${alertTitle.text}"
+            alertTitle.text = "$userName${resources.getString(R.string.user_profile_dialog_title_suffix_m)}"
         else
-            alertTitle.text = "$userName${R.string.user_profile_dialog_title_suffix_f}"
+            alertTitle.text = "$userName${resources.getString(R.string.user_profile_dialog_title_suffix_f)}"
 
 
         cameraUploadButton.setOnClickListener {
