@@ -228,7 +228,7 @@ class UserProfileActivity : VedibartaActivity(),
             student!!.hobbies.toTypedArray(),
             student!!
         )
-
+        characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
         hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
         populateProfilePicture()
         populateUsername()
