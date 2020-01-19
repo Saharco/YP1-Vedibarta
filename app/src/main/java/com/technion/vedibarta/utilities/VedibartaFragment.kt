@@ -243,9 +243,13 @@ open class VedibartaFragment : Fragment() {
                         .load(hobbyToPhoto(hobbies[i + j], allHobbies))
                         .into(bubblePhoto)
                     val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
-                    bubbleText.text = hobbies[i + j]
 
-                    if (student.hobbies.contains(hobbies[i + j])) {
+                    bubbleText.text = hobbies[i + j]
+                    val hobby = hobbies[i + j].translate(context).hobbies()
+                        .from(Languages.HEBREW)
+                        .to(Languages.BASE)
+                        .execute().first()
+                    if (student.hobbies.contains(hobby)) {
                         bubblePhoto.alpha = 1f
                         bubbleFrame.tag = SELECTED_BUBBLE
 //                        bubbleText.visibility = View.GONE
@@ -346,19 +350,22 @@ open class VedibartaFragment : Fragment() {
             val bubblePhoto = bubbleFrame.findViewById(R.id.hobbyPhoto) as CircleImageView
             val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
 
-
+            val hobby = hobbies[view.id].translate(context).hobbies()
+                .from(Languages.HEBREW)
+                .to(Languages.BASE)
+                .execute().first()
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
                 bubblePhoto.animate().alpha(1f).duration = 400
 //                bubbleText.visibility = View.GONE
                 bubbleFrame.tag = SELECTED_BUBBLE
-                student.hobbies = student.hobbies.plusElement(hobbies[view.id])
+                student.hobbies = student.hobbies.plusElement(hobby)
 
             } else {
                 bubblePhoto.animate().alpha(0.4f).duration = 400
 //                bubbleText.visibility = View.VISIBLE
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
                 student.hobbies =
-                    student.hobbies.filter { element -> element != hobbies[view.id] }
+                    student.hobbies.filter { element -> element != hobby }
             }
 
         }

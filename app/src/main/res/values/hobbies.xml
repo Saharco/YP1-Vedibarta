@@ -98,4 +98,48 @@
         <item>פוליטיקה</item>  <!-- other -->
         <item>בישול</item>  <!-- other -->
     </array>
+
+    <array name="hobbies_base">
+        <!--    art    -->
+        <item>מוסיקה</item>
+        <item>תאטרון</item>
+        <item>ריקוד</item>
+        <item>צילום</item>
+        <item>ציור</item>
+
+        <!--    sports    -->
+        <item>כדורגל</item>
+        <item>כדורסל</item>
+        <item>טניס</item>
+        <item>שחייה</item>
+        <item>טיולים</item>
+        <item>אופניים</item>
+        <item>אומנויות לחימה</item>
+
+        <!--    technology    -->
+        <item>רובוטיקה</item>
+        <item>מדעים</item>
+        <item>מתמטיקה</item>
+        <item>מחשבים</item>
+
+        <!--    hangouts    -->
+        <item>קולנוע</item>
+        <item>שופינג</item>
+        <item>חברים</item>
+        <item>אוכל</item>
+        <item>סדרות</item>
+        <item>תנועות נוער</item>
+        <item>אופנה</item>
+
+        <!--    games    -->
+        <item>משחקי מחשב</item>
+        <item>משחקי לוח</item>
+
+        <!--    other    -->
+        <item>קריאת ספרים</item>  <!-- other -->
+        <item>טבע</item>  <!-- other -->
+        <item>פוליטיקה</item>  <!-- other -->
+        <item>בישול</item>  <!-- other -->
+    </array>
+
 </resources>

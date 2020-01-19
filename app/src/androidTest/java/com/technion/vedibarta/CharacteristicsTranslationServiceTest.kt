@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4::class)
-class TranslationServiceTest {
+class CharacteristicsTranslationServiceTest {
 
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
@@ -48,5 +48,26 @@ class TranslationServiceTest {
         Assert.assertEquals(initial, translated)
     }
 
-    //TODO add hobbies tests once implemented
+    @Test
+    fun hobbies_translationWorksOnSingleString(){
+        val initial = "ריקוד"
+        val translated = initial.translate(appContext).hobbies()
+            .from(Languages.BASE)
+            .to(Languages.HEBREW)
+            .execute().first()
+        Assert.assertEquals(translated, "ריקוד")
+    }
+
+    @Test
+    fun hobbies_doesNoChangeStringIfToAndFromAreTheSame() {
+        val initial = "אוכל"
+        val translated = initial.translate(appContext)
+            .hobbies()
+            .from(Languages.HEBREW)
+            .to(Languages.HEBREW)
+            .execute().first()
+        Assert.assertEquals(initial, translated)
+    }
+
+
 }

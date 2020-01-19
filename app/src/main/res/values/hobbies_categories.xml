@@ -9,6 +9,15 @@
         <item>אחר</item>
     </array>
 
+    <array name="hobbies_categories_base">
+        <item>אומנות</item>
+        <item>ספורט</item>
+        <item>טכנולוגייה</item>
+        <item>בילויים</item>
+        <item>משחקים</item>
+        <item>אחר</item>
+    </array>
+
     <array name="hobbiesId_to_category">
         <!--    art    -->
         <item>אומנות</item>
