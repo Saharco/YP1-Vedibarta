@@ -16,7 +16,13 @@ class ResourceManager(context: Context, type: StringType) {
                 resourcesMap["${Languages.HEBREW}_$FEMALE"] = context.resources.getStringArray(R.array.characteristicsFemale_hebrew)
                 //TODO add arabic support
             }
-            StringType.HOBBIES -> TODO()
+            StringType.HOBBIES -> {
+                resourcesMap["${Languages.BASE}_${HobbyType.HOBBY}"] = context.resources.getStringArray(R.array.hobbies_base)
+                resourcesMap["${Languages.HEBREW}_${HobbyType.HOBBY}"] = context.resources.getStringArray(R.array.hobbies)
+                resourcesMap["${Languages.HEBREW}_${HobbyType.CATEGORY}"] = context.resources.getStringArray(R.array.hobbies_categories_base)
+                resourcesMap["${Languages.HEBREW}_${HobbyType.CATEGORY}"] = context.resources.getStringArray(R.array.hobbies_categories)
+                //TODO add arabic support
+            }
         }
     }
 

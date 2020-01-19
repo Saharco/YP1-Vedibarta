@@ -8,5 +8,6 @@
         style="@style/CarouselBubble"
         app:autoSizeMaxTextSize="6.5sp"
         app:autoSizeMinTextSize="4.5sp"
+        android:maxLines="1"
         app:autoSizeTextType="uniform"/>
 </FrameLayout>

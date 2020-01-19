@@ -14,15 +14,15 @@
         app:civ_border_width="1dp"
         app:civ_border_color="@color/backgroundSplash"
         app:civ_border_overlay="true"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/hobbyText"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/hobbyText"
         android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:maxLines="3"
         android:padding="8dp"
@@ -31,9 +31,8 @@
         app:autoSizeTextType="uniform"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/hobbyPhoto" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

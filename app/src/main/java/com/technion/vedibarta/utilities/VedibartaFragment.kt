@@ -3,7 +3,6 @@ package com.technion.vedibarta.utilities
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -237,23 +236,26 @@ open class VedibartaFragment : Fragment() {
                         null
                     ) as ConstraintLayout
                     val bubblePhoto = bubbleFrame.findViewById(R.id.hobbyPhoto) as CircleImageView
-//                    bubblePhoto.setImageDrawable(hobbyToPhoto(context, hobbies[i + j], allHobbies))
                     val myOptions = RequestOptions().override(100, 100)
                     Glide.with(context)
                         .asBitmap()
                         .apply(myOptions)
-                        .load(hobbyToPhoto(context, hobbies[i + j], allHobbies))
+                        .load(hobbyToPhoto(hobbies[i + j], allHobbies))
                         .into(bubblePhoto)
                     val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
-                    bubbleText.text = hobbies[i + j]
 
-                    if (student.hobbies.contains(hobbies[i + j])) {
+                    bubbleText.text = hobbies[i + j]
+                    val hobby = hobbies[i + j].translate(context).hobbies()
+                        .from(Languages.HEBREW)
+                        .to(Languages.BASE)
+                        .execute().first()
+                    if (student.hobbies.contains(hobby)) {
                         bubblePhoto.alpha = 1f
                         bubbleFrame.tag = SELECTED_BUBBLE
-                        bubbleText.visibility = View.GONE
+//                        bubbleText.visibility = View.GONE
                     } else {
                         bubbleFrame.tag = NON_SELECTED_BUBBLE
-                        bubbleText.visibility = View.VISIBLE
+//                        bubbleText.visibility = View.VISIBLE
                     }
                     bubbleFrame.id = i + j
                     bubbleFrame.setOnClickListener {
@@ -273,8 +275,9 @@ open class VedibartaFragment : Fragment() {
             }
         }
 
-        private fun hobbyToPhoto(context: Context, hobby: String, hobbies: Array<String>): Int {
-            val hobbyPhotoId = when (hobby) {
+        private fun hobbyToPhoto(hobby: String, hobbies: Array<String>): Int {
+
+            return when (hobby) {
                 hobbies[0] -> R.drawable.music
                 hobbies[1] -> R.drawable.theatre
                 hobbies[2] -> R.drawable.dance
@@ -312,8 +315,6 @@ open class VedibartaFragment : Fragment() {
 
                 else -> android.R.drawable.ic_menu_help
             }
-
-            return hobbyPhotoId
         }
 
         fun loadHobbies(context: Context): List<HobbyCard> {
@@ -349,19 +350,22 @@ open class VedibartaFragment : Fragment() {
             val bubblePhoto = bubbleFrame.findViewById(R.id.hobbyPhoto) as CircleImageView
             val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
 
-
+            val hobby = hobbies[view.id].translate(context).hobbies()
+                .from(Languages.HEBREW)
+                .to(Languages.BASE)
+                .execute().first()
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
                 bubblePhoto.animate().alpha(1f).duration = 400
-                bubbleText.visibility = View.GONE
+//                bubbleText.visibility = View.GONE
                 bubbleFrame.tag = SELECTED_BUBBLE
-                student.hobbies = student.hobbies.plusElement(hobbies[view.id])
+                student.hobbies = student.hobbies.plusElement(hobby)
 
             } else {
                 bubblePhoto.animate().alpha(0.4f).duration = 400
-                bubbleText.visibility = View.VISIBLE
+//                bubbleText.visibility = View.VISIBLE
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
                 student.hobbies =
-                    student.hobbies.filter { element -> element != hobbies[view.id] }
+                    student.hobbies.filter { element -> element != hobby }
             }
 
         }
