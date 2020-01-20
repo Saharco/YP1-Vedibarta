@@ -28,3 +28,5 @@ app/google-services.json
 
 # cloud functions stuff
 **/node_modules/*
+
+.idea/codeStyles/

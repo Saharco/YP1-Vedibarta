@@ -20,14 +20,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.facebook.appevents.codeless.internal.UnityReflection.sendMessage
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.technion.vedibarta.POJOs.Message
+import com.technion.vedibarta.utilities.VedibartaActivity
+import kotlinx.android.synthetic.main.activity_chat_room.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.VedibartaActivity
-import kotlinx.android.synthetic.main.activity_chat_room.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -57,6 +59,7 @@ class ChatRoomActivity : VedibartaActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_room)
         window.setBackgroundDrawableResource(R.drawable.bg_chat_1)
+
 
         val chatMetaData = intent.getSerializableExtra("chatData") as ChatMetadata
 
@@ -98,7 +101,7 @@ class ChatRoomActivity : VedibartaActivity()
             })
 
     }
-
+//
     private fun displayDefaultProfilePicture() {
         when (otherGender) {
             null -> return
@@ -107,20 +110,20 @@ class ChatRoomActivity : VedibartaActivity()
             else -> Log.d(TAG, "other student is neither male nor female??")
         }
     }
-
+//
     override fun onStart()
     {
         super.onStart()
         adapter.fireStoreAdapter.startListening()
     }
-
+//
     override fun onStop()
     {
         super.onStop()
         adapter.fireStoreAdapter.stopListening()
 
     }
-
+//
     private fun configureAdapter() {
         val query =
             database
@@ -139,7 +142,6 @@ class ChatRoomActivity : VedibartaActivity()
         chatView.adapter = adapter
         adapter.notifyDataSetChanged() //
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
-        chatView.layoutManager = layoutManager
         chatView.layoutManager = layoutManager
         chatView.addOnScrollListener(firstVisibleMessageTracker())
         chatRoomRootView.viewTreeObserver.addOnGlobalLayoutListener(scrollToBottomOnKeyboardOpening())
@@ -175,7 +177,7 @@ class ChatRoomActivity : VedibartaActivity()
             Log.d("QuestionGenerator", e.toString())
         }
     }
-
+//
     override fun onAbuseTypeClick(dialog: DialogFragment) {
         TODO("need to decide what to do")
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
@@ -313,5 +315,9 @@ class ChatRoomActivity : VedibartaActivity()
                 return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics)
             }
         }
+    }
+
+    fun getNumMessages(): Int {
+        return adapter.itemCount
     }
 }

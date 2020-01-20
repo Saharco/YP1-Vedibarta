@@ -27,8 +27,8 @@ class CharacteristicsTranslationServiceTest {
 
     @Test
     fun translationWorksWithArray(){
-        val initial = appContext.resources.getStringArray(R.array.characteristicsMale_hebrew)
-        val goal = appContext.resources.getStringArray(R.array.characteristicsFemale_hebrew)
+        val initial = appContext.resources.getStringArray(R.array.characteristicsMale)
+        val goal = appContext.resources.getStringArray(R.array.characteristicsFemale)
         val translated = initial.translate(appContext)
             .characteristics()
             .from(Languages.HEBREW)

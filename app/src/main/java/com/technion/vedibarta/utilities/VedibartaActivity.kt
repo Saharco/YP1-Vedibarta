@@ -21,6 +21,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.skyfishjy.library.RippleBackground
@@ -81,6 +82,9 @@ open class VedibartaActivity : AppCompatActivity() {
         const val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS = 90
         const val EXTRA_CHANGE_ACTIVITY = "EXTRA_CHANGE_ACTIVITY"
 
+        //needed for espresso tests
+        val splashScreen = CountingIdlingResource("splashScreen")
+
 
         /**
          * @param resources: resources object of the current context
@@ -114,7 +118,9 @@ open class VedibartaActivity : AppCompatActivity() {
          * @param activity: current context
          * @param loadMessage: the message to be displayed on the splash screen
          */
-        fun showSplash(activity: Activity, loadMessage: String) {
+        fun showSplash(activity: Activity, loadMessage: String)
+        {
+            splashScreen.increment()
             try {
                 val rippleBackground = activity.findViewById<RippleBackground>(R.id.rippleBackground)
                 val splashText = activity.findViewById<TextView>(R.id.splashText)
@@ -122,7 +128,9 @@ open class VedibartaActivity : AppCompatActivity() {
                 splashText.text = loadMessage
                 rippleBackground.startRippleAnimation()
 
-            } catch (e: Exception) {
+            } catch (e: Exception)
+            {
+                splashScreen.decrement() //just in case of failure
             }
         }
 
@@ -131,10 +139,12 @@ open class VedibartaActivity : AppCompatActivity() {
          *
          * @param activity: current context
          */
-        fun hideSplash(activity: Activity) {
+        fun hideSplash(activity: Activity)
+        {
             changeStatusBarColor(activity, ContextCompat.getColor(activity, R.color.colorPrimaryDark))
             val rippleBackground = activity.findViewById<RippleBackground>(R.id.rippleBackground)
             rippleBackground.stopRippleAnimation()
+            splashScreen.decrement()
         }
 
         /**
@@ -255,6 +265,7 @@ open class VedibartaActivity : AppCompatActivity() {
      * @param loadMessage: the message to be displayed on the splash screen
      */
     fun showSplash(loadMessage: String) {
+        splashScreen.increment()
         try {
             val rippleBackground = this.findViewById<RippleBackground>(R.id.rippleBackground)
             val splashText = this.findViewById<TextView>(R.id.splashText)
@@ -263,6 +274,7 @@ open class VedibartaActivity : AppCompatActivity() {
             rippleBackground.startRippleAnimation()
 
         } catch (e: Exception) {
+            splashScreen.decrement()
         }
     }
 
@@ -273,5 +285,6 @@ open class VedibartaActivity : AppCompatActivity() {
         changeStatusBarColor(this, ContextCompat.getColor(this, R.color.colorPrimaryDark))
         val rippleBackground = this.findViewById<RippleBackground>(R.id.rippleBackground)
         rippleBackground.stopRippleAnimation()
+        splashScreen.decrement()
     }
 }

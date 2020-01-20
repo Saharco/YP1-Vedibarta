@@ -72,6 +72,12 @@ class ChatSearchActivity : VedibartaActivity() {
         viewFlipper.setOutAnimation(this, android.R.anim.fade_out)
     }
 
+    override fun onStop() {
+        super.onStop()
+        if (!splashScreen.isIdleNow)
+            splashScreen.decrement()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putSerializable("STUDENT", fakeStudent)
         outState.putString("SCHOOL", chosenSchool)

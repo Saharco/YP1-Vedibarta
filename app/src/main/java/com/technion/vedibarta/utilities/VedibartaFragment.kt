@@ -381,8 +381,17 @@ open class VedibartaFragment : Fragment() {
 
         //Calculate the number of bubbles that can fit in the table
         //The Function calculates according to current screen size
-        private fun calculateBubblesInRow(context: Context): Int =
+        fun calculateBubblesInRow(context: Context): Int =
             ((Resources.getSystem().displayMetrics.widthPixels - VedibartaActivity.dpToPx(
+                context.resources,
+                48f
+            )) / VedibartaActivity.dpToPx(
+                context.resources,
+                100f
+            )).toInt()
+
+        fun calculateBubblesInCol(context: Context): Int =
+            ((Resources.getSystem().displayMetrics.heightPixels - VedibartaActivity.dpToPx(
                 context.resources,
                 48f
             )) / VedibartaActivity.dpToPx(

@@ -28,6 +28,7 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.splashScreen
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import kotlinx.android.synthetic.main.activity_login.*
@@ -92,6 +93,13 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 }
             }
         }
+    }
+
+    // splash screen stops with this activity and for testing purposes needs to call hideSplash()
+    override fun onStop() {
+        super.onStop()
+        if (!splashScreen.isIdleNow)
+            hideSplash(this)
     }
 
     override fun onSignInButtonClick() {
