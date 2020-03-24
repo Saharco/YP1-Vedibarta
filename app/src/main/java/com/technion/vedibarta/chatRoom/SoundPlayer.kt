@@ -6,6 +6,9 @@ import android.os.Handler
 import com.technion.vedibarta.R
 import java.lang.Exception
 
+/***
+ * In charge of sounding the appropriate sound on received/sent messages
+ */
 class SoundPlayer(private val activity: Activity, private var numMessages: Int) {
     private val MESSAGE_SOUND_INTERVAL: Long = 2000
     private val soundHandler = Handler()
@@ -13,6 +16,7 @@ class SoundPlayer(private val activity: Activity, private var numMessages: Int) 
     var sendPlayer = MediaPlayer.create(activity, R.raw.message_sent_audio)
     var receivePlayer = MediaPlayer.create(activity, R.raw.message_received_audio)
 
+    // must release resources when not in use, otherwise it won't work correctly
     fun release() {
         sendPlayer.stop()
         receivePlayer.stop()
@@ -20,6 +24,7 @@ class SoundPlayer(private val activity: Activity, private var numMessages: Int) 
         receivePlayer.release()
     }
 
+    // acquire resources
     fun init() {
         sendPlayer = MediaPlayer.create(activity, R.raw.message_sent_audio)
         receivePlayer = MediaPlayer.create(activity, R.raw.message_received_audio)

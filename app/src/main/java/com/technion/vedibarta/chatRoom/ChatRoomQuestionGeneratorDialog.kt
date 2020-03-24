@@ -13,21 +13,22 @@ import com.technion.vedibarta.adapters.QuestionGeneratorCategoryAdapter
 import kotlinx.android.synthetic.main.question_generator_dialog.*
 
 
-class ChatRoomQuestionGeneratorDialog : DialogFragment() {
+class ChatRoomQuestionGeneratorDialog : DialogFragment()
+{
 
     private lateinit var listener: QuestionGeneratorDialogListener
     lateinit var hobbies: Array<String>
     lateinit var partnerHobbies: Array<String>
 
-    interface QuestionGeneratorDialogListener {
+    interface QuestionGeneratorDialogListener
+    {
         fun onQuestionclick(dialog: DialogFragment, v: View)
     }
 
-    companion object {
-        fun newInstance(
-            hobbies: Array<String>,
-            partnerHobbies: Array<String>
-        ): ChatRoomQuestionGeneratorDialog {
+    companion object
+    {
+        fun newInstance(hobbies: Array<String>, partnerHobbies: Array<String>): ChatRoomQuestionGeneratorDialog
+        {
             val fragment = ChatRoomQuestionGeneratorDialog()
             val args = Bundle()
             args.putStringArray("hobbies", hobbies)
@@ -37,7 +38,8 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         hobbies = arguments!!.getStringArray("hobbies")!!
         partnerHobbies = arguments!!.getStringArray("partnerHobbies")!!
@@ -47,22 +49,28 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View?
+    {
         val inflatedView = inflater.inflate(R.layout.question_generator_dialog, container, false)
         dialog?.setCanceledOnTouchOutside(true)
         return inflatedView
     }
 
-    override fun onAttach(context: Context) {
+    override fun onAttach(context: Context)
+    {
         super.onAttach(context)
-        try {
+        try
+        {
             listener = context as QuestionGeneratorDialogListener
-        } catch (e: ClassCastException) {
+        }
+        catch (e: ClassCastException)
+        {
             Log.d("questionGeneratorDialog", e.toString())
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
+    {
         super.onViewCreated(view, savedInstanceState)
 
         categoriesLayoutInit()
@@ -73,27 +81,31 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
 
     }
 
-    private fun categoriesLayoutInit() {
+    private fun categoriesLayoutInit()
+    {
         questionCategoriesList.adapter =
             QuestionGeneratorCategoryAdapter(getCategoriesInCommon()) { str -> onCategorySelect(str) }
         questionCategoriesList.layoutManager = LinearLayoutManager(this.context)
         questionGeneratorDismissButton.setOnClickListener { dismiss() }
     }
 
-    private fun questionsLayoutInit(category: String) {
+    private fun questionsLayoutInit(category: String)
+    {
         questionsLayoutTitle.text = category
-        questionList.adapter = QuestionGeneratorCategoryAdapter(getQuestions(category)) { str -> onQuestionSelect(str) }
+        questionList.adapter =
+            QuestionGeneratorCategoryAdapter(getQuestions(category)) { str -> onQuestionSelect(str) }
         questionList.layoutManager = LinearLayoutManager(this.context)
         backButton.setOnClickListener { onBackButton() }
     }
 
     private fun onQuestionSelect(question: String)
     {
-        (activity as ChatRoomActivity).sendMessage(question, true)
+        (activity as ChatRoomActivity).sendSystemMessage(question)
         dismiss()
     }
 
-    private fun getCategoriesInCommon(): Array<String> {
+    private fun getCategoriesInCommon(): Array<String>
+    {
         val commonHobbies = hobbies.intersect(partnerHobbies.asIterable())
         val hobbyIdToCategory = resources.getStringArray(R.array.hobbiesId_to_category)
         val hobbies = resources.getStringArray(R.array.hobbies_base)
@@ -102,17 +114,21 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
     }
 
 
-    private fun onCategorySelect(category: String) {
+    private fun onCategorySelect(category: String)
+    {
         questionsLayoutInit(category)
         viewFlipper.showNext()
     }
 
-    private fun onBackButton() {
+    private fun onBackButton()
+    {
         viewFlipper.showPrevious()
     }
 
-    private fun getQuestions(category: String): Array<String> {
-        if (category == "כללי") {
+    private fun getQuestions(category: String): Array<String>
+    {
+        if (category == "כללי")
+        {
             questionList.visibility = View.VISIBLE
             emptyQuestionList.visibility = View.GONE
             return resources.getStringArray(R.array.general_questions)
@@ -134,17 +150,19 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment() {
         }.filter { it != -1 }
 
         val questions = commonHobbiesIdFromChosenCategory
-            .map { id -> resources.getStringArray(questionsIdArray.getResourceId(id,-1)) }
+            .map { id -> resources.getStringArray(questionsIdArray.getResourceId(id, -1)) }
             .flatMap { array -> array.plus(array).asIterable() }.distinct()
 
         hobbiesLinkArray.recycle()
         hobbiesCategoryToQuestion.recycle()
         questionsIdArray.recycle()
-        if (questions.isEmpty()){
+        if (questions.isEmpty())
+        {
             questionList.visibility = View.GONE
             emptyQuestionList.visibility = View.VISIBLE
         }
-        else{
+        else
+        {
             questionList.visibility = View.VISIBLE
             emptyQuestionList.visibility = View.GONE
         }
