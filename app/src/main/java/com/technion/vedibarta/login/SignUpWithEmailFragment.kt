@@ -19,7 +19,13 @@ import com.technion.vedibarta.utilities.isEmail
 import kotlinx.android.synthetic.main.fragment_sign_up_with_email.*
 import java.lang.ClassCastException
 
-
+/**
+ * The sign-up with email screen.
+ *
+ * This class handles the actions taken when any button is pressed on the sign-up with email screen.
+ *
+ * @see R.layout.fragment_sign_up_with_email
+ */
 class SignUpWithEmailFragment : Fragment() {
     // Keys to be used when saving and restoring fragment states.
     companion object StatesKeys {
@@ -29,6 +35,7 @@ class SignUpWithEmailFragment : Fragment() {
     }
 
     private lateinit var backListener: OnBackButtonClickListener
+    // Notice: the listener will be called only after checking for valid inputs.
     private lateinit var signUpListener: OnSignUpButtonClickListener
 
     override fun onAttach(context: Context) {
@@ -46,12 +53,15 @@ class SignUpWithEmailFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_sign_up_with_email, container, false)
-
+        // Set up back button listener.
         val backButton = view.findViewById<Button>(R.id.back_button)
         backButton.setOnClickListener { back() }
-
+        // Set up sign-up button listener
         val signUpButton = view.findViewById<Button>(R.id.sign_up_button)
-        signUpButton.setOnClickListener { signUp() }
+        signUpButton.setOnClickListener {
+            // Checking input before calling signUpListener.
+            signUp()
+        }
 
         val email = view.findViewById<TextInputEditText>(R.id.email_input_edit_text)
         val emailLayout = view.findViewById<TextInputLayout>(R.id.email_input_layout)
@@ -60,6 +70,7 @@ class SignUpWithEmailFragment : Fragment() {
         val passwordRepeat = view.findViewById<TextInputEditText>(R.id.password_repeat_input_edit_text)
         val passwordRepeatLayout = view.findViewById<TextInputLayout>(R.id.password_repeat_input_layout)
 
+        // Removing error messages after editing texts.
         email.addTextChangedListener { emailLayout.error = null }
         password.addTextChangedListener { passwordLayout.error = null }
         passwordRepeat.addTextChangedListener { passwordRepeatLayout.error = null }
@@ -70,6 +81,7 @@ class SignUpWithEmailFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        // Refilling edit-texts when restarting the activity.
         if (savedInstanceState != null) {
             email_input_edit_text.setText(savedInstanceState.getString(EMAIL_KEY))
             password_input_edit_text.setText(savedInstanceState.getString(PASSWORD_KEY))
@@ -80,6 +92,7 @@ class SignUpWithEmailFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
+        // Saving filled texts.
         outState.putString(email_input_edit_text.text.toString(), EMAIL_KEY)
         outState.putString(password_input_edit_text.text.toString(), PASSWORD_KEY)
         outState.putString(password_repeat_input_edit_text.text.toString(), PASSWORD_REP_KEY)
@@ -116,6 +129,7 @@ class SignUpWithEmailFragment : Fragment() {
         password_input_layout.error = passwordError
         password_repeat_input_layout.error = passwordRepError
 
+        // Calling signUpListener only if there were no errors.
         if ((emailError == null) and (passwordError == null) and (passwordRepError == null)) {
             signUpListener.onSignUpButtonClick(email, password)
         }
