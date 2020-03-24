@@ -24,27 +24,43 @@ import kotlin.ClassCastException
 
 private const val TAG = "LoginScreenFragment"
 
+/**
+ * The main login screen.
+ *
+ * This class handles the actions taken when any button is pressed on the main login screen.
+ *
+ * @see R.layout.fragment_login_options
+ */
 class LoginOptionsFragment : Fragment() {
+    // Buttons listeners.
     private lateinit var signInListener : OnSignInButtonClickListener
     private lateinit var signUpWithEmailListener: OnSignUpWithEmailButtonClickListener
     private lateinit var continueWithGoogleListener: OnContinueWithGoogleButtonClickListener
     private lateinit var continueWithFacebookCallback: OnContinueWithFacebookCallback
 
-    private lateinit var auth: FirebaseAuth
-
     private lateinit var callbackManager: CallbackManager
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        signInListener = context as? OnSignInButtonClickListener ?:
+                throw ClassCastException("$context must implement ${OnSignInButtonClickListener::class}")
+        signUpWithEmailListener = context as? OnSignUpWithEmailButtonClickListener ?:
+                throw ClassCastException("$context must implement ${OnSignUpWithEmailButtonClickListener::class}")
+        continueWithGoogleListener = context as? OnContinueWithGoogleButtonClickListener ?:
+                throw ClassCastException("$context must implement ${OnContinueWithGoogleButtonClickListener::class}")
+        continueWithFacebookCallback = context as? OnContinueWithFacebookCallback ?:
+                throw ClassCastException("$context must implement ${OnContinueWithFacebookCallback::class}")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        auth = FirebaseAuth.getInstance()
 
         callbackManager = CallbackManager.Factory.create()
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_login_options, container, false)
@@ -58,26 +74,13 @@ class LoginOptionsFragment : Fragment() {
         // Set up sign-in with google listener.
         val signInWithGoogleButton = view.findViewById<Button>(R.id.google_login_button)
         signInWithGoogleButton.setOnClickListener { continueWithGoogle() }
-
+        // Set up sign-in with facebook listener.
         val signInWithFacebookButton = view.findViewById<LoginButton>(R.id.facebook_login_button)
         signInWithFacebookButton.fragment = this
         signInWithFacebookButton.setPermissions("email")
         signInWithFacebookButton.registerCallback(callbackManager, getFacebookCallbackForLogin())
 
         return view
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        signInListener = context as? OnSignInButtonClickListener ?:
-                throw ClassCastException("$context must implement ${OnSignInButtonClickListener::class}")
-        signUpWithEmailListener = context as? OnSignUpWithEmailButtonClickListener ?:
-                throw ClassCastException("$context must implement ${OnSignUpWithEmailButtonClickListener::class}")
-        continueWithGoogleListener = context as? OnContinueWithGoogleButtonClickListener ?:
-                throw ClassCastException("$context must implement ${OnContinueWithGoogleButtonClickListener::class}")
-        continueWithFacebookCallback = context as? OnContinueWithFacebookCallback ?:
-                throw ClassCastException("$context must implement ${OnContinueWithFacebookCallback::class}")
     }
 
     private fun signIn() {
@@ -117,5 +120,4 @@ class LoginOptionsFragment : Fragment() {
         callbackManager.onActivityResult(requestCode, resultCode, data)
         //super.onActivityResult(requestCode, resultCode, data)
     }
-
 }
