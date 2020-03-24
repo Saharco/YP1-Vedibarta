@@ -13,6 +13,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.isEmail
 import kotlinx.android.synthetic.main.fragment_sign_in_with_email.*
 import java.lang.ClassCastException
@@ -114,6 +115,7 @@ class LoginFragment : Fragment() {
 
         // Calling loginListener only if there were no errors.
         if ((emailError == null) and (passwordError == null)){
+            hideKeyboard(this.requireActivity())
             loginListener.onLoginButtonClick(email, password)
         }
     }

@@ -2,19 +2,17 @@ package com.technion.vedibarta.login
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.isEmail
 import kotlinx.android.synthetic.main.fragment_sign_up_with_email.*
 import java.lang.ClassCastException
@@ -131,6 +129,7 @@ class SignUpWithEmailFragment : Fragment() {
 
         // Calling signUpListener only if there were no errors.
         if ((emailError == null) and (passwordError == null) and (passwordRepError == null)) {
+            hideKeyboard(this.requireActivity())
             signUpListener.onSignUpButtonClick(email, password)
         }
     }

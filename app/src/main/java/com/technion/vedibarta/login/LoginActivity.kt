@@ -4,7 +4,6 @@ import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import com.facebook.AccessToken
@@ -24,24 +23,34 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.DocumentsCollections
-import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.splashScreen
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
-import com.technion.vedibarta.utilities.extensions.isInForeground
 import kotlinx.android.synthetic.main.activity_login.*
 
 
 private const val REQ_GOOGLE_SIGN_IN = 1
 private const val TAG = "LoginActivity"
 
-class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener,
+/**
+ * The login activity.
+ *
+ * This class coordinates between the login fragments and implements their listeners. The signing-in
+ * and signing-up logic resides inside of this class.
+ *
+ * @see LoginOptionsFragment
+ * @see LoginFragment
+ * @see SignUpWithEmailFragment
+ * @see R.layout.activity_login
+ */
+class LoginActivity : AppCompatActivity(),
+    LoginOptionsFragment.OnSignInButtonClickListener,
     LoginOptionsFragment.OnSignUpWithEmailButtonClickListener,
     LoginOptionsFragment.OnContinueWithGoogleButtonClickListener,
     LoginOptionsFragment.OnContinueWithFacebookCallback,
-    LoginFragment.OnBackButtonClickListener, LoginFragment.OnLoginButtonClickListener,
+    LoginFragment.OnBackButtonClickListener,
+    LoginFragment.OnLoginButtonClickListener,
     SignUpWithEmailFragment.OnBackButtonClickListener,
     SignUpWithEmailFragment.OnSignUpButtonClickListener {
 
@@ -50,12 +59,12 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_login)
         Log.d(TAG, "onCreate: Invoked")
 
         auth = FirebaseAuth.getInstance()
 
-        // 381465238096-e60campao164cdi8j1bs8pp0h53cs5c1.apps.googleusercontent.com
         // Set up google sign-in client
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("381465238096-e60campao164cdi8j1bs8pp0h53cs5c1.apps.googleusercontent.com")
@@ -68,28 +77,32 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
             return
         }
 
+        // On launch, display the main login screen.
         val fm = supportFragmentManager
         fm.beginTransaction().apply {
             add(R.id.login_screen_fragment, LoginOptionsFragment())
         }.commit()
 
-        viewFlipper.setInAnimation(this, android.R.anim.fade_in)
-        viewFlipper.setOutAnimation(this, android.R.anim.fade_out)
+        // ViewFlipper flips between the main (fragments) and the splash-screen layouts.
+        viewFlipper.apply {
+            setInAnimation(this@LoginActivity, android.R.anim.fade_in)
+            setOutAnimation(this@LoginActivity, android.R.anim.fade_out)
+        }
     }
 
     override fun onStart() {
         super.onStart()
 
+        // Reloading the current user because he could have been deleted since the last login.
         auth.currentUser?.reload()?.let {
-            viewFlipper.showNext()
-            showSplash(this, getString(R.string.default_loading_message))
+            activateSplash()
 
             it.continueWithTask {
                 updateUIForCurrentUser(auth.currentUser)
             }.addOnSuccessListener { willRedirect ->
+                // Hide splash-screen if we are not about to be redirected to another activity.
                 if (!willRedirect) {
-                    hideSplash(this)
-                    viewFlipper.showPrevious()
+                    deactivateSplash()
                 }
             }
         }
@@ -130,7 +143,6 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpWithEmailButtonClick() {
-        hideKeyboard(this)
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.login_screen_fragment, SignUpWithEmailFragment())
             addToBackStack(null)
@@ -138,7 +150,6 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onSignUpButtonClick(email: String, password: String) {
-        hideKeyboard(this)
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -180,7 +191,6 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     override fun onLoginButtonClick(email: String, password: String) {
-        hideKeyboard(this)
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -263,11 +273,12 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     /**
      * Redirect the current user to its desired activity.
+     *
      * If the user doesn't exists (null) or isn't verified yet the method does nothing.
      *
      * @param user the current user (null if no such user exists)
      * @param displaySplash if true displays the splash screen (only if a redirection occurs)
-     * @return if a redirection will occur
+     * @return will a redirection occur
      */
     private fun updateUIForCurrentUser(user: FirebaseUser?, displaySplash: Boolean = false): Task<Boolean> =
         if (user != null && isUserVerified(user)) {
@@ -333,5 +344,15 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                     Log.w(TAG, "signInWithCredential:failure", it.exception)
                 }
             }
+    }
+
+    private fun activateSplash() {
+        viewFlipper.showNext()
+        showSplash(this, getString(R.string.default_loading_message))
+    }
+
+    private fun deactivateSplash() {
+        hideSplash(this)
+        viewFlipper.showPrevious()
     }
 }
