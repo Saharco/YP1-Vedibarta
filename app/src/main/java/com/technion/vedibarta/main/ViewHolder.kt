@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-internal class ViewHolder(val view: View, val userId: String, val context: Context) :
+class ViewHolder(val view: View, val userId: String, val context: Context) :
     RecyclerView.ViewHolder(view) {
     private fun getString(x: Int): String {
         return context.resources.getString(x)

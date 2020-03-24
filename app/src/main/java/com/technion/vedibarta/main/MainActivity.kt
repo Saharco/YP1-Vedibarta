@@ -16,7 +16,6 @@ import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
-import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
@@ -24,137 +23,147 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
-
-class MainActivity : VedibartaActivity() {
-
-    private lateinit var mainAdapter: MainAdapter
-    private lateinit var searchAdapter: RecyclerView.Adapter<ViewHolder>
-
+/***
+ * main screen of the app, contains the chat history/list
+ */
+class MainActivity : VedibartaActivity()
+{
     private val chatPartnersMap = HashMap<String, ArrayList<ChatMetadata>>()
+    private lateinit var mainAdapter: MainAdapter
+    private lateinit var searchAdapter: MainsSearchAdapter<String>
 
-    companion object {
+    companion object
+    {
         const val TAG = "Vedibarta/chat-lobby"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        // Update user's tokens
-        FirebaseInstanceId.getInstance().instanceId
-            .addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful || task.result == null) {
-                    Log.d(TAG, "getInstanceId failed")
-                    return@OnCompleteListener
-                }
-                val token = task.result!!.token
-                Log.d(TAG, "Token is: $token")
-                DatabaseVersioning.currentVersion.instance
-                    .collection("students")
-                    .document(userId!!)
-                    .update("tokens", FieldValue.arrayUnion(token))
-            })
+        chat_history.layoutManager = LinearLayoutManager(this)
+        configureSearchView()
 
         extendedFloatingActionButton.setOnClickListener {
             startActivity(Intent(this, ChatSearchActivity::class.java))
         }
 
-        configureSearchView()
+        updateUserToken()
     }
 
-    private fun configureSearchView() {
-        searchView.setOnSearchViewListener(object : MaterialSearchView.SearchViewListener {
-            override fun onSearchViewClosed() {
-                // do nothing
+    override fun onStart()
+    {
+        super.onStart()
+        if (student!!.gender == Gender.FEMALE) emptyListMessage.text =
+            resources.getString(R.string.empty_chat_list_message_f)
+
+        emptyListMessage.visibility = View.VISIBLE
+        chat_history.visibility = View.GONE
+
+        //must be constructed after applicationContext is initialized
+        searchAdapter = MainSearchByNameAdapter(applicationContext, chatPartnersMap, this)
+        mainAdapter = getMainAdapter()
+
+        mainAdapter.startListening()
+    }
+
+    override fun onStop()
+    {
+        super.onStop()
+        searchView.closeSearch()
+        mainAdapter.stopListening()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean
+    {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        searchView.setMenuItem(menu.findItem(R.id.search))
+        return true
+    }
+
+    override fun onBackPressed()
+    {
+        if (searchView.isSearchOpen) searchView.closeSearch()
+        else super.onBackPressed()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
+        when (item.itemId)
+        {
+            R.id.action_user_profile -> startActivity(Intent(this, UserProfileActivity::class.java))
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun updateUserToken()
+    {
+        FirebaseInstanceId.getInstance()
+            .instanceId.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful or (task.result == null))
+            {
+                Log.d(TAG, "getInstanceId failed")
+                return@OnCompleteListener
             }
-
-            override fun onSearchViewShown() {
-                searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
-
-                    override fun onQueryTextSubmit(query: String?): Boolean {
-                        Log.i(TAG, "textSubmit: $query")
-                        hideKeyboard(this@MainActivity)
-                        return true
-                    }
-
-                    override fun onQueryTextChange(newText: String?): Boolean {
-                        if (newText == null || newText == "") {
-                            showAllChats()
-                        } else
-                            showFilteredChats(newText)
-                        return false
-                    }
-                })
-            }
+            val token = task.result!!.token
+            Log.d(TAG, "Token is: $token")
+            DatabaseVersioning.currentVersion.instance.collection("students").document(userId!!)
+                .update("tokens", FieldValue.arrayUnion(token))
         })
     }
 
-    private fun showFilteredChats(query: String) {
-        Log.d(TAG, "changing to filtered query")
-
-        mainAdapter.firestoreAdapter.stopListening()
-
-        val filteredList = chatPartnersMap.filterKeys {
-            it.startsWith(
-                query,
-                ignoreCase = true
-            ) || it.split(" ")[1].startsWith(query, ignoreCase = true)
-        }.values
-            .flatten()
-            .sortedBy { it.lastMessageTimestamp } // observe that that Date implements Comparable!
-
-        searchAdapter = object : RecyclerView.Adapter<ViewHolder>() {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-                val userNameView =
-                    LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-                return ViewHolder(userNameView, userId!!, applicationContext)
+    private fun configureSearchView()
+    {
+        // used by searchListener below
+        val queryListener = object : MaterialSearchView.OnQueryTextListener
+        {
+            override fun onQueryTextSubmit(query: String?): Boolean
+            {
+                Log.i(TAG, "textSubmit: $query")
+                hideKeyboard(this@MainActivity)
+                return true
             }
 
-            override fun getItemCount(): Int {
-                return filteredList.size
-            }
-
-            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-                val chatMetadata = filteredList[holder.adapterPosition]
-                Log.d(TAG, "Binding chat with the following data: $chatMetadata")
-                holder.bind(chatMetadata)
-                holder.view.setOnClickListener {
-                    val intent = Intent(this@MainActivity, ChatRoomActivity::class.java)
-                    intent.putExtra("chatData", chatMetadata)
-                    startActivity(intent)
-                }
+            override fun onQueryTextChange(newText: String?): Boolean
+            {
+                if (newText == null || newText.isEmpty()) searchAdapter.filter("")
+                else searchAdapter.filter(newText)
+                return false
             }
         }
-        chat_history.layoutManager = LinearLayoutManager(this)
-        chat_history.adapter = searchAdapter
+
+
+        val searchListener = object : MaterialSearchView.SearchViewListener
+        {
+            override fun onSearchViewClosed()
+            {
+                searchAdapter.stopListening()
+                mainAdapter.startListening()
+            }
+
+            override fun onSearchViewShown()
+            {
+                mainAdapter.stopListening()
+                searchAdapter.startListening()
+                searchAdapter.filter("")
+                searchView.setOnQueryTextListener(queryListener)
+            }
+        }
+
+        searchView.setOnSearchViewListener(searchListener)
     }
 
-    private fun showAllChats() {
-        Log.d(TAG, "showing all chat results")
-
-        mainAdapter = getMainAdapter()
-        mainAdapter.registerAdapterDataObserver(onChatPopulate())
-        chat_history.layoutManager = LinearLayoutManager(this)
-        chat_history.adapter = mainAdapter
-        mainAdapter.firestoreAdapter.startListening()
-    }
-
-
-    override fun onStart() {
-        super.onStart()
-        if (student!!.gender == Gender.FEMALE)
-            emptyListMessage.text = resources.getString(R.string.empty_chat_list_message_f)
-        emptyListMessage.visibility = View.VISIBLE
-        chat_history.visibility = View.GONE
-        showAllChats()
-        mainAdapter.firestoreAdapter.startListening()
-    }
-
-    private fun onChatPopulate(): RecyclerView.AdapterDataObserver {
-        return object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+    private fun onChatPopulate(): RecyclerView.AdapterDataObserver
+    {
+        return object : RecyclerView.AdapterDataObserver()
+        {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int)
+            {
                 super.onItemRangeInserted(positionStart, itemCount)
                 emptyListMessage.visibility = View.GONE
                 chat_history.visibility = View.VISIBLE
@@ -162,44 +171,21 @@ class MainActivity : VedibartaActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        searchView.closeSearch()
-        mainAdapter.firestoreAdapter.stopListening()
-    }
+    private fun getMainAdapter(): MainAdapter
+    {
+        val adapterQuery = database.chats().build().whereArrayContains("participantsId", userId!!)
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
-        searchView.setMenuItem(menu.findItem(R.id.search))
-        return true
-    }
+        val options =
+            FirestoreRecyclerOptions.Builder<Chat>().setQuery(adapterQuery, Chat::class.java)
+                .build()
 
-    override fun onBackPressed() {
-        if (searchView.isSearchOpen)
-            searchView.closeSearch()
-        else
-            super.onBackPressed()
-    }
+        val adapter = MainFireBaseAdapter(userId,
+                                          applicationContext,
+                                          chatPartnersMap,
+                                          this@MainActivity,
+                                          options)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_user_profile ->
-                startActivity(Intent(this, UserProfileActivity::class.java))
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun getMainAdapter(): MainAdapter {
-        val adapterQuery = database
-            .chats()
-            .build()
-            .whereArrayContains("participantsId", userId!!)
-
-        val options = FirestoreRecyclerOptions.Builder<Chat>()
-            .setQuery(adapterQuery, Chat::class.java)
-            .build()
-
-        return MainAdapter(userId, applicationContext, chatPartnersMap, this@MainActivity, options)
+        adapter.registerAdapterDataObserver(onChatPopulate())
+        return adapter
     }
 }
