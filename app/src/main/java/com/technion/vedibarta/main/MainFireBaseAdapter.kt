@@ -68,53 +68,29 @@ class MainFireBaseAdapter(val userId: String?,
         {
             is ViewHolder ->
             {
-                DatabaseVersioning.currentVersion.instance.collection("students")
-                    .document(chat.getPartnerId(VedibartaActivity.student!!.uid)).get()
-                    .addOnSuccessListener { otherStudent ->
-                        Log.d(MainActivity.TAG,
-                              "$otherStudent\n has the following photo: ${otherStudent["photo"]}")
-                        val otherStudentPhotoUrl = otherStudent["photo"] as String?
-                        val otherGender =
-                            if (otherStudent["gender"] as String == "FEMALE") Gender.FEMALE
-                            else Gender.MALE
-
-                        holder.bind(chat, otherStudentPhotoUrl, otherGender)
-                        val partnerId = chat.getPartnerId(userId!!)
-                        val chatMetadata = ChatMetadata(chat.chat!!,
-                                                        partnerId,
-                                                        chat.getName(partnerId),
-                                                        chat.numMessages,
-                                                        chat.lastMessage,
-                                                        chat.lastMessageTimestamp,
-                                                        otherGender,
-                                                        otherStudentPhotoUrl,
-                                                        otherStudent.toObject(Student::class.java)!!.hobbies.toTypedArray())
-
-                        Log.d(MainActivity.TAG,
-                              "Binding chat with the following data: $chatMetadata")
-
-                        registerChatForFiltering(chatMetadata)
+                var chatMeta = ChatMetadata()
+                var partner: Student? = null
+                mainActivity.database
+                    .students()
+                    .otherUserId(chat.getPartnerId(userId!!))
+                    .build()
+                    .get()
+                    .addOnSuccessListener {
+                        partner = it.toObject(Student::class.java)
+                        chatMeta = ChatMetadata.create(chat, userId, partner)
+                    }
+                    .addOnFailureListener {
+                        Log.d(MainActivity.TAG, "Binding threw: ${it.message}, cause: ${it.cause?.message}")
+                        chatMeta = ChatMetadata.create(chat, userId, null)
+                    }
+                    .addOnCompleteListener {
+                        Log.d(MainActivity.TAG, "Binding chat with the following data: $chatMeta")
+                        holder.bind(chat, partner?.photo, partner?.gender)
+                        registerChatForFiltering(chatMeta)
 
                         holder.view.setOnClickListener {
                             val i = Intent(mainActivity, ChatRoomActivity::class.java)
-                            i.putExtra("chatData", chatMetadata)
-                            mainActivity.startActivity(i)
-                        }
-                    }.addOnFailureListener {
-                        holder.bind(chat)
-                        val partnerId = chat.getPartnerId(userId!!)
-                        val chatMetadata = ChatMetadata(chat.chat!!,
-                                                        partnerId,
-                                                        chat.getName(partnerId),
-                                                        chat.numMessages,
-                                                        chat.lastMessage,
-                                                        chat.lastMessageTimestamp)
-
-                        registerChatForFiltering(chatMetadata)
-
-                        holder.view.setOnClickListener {
-                            val i = Intent(mainActivity, ChatRoomActivity::class.java)
-                            i.putExtra("chatData", chatMetadata)
+                            i.putExtra("chatData", chatMeta)
                             mainActivity.startActivity(i)
                         }
                     }
@@ -122,6 +98,8 @@ class MainFireBaseAdapter(val userId: String?,
 
         }
     }
+
+
 
     private fun registerChatForFiltering(chatMetadata: ChatMetadata)
     {

@@ -84,7 +84,9 @@ class ViewHolder(val view: View, val userId: String, val context: Context) :
         }
     }
 
-    fun bind(card: Chat, photoUrl: String? = null, otherGender: Gender = Gender.MALE) {
+    fun bind(card: Chat, photoUrl: String? = null, gender: Gender?)
+    {
+        val otherGender = gender ?: Gender.MALE
         try {
             val partnerId = card.getPartnerId(userId)
             itemView.findViewById<TextView>(R.id.user_name).text = card.getName(partnerId)
