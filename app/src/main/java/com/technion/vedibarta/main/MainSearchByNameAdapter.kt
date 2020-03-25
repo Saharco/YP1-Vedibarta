@@ -16,7 +16,7 @@ import java.util.HashMap
  * filtering adapter which filters by the name of the chat partner
  */
 class MainSearchByNameAdapter(private val applicationContext: Context,
-                              private val chatPartnersMap: HashMap<String, ArrayList<ChatMetadata>>,
+                              private val chatPartnersMap: HashMap<String, ChatMetadata>,
                               private val mainActivity: MainActivity): MainsSearchAdapter<String>(mainActivity.chat_history)
 {
     private var filteredList = listOf<ChatMetadata>()
@@ -26,8 +26,7 @@ class MainSearchByNameAdapter(private val applicationContext: Context,
         filteredList = chatPartnersMap.filterKeys {
             it.startsWith(query, ignoreCase = true) or it.split(" ")[1].startsWith(query,
                                                                                    ignoreCase = true)
-        }.values.flatten()
-            .sortedByDescending { it.lastMessageTimestamp } // observe that that Date implements Comparable!
+        }.values.sortedByDescending { it.lastMessageTimestamp } // observe that that Date implements Comparable!
 
         this.notifyDataSetChanged()
     }

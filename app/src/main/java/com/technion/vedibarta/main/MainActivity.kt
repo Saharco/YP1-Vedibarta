@@ -28,7 +28,7 @@ import java.util.*
  */
 class MainActivity : VedibartaActivity()
 {
-    private val chatPartnersMap = HashMap<String, ArrayList<ChatMetadata>>()
+    private val chatPartnersMap = HashMap<String, ChatMetadata>()
     private lateinit var mainAdapter: MainAdapter
     private lateinit var searchAdapter: MainsSearchAdapter<String>
 

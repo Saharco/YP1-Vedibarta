@@ -24,10 +24,10 @@ import java.util.HashMap
  */
 class MainFireBaseAdapter(val userId: String?,
                           private val applicationContext: Context,
-                          private val chatPartnersMap: HashMap<String, ArrayList<ChatMetadata>>,
+                          private val chatPartnersMap: HashMap<String, ChatMetadata>,
                           private val mainActivity: MainActivity,
-                          options: FirestoreRecyclerOptions<Chat>) : MainAdapter(mainActivity.chat_history)
-
+                          options: FirestoreRecyclerOptions<Chat>) :
+    MainAdapter(mainActivity.chat_history)
 {
     companion object
     {
@@ -88,10 +88,10 @@ class MainFireBaseAdapter(val userId: String?,
                                                         chat.lastMessageTimestamp,
                                                         otherGender,
                                                         otherStudentPhotoUrl,
-                                                        otherStudent.toObject(Student::class.java)!!
-                                                            .hobbies.toTypedArray())
+                                                        otherStudent.toObject(Student::class.java)!!.hobbies.toTypedArray())
 
-                        Log.d(MainActivity.TAG,"Binding chat with the following data: $chatMetadata")
+                        Log.d(MainActivity.TAG,
+                              "Binding chat with the following data: $chatMetadata")
 
                         registerChatForFiltering(chatMetadata)
 
@@ -125,11 +125,7 @@ class MainFireBaseAdapter(val userId: String?,
 
     private fun registerChatForFiltering(chatMetadata: ChatMetadata)
     {
-        if (chatPartnersMap[chatMetadata.partnerName] == null)
-            chatPartnersMap[chatMetadata.partnerName] = ArrayList()
-
-        if (!chatPartnersMap[chatMetadata.partnerName]!!.contains(chatMetadata))
-            chatPartnersMap[chatMetadata.partnerName]!!.add(chatMetadata)
+        chatPartnersMap[chatMetadata.partnerName] = chatMetadata
     }
 
     private fun getFireStoreAdapter(options: FirestoreRecyclerOptions<Chat>,
@@ -143,7 +139,8 @@ class MainFireBaseAdapter(val userId: String?,
 
                 val newList = this.snapshots.sortedByDescending { it.lastMessageTimestamp }
 
-                // onDataChange should be called on every change and as such there shouldn't be more then 1 change at a time to the list
+                // onDataChange should be called on every change and as such there shouldn't be more
+                // then 1 change at a time to the list
                 when
                 {
                     newList.size > chatsList.size ->
