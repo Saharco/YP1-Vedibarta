@@ -9,6 +9,7 @@ import com.technion.vedibarta.POJOs.Student
 interface Matcher {
     /**
      * Run the matching algorithm asynchronously and return the matched students.
+     *
      * @return a [Set] of [Student] objects, the matched students.
      */
     fun match(): Task<Set<Student>>

@@ -15,19 +15,21 @@ const val TAG = "Matcher"
 /**
  * The default implementation of [Matcher].
  *
- * The matched students will all be a perfect match, and if needed, the rest will be an ok match.
- * Perfect students will always be placed before ok students in the returned lists.
- * The algorithm will match no more than [STUDENTS_LIMIT] students.
+ * This implementation of Matcher uses a Firestore database. It assumes that the pool of existing
+ * students from which matches will be picked are contained within a collection. The matched
+ * students will all be a perfect match and, if needed, the rest will be an ok match. Perfect
+ * students will always be placed before ok students in the returned lists. The algorithm will
+ * return no more than [STUDENTS_LIMIT] students.
  *
  * Any student which fits the [characteristics], [region] and [school] will be considered a perfect
  * match. If there aren't enough students who do fit the parameters (less than [STUDENTS_LIMIT]),
  * any other student who has all-but-one of the specified [characteristics], will be considered an
  * ok match.
  *
- * @param studentsCollection a reference to the students collection where matches will be searched.
- * @param characteristics the wanted set of characteristics, which the matched users must have.
- * @param region if not null, the region in which the matched users must live.
- * @param school if not null, the school in which the matched users must study.
+ * @param studentsCollection a reference to the students collection where matches will be searched
+ * @param characteristics the wanted set of characteristics, which the matched users must have
+ * @param region if not null, the region in which the matched users must live
+ * @param school if not null, the school in which the matched users must study
  */
 class MatcherImpl(private val studentsCollection: CollectionReference,
                   private val characteristics: Collection<String>, private val region: String? = null,
@@ -39,11 +41,13 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
         }
     }
 
+    // Returns the docs of the matched students.
     private fun getDocs(): Task<Set<DocumentSnapshot>> {
         return matchWithGivenCharacteristics(STUDENTS_LIMIT, characteristics)
             .continueWithTask { task ->
                 val docsSet = task.result!!
 
+                // Trying with one less characteristic if there weren't enough perfect matched.
                 if ((docsSet.size < STUDENTS_LIMIT) and (characteristics.size > 1)) {
                     tryWithOneLessCharacteristic(STUDENTS_LIMIT - docsSet.size)
                         .continueWith { docsSet.union(it.result!!) }
@@ -53,6 +57,7 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
             }
     }
 
+    // Returns non-perfect ok matches (matching exactly n-1 characteristics).
     private fun tryWithOneLessCharacteristic(amount: Int): Task<Set<DocumentSnapshot>> {
         val results = mutableListOf<DocumentSnapshot>()
 
@@ -62,6 +67,7 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
             val newCharacteristics = characteristicsList.toMutableList()
             newCharacteristics.removeAt(i)
 
+            // Note that the ignored characteristic is disallowed as to not get duplicate results.
             matchWithGivenCharacteristics(
                 amount,
                 newCharacteristics,
@@ -72,6 +78,7 @@ class MatcherImpl(private val studentsCollection: CollectionReference,
         }
     }
 
+    // Returns students that match perfectly to the parameters.
     private fun matchWithGivenCharacteristics(
         amount: Int,
         characteristics: Iterable<String>,
