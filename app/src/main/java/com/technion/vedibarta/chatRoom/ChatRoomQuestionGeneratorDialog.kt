@@ -12,7 +12,9 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.QuestionGeneratorCategoryAdapter
 import kotlinx.android.synthetic.main.question_generator_dialog.*
 
-
+/***
+ * class in charge of the question generation functionality in a specific chat
+ */
 class ChatRoomQuestionGeneratorDialog : DialogFragment()
 {
 

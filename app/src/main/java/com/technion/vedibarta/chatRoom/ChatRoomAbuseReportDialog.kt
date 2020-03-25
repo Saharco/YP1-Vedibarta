@@ -11,6 +11,9 @@ import androidx.fragment.app.DialogFragment
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.report_abuse_dialog.*
 
+/***
+ * class in charge of the reporting functionality in a specific chat
+ */
 class ChatRoomAbuseReportDialog: DialogFragment() {
 
     private lateinit var listener: AbuseReportDialogListener
