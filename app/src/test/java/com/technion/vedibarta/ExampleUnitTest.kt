@@ -11,13 +11,13 @@ import io.mockk.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
-
-    @Test
-    fun mocking()
+    fun subtract_isCorrect()
     {
-    }
+        val l1: MutableList<Int> = arrayListOf(0,1,2,3,4,5,6,7,8,9)
+        val l2 : List<Int> = listOf(0,1,2,3,4,5,6,8,9) // 7 is missing
 
+        l1.removeAt(3)
+        l1.add(0,3)
+        print(l1.subtract(l2))
+    }
 }

@@ -47,7 +47,8 @@ class ChatRoomActivity : VedibartaActivity(),
     private var firstVisibleMessagePosition = 0
     private val systemSenderId = "-1"
 
-    companion object {
+    companion object
+    {
         private const val TAG = "Vedibarta/chat"
     }
 
@@ -56,11 +57,11 @@ class ChatRoomActivity : VedibartaActivity(),
 
     fun sendSystemMessage(text: String) = apply { messageSender.sendMessage(text, true) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_room)
         window.setBackgroundDrawableResource(R.drawable.bg_chat_1)
-
 
         val chatMetaData = intent.getSerializableExtra("chatData") as ChatMetadata
 
@@ -85,21 +86,20 @@ class ChatRoomActivity : VedibartaActivity(),
             chatBox.hint = SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
 
         toolbarUserName.text = partnerName
-        Glide.with(applicationContext)
-            .asBitmap()
-            .load(photoUrl)
-            .into(object : SimpleTarget<Bitmap>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: Transition<in Bitmap>?
-                ) {
-                    toolbarProfileImage.setImageBitmap(resource)
-                }
+        Glide.with(applicationContext).asBitmap().load(photoUrl)
+            .into(object : SimpleTarget<Bitmap>()
+                  {
+                      override fun onResourceReady(resource: Bitmap,
+                                                   transition: Transition<in Bitmap>?)
+                      {
+                          toolbarProfileImage.setImageBitmap(resource)
+                      }
 
-                override fun onLoadFailed(errorDrawable: Drawable?) {
-                    displayDefaultProfilePicture()
-                }
-            })
+                      override fun onLoadFailed(errorDrawable: Drawable?)
+                      {
+                          displayDefaultProfilePicture()
+                      }
+                  })
 
     }
 
@@ -115,30 +115,37 @@ class ChatRoomActivity : VedibartaActivity(),
         adapter.stopListening()
     }
 
-    override fun onBackPressed() {
+    override fun onBackPressed()
+    {
         chatPartnerId = null // exiting chat: notify that there is no chat partner
         super.onBackPressed()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
+        when (item.itemId)
+        {
             android.R.id.home -> onBackPressed()
-            else -> TODO()
+            else              -> TODO()
         }
         return true
     }
 
     override fun onQuestionclick(dialog: DialogFragment, v: View)
     {
-        try {
+        try
+        {
             val question = (v as TextView).text
             Toast.makeText(this, question, Toast.LENGTH_SHORT).show()
-        } catch (e: ClassCastException) {
+        }
+        catch (e: ClassCastException)
+        {
             Log.d("QuestionGenerator", e.toString())
         }
     }
 
-    override fun onAbuseTypeClick(dialog: DialogFragment) {
+    override fun onAbuseTypeClick(dialog: DialogFragment)
+    {
         TODO("need to decide what to do")
         //Toast.makeText(this, "abuse", Toast.LENGTH_SHORT).show()
     }
@@ -146,35 +153,31 @@ class ChatRoomActivity : VedibartaActivity(),
     private fun sendMessageFromChatBox(v: View)
     {
         var text = chatBox.text.toString()
-        if (text.isBlank())
-            return
+        if (text.isBlank()) return
 
         text = text.replace("[\n]+".toRegex(), "\n").trim()
         messageSender.sendMessage(text, false)
         chatBox.setText("")
     }
 
-    private fun displayDefaultProfilePicture() {
-        when (otherGender) {
-            null -> return
-            Gender.MALE -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_man)
+    private fun displayDefaultProfilePicture()
+    {
+        when (otherGender)
+        {
+            null          -> return
+            Gender.MALE   -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_man)
             Gender.FEMALE -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_girl)
-            else -> Log.d(TAG, "other student is neither male nor female??")
+            else          -> Log.d(TAG, "other student is neither male nor female??")
         }
     }
 
-    private fun configureAdapter() {
-        val query =
-            database
-                .chats()
-                .chatId(chatId)
-                .messages()
-                .build().orderBy("timestamp", Query.Direction.DESCENDING)
+    private fun configureAdapter()
+    {
+        val query = database.chats().chatId(chatId).messages().build()
+            .orderBy("timestamp", Query.Direction.DESCENDING)
 
         val options =
-            FirestoreRecyclerOptions.Builder<Message>()
-                .setQuery(query, Message::class.java)
-                .build()
+            FirestoreRecyclerOptions.Builder<Message>().setQuery(query, Message::class.java).build()
 
         val soundPlayer = SoundPlayer(this, numMessages)
         adapter = ChatRoomFireBaseAdapter(options, userId!!, systemSenderId, soundPlayer)
@@ -195,10 +198,16 @@ class ChatRoomActivity : VedibartaActivity(),
             Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
         }
 
-        messageSender = MessageSender(adapter, database, chatId, userId!!, partnerId, systemSenderId, errorCallback)
+        messageSender = MessageSender(adapter,
+                                      chatId,
+                                      userId!!,
+                                      partnerId,
+                                      systemSenderId,
+                                      errorCallback)
     }
 
-    private fun setToolbar(tb: Toolbar) {
+    private fun setToolbar(tb: Toolbar)
+    {
         setSupportActionBar(tb)
         supportActionBar?.setDisplayShowTitleEnabled(false) // if you want to to write your own title programmatically
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -214,15 +223,20 @@ class ChatRoomActivity : VedibartaActivity(),
 
             when (item!!.itemId)
             {
-                R.id.generateQuestion -> {
-                    ChatRoomQuestionGeneratorDialog.newInstance(student!!.hobbies.toTypedArray(), partnerHobbies)
+                R.id.generateQuestion ->
+                {
+                    ChatRoomQuestionGeneratorDialog.newInstance(student!!.hobbies.toTypedArray(),
+                                                                partnerHobbies)
                         .show(supportFragmentManager, "QuestionGeneratorFragment")
                 }
 
-                R.id.reportAbuse -> {
+                R.id.reportAbuse      ->
+                {
                     //TODO Implement report abuse
-                    Toast.makeText(this, "This functionality isn't supported yet", Toast.LENGTH_LONG).show()
-//                  ChatRoomAbuseReportDialog().show( supportFragmentManager, "ReportAbuseDialog")
+                    Toast.makeText(this,
+                                   "This functionality isn't supported yet",
+                                   Toast.LENGTH_LONG).show()
+                    //                  ChatRoomAbuseReportDialog().show( supportFragmentManager, "ReportAbuseDialog")
                 }
             }
 
@@ -231,34 +245,38 @@ class ChatRoomActivity : VedibartaActivity(),
         popup.show()
     }
 
-    private fun firstVisibleMessageTracker(): RecyclerView.OnScrollListener {
-        return object: RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+    private fun firstVisibleMessageTracker(): RecyclerView.OnScrollListener
+    {
+        return object : RecyclerView.OnScrollListener()
+        {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int)
+            {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (newState ==  RecyclerView.SCROLL_STATE_IDLE)
-                    firstVisibleMessagePosition = (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                    Log.d("wtf", "firstvisible = $firstVisibleMessagePosition")
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) firstVisibleMessagePosition =
+                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                Log.d("wtf", "firstvisible = $firstVisibleMessagePosition")
             }
         }
     }
 
     private fun automaticScroller(): RecyclerView.AdapterDataObserver
     {
-        return object: RecyclerView.AdapterDataObserver()
+        return object : RecyclerView.AdapterDataObserver()
         {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int)
+            {
                 super.onItemRangeInserted(positionStart, itemCount)
                 val firstVisiblePosition =
                     (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                if (firstVisiblePosition <= 1)
-                    chatView.scrollToPosition(0)
+                if (firstVisiblePosition <= 1) chatView.scrollToPosition(0)
                 else
                 {
                     chatView.scrollToPosition(firstVisiblePosition + 1)
                 }
             }
 
-            override fun onChanged() {
+            override fun onChanged()
+            {
                 super.onChanged()
                 val firstVisiblePosition =
                     (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
@@ -270,7 +288,8 @@ class ChatRoomActivity : VedibartaActivity(),
     private fun scrollToBottomOnKeyboardOpening(): ViewTreeObserver.OnGlobalLayoutListener
     {
 
-        return object : ViewTreeObserver.OnGlobalLayoutListener {
+        return object : ViewTreeObserver.OnGlobalLayoutListener
+        {
             private var isKeyBoardVisible = false
             override fun onGlobalLayout()
             {
@@ -279,8 +298,7 @@ class ChatRoomActivity : VedibartaActivity(),
                 if (heightDiff > dpToPx(this@ChatRoomActivity, 200f) && !isKeyBoardVisible)
                 {
                     isKeyBoardVisible = true
-                    if (firstVisibleMessagePosition == 0)
-                        chatView.scrollToPosition(0)
+                    if (firstVisibleMessagePosition == 0) chatView.scrollToPosition(0)
                 }
                 else if (heightDiff < dpToPx(this@ChatRoomActivity, 200f) && isKeyBoardVisible)
                 {

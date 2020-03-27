@@ -42,7 +42,7 @@ data class Chat (
     override fun equals(other: Any?): Boolean
     {
         if (other is Chat)
-            return this.participantsId.containsAll(other.participantsId)
+            return (this.chat == other.chat) and (this.chat != null)
         return false
     }
 }

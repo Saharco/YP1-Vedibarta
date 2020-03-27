@@ -21,7 +21,12 @@ import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 /***
  * main screen of the app, contains the chat history/list

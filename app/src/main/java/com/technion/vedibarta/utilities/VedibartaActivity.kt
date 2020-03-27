@@ -37,7 +37,6 @@ open class VedibartaActivity : AppCompatActivity() {
     val user = FirebaseAuth.getInstance().currentUser
     val userId = user?.uid
     val storage = Storage(userId)
-    val database = DocumentsCollections(userId)
 
     private var progress: ProgressDialog? = null
     private var progressHandler: Handler? = null
@@ -78,6 +77,7 @@ open class VedibartaActivity : AppCompatActivity() {
         var student: Student? = null
         var chatPartnerId: String? = null
         var isActivityRunning = false
+        val database = DocumentsCollections()
 
         const val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS = 90
         const val EXTRA_CHANGE_ACTIVITY = "EXTRA_CHANGE_ACTIVITY"

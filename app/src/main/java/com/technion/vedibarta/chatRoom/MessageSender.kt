@@ -3,6 +3,7 @@ package com.technion.vedibarta.chatRoom
 import android.util.Log
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.utilities.DocumentsCollections
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -12,7 +13,6 @@ import java.util.*
  */
 class MessageSender(
     private val adapter: ChatRoomAdapter,
-    private val database: DocumentsCollections,
     private val chatId: String,
     private val userId: String,
     private val partnerId: String,
@@ -20,7 +20,6 @@ class MessageSender(
     private val errorCallback: (e: Exception) -> Unit)
 {
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
-    private val reversedDateFormatter = SimpleDateFormat("yy/MM/dd", Locale.getDefault())
 
     fun sendMessage(text: String, isSystemMessage: Boolean)
     {
@@ -40,15 +39,11 @@ class MessageSender(
             .addOnFailureListener { errorCallback(it) }
     }
 
-    private fun sendDateMessageIfNeeded(currentDate: Date = Date())
+    private fun sendDateMessageIfNeeded()
     {
-        if (adapter.hasNoMessages() or hasMoreThenADayPassed(currentDate))
-            write(dateFormatter.format(currentDate), true)
+        val lastMessageDate = adapter.getFirstMessageOrNull()?.timestamp
+        if (lastMessageDate === null || database.hasMoreThenADayPassed(lastMessageDate))
+            write(dateFormatter.format(database.getCurrentDate()), true)
     }
 
-    private fun hasMoreThenADayPassed(currentDate: Date): Boolean
-    {
-        val lastMessageDate = adapter.getFirstMessageOrNull()?.timestamp ?: Date()
-        return reversedDateFormatter.format(currentDate) > reversedDateFormatter.format(lastMessageDate)
-    }
 }
