@@ -47,17 +47,17 @@ class PreferencesResolver(private val preferences: Map<String, *>) {
 
             // Skip preferences that no valid possibility specifies.
             if (entries.none { it.second.containsKey(key) })
-                return resolveAux(entries, keys.minus(key))
+                return resolveAux(entries, keys - key)
 
             val entriesMatch = entries.filter { it.second[key] == value }
             if (entriesMatch.isNotEmpty())
-                return resolveAux(entriesMatch, keys.minus(key))
+                return resolveAux(entriesMatch, keys - key)
 
             // If none of the possibilities matches the current preference, continue with those that
             // did not specify it.
             val entriesUnspecified = entries.filter { !it.second.containsKey(key) }
             return if (entriesUnspecified.isNotEmpty())
-                entriesUnspecified.sortedBy { it.second.size }.first().first
+                resolveAux(entriesUnspecified, keys - key)
             else throw NoMatchException("Expected $key = $value but no match was found")
         }
 

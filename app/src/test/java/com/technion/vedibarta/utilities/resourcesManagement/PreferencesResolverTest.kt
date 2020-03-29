@@ -6,8 +6,8 @@ import org.junit.Assert.*
 
 class PreferencesResolverTest {
     private val preferences = mapOf<String, String>(
-        "Lang" to "HE",
         "Sex" to "MALE",
+        "Lang" to "HE",
         "Shape" to "CIRCLE"
     )
 
@@ -120,5 +120,18 @@ class PreferencesResolverTest {
         val result = PreferencesResolver(preferences).resolve(possibilities)
 
         assertEquals("resource-Sex=MALE-Lang=HE", result)
+    }
+
+    @Test
+    fun `resolves works when some possibilities specify some preferences but not others`() {
+        val possibilities = listOf(
+            "resources",
+            "resources-Lang=HE",
+            "resources-Lang=HE-Sex=FEMALE"
+        )
+
+        val result = PreferencesResolver(preferences).resolve(possibilities)
+
+        assertEquals("resources-Lang=HE", result)
     }
 }
