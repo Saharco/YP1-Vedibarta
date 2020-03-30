@@ -58,20 +58,23 @@ class MainActivity : VedibartaActivity()
         }
 
         updateUserToken()
+
+        //must be constructed after applicationContext is initialized
+        searchAdapter = MainSearchByNameAdapter(applicationContext, chatPartnersMap, this)
+        mainAdapter = getMainAdapter()
     }
 
     override fun onStart()
     {
         super.onStart()
-        if (student!!.gender == Gender.FEMALE) emptyListMessage.text =
-            resources.getString(R.string.empty_chat_list_message_f)
+        if (mainAdapter.itemCount == 0)
+        {
+            if (student!!.gender == Gender.FEMALE)
+                emptyListMessage.text = resources.getString(R.string.empty_chat_list_message_f)
 
-        emptyListMessage.visibility = View.VISIBLE
-        chat_history.visibility = View.GONE
-
-        //must be constructed after applicationContext is initialized
-        searchAdapter = MainSearchByNameAdapter(applicationContext, chatPartnersMap, this)
-        mainAdapter = getMainAdapter()
+            emptyListMessage.visibility = View.VISIBLE
+            chat_history.visibility = View.GONE
+        }
 
         mainAdapter.startListening()
     }

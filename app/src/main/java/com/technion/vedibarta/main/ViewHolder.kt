@@ -33,9 +33,10 @@ class ViewHolder(val view: View, val userId: String, val context: Context) :
         itemView.findViewById<TextView>(R.id.last_message).text = chatMetadata.lastMessage
         if (chatMetadata.numMessages != 0)
         {
-            itemView.findViewById<TextView>(R.id.relative_timestamp).text =
-                database.calcRelativeTime(chatMetadata.lastMessageTimestamp, context)
+            val t = database.calcRelativeTime(chatMetadata.lastMessageTimestamp, context)
+            itemView.findViewById<TextView>(R.id.relative_timestamp).text = t
         }
+
         val profilePicture = itemView.findViewById<ImageView>(R.id.user_picture)
 
         if (chatMetadata.partnerPhotoUrl == null) displayDefaultProfilePicture(profilePicture,

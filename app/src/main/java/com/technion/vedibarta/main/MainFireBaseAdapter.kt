@@ -141,7 +141,7 @@ class MainFireBaseAdapter(val userId: String?,
                             Log.d(TAG, "moved chat is not in list")
                             return
                         }
-                        val movedChat = chatsList[originalPosition]
+                        val movedChat = newList.firstOrNull()!!
                         chatsList.removeAt(originalPosition)
                         chatsList.add(0, movedChat)
                         mainAdapter.notifyItemMoved(originalPosition, 0)
