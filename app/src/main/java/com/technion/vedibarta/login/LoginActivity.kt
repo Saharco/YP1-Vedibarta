@@ -23,7 +23,6 @@ import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
-import com.technion.vedibarta.utilities.DocumentsCollections
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
@@ -328,7 +327,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 {
                     Log.d(TAG, "document exists. redirecting to main activity")
                     student = document.toObject(Student::class.java)
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, MainActivity::class.java)) // change to Main later
                     finish()
                 }
                 else

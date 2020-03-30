@@ -1,8 +1,6 @@
 package com.technion.vedibarta.chatRoom
 
-import android.util.Log
 import com.technion.vedibarta.POJOs.Message
-import com.technion.vedibarta.utilities.DocumentsCollections
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import java.text.SimpleDateFormat
 import java.util.*

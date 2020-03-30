@@ -14,7 +14,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -77,7 +76,7 @@ open class VedibartaActivity : AppCompatActivity() {
         var student: Student? = null
         var chatPartnerId: String? = null
         var isActivityRunning = false
-        val database = DocumentsCollections()
+        val database = DataBase()
 
         const val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS = 90
         const val EXTRA_CHANGE_ACTIVITY = "EXTRA_CHANGE_ACTIVITY"

@@ -57,6 +57,7 @@ interface ICollectionPath
     fun userId(): IDocumentPath
     fun otherUserId(id: String): IDocumentPath
     fun chatId(chatId: String): IDocumentPath
+    fun classId(classId: String): IDocumentPath
     fun message(d: Date): IDocumentPath
     fun systemMessage(d: Date): IDocumentPath
     fun build(): CollectionReference
@@ -66,6 +67,7 @@ interface ICollectionPath
 interface IDocumentPath
 {
     fun messages(): ICollectionPath
+    fun classes(): ICollectionPath
     fun build(): DocumentReference
 }
 
@@ -73,7 +75,7 @@ interface IDocumentPath
  * must set userId field before using.
  * userId is set in LogInActivity after verification of user
  */
-class DocumentsCollections
+class DataBase
 {
     var userId = "illegalUid"
     private val database = DatabaseVersioning.currentVersion.instance
@@ -89,6 +91,9 @@ class DocumentsCollections
     }
 
     fun students(): ICollectionPath = CollectionPath(database.collection("students"), userId)
+
+    fun teachers(): ICollectionPath = CollectionPath(database.collection("teachers"), userId)
+
     fun chats(): ICollectionPath = CollectionPath(database.collection("chats"), userId)
 
     fun getCurrentDate() = currentDate
@@ -139,6 +144,7 @@ private class CollectionPath(private val c: CollectionReference, private val use
 {
     override fun systemMessage(d: Date): IDocumentPath = DocumentPath(c.document("sys$d"), userId)
     override fun chatId(chatId: String): IDocumentPath = DocumentPath(c.document(chatId), userId)
+    override fun classId(classId: String): IDocumentPath = DocumentPath(c.document(classId), userId)
     override fun userId() = DocumentPath(c.document("$userId"), userId)
     override fun otherUserId(id: String): IDocumentPath = DocumentPath(c.document(id), userId)
     override fun message(d: Date): IDocumentPath = DocumentPath(c.document(d.toString()), userId)
@@ -149,6 +155,7 @@ private class DocumentPath(private val d: DocumentReference, private val userId:
     IDocumentPath
 {
     override fun messages(): ICollectionPath = CollectionPath(d.collection("messages"), userId)
+    override fun classes(): ICollectionPath = CollectionPath(d.collection("classes"), userId)
     override fun build(): DocumentReference = d
 }
 

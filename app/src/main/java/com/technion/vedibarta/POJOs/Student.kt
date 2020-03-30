@@ -18,5 +18,6 @@ data class Student(
     var lastActivity: Date? = null,
     var characteristics: MutableMap<String, Boolean> = HashMap(),
     var hobbies: List<String> = emptyList(),
-    val uid: String = ""
+    val uid: String = "",
+    val teachersIds: List<String> = emptyList()
 ): Serializable, Parcelable
