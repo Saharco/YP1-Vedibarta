@@ -138,6 +138,9 @@
     <string name="chat">צ\'אט</string>
     <string name="search">חיפוש</string>
     <string name="reports">דיווחים</string>
+    <string name="class_creation_fab_text">יצירת כיתה</string>
+    <string name="finding_connections_text">מוצאים חיבורים</string>
+    <string name="teacher_main_title">ודיברת</string>
     <string name="email_not_verified_error">אנא אמת דוא\"ל</string>
     <string name="timeout_error">שגיאה: הפעולה נמשכת זמן רב מידי</string>
 
