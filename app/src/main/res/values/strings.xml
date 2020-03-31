@@ -133,6 +133,11 @@
     <string name="email_format_error">הכנס כתובת מהצורה mail@client.com</string>
     <string name="short_password_error">על הסיסמה להכיל לפחות 8 תווים</string>
     <string name="wrong_password_repeat">הסיסמאות לא זהות</string>
+    <string name="home">בית</string>
+    <string name="profile">פרופיל</string>
+    <string name="chat">צ\'אט</string>
+    <string name="search">חיפוש</string>
+    <string name="reports">דיווחים</string>
     <string name="email_not_verified_error">אנא אמת דוא\"ל</string>
     <string name="timeout_error">שגיאה: הפעולה נמשכת זמן רב מידי</string>
 
