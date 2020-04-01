@@ -10,12 +10,14 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
+import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.HashMap
+import java.util.*
+import kotlin.collections.ArrayList
 
 /***
  * adapter wrapping for the FireBaseAdapter to be used by the RecyclerView of MainActivity
@@ -113,7 +115,8 @@ class MainFireBaseAdapter(val userId: String?,
             {
                 super.onDataChanged()
 
-                val newList = this.snapshots.sortedByDescending { it.lastMessageTimestamp }
+                val newList = this.snapshots.sortedWith(
+                        compareByDescending<Chat, Date?>(nullsLast()) { it.lastMessageTimestamp })
                 when
                 {
                     (newList.size - chatsList.size) == 1 ->

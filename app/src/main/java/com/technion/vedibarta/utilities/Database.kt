@@ -106,8 +106,9 @@ class DataBase
         return timeGapInDays >= 1
     }
 
-    fun calcRelativeTime(time: Date, context: Context): String
+    fun calcRelativeTime(time: Date?, context: Context): String
     {
+        if (time == null) return ""
         val hasADayPassed = hasMoreThenADayPassed(time)
 
         if (!hasADayPassed) return SimpleDateFormat("HH:mm", Locale.getDefault()).format(time)

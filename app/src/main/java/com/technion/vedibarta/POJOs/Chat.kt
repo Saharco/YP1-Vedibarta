@@ -1,5 +1,6 @@
 package com.technion.vedibarta.POJOs
 
+import com.google.firebase.firestore.ServerTimestamp
 import com.technion.vedibarta.utilities.VedibartaActivity
 import java.io.Serializable
 import java.util.*
@@ -8,7 +9,8 @@ data class Chat (
     var participantsName: List<String> = emptyList(),
     var participantsId: List<String> = emptyList(),
     var lastMessage: String = "",
-    var lastMessageTimestamp: Date = Date(System.currentTimeMillis()),
+    @ServerTimestamp
+    var lastMessageTimestamp: Date? = null,
     val numMessages: Int = 0,
     var chat: String? = null
 ): Serializable
