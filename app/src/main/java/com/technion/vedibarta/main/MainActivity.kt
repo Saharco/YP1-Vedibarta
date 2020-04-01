@@ -83,6 +83,11 @@ class MainActivity : VedibartaActivity()
     {
         super.onStop()
         searchView.closeSearch()
+    }
+
+    override fun onDestroy()
+    {
+        super.onDestroy()
         mainAdapter.stopListening()
     }
 

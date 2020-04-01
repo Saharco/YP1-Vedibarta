@@ -39,9 +39,15 @@ class MessageSender(
 
     private fun sendDateMessageIfNeeded()
     {
-        val lastMessageDate = adapter.getFirstMessageOrNull()?.timestamp
-        if (lastMessageDate === null || database.hasMoreThenADayPassed(lastMessageDate))
+        val lastMessage = adapter.getFirstMessageOrNull()
+        if (lastMessage == null)
             write(dateFormatter.format(database.getCurrentDate()), true)
+        else
+        {
+            val lastMessageDate = lastMessage.timestamp ?: return
+            if (database.hasMoreThenADayPassed(lastMessageDate))
+                write(dateFormatter.format(database.getCurrentDate()), true)
+        }
     }
 
 }
