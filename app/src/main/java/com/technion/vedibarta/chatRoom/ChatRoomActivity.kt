@@ -83,23 +83,24 @@ class ChatRoomActivity : VedibartaActivity(),
         popupMenu.setOnClickListener { showPopup(it) }
 
         if (student!!.gender == Gender.FEMALE)
-            chatBox.hint = SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
+            chatBox.hint =
+                SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
 
         toolbarUserName.text = partnerName
         Glide.with(applicationContext).asBitmap().load(photoUrl)
-            .into(object : SimpleTarget<Bitmap>()
-                  {
-                      override fun onResourceReady(resource: Bitmap,
-                                                   transition: Transition<in Bitmap>?)
+                .into(object : SimpleTarget<Bitmap>()
                       {
-                          toolbarProfileImage.setImageBitmap(resource)
-                      }
+                          override fun onResourceReady(resource: Bitmap,
+                                                       transition: Transition<in Bitmap>?)
+                          {
+                              toolbarProfileImage.setImageBitmap(resource)
+                          }
 
-                      override fun onLoadFailed(errorDrawable: Drawable?)
-                      {
-                          displayDefaultProfilePicture()
-                      }
-                  })
+                          override fun onLoadFailed(errorDrawable: Drawable?)
+                          {
+                              displayDefaultProfilePicture()
+                          }
+                      })
 
     }
 
@@ -174,7 +175,7 @@ class ChatRoomActivity : VedibartaActivity(),
     private fun configureAdapter()
     {
         val query = database.chats().chatId(chatId).messages().build()
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
 
         val options =
             FirestoreRecyclerOptions.Builder<Message>().setQuery(query, Message::class.java).build()
@@ -186,7 +187,8 @@ class ChatRoomActivity : VedibartaActivity(),
         chatView.adapter = adapter
         chatView.layoutManager = layoutManager
         chatView.addOnScrollListener(firstVisibleMessageTracker())
-        chatRoomRootView.viewTreeObserver.addOnGlobalLayoutListener(scrollToBottomOnKeyboardOpening())
+        chatRoomRootView.viewTreeObserver
+                .addOnGlobalLayoutListener(scrollToBottomOnKeyboardOpening())
         adapter.registerAdapterDataObserver(automaticScroller())
         adapter.notifyDataSetChanged()
     }
@@ -198,7 +200,8 @@ class ChatRoomActivity : VedibartaActivity(),
             Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
         }
 
-        messageSender = MessageSender(adapter,
+        messageSender = MessageSender(database,
+                                      adapter,
                                       chatId,
                                       userId!!,
                                       partnerId,
@@ -209,7 +212,8 @@ class ChatRoomActivity : VedibartaActivity(),
     private fun setToolbar(tb: Toolbar)
     {
         setSupportActionBar(tb)
-        supportActionBar?.setDisplayShowTitleEnabled(false) // if you want to to write your own title programmatically
+        supportActionBar
+                ?.setDisplayShowTitleEnabled(false) // if you want to to write your own title programmatically
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
@@ -227,7 +231,7 @@ class ChatRoomActivity : VedibartaActivity(),
                 {
                     ChatRoomQuestionGeneratorDialog.newInstance(student!!.hobbies.toTypedArray(),
                                                                 partnerHobbies)
-                        .show(supportFragmentManager, "QuestionGeneratorFragment")
+                            .show(supportFragmentManager, "QuestionGeneratorFragment")
                 }
 
                 R.id.reportAbuse      ->

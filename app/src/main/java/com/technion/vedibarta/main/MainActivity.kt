@@ -17,6 +17,8 @@ import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
+import com.technion.vedibarta.dagger.AppComponent
+import com.technion.vedibarta.dagger.AppComponent.Companion.injector
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -45,6 +47,8 @@ class MainActivity : VedibartaActivity()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
+
+        Log.d("wtf", "uid = ${database.userId}")
 
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<Toolbar>(R.id.main_toolbar)

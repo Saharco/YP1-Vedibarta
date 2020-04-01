@@ -16,7 +16,7 @@ import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
+import com.technion.vedibarta.utilities.DataBase
 import java.lang.Math.ceil
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -24,7 +24,7 @@ import java.time.LocalTime
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class ViewHolder(val view: View, val userId: String, val context: Context) :
+class ViewHolder(val view: View, val userId: String, val context: Context, val database: DataBase) :
     RecyclerView.ViewHolder(view)
 {
     fun bind(chatMetadata: ChatMetadata)

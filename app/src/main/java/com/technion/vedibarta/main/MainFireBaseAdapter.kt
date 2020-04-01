@@ -13,7 +13,6 @@ import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
-import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.HashMap
 
@@ -32,6 +31,7 @@ class MainFireBaseAdapter(val userId: String?,
         const val TAG = "MainAdapter"
     }
 
+    private val database = mainActivity.database
     private val chatsList: MutableList<Chat> = ArrayList()
     private val firestoreAdapter = getFireStoreAdapter(options, this)
 
@@ -51,7 +51,7 @@ class MainFireBaseAdapter(val userId: String?,
     {
         val userNameView =
             LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-        return ViewHolder(userNameView, userId!!, applicationContext)
+        return ViewHolder(userNameView, userId!!, applicationContext, database)
     }
 
     override fun getItemCount(): Int
@@ -154,7 +154,7 @@ class MainFireBaseAdapter(val userId: String?,
             {
                 val userNameView =
                     LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-                return ViewHolder(userNameView, userId!!, applicationContext)
+                return ViewHolder(userNameView, userId!!, applicationContext, database)
             } //implemented because it must return something, this value is never used
 
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder,

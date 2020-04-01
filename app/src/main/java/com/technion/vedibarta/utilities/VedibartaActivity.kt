@@ -8,7 +8,9 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
+import android.os.PersistableBundle
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -26,16 +28,27 @@ import com.google.firebase.auth.FirebaseAuth
 import com.skyfishjy.library.RippleBackground
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.dagger.AppComponent
 import com.technion.vedibarta.login.LoginActivity
+import javax.inject.Inject
 
 /**
  * This is a utility activity with no GUI
  */
 @SuppressLint("Registered")
-open class VedibartaActivity : AppCompatActivity() {
+open class VedibartaActivity : AppCompatActivity()
+{
     val user = FirebaseAuth.getInstance().currentUser
     val userId = user?.uid
     val storage = Storage(userId)
+    @Inject
+    lateinit var database: DataBase
+
+    init
+    {
+        // has to be here, otherwise it would need to be called from every activity which extends Vedibarta
+        AppComponent.injector.inject(this)
+    }
 
     private var progress: ProgressDialog? = null
     private var progressHandler: Handler? = null
@@ -44,7 +57,8 @@ open class VedibartaActivity : AppCompatActivity() {
     // A task that's executed when a time-out occurs with a loading process
     protected val loadTimeoutTask = Runnable {
 
-        if (progress != null) {
+        if (progress != null)
+        {
             progress!!.dismiss()
         }
 
@@ -58,9 +72,9 @@ open class VedibartaActivity : AppCompatActivity() {
 
         val builder = AlertDialog.Builder(this)
         builder.setCustomTitle(title)
-            .setIcon(R.drawable.ic_warning_yellow)
-            .setMessage(R.string.dialog_timeout_body)
-            .setNeutralButton(android.R.string.ok) { _, _ -> onBackPressed() }
+                .setIcon(R.drawable.ic_warning_yellow)
+                .setMessage(R.string.dialog_timeout_body)
+                .setNeutralButton(android.R.string.ok) { _, _ -> onBackPressed() }
         val dialog = builder.create()
         dialog.show()
 
@@ -72,11 +86,11 @@ open class VedibartaActivity : AppCompatActivity() {
         neutralButton.layoutParams = buttonLayoutParams
     }
 
-    companion object {
+    companion object
+    {
         var student: Student? = null
         var chatPartnerId: String? = null
         var isActivityRunning = false
-        val database = DataBase()
 
         const val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS = 90
         const val EXTRA_CHANGE_ACTIVITY = "EXTRA_CHANGE_ACTIVITY"
@@ -98,11 +112,13 @@ open class VedibartaActivity : AppCompatActivity() {
          *`
          * @param activity: activity in which the keyboard should be hidden
          */
-        fun hideKeyboard(activity: Activity) {
+        fun hideKeyboard(activity: Activity)
+        {
             val imm = activity
-                .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    .getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             var view = activity.currentFocus
-            if (view == null) {
+            if (view == null)
+            {
                 // There is no view to pass the focus to, so we create a new view
                 view = View(activity)
             }
@@ -120,14 +136,18 @@ open class VedibartaActivity : AppCompatActivity() {
         fun showSplash(activity: Activity, loadMessage: String)
         {
             splashScreen.increment()
-            try {
-                val rippleBackground = activity.findViewById<RippleBackground>(R.id.rippleBackground)
+            try
+            {
+                val rippleBackground =
+                    activity.findViewById<RippleBackground>(R.id.rippleBackground)
                 val splashText = activity.findViewById<TextView>(R.id.splashText)
-                changeStatusBarColor(activity, ContextCompat.getColor(activity, R.color.backgroundSplash))
+                changeStatusBarColor(activity,
+                                     ContextCompat.getColor(activity, R.color.backgroundSplash))
                 splashText.text = loadMessage
                 rippleBackground.startRippleAnimation()
 
-            } catch (e: Exception)
+            }
+            catch (e: Exception)
             {
                 splashScreen.decrement() //just in case of failure
             }
@@ -140,7 +160,8 @@ open class VedibartaActivity : AppCompatActivity() {
          */
         fun hideSplash(activity: Activity)
         {
-            changeStatusBarColor(activity, ContextCompat.getColor(activity, R.color.colorPrimaryDark))
+            changeStatusBarColor(activity,
+                                 ContextCompat.getColor(activity, R.color.colorPrimaryDark))
             val rippleBackground = activity.findViewById<RippleBackground>(R.id.rippleBackground)
             rippleBackground.stopRippleAnimation()
             splashScreen.decrement()
@@ -152,8 +173,10 @@ open class VedibartaActivity : AppCompatActivity() {
          * @param activity: current running activity
          * @param color: the selected color for the status bar
          */
-        fun changeStatusBarColor(activity: Activity, color: Int) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        fun changeStatusBarColor(activity: Activity, color: Int)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            {
                 val window = activity.window
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                 window.statusBarColor = color
@@ -161,26 +184,36 @@ open class VedibartaActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?)
+    {
+        super.onCreate(savedInstanceState, persistentState)
+    }
+
+    override fun onStart()
+    {
         super.onStart()
         tryRedirectToLogin()
     }
 
-    override fun onResume() {
+    override fun onResume()
+    {
         super.onResume()
         tryRedirectToLogin()
         isActivityRunning = true
         setVisible(true)
     }
 
-    override fun onPause() {
+    override fun onPause()
+    {
         super.onPause()
         isActivityRunning = false
         setVisible(false)
     }
 
-    private fun tryRedirectToLogin() {
-        if (user == null) {
+    private fun tryRedirectToLogin()
+    {
+        if (user == null)
+        {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -202,7 +235,8 @@ open class VedibartaActivity : AppCompatActivity() {
      * @param root: the context's root element (activity's root layout)
      * @param msg:  the message displayed in the snackbar
      */
-    protected open fun makeHighlightedSnackbar(root: View, msg: String) {
+    protected open fun makeHighlightedSnackbar(root: View, msg: String)
+    {
         val snackbar = Snackbar.make(root, msg, Snackbar.LENGTH_SHORT)
         val textView =
             snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
@@ -215,8 +249,10 @@ open class VedibartaActivity : AppCompatActivity() {
      *
      * @param color: the selected color for the status bar
      */
-    protected fun changeStatusBarColor(color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    protected fun changeStatusBarColor(color: Int)
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
             val window = window
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = color
@@ -232,13 +268,15 @@ open class VedibartaActivity : AppCompatActivity() {
      * @param msg:     message to display to the user while loading
      * @param timeout: amount of time (in milliseconds) before the progress dialog is dismissed
      */
-    protected open fun startLoading(msg: String?, timeout: Int?) {
+    protected open fun startLoading(msg: String?, timeout: Int?)
+    {
         progress = ProgressDialog(this)
         progress!!.setCancelable(false)
         progress!!.isIndeterminate = true
         progress!!.setMessage(msg)
         progress!!.show()
-        if (progressHandler == null) {
+        if (progressHandler == null)
+        {
             progressHandler = Handler()
         }
         progressHandler!!.removeCallbacks(loadTimeoutTask)
@@ -250,7 +288,8 @@ open class VedibartaActivity : AppCompatActivity() {
     /**
      * Dismisses a loading progress dialog. Should be called after [startLoading]
      */
-    protected open fun stopLoading() {
+    protected open fun stopLoading()
+    {
         if (progress == null || !progress!!.isShowing) return
         progress!!.dismiss()
         progressHandler?.removeCallbacks(loadTimeoutTask)
@@ -263,16 +302,20 @@ open class VedibartaActivity : AppCompatActivity() {
      *
      * @param loadMessage: the message to be displayed on the splash screen
      */
-    fun showSplash(loadMessage: String) {
+    fun showSplash(loadMessage: String)
+    {
         splashScreen.increment()
-        try {
+        try
+        {
             val rippleBackground = this.findViewById<RippleBackground>(R.id.rippleBackground)
             val splashText = this.findViewById<TextView>(R.id.splashText)
             changeStatusBarColor(this, ContextCompat.getColor(this, R.color.backgroundSplash))
             splashText.text = loadMessage
             rippleBackground.startRippleAnimation()
 
-        } catch (e: Exception) {
+        }
+        catch (e: Exception)
+        {
             splashScreen.decrement()
         }
     }
@@ -280,7 +323,8 @@ open class VedibartaActivity : AppCompatActivity() {
     /**
      * Cancels the splash's animation and returns the status bar color back to its default color
      */
-    fun hideSplash() {
+    fun hideSplash()
+    {
         changeStatusBarColor(this, ContextCompat.getColor(this, R.color.colorPrimaryDark))
         val rippleBackground = this.findViewById<RippleBackground>(R.id.rippleBackground)
         rippleBackground.stopRippleAnimation()

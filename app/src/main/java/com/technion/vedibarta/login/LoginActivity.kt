@@ -22,13 +22,15 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.dagger.AppComponent.Companion.injector
 import com.technion.vedibarta.main.MainActivity
-import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
+import com.technion.vedibarta.utilities.DataBase
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.splashScreen
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
 import kotlinx.android.synthetic.main.activity_login.*
+import javax.inject.Inject
 
 
 private const val REQ_GOOGLE_SIGN_IN = 1
@@ -55,13 +57,15 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+    @Inject lateinit var database: DataBase
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_login)
         Log.d(TAG, "onCreate: Invoked")
+
+        injector.inject(this)
 
         auth = FirebaseAuth.getInstance()
 
@@ -97,8 +101,9 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         // Reloading the current user because he could have been deleted since the last login.
         auth.currentUser?.reload()?.let {
             activateSplash()
-
+            Log.d("wtf", "activated splash")
             it.continueWithTask {
+                Log.d("wtf", "updating ui")
                 updateUIForCurrentUser(auth.currentUser)
             }.addOnSuccessListener { willRedirect ->
                 // Hide splash-screen if we are not about to be redirected to another activity.
@@ -320,6 +325,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 viewFlipper.showNext()
                 showSplash(this, getString(R.string.default_loading_message))
             }
+            Log.d("wtf", "database accessing")
             database.userId = user.uid
             database.students().userId().build().get().continueWith { task ->
                 val document = task.result

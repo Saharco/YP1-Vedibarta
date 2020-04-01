@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
+import com.technion.vedibarta.utilities.DataBase
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.HashMap
 
@@ -20,6 +21,7 @@ class MainSearchByNameAdapter(private val applicationContext: Context,
                               private val mainActivity: MainActivity): MainsSearchAdapter<String>(mainActivity.chat_history)
 {
     private var filteredList = listOf<ChatMetadata>()
+    private val database: DataBase = mainActivity.database
 
     override fun filter(query: String)
     {
@@ -35,7 +37,7 @@ class MainSearchByNameAdapter(private val applicationContext: Context,
     {
         val userNameView =
             LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-        return ViewHolder(userNameView, mainActivity.userId!!, applicationContext)
+        return ViewHolder(userNameView, mainActivity.userId!!, applicationContext, database)
     }
 
     override fun getItemCount(): Int
