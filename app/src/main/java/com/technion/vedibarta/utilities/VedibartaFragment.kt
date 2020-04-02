@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.get
@@ -19,6 +20,8 @@ import com.technion.vedibarta.R
 import de.hdodenhof.circleimageview.CircleImageView
 import com.bumptech.glide.request.RequestOptions
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.toBaseLanguage
 import com.technion.vedibarta.utilities.services.Languages
 import com.technion.vedibarta.utilities.services.translate
 
@@ -74,23 +77,30 @@ open class VedibartaFragment : Fragment() {
                 tableRow.layoutParams = tableRowParams
                 tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
-                var bubbleFrame: FrameLayout
+
 
                 for (j in 0 until steps) {
                     if (i + j >= characteristics.size)
                         break
+                    val bubbleFrame = LayoutInflater.from(context).inflate(
+                        R.layout.user_profile_bubble_blue,
+                        null
+                    ) as FrameLayout
+                    val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
+
                     if (isContained(context, student, characteristics[i + j])) {
-                        bubbleFrame = LayoutInflater.from(context).inflate(
-                            R.layout.user_profile_bubble_blue,
-                            null
-                        ) as FrameLayout
+//                        bubbleFrame = LayoutInflater.from(context).inflate(
+//                            R.layout.user_profile_bubble_blue,
+//                            null
+//                        ) as FrameLayout
                         bubbleFrame.alpha = 1f
                         bubbleFrame.tag = SELECTED_BUBBLE
                     } else {
-                        bubbleFrame = LayoutInflater.from(context).inflate(
-                            R.layout.user_profile_bubble_blue_selected,
-                            null
-                        ) as FrameLayout
+//                        bubbleFrame = LayoutInflater.from(context).inflate(
+//                            R.layout.user_profile_bubble_blue_selected,
+//                            null
+//                        ) as FrameLayout
+                        bubble.background = ContextCompat.getDrawable(context, R.drawable.circle_cyan)
                         bubbleFrame.alpha = 0.6f
                         bubbleFrame.tag = NON_SELECTED_BUBBLE
                     }
@@ -104,7 +114,6 @@ open class VedibartaFragment : Fragment() {
                             student
                         )
                     }
-                    val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
                     bubble.text = characteristics[i + j]
                     bubbleFrame.layoutParams = bubbleParams
                     tableRow.addView(bubbleFrame)
@@ -123,12 +132,12 @@ open class VedibartaFragment : Fragment() {
            if(student.gender == Gender.NONE)
                return false
 
-            val characteristic: String = s.translate(context)
-                .characteristics()
-                .from(Languages.HEBREW, student.gender)
-                .to(Languages.BASE)
-                .execute().first()
-            return student.characteristics.contains(characteristic)
+//            val characteristic: String = s.translate(context)
+//                .characteristics()
+//                .from(Languages.HEBREW, student.gender)
+//                .to(Languages.BASE)
+//                .execute().first()
+            return student.characteristics.contains(s)
         }
 
         private fun characteristicsTableItemClickHandler(
@@ -141,59 +150,66 @@ open class VedibartaFragment : Fragment() {
             val steps = calculateBubblesInRow(context)
             val row = view.id / steps
             val tableRow = table[row] as TableRow
-            val bubbleFrame: FrameLayout
+            val bubbleFrame = view as FrameLayout
             val viewPos = view.id % steps
-
-            if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
-                bubbleFrame = LayoutInflater.from(context).inflate(
-                    R.layout.user_profile_bubble_blue,
-                    null
-                ) as FrameLayout
-
-                bubbleFrame.alpha = 1f
-                bubbleFrame.tag = SELECTED_BUBBLE
-
-                val char = characteristics[view.id].translate(context).characteristics()
-                    .from(Languages.HEBREW, student.gender)
-                    .to(Languages.BASE).execute().first()
-
-                student.characteristics[char] = true
-
-            } else {
-                bubbleFrame = LayoutInflater.from(context).inflate(
-                    R.layout.user_profile_bubble_blue_selected,
-                    null
-                ) as FrameLayout
-
-                bubbleFrame.alpha = 0.6f
-                bubbleFrame.tag = NON_SELECTED_BUBBLE
-
-                val char = characteristics[view.id].translate(context).characteristics()
-                    .from(Languages.HEBREW, student.gender)
-                    .to(Languages.BASE).execute().first()
-
-                student.characteristics.remove(char)
-
-            }
-
-            bubbleFrame.id = view.id
-            bubbleFrame.setOnClickListener {
-                characteristicsTableItemClickHandler(
-                    it,
-                    context,
-                    characteristics,
-                    table,
-                    student
-                )
-            }
-
-
             val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
-            bubble.text = characteristics[view.id]
-            bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
+            RemoteResourcesManager(context)
+                .findMultilingualResource("characteristics")
+                .addOnSuccessListener {
 
-            tableRow.removeViewAt(viewPos)
-            tableRow.addView(bubbleFrame, viewPos)
+                    val char = it.toBaseLanguage(characteristics[view.id])
+                    student.characteristics[char] = true
+                    it.close()
+
+                    if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
+//                        bubbleFrame = LayoutInflater.from(context).inflate(
+//                            R.layout.user_profile_bubble_blue,
+//                            null
+//                        ) as FrameLayout
+                        bubble.background = ContextCompat.getDrawable(context, R.drawable.circle_blue)
+                        bubbleFrame.alpha = 1f
+                        bubbleFrame.tag = SELECTED_BUBBLE
+
+//                val char = characteristics[view.id].translate(context).characteristics()
+//                    .from(Languages.HEBREW, student.gender)
+//                    .to(Languages.BASE).execute().first()
+//
+                        student.characteristics[char] = true
+
+                    } else {
+//                        bubbleFrame = LayoutInflater.from(context).inflate(
+//                            R.layout.user_profile_bubble_blue_selected,
+//                            null
+//                        ) as FrameLayout
+                        bubble.background = ContextCompat.getDrawable(context, R.drawable.circle_cyan)
+                        bubbleFrame.alpha = 0.6f
+                        bubbleFrame.tag = NON_SELECTED_BUBBLE
+
+//                        val char = characteristics[view.id].translate(context).characteristics()
+//                            .from(Languages.HEBREW, student.gender)
+//                            .to(Languages.BASE).execute().first()
+
+                        student.characteristics.remove(char)
+
+                    }
+
+                    bubbleFrame.id = view.id
+                    bubbleFrame.setOnClickListener {
+                        characteristicsTableItemClickHandler(
+                            it,
+                            context,
+                            characteristics,
+                            table,
+                            student
+                        )
+                    }
+
+                    bubble.text = characteristics[view.id]
+                    bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
+
+                    tableRow.removeViewAt(viewPos)
+                    tableRow.addView(bubbleFrame, viewPos)
+                }
         }
         //-------------------------------
 

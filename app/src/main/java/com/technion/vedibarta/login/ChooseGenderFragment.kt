@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Gender
@@ -17,6 +18,7 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.extensions.putGender
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import kotlinx.android.synthetic.main.fragment_choose_gender.*
 
@@ -55,6 +57,8 @@ class ChooseGenderFragment : VedibartaFragment() {
             ).show()
         }
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
+        PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
+            .putGender(Gender.FEMALE).apply()
         reloadCharacteristics()
 
     }
@@ -74,6 +78,8 @@ class ChooseGenderFragment : VedibartaFragment() {
             ).show()
         }
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
+        PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
+            .putGender(Gender.MALE).apply()
         reloadCharacteristics()
     }
 

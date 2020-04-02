@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.fragment_choose_characteristics.*
+import kotlin.random.Random
+
 
 /**
  * A simple [Fragment] subclass.
@@ -17,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_choose_characteristics.*
 class ChooseCharacteristicsFragment : VedibartaFragment() {
 
     private val TAG = "CharFragment@Setup"
+    private lateinit var resourcesManager: RemoteResourcesManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,19 +31,24 @@ class ChooseCharacteristicsFragment : VedibartaFragment() {
 
     override fun onStart() {
         super.onStart()
-        val characteristics = if ((activity as UserSetupActivity).setupStudent.gender != Gender.FEMALE)
-            resources.getStringArray(R.array.characteristicsMale)
-        else
-            resources.getStringArray(R.array.characteristicsFemale)
-        populateCharacteristicsTable(activity as UserSetupActivity, searchCharacteristics, characteristics.toList().shuffled().toTypedArray(), (activity as UserSetupActivity).setupStudent)
+        resourcesManager = RemoteResourcesManager(context!!)
+        resourcesManager.findMultilingualResource("characteristics")
+            .addOnSuccessListener {
+                populateCharacteristicsTable(activity as UserSetupActivity, searchCharacteristics, it.getAll().shuffled(Random(42)).toTypedArray(), (activity as UserSetupActivity).setupStudent)
+            }
 
-        //val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
-
-        //populateCharacteristicsTable(activity as UserSetupActivity, table, characteristics, (activity as UserSetupActivity).setupStudent)
-
-//        return view
+//        val characteristics = if ((activity as UserSetupActivity).setupStudent.gender != Gender.FEMALE)
+//            resources.getStringArray(R.array.characteristicsMale)
+//        else
 //            resources.getStringArray(R.array.characteristicsFemale)
+
 //        populateCharacteristicsTable(activity as UserSetupActivity, searchCharacteristics, characteristics.toList().shuffled().toTypedArray(), (activity as UserSetupActivity).setupStudent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        resourcesManager.findResource("characteristics")
+            .addOnSuccessListener { it.close() }
     }
 
 }
