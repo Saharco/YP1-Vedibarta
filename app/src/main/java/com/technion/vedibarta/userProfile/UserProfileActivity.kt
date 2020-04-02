@@ -57,6 +57,8 @@ import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
 
 class UserProfileActivity : VedibartaActivity(),
@@ -209,36 +211,72 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun loadUserData() {
-        val characteristics: Array<String> = student!!.characteristics.keys
-            .translate(this)
-                .characteristics()
-                .from(Languages.BASE)
-                .to(Languages.HEBREW, student!!.gender)
-                .execute()
+        RemoteResourcesManager(this)
+            .findMultilingualResource("characteristics")
+            .addOnSuccessListener {
+                val characteristics = it.toCurrentLanguage(student!!.characteristics.keys.toTypedArray())
 
-        VedibartaFragment.populateCharacteristicsTable(
-            this,
-            characteristicsTable,
-            characteristics,
-            student!!
-        )
-        val hobbies = student!!.hobbies.toTypedArray()
-            .translate(this)
-            .hobbies()
-            .from(Languages.BASE)
-            .to(Languages.HEBREW)
-            .execute()
-        VedibartaFragment.populateHobbiesTable(
-            this,
-            hobbiesTable,
-            hobbies,
-            student!!
-        )
-        characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
-        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
-        populateProfilePicture()
-        populateUsername()
-        populateUserRegion()
+                VedibartaFragment.populateCharacteristicsTable(
+                    this,
+                    characteristicsTable,
+                    characteristics,
+                    student!!
+                )
+                it.close()
+
+                characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+
+                RemoteResourcesManager(this)
+                    .findMultilingualResource("hobbies/all")
+                    .addOnSuccessListener {
+                        val hobbies = it.toCurrentLanguage(student!!.hobbies.toTypedArray())
+
+                        VedibartaFragment.populateHobbiesTable(
+                            this,
+                            hobbiesTable,
+                            hobbies,
+                            student!!
+                        )
+                        it.close()
+                        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+
+                    }
+
+                populateProfilePicture()
+                populateUsername()
+                populateUserRegion()
+
+            }
+//        val characteristics: Array<String> = student!!.characteristics.keys
+//            .translate(this)
+//                .characteristics()
+//                .from(Languages.BASE)
+//                .to(Languages.HEBREW, student!!.gender)
+//                .execute()
+//
+//        VedibartaFragment.populateCharacteristicsTable(
+//            this,
+//            characteristicsTable,
+//            characteristics,
+//            student!!
+//        )
+//        val hobbies = student!!.hobbies.toTypedArray()
+//            .translate(this)
+//            .hobbies()
+//            .from(Languages.BASE)
+//            .to(Languages.HEBREW)
+//            .execute()
+//        VedibartaFragment.populateHobbiesTable(
+//            this,
+//            hobbiesTable,
+//            hobbies,
+//            student!!
+//        )
+//        characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+//        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+//        populateProfilePicture()
+//        populateUsername()
+//        populateUserRegion()
     }
 
     private fun populateUserRegion() {

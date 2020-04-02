@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentTransaction
+import androidx.preference.PreferenceManager
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -28,7 +29,10 @@ import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.splashScreen
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
+import com.technion.vedibarta.utilities.extensions.putGender
+import com.technion.vedibarta.utilities.extensions.putLanguage
 import kotlinx.android.synthetic.main.activity_login.*
+import java.util.*
 
 
 private const val REQ_GOOGLE_SIGN_IN = 1
@@ -327,6 +331,9 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 {
                     Log.d(TAG, "document exists. redirecting to main activity")
                     student = document.toObject(Student::class.java)
+                    PreferenceManager.getDefaultSharedPreferences(this).edit()
+                        .putGender(student!!.gender)
+                        .putLanguage(Locale.getDefault().displayLanguage).apply()
                     startActivity(Intent(this, MainActivity::class.java)) // change to Main later
                     finish()
                 }
