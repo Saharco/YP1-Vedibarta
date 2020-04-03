@@ -1,0 +1,185 @@
+<resources>
+    <string name="app_name">لتعارفوا</string>
+
+    <!--    General shared attributes   -->
+    <string name="back">ارجع</string>
+    <string name="or">او</string>
+    <string name="allowed_letters_regex">[چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ]+</string>
+    <string name="allowed_letters">چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="ok">حسنا</string>
+
+    <!--    UserProfile attribute   -->
+    <string name="user_profile_title">البروفيل الشخصي</string>
+    <string name="user_title_picture_overlay">صورة غلاف الملف الشخصي</string>
+    <string name="user_profile_picture_overlay">صورة بروفيل</string>
+    <string name="reportAbuse">الإبلاغ عن مشكلة</string>
+    <string name="generateQuestion">مقترح الأسئلة</string>
+    <string name="user_profile_hobbies">هواياتي</string>
+    <string name="user_profile_characteristics">اعرف نفسي ك</string>
+    <string name="action_edit_profile_title">اعداد البروفيل</string>
+    <string name="action_save_profile_edit">إحفظ التغييرات</string>
+    <string name="edit_changes_saved_successfully">كانت التغييرات ناجحة</string>
+    <string name="edit_discard_changes_title">إلغ التغييرات</string>
+    <string name="edit_discard_changes_message">أكيد بدك تلغي التغييرات؟</string>
+    <string name="action_logout_title">الخروج</string>
+    <string name="user_profile_dialog_title_suffix_m">حمل صورتك</string>
+    <string name="user_profile_dialog_title_suffix_f">حملي صورتك</string>
+    <string name="user_profile_dialog_description">يجب اختيار مضامين مناسبة فقط\nستحذف المضامين غير المناسبة</string>
+    <string name="user_profile_dialog_camera_button">كاميرا</string>
+    <string name="user_profile_dialog_gallery_button">جاليريا</string>
+    <string name="user_profile_dialog_dismiss_button">إلغاء</string>
+    <string name="dialog_logout_title">الخروج</string>
+    <string name="dialog_logout_message_m">متأكد من الخروج؟</string>
+    <string name="dialog_logout_message_f">متأكدة من الخروج؟</string>
+    <string name="profile_edit_title">إعداد البروفيل</string>
+    <string name="characteristics_tab_title">مميزات الهوية</string>
+    <string name="hobbies_tab_title">هوايات</string>
+
+    <!--    ChatCandidates attribute   -->
+    <string name="chat_candidates_title">إختيار شريك</string>
+    <string name="chat_candidate_accept_button_m">تعال نحكي</string>
+    <string name="chat_candidate_accept_button_f">تعالي نحكي</string>
+
+    <!--   ChatSearch attribute   -->
+    <string name="chat_search_title">البحث</string>
+    <string name="filter_by_school_text">فلتر المدارس</string>
+    <string name="filter_by_region_text">فلتر منطقة السكن</string>
+    <string name="chat_search_button">البحث</string>
+    <string name="chat_search_wrong_details_title">خطأ بالتفاصيل</string>
+    <string name="chat_search_wrong_region_message">عليك إختيار مكان السكن من القائمة</string>
+    <string name="chat_search_wrong_school_message">عليك إختيار المدرسة  من القائمة</string>
+    <string name="chat_search_no_characteristics_chosen_message">عليك اختيار مركب هوية واحد على الأقل</string>
+    <string name="no_matching_students">لا يوجد طلاب</string>
+
+    <!--    UserSetup Attributes  -->
+    <string name="user_setup_title">اعدادات المستخدم</string>
+    <string name="choose_gender_text">كيف نتوجه اليك ؟</string>
+    <string name="user_setup_characteristics_title">مميزات الهوية</string>
+    <string name="user_setup_extra_options_title">تفاصيل شخصية</string>
+    <string name="user_setup_school_info_title">تفاصيل المدرسة</string>
+    <string name="user_setup_hobbies_title">هوايات</string>
+    <string name="user_setup_region_title">منطقة السكن</string>
+    <string name="user_setup_school_title">المدرسة</string>
+    <string name="user_setup_first_name_title">الإسم الشخصي</string>
+    <string name="user_setup_last_name_title">اسم العائلة</string>
+    <string name="user_setup_done_title">الإنتهاء</string>
+    <string name="text_field_hint">العبري/فقط العربية</string>
+    <string name="user_setup_missing_details_dialog_title">تفاصيل ناقصة</string>
+    <string name="checking_document">يتزامن مع الشبكة</string>
+    <string name="user_setup_dialog_message_m">اسحب لليسار للانتقال إلى الصفحة التالية</string>
+    <string name="user_setup_dialog_message_f">اسحب لليسار للانتقال إلى الصفحة التالية</string>
+    <string name="user_setup_male_option">ولد</string>
+    <string name="user_setup_female_option">بنت</string>
+    <string name="user_setup_gender_missing">يجب الاختيار ولد/بنت</string>
+    <string name="user_setup_first_name_missing">يجب تعبئة الاسم الشخصي </string>
+    <string name="user_setup_wrong_school_and_region_combination">المدرسة غير موجودة في الموقع المدرج ، يجب اختيار المدرسة والموقع من القائمة</string>
+    <string name="user_setup_last_name_missing">يجب تعبئة اسم العائلة</string>
+    <string name="user_setup_school_missing">يجب اختيار مدرسة من القائمة</string>
+    <string name="user_setup_region_missing">يجب اختيار مكان السكن من القائمة</string>
+    <string name="user_setup_characteristics_missing">يجب اختيار مركبات الهوية</string>
+    <string name="user_setup_hobbies_missing">يجب اختيار الهوايات</string>
+    <string name="chat_room_abuse_dialog_title">ابلاغ</string>
+
+    <!--    ChatRoom attribute   -->
+    <string name="chat_room_abuse_dialog_message">يجب اختيار الأسباب للتبليغ</string>
+    <string name="chat_room_abuse_dialog_option1">عنف كلامي</string>
+    <string name="chat_room_abuse_dialog_option2">تحرش جنسي</string>
+    <string name="chat_room_abuse_dialog_option3">مضامين مضرة</string>
+    <string name="chat_room_abuse_dialog_report_button_m">بلغ</string>
+    <string name="chat_room_abuse_dialog_report_button_f">بلغي</string>
+    <string name="chat_room_abuse_dialog_back_button">الغاء</string>
+    <string name="chat_room_question_generator_title">مقترح الأسئلة</string>
+    <string name="chat_room_question_generator_empty_list_message">لا توجد أسئلة للموضوع</string>
+    <string name="chat_room_question_generator_question_title">أسئلة على سبيل المثال:</string>
+    <string name="chat_room_enter_message_m">اكتب رسالة</string>
+    <string name="chat_room_enter_message_f">اكتبي رسالة</string>
+    <string name="sending_message">يبعث..</string>
+
+    <!--    LoginScreen attribute   -->
+    <string name="facebook_app_id">3227815763959885</string>
+    <string name="fb_login_protocol_scheme">fb3227815763959885</string>
+    <string name="continue_with_facebook_hebrew">الدخول بواسطة فيسبوك</string>
+    <string name="sign_out_from_facebook_hebrew">الخروج من حساب الفيسبوك</string>
+    <string name="sign_in_with_google_hebrew">الدخول بواسطة جوجل</string>
+    <string name="email_sign_in">سجل بواسطة جوجل</string>
+    <string name="already_a_user">مستخدم مسجل؟</string>
+    <string name="sign_in">الدخول</string>
+    <string name="login_title">الاتصال</string>
+    <string name="enter_email_hint">البريد الالكتروني</string>
+    <string name="enter_password_hint">كلمة السر</string>
+    <string name="sign_up_title">التسجيل</string>
+    <string name="enter_password_repeat_hint">التحقق من كلة السر</string>
+    <string name="enter_first_name_hint">الاسم الشخصي</string>
+    <string name="enter_last_name_hint">اسم العائلة</string>
+    <string name="sign_up">سجل</string>
+    <string name="progress_dialog_loading">تحميل…</string>
+    <string name="sending_verification_email">يتم ارسال بريد الكتروني للتأكيد</string>
+    <string name="email_sent_successfully">الرسالة بعثت بنجاح</string>
+    <string name="sign_in_error">خطأ بالاتصال</string>
+
+    <!--    Error Messages  -->
+    <string name="something_went_wrong">حدث خطأ</string>
+    <string name="blank_input_error">الرجاء التعبئة</string>
+    <string name="email_format_error">ادخل عنوان بشكل  mail@client.com</string>
+    <string name="short_password_error">على كلمة السر ان تشمل على الأقل 8 حروف</string>
+    <string name="wrong_password_repeat">كلمات السر غير متشابهة</string>
+    <string name="email_not_verified_error">الرجاء تعبئة البريد الالكتروني</string>
+    <string name="timeout_error">خطأ: العملية تستغرق وقت طويل</string>
+
+    <!-- MainActivity attributes-->
+    <string name="main_title">لتعارفوا</string>
+    <string name="main_fab_title">فتش عن أصدقاء</string>
+    <string name="main_menu_search_title">البحث</string>
+    <string name="user_profile_action_title">بروفيل</string>
+    <string name="app_label">Vedibarta</string>
+    <string name="empty_chat_list_message_m">أنت لا تشارك أي محادثة.\nتعال، ابحث عن أصدقاء</string>
+    <string name="empty_chat_list_message_f">أنت لا تشارك أي محادثة.\nتعال، ابحث عن أصدقاء</string>
+
+    <string-array name="menuitems">
+        <item>Menu Item 0</item>
+        <item>Menu Item 1</item>
+        <item>Menu Item 2</item>
+    </string-array>
+
+    <!-- MainActivity Chat-->
+    <string name="sent">تم الارسال</string>
+    <string name="just_now">الآن</string>
+    <string name="before">قبل</string>
+    <string name="hours">ساعات</string>
+    <string name="days">ايام</string>
+    <string name="yesterday">امس</string>
+
+
+    <!--  FCM  -->
+    <string name="vedibarta_notification_channel_name">ודיברת</string>
+
+    <string name="payload_display_status">display_status</string>
+    <string name="payload_admin_broadcast">admin_broadcast</string>
+    <string name="payload_data_message_title">title</string>
+    <string name="payload_data_message_body">body</string>
+    <string name="payload_data_notification_type">notification_type</string>
+    <string name="payload_data_sender_id">sender_id</string>
+    <string name="payload_data_sender_photo">sender_photo_url</string>
+    <string name="payload_data_notification_time">notification_time</string>
+    <string name="payload_data_sender_msg">sender_msg</string>
+    <string name="payload_data_sender_name">sender_name</string>
+    <string name="payload_data_chat_id">chat_id</string>
+    <string name="payload_data_photo">photo</string>
+
+    <!--  Notification messages  -->
+    <string name="notification_chat_title_prefix">رسالة جديدة من</string>
+
+    <!--  VedibartaActivity  -->
+    <string name="dialog_timeout_title">حدث خطأ</string>
+    <string name="dialog_timeout_body">العملية تستغرق وقت طويا!\nيجب فحص الاتصال بالانترنت والمحاولة مرة اخرى</string>
+
+    <!--  Splash  -->
+    <string name="chat_search_loading_message">فتش عن اصدقاء</string>
+    <string name="default_loading_message">نلتقي بالآخر بالصف</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
