@@ -56,7 +56,7 @@ class RemoteResourcesManager(
         fileReference: StorageReference,
         name: String = fileReference.name
     ): Task<FileResource> {
-        val file = File.createTempFile(name, null, context.filesDir)
+        val file = File.createTempFile(name.replace("/", "_"), null, context.filesDir)
 
         return fileReference.getFile(file).continueWith {
             file.setReadOnly()

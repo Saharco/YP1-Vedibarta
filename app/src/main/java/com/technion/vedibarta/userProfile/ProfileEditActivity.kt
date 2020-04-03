@@ -12,15 +12,25 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
+import com.google.android.gms.tasks.Task
+import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 
 class ProfileEditActivity : VedibartaActivity() {
 
     private val TAG = "ProfileEditActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
+
+    lateinit var hobbyCardTask: Task<List<HobbyCard>>
+    lateinit var hobbiesResourceTask: Task<MultilingualResource>
+
+    lateinit var characteristicsTask : Task<MultilingualResource>
 
     private var startingCharacteristics = student!!.characteristics.toMutableMap()
     private var startingHobbies = student!!.hobbies.toMutableSet()
@@ -33,6 +43,13 @@ class ProfileEditActivity : VedibartaActivity() {
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
         setupViewPager(editProfileContainer)
+
+        hobbiesResourceTask = RemoteResourcesManager(this)
+            .findMultilingualResource("hobbies/all")
+
+        hobbyCardTask = VedibartaFragment.loadHobbies(this)
+
+        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics")
 
         editTabs.setupWithViewPager(editProfileContainer)
         setToolbar(toolbar)
@@ -116,5 +133,11 @@ class ProfileEditActivity : VedibartaActivity() {
         )
             return true
         return false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        characteristicsTask.result!!.close()
+        hobbiesResourceTask.result!!.close()
     }
 }

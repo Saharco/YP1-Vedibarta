@@ -10,8 +10,13 @@ import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 
-class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Student) :
+class HobbiesAdapter(
+    private val hobbyCard: List<HobbyCard>,
+    val student: Student,
+    private val hobbiesResource: MultilingualResource
+) :
     RecyclerView.Adapter<HobbiesAdapter.HobbyCardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HobbyCardViewHolder {
@@ -26,7 +31,7 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Studen
     }
 
     override fun onBindViewHolder(holder: HobbyCardViewHolder, position: Int) {
-        holder.bind(hobbyCard[holder.adapterPosition], student)
+        holder.bind(hobbyCard[holder.adapterPosition], student, hobbiesResource)
     }
 
     class HobbyCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,7 +41,8 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Studen
 
         fun bind(
             hobbyCard: HobbyCard,
-            student: Student
+            student: Student,
+            hobbiesResource: MultilingualResource
         ) {
             header = itemView.findViewById(R.id.hobbyCardTitle)
             table = itemView.findViewById(R.id.hobbiesTables)
@@ -47,7 +53,8 @@ class HobbiesAdapter(private val hobbyCard: List<HobbyCard>, val student: Studen
                 itemView.context,
                 table,
                 hobbyCard.hobbies,
-                student
+                student,
+                hobbiesResource
             )
 
         }

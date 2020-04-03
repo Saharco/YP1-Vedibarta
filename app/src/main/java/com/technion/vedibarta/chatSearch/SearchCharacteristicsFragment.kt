@@ -1,25 +1,19 @@
 package com.technion.vedibarta.chatSearch
 
 
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.TableLayout
-import android.widget.TableRow
-import android.widget.TextView
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Student
+import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.services.TranslationServiceFactory
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import kotlinx.android.synthetic.main.fragment_search_characteristics.*
+import kotlin.random.Random
 
 /**
  * A simple [Fragment] subclass.
@@ -27,7 +21,6 @@ import com.technion.vedibarta.utilities.services.TranslationServiceFactory
 class SearchCharacteristicsFragment : VedibartaFragment() {
 
     private val TAG = "CharFragment@Search"
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,14 +28,15 @@ class SearchCharacteristicsFragment : VedibartaFragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search_characteristics, container, false)
         val act = (activity as ChatSearchActivity)
-        val characteristics : Array<String> = if (VedibartaActivity.student!!.gender != Gender.FEMALE)
-            resources.getStringArray(R.array.characteristicsMale)
-        else
-            resources.getStringArray(R.array.characteristicsFemale)
-        val table = view.findViewById(R.id.searchCharacteristics) as TableLayout
-        populateCharacteristicsTable(act, table, characteristics.toMutableList().shuffled().toTypedArray(), act.fakeStudent)
 
+        Tasks.whenAll(act.characteristicsTask)
+            .addOnSuccessListener {
+                loading.visibility = View.GONE
+                populateCharacteristicsTable(act, searchCharacteristics, act.characteristicsTask.result!!.getAll().shuffled(
+                    Random(42)
+                ).toTypedArray(), act.fakeStudent, act.characteristicsTask.result!!)
+
+            }
         return view
     }
-
 }

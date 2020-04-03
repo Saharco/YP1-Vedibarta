@@ -16,6 +16,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import com.google.android.gms.tasks.Task
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
@@ -25,6 +27,8 @@ import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.extensions.isInForeground
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_chat_search.*
 
 class ChatSearchActivity : VedibartaActivity() {
@@ -40,6 +44,8 @@ class ChatSearchActivity : VedibartaActivity() {
     lateinit var schoolsName: Array<String>
     lateinit var regionsName: Array<String>
     lateinit var schoolTags: Array<Int>
+
+    lateinit var characteristicsTask : Task<MultilingualResource>
 
     var chosenSchool: String? = null
     var chosenRegion: String? = null
@@ -57,6 +63,8 @@ class ChatSearchActivity : VedibartaActivity() {
             chosenSchool = savedInstanceState.getString("SCHOOL")
             chosenRegion = savedInstanceState.getString("REGION")
         }
+
+        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics")
 
         schoolsName = resources.getStringArray(R.array.schoolNameList)
         regionsName =
@@ -231,5 +239,10 @@ class ChatSearchActivity : VedibartaActivity() {
             }
         }
         return result
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        characteristicsTask.result!!.close()
     }
 }

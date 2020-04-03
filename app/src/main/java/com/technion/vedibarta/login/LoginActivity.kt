@@ -1,11 +1,13 @@
 package com.technion.vedibarta.login
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.preference.PreferenceManager
 import com.facebook.AccessToken
@@ -276,7 +278,6 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount)
     {
         Log.d(TAG, "firebaseAuthWithGoogle: ${account.id!!}")
-
         val dialog = ProgressDialog(this).apply {
             setMessage(getString(R.string.progress_dialog_loading))
             setCancelable(false)
