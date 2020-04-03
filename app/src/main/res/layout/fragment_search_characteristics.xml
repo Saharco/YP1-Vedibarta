@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@android:color/transparent"
+tools:context=".chatSearch.SearchCharacteristicsFragment">
+
+<ProgressBar
+    android:id="@+id/loading"
+    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".chatSearch.SearchCharacteristicsFragment">
+    android:layout_height="wrap_content"
+    android:indeterminate="true"
+    android:visibility="visible"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+<ScrollView
+    android:id="@+id/scrollView"
+    android:background="@android:color/transparent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TableLayout
         android:id="@+id/searchCharacteristics"
@@ -12,3 +30,5 @@
         android:layout_height="wrap_content" />
 
 </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

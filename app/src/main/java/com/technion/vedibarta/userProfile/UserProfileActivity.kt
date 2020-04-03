@@ -36,6 +36,8 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.login.LoginManager
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -50,8 +52,7 @@ import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.services.Languages
-import com.technion.vedibarta.utilities.services.translate
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -82,12 +83,18 @@ class UserProfileActivity : VedibartaActivity(),
 
     private var minimizer: View.OnClickListener? = null
 
+    private lateinit var characteristicsTask : Task<MultilingualResource>
+    private lateinit var hobbiesTask: Task<MultilingualResource>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
         Log.d(TAG, "created UserProfileActivity")
         initWidgets()
-
+        characteristicsTask = RemoteResourcesManager(this)
+            .findMultilingualResource("characteristics")
+        hobbiesTask = RemoteResourcesManager(this)
+            .findMultilingualResource("hobbies/all")
     }
 
     override fun onStart() {
@@ -210,72 +217,36 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun loadUserData() {
-        RemoteResourcesManager(this)
-            .findMultilingualResource("characteristics")
+        Tasks.whenAll(hobbiesTask, characteristicsTask)
             .addOnSuccessListener {
-                val characteristics = it.toCurrentLanguage(student!!.characteristics.keys.toTypedArray())
+                val studentCharacteristics = characteristicsTask.result!!.toCurrentLanguage(student!!.characteristics.keys.toTypedArray())
 
                 VedibartaFragment.populateCharacteristicsTable(
                     this,
                     characteristicsTable,
-                    characteristics,
-                    student!!
+                    studentCharacteristics,
+                    student!!,
+                    characteristicsTask.result!!
                 )
-                it.close()
-
                 characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
 
-                RemoteResourcesManager(this)
-                    .findMultilingualResource("hobbies/all")
-                    .addOnSuccessListener {
-                        val hobbies = it.toCurrentLanguage(student!!.hobbies.toTypedArray())
+                val hobbies = hobbiesTask.result!!.toCurrentLanguage(student!!.hobbies.toTypedArray())
 
-                        VedibartaFragment.populateHobbiesTable(
-                            this,
-                            hobbiesTable,
-                            hobbies,
-                            student!!
-                        )
-                        it.close()
-                        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
-
-                    }
-
-                populateProfilePicture()
-                populateUsername()
-                populateUserRegion()
-
+                VedibartaFragment.populateHobbiesTable(
+                    this,
+                    hobbiesTable,
+                    hobbies,
+                    student!!,
+                    hobbiesTask.result!!
+                )
+                hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+                hobbiesTask.result!!.close()
+                characteristicsTask.result!!.close()
             }
-//        val characteristics: Array<String> = student!!.characteristics.keys
-//            .translate(this)
-//                .characteristics()
-//                .from(Languages.BASE)
-//                .to(Languages.HEBREW, student!!.gender)
-//                .execute()
-//
-//        VedibartaFragment.populateCharacteristicsTable(
-//            this,
-//            characteristicsTable,
-//            characteristics,
-//            student!!
-//        )
-//        val hobbies = student!!.hobbies.toTypedArray()
-//            .translate(this)
-//            .hobbies()
-//            .from(Languages.BASE)
-//            .to(Languages.HEBREW)
-//            .execute()
-//        VedibartaFragment.populateHobbiesTable(
-//            this,
-//            hobbiesTable,
-//            hobbies,
-//            student!!
-//        )
-//        characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
-//        hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
-//        populateProfilePicture()
-//        populateUsername()
-//        populateUserRegion()
+
+            populateProfilePicture()
+            populateUsername()
+            populateUserRegion()
     }
 
     private fun populateUserRegion() {
@@ -374,6 +345,12 @@ class UserProfileActivity : VedibartaActivity(),
             supportActionBar?.title = student!!.name
             changeStatusBarColor(ContextCompat.getColor(this, android.R.color.black))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        characteristicsTask.result!!.close()
+        hobbiesTask.result!!.close()
     }
 
     /**

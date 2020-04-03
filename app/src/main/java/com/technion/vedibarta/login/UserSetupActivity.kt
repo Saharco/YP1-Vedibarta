@@ -12,13 +12,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
+import com.google.android.gms.tasks.Task
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
 class UserSetupActivity : VedibartaActivity() {
@@ -30,6 +35,12 @@ class UserSetupActivity : VedibartaActivity() {
     var setupStudent = Student(
         uid = userId!!
     )
+
+    lateinit var hobbyCardTask: Task<List<HobbyCard>>
+    lateinit var hobbiesResourceTask: Task<MultilingualResource>
+
+    lateinit var characteristicsMaleTask : Task<MultilingualResource>
+    lateinit var characteristicsFemaleTask: Task<MultilingualResource>
 
     lateinit var schoolsName: Array<String>
     lateinit var regionsName: Array<String>
@@ -51,6 +62,14 @@ class UserSetupActivity : VedibartaActivity() {
         if (savedInstanceState?.get(STUDENT_KEY) != null) {
             setupStudent = savedInstanceState[STUDENT_KEY] as Student
         }
+
+        hobbiesResourceTask = RemoteResourcesManager(this)
+            .findMultilingualResource("hobbies/all")
+
+        hobbyCardTask = VedibartaFragment.loadHobbies(this)
+
+        characteristicsMaleTask = RemoteResourcesManager(this).findMultilingualResource("characteristics", Gender.MALE)
+        characteristicsFemaleTask = RemoteResourcesManager(this).findMultilingualResource("characteristics",Gender.FEMALE)
 
         schoolsName = resources.getStringArray(R.array.schoolNameList)
         regionsName =
@@ -198,5 +217,12 @@ class UserSetupActivity : VedibartaActivity() {
             }
         }
         return result
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        hobbiesResourceTask.result!!.close()
+        characteristicsMaleTask.result!!.close()
+        characteristicsFemaleTask.result!!.close()
     }
 }

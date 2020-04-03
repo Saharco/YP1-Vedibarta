@@ -10,5 +10,5 @@ const val Language_KEY = ""
 fun Editor.putGender(gender: Gender) =
     this.putString(GENDER_KEY, gender.toString())
 
-fun Editor.putLanguage(language: Language) =
-    this.putString(Language_KEY, language.toString())
+fun Editor.putLanguage(language: String) =
+    this.putString(Language_KEY, language)
