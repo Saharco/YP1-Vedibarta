@@ -5,7 +5,7 @@ import java.io.Closeable
 /**
  * An Interface for texts resource.
  */
-interface Resource: Closeable {
+interface Resource {
     /**
      * @return all the texts of the resource
      */

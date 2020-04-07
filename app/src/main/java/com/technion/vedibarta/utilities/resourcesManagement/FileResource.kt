@@ -4,23 +4,15 @@ import java.io.File
 
 class FileResource
 internal constructor(
-    private val file: File
+    internal val file: File
 ) : Resource {
-    private val closeListeners = mutableListOf<() -> Unit>()
-
-    internal fun addOnCloseListener(listener: () -> Unit) {
-        closeListeners.add(listener)
-    }
-
     override fun getAll(): List<String> = file.readLines()
-
-    override fun close() = closeListeners.forEach { it() }
 }
 
 class MultilingualFileResource
 internal constructor(
-    userResource: FileResource,
-    private val baseResource: FileResource
+    internal val userResource: FileResource,
+    internal val baseResource: FileResource
 ) : Resource by userResource, MultilingualResource {
 
     constructor(userFile: File, baseFile: File): this(

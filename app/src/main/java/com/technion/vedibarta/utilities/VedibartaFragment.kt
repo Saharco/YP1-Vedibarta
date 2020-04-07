@@ -324,10 +324,7 @@ open class VedibartaFragment : Fragment() {
                                     HobbyCard(categoryResource.toCurrentLanguage(category), it.result!![index].getAll().toTypedArray())
                                 )
                             }
-                            it.result!!.forEach { it.close() }
                         }.continueWith {
-                            categoryResource.close()
-
                             hobbyCards.toList()
                         }
                 }

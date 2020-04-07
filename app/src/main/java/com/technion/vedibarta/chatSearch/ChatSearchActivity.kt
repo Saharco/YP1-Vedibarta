@@ -240,9 +240,4 @@ class ChatSearchActivity : VedibartaActivity() {
         }
         return result
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        characteristicsTask.result!!.close()
-    }
 }

@@ -134,10 +134,4 @@ class ProfileEditActivity : VedibartaActivity() {
             return true
         return false
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        characteristicsTask.result!!.close()
-        hobbiesResourceTask.result!!.close()
-    }
 }

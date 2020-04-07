@@ -220,11 +220,4 @@ class UserSetupActivity : VedibartaActivity() {
         }
         return result
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        hobbiesResourceTask.result!!.close()
-        characteristicsMaleTask.result!!.close()
-        characteristicsFemaleTask.result!!.close()
-    }
 }
