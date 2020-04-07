@@ -240,8 +240,6 @@ class UserProfileActivity : VedibartaActivity(),
                     hobbiesTask.result!!
                 )
                 hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
-                hobbiesTask.result!!.close()
-                characteristicsTask.result!!.close()
             }
 
             populateProfilePicture()
@@ -345,12 +343,6 @@ class UserProfileActivity : VedibartaActivity(),
             supportActionBar?.title = student!!.name
             changeStatusBarColor(ContextCompat.getColor(this, android.R.color.black))
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        characteristicsTask.result!!.close()
-        hobbiesTask.result!!.close()
     }
 
     /**

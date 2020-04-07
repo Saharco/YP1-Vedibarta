@@ -9,8 +9,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.extensions.GENDER_KEY
-import java.io.File
+import com.technion.vedibarta.utilities.filesCaching.FilesCache
 
+const val CACHE_RELATIVE_PATH = "Resources"
 val RESOURCES_REFERENCE = FirebaseStorage.getInstance().reference.child("resources")
 
 class RemoteResourcesManager(
@@ -18,54 +19,69 @@ class RemoteResourcesManager(
     private val storageReference: StorageReference = RESOURCES_REFERENCE,
     private val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 ) : ResourcesManager {
+    private val cache = FilesCache(
+        context,
+        CACHE_RELATIVE_PATH
+    )
 
     override fun findResource(name: String, gender: Gender?): Task<out Resource> =
-        findResourceAux(name, gender)
+        findFileResource(name, gender)
 
     override fun findMultilingualResource(name: String, gender: Gender?): Task<MultilingualResource> {
-        val baseRef = storageReference.child(name).child("base")
         var userRes: FileResource? = null
         var baseRes: FileResource? = null
 
-        val task1 = findResourceAux(name, gender)
-            .continueWith { userRes = it.result!! }
-        val task2 = fetchResource(baseRef).continueWith { baseRes = it.result!! }
+        val task1 = findFileResource(name, gender).continueWith { userRes = it.result!! }
+        val task2 = fetchBase(name).continueWith { baseRes = it.result!! }
 
         return Tasks.whenAll(task1, task2).continueWith<MultilingualResource> {
             MultilingualFileResource(userRes!!, baseRes!!)
         }.addOnFailureListener {
-            userRes?.close()
-            baseRes?.close()
+            userRes?.apply { cache.deleteFile(file) }
+            baseRes?.apply { cache.deleteFile(file) }
         }
     }
 
-    private fun findResourceAux(name: String, gender: Gender?): Task<out FileResource> {
+    // Returns the wanted FileResource.
+    private fun findFileResource(name: String, gender: Gender?): Task<out FileResource> {
         val folder = storageReference.child(name)
         val preferencesResolver = PreferencesResolver(getPreferenceMap(preferences, gender))
+        val localFileName = "${name.replace('/', '_')}-$gender-user"
 
-        return folder.listAll().continueWithTask { task ->
+        return if (localFileName in cache)
+            Tasks.call { FileResource(cache[localFileName]!!) }
+
+        else folder.listAll().continueWithTask { task ->
             val filesList = task.result!!.items.map { it.name }
                 .toMutableList().apply { remove("base") }
             val chosenFile = preferencesResolver.resolve(filesList)
 
-            fetchResource(folder.child(chosenFile), "$name-user")
+            fetchFromDatabase(folder.child(chosenFile), localFileName)
         }
     }
 
-    private fun fetchResource(
+    private fun fetchBase(name: String): Task<FileResource> {
+        val baseRef = storageReference.child(name).child("base")
+        val localFileName = "${name.replace('/', '_')}-base"
+
+        return if (localFileName in cache)
+            Tasks.call { FileResource(cache[localFileName]!!) }
+
+        else fetchFromDatabase(baseRef, localFileName)
+    }
+
+    // Fetches the wanted file from the database and creates the wanted resource.
+    private fun fetchFromDatabase(
         fileReference: StorageReference,
-        name: String = fileReference.name
+        localFileName: String
     ): Task<FileResource> {
-        val file = File.createTempFile(name.replace("/", "_"), null, context.filesDir)
+        val localFile = cache.newFile(localFileName)
 
-        return fileReference.getFile(file).continueWith {
-            file.setReadOnly()
-
-            FileResource(file).apply {
-                addOnCloseListener { file.delete() }
-            }
+        return fileReference.getFile(localFile).continueWith {
+            localFile.setReadOnly()
+            FileResource(localFile)
         }.addOnFailureListener {
-            file.delete()
+            cache.deleteFile(localFileName)
         }
     }
 
