@@ -153,12 +153,12 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
         val argMap = argumentTransfer.getArgs()
+        genderInit()
         val act = argMap["activity"] as Activity
         val schoolsNameTask = argMap["schoolsNameTask"] as Task<Resource>
         val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
         Tasks.whenAll(schoolsNameTask, regionsNameTask)
             .addOnSuccessListener(act){
-                genderInit()
                 extraOptionsInit(v, schoolsNameTask, regionsNameTask)
             }
     }
