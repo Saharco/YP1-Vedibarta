@@ -10,4 +10,11 @@
         app:autoSizeMinTextSize="4.5sp"
         android:maxLines="1"
         app:autoSizeTextType="uniform"/>
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="3dp"
+        android:indeterminate="true"
+        android:layout_margin="4dp"/>
 </FrameLayout>

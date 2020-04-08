@@ -68,7 +68,7 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
             chosenRegion = savedInstanceState.getString("REGION")
         }
 
-        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics")
+        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics", Gender.NONE)
 
         schoolsName = resources.getStringArray(R.array.schoolNameList)
         regionsName =
