@@ -6,13 +6,13 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class])
-interface AppComponent
+@Component(modules = [DataBaseModule::class])
+interface DataBaseInjector
 {
     companion object
     {
-        val injector = DaggerAppComponent.builder()
-                .appModule(AppModule())
+        val injector = DaggerDataBaseInjector.builder()
+                .dataBaseModule(DataBaseModule())
                 .build()
     }
 

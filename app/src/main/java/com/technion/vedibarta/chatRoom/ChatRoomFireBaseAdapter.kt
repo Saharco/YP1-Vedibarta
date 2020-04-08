@@ -1,5 +1,6 @@
 package com.technion.vedibarta.chatRoom
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,11 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.R
+import com.technion.vedibarta.dagger.ChatInnerAdapterModule
+import com.technion.vedibarta.dagger.DaggerChatInnerAdapterInjector
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 /***
  * adapter wrapping for the FireBaseAdapter to be used by the RecyclerView of ChatRoomActivity
@@ -22,8 +26,16 @@ class ChatRoomFireBaseAdapter(
     private val soundPlayer: SoundPlayer
 ) : ChatRoomAdapter()
 {
-    private var messageList: List<Message> = listOf()
-    private val fireStoreAdapter = getFireStoreAdapter(options, this)
+    private var messageList: MutableList<Message> = mutableListOf()
+    @Inject lateinit var fireStoreAdapter: FirestoreRecyclerAdapter<Message, RecyclerView.ViewHolder>
+
+    init
+    {
+        DaggerChatInnerAdapterInjector.builder()
+                .chatInnerAdapterModule(ChatInnerAdapterModule(this,messageList, options))
+                .build()
+                .inject(this)
+    }
 
     override fun getFirstMessageOrNull(): Message? {
         return messageList.firstOrNull()
@@ -81,17 +93,22 @@ class ChatRoomFireBaseAdapter(
             {
                 super.onDataChanged()
                 val newMessageList = this.snapshots.sortedWith(
-                    compareByDescending<Message, Date?>(nullsLast()) { it.timestamp }
+                        compareByDescending<Message, Date?>(nullsLast()) { it.timestamp }
                 )
-                val oldMessageListSize = messageList.size
-                val newMessageListSize = newMessageList.size
-                messageList = newMessageList
-                if(newMessageListSize > oldMessageListSize)
-                    mainAdapter.notifyItemInserted(0)
-                else if (newMessageListSize == oldMessageListSize)
+
+                val sizeDiff = newMessageList.size - messageList.size
+                if((sizeDiff > 1) or (sizeDiff == 0))
                 {
+                    Log.d("wtf", ">")
+                    messageList.clear()
+                    messageList.addAll(newMessageList)
                     mainAdapter.notifyDataSetChanged()
-                    //mainAdapter.notifyDataSetChanged()
+                }
+                else if (sizeDiff == 1)
+                {
+                    Log.d("wtf", "1")
+                    messageList.add(0, newMessageList.first())
+                    mainAdapter.notifyItemInserted(0)
                 }
             }
 

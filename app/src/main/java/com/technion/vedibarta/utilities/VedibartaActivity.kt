@@ -28,7 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.skyfishjy.library.RippleBackground
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.dagger.AppComponent
+import com.technion.vedibarta.dagger.DataBaseInjector
 import com.technion.vedibarta.login.LoginActivity
 import javax.inject.Inject
 
@@ -47,7 +47,7 @@ open class VedibartaActivity : AppCompatActivity()
     init
     {
         // has to be here, otherwise it would need to be called from every activity which extends Vedibarta
-        AppComponent.injector.inject(this)
+        DataBaseInjector.injector.inject(this)
     }
 
     private var progress: ProgressDialog? = null

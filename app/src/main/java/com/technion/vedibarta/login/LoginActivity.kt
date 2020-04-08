@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -22,7 +21,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.dagger.AppComponent.Companion.injector
+import com.technion.vedibarta.dagger.DataBaseInjector.Companion.injector
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.DataBase
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
