@@ -18,12 +18,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
-import com.technion.vedibarta.utilities.services.Languages
-import com.technion.vedibarta.utilities.services.translate
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
 open class CarouselAdapter(
     val context: Context,
@@ -178,12 +178,9 @@ open class CarouselAdapter(
                         ) as FrameLayout
 
                         val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                        val text = studentsCharacteristics[i + j].translate(context)
-                            .characteristics()
-                            .from(Languages.BASE)
-                            .to(Languages.HEBREW,student.gender)
-                            .execute().first()
-                        bubble.text = text
+                        RemoteResourcesManager(context).findMultilingualResource("characteristics", student.gender)
+                            .addOnSuccessListener { bubble.text = it.toCurrentLanguage(studentsCharacteristics[i+j])}
+
                         bubbleFrame.layoutParams = bubbleParams
                         tableRow.addView(bubbleFrame)
                     }

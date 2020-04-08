@@ -302,9 +302,6 @@ open class VedibartaFragment : Fragment() {
         fun loadHobbies(
             context: Context
         ): Task<List<HobbyCard>> {
-//            val hobbiesLinkArray = context.resources.obtainTypedArray(R.array.hobbies_id_link)
-//            val categories = context.resources.getStringArray(R.array.hobbies_categories)
-            // these are the final indexes of each category for all hobbies
 
             return RemoteResourcesManager(context)
                 .findMultilingualResource("hobbies/categories")
@@ -328,19 +325,6 @@ open class VedibartaFragment : Fragment() {
                             hobbyCards.toList()
                         }
                 }
-
-//
-//
-//            categories.forEachIndexed { index, category ->
-//                val hobbyId = hobbiesLinkArray.getResourceId(index, -1)
-//                hobbyCards.add(
-//                    index,
-//                    HobbyCard(category, context.resources.getStringArray(hobbyId))
-//                )
-//            }
-//
-//            hobbiesLinkArray.recycle()
-//            return hobbyCards
         }
 
         private fun hobbiesItemClickHandler(
@@ -405,4 +389,8 @@ open class VedibartaFragment : Fragment() {
     }
 
     protected open fun setupAndInitViews(v: View) = Unit
+
+    interface ArgumentTransfer{
+        fun getArgs() : Map<String, Any>
+    }
 }

@@ -20,6 +20,8 @@ import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -57,6 +59,12 @@ class MainActivity : VedibartaActivity()
         //must be constructed after applicationContext is initialized
         searchAdapter = MainSearchByNameAdapter(applicationContext, chatPartnersMap, this)
         mainAdapter = getMainAdapter()
+
+        //ResourceDownload
+        RemoteResourcesManager(this)
+            .findMultilingualResource("hobbies/all")
+
+        VedibartaFragment.loadHobbies(this)
     }
 
     override fun onStart()
