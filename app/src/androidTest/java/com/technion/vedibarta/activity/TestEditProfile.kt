@@ -57,7 +57,7 @@ class TestEditProfile
         onView(withId(R.id.actionEditProfile)).perform(click())
 
         val table = TableLayoutHandler()
-        table.bindTable(R.id.editCharacteristicsTable)
+        table.bindTable(R.id.characteristicsTable)
             .forTable(click())
             .scrollToRowAt(0)
             .forTable(click())
@@ -89,7 +89,7 @@ class TestEditProfile
     {
         onView(withId(R.id.actionEditProfile)).perform(click())
         val table = TableLayoutHandler()
-        table.bindTable(R.id.editCharacteristicsTable)
+        table.bindTable(R.id.characteristicsTable)
             .performAtPositionInTable(0,0, click())
             .performAtPositionInTable(0,1, click())
         sleep(1)

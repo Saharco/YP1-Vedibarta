@@ -22,7 +22,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 
-class ProfileEditActivity : VedibartaActivity() {
+class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
 
     private val TAG = "ProfileEditActivity"
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
@@ -65,7 +65,7 @@ class ProfileEditActivity : VedibartaActivity() {
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(ProfileEditCharacteristicsFragment(), getString(R.string.characteristics_tab_title))
+        adapter.addFragment(CharacteristicsFragment(), getString(R.string.characteristics_tab_title))
         adapter.addFragment(ProfileEditHobbiesFragment(), getString(R.string.hobbies_tab_title))
         viewPager.adapter = adapter
     }
@@ -133,5 +133,14 @@ class ProfileEditActivity : VedibartaActivity() {
         )
             return true
         return false
+    }
+
+    override fun getArgs(): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["student"] = student!!
+        map["characteristicsTask"] = characteristicsTask
+        map["hobbiesResourceTask"] = hobbiesResourceTask
+        map["hobbyCardTask"] = hobbyCardTask
+        return map
     }
 }

@@ -23,15 +23,17 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.studentsMatching.impl.MatcherImpl
+import com.technion.vedibarta.userProfile.CharacteristicsFragment
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_chat_search.*
 
-class ChatSearchActivity : VedibartaActivity() {
+class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
 
     companion object {
         private const val MATCHING_TIMEOUT = 10L
@@ -158,7 +160,7 @@ class ChatSearchActivity : VedibartaActivity() {
 
     private fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(SearchCharacteristicsFragment(), "1")
+        adapter.addFragment(CharacteristicsFragment(), "1")
         adapter.addFragment(SearchExtraOptionsFragment(), "2")
         viewPager.adapter = adapter
     }
@@ -239,5 +241,12 @@ class ChatSearchActivity : VedibartaActivity() {
             }
         }
         return result
+    }
+
+    override fun getArgs(): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["student"] = fakeStudent
+        map["characteristicsTask"] = characteristicsTask
+        return map
     }
 }
