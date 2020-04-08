@@ -178,8 +178,9 @@ open class CarouselAdapter(
                         ) as FrameLayout
 
                         val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
+                        val loading = bubbleFrame.findViewById(R.id.loading) as ProgressBar
                         RemoteResourcesManager(context).findMultilingualResource("characteristics", student.gender)
-                            .addOnSuccessListener { bubble.text = it.toCurrentLanguage(studentsCharacteristics[i+j])}
+                            .addOnSuccessListener { bubble.text = it.toCurrentLanguage(studentsCharacteristics[i+j]); loading.visibility = View.GONE}
 
                         bubbleFrame.layoutParams = bubbleParams
                         tableRow.addView(bubbleFrame)
