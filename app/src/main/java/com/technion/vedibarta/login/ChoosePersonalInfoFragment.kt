@@ -1,6 +1,8 @@
 package com.technion.vedibarta.login
 
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -12,6 +14,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
@@ -19,13 +23,14 @@ import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.putGender
+import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_user_setup.*
-import kotlinx.android.synthetic.main.fragment_choose_gender.*
+import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class ChooseGenderFragment : VedibartaFragment() {
+class ChoosePersonalInfoFragment : VedibartaFragment() {
 
 
     private val TAG = "GenderFragment@Setup"
@@ -33,13 +38,20 @@ class ChooseGenderFragment : VedibartaFragment() {
     // Tag -> (schoolName, SchoolRegion)
     private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
 
+    private lateinit var argumentTransfer: ArgumentTransfer
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        argumentTransfer = context as? ArgumentTransfer
+            ?: throw ClassCastException("$context must implement ${ArgumentTransfer::class}")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_choose_gender, container, false)
+        return inflater.inflate(R.layout.fragment_choose_personal_info, container, false)
     }
 
     private fun onButtonFemaleClickListener() {
@@ -140,9 +152,15 @@ class ChooseGenderFragment : VedibartaFragment() {
 
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
-
-        genderInit()
-        extraOptionsInit(v)
+        val argMap = argumentTransfer.getArgs()
+        val act = argMap["activity"] as Activity
+        val schoolsNameTask = argMap["schoolsNameTask"] as Task<Resource>
+        val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
+        Tasks.whenAll(schoolsNameTask, regionsNameTask)
+            .addOnSuccessListener(act){
+                genderInit()
+                extraOptionsInit(v, schoolsNameTask, regionsNameTask)
+            }
     }
 
     private fun genderInit() {
@@ -181,12 +199,16 @@ class ChooseGenderFragment : VedibartaFragment() {
         }
     }
 
-    private fun extraOptionsInit(v: View) {
+    private fun extraOptionsInit(
+        v: View,
+        schoolsNameTask: Task<Resource>,
+        regionsNameTask: Task<Resource>
+    ) {
 
         val act = (activity as UserSetupActivity)
 
         schoolAndRegionMap =
-            act.schoolTags.zip(act.schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
+            act.schoolTags.zip(schoolsNameTask.result!!.getAll().zip(resources.getStringArray(R.array.regionNameList)))
                 .toMap()
 
         // ---Student Name Views---
@@ -222,13 +244,13 @@ class ChooseGenderFragment : VedibartaFragment() {
         schoolListSpinner.doOnTextChanged { text, _, _ , _ ->  (activity as UserSetupActivity).setupStudent.school =text.toString()}
 
         regionListSpinner.doOnTextChanged { text, _, _, _ ->
-            populateAutoTextView(act, schoolListSpinner, act.schoolsName)
+            populateAutoTextView(act, schoolListSpinner, schoolsNameTask.result!!.getAll().toTypedArray())
             (activity as UserSetupActivity).setupStudent.region = text.toString()
         }
 
         //---Populate DropDownLists---
-        populateAutoTextView(act, schoolListSpinner, act.schoolsName)
-        populateAutoTextView(act, regionListSpinner, act.regionsName)
+        populateAutoTextView(act, schoolListSpinner, schoolsNameTask.result!!.getAll().toTypedArray())
+        populateAutoTextView(act, regionListSpinner, regionsNameTask.result!!.getAll().toTypedArray())
 
 
         textViewFirstNameTitle.markRequired()

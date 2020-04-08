@@ -13,6 +13,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ProgressBar
+            android:id="@+id/loading"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/editTabs"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/doneButton"
             android:layout_width="wrap_content"
@@ -32,7 +44,7 @@
             android:background="@android:color/transparent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loading"
             app:layout_constraintBottom_toTopOf="@id/userSetupContainer"
             app:tabBackground="@drawable/tab_layout_selector"
             app:tabIndicatorHeight="0dp"
@@ -40,15 +52,7 @@
             app:tabSelectedTextColor="@android:color/white"
             app:tabTextColor="@color/colorPrimaryDark" />
 
-<!--        <View-->
-<!--            android:id="@+id/divider1"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="@color/textSecondary"-->
-<!--            app:elevation="8dp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/editTabs" />-->
+
 
         <com.technion.vedibarta.utilities.CustomViewPager
             android:id="@+id/userSetupContainer"
