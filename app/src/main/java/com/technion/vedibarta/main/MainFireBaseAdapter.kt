@@ -13,8 +13,11 @@ import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
+import com.technion.vedibarta.dagger.DaggerMainInnerAdapterInjector
+import com.technion.vedibarta.dagger.MainInnerAdapterModule
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.HashMap
+import javax.inject.Inject
 
 /***
  * adapter wrapping for the FireBaseAdapter to be used by the RecyclerView of MainActivity
@@ -33,7 +36,15 @@ class MainFireBaseAdapter(val userId: String?,
 
     private val database = mainActivity.database
     private val chatsList: MutableList<Chat> = ArrayList()
-    private val firestoreAdapter = getFireStoreAdapter(options, this)
+    @Inject lateinit var firestoreAdapter: FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>
+
+    init
+    {
+        DaggerMainInnerAdapterInjector.builder()
+                .mainInnerAdapterModule(MainInnerAdapterModule(this, chatsList, options))
+                .build()
+                .inject(this)
+    }
 
     override fun startListening()
     {
@@ -100,80 +111,5 @@ class MainFireBaseAdapter(val userId: String?,
     private fun registerChatForFiltering(chatMetadata: ChatMetadata)
     {
         chatPartnersMap[chatMetadata.partnerName] = chatMetadata
-    }
-
-    private fun getFireStoreAdapter(options: FirestoreRecyclerOptions<Chat>,
-                                    mainAdapter: MainAdapter): FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>
-    {
-        return object : FirestoreRecyclerAdapter<Chat, RecyclerView.ViewHolder>(options)
-        {
-            // onDataChange should be called on every change and as such there shouldn't be more
-            // then 1 change at a time to the list except for first initialization
-            override fun onDataChanged()
-            {
-                super.onDataChanged()
-
-                val newList = this.snapshots.sortedByDescending { it.lastMessageTimestamp }
-                when
-                {
-                    (newList.size - chatsList.size) == 1 ->
-                    {
-                        chatsList.add(0, newList.first())
-                        mainAdapter.notifyItemInserted(0)
-                    }
-                    (newList.size - chatsList.size) > 1  ->
-                    {
-                        // first initialization of list
-                        chatsList.addAll(newList)
-                        mainAdapter.notifyItemInserted(0)
-                    }
-                    newList.size < chatsList.size        ->
-                    {
-                        val removedPosition = firstMissingChatIndex(chatsList, newList) ?: return
-                        chatsList.removeAt(removedPosition)
-                        mainAdapter.notifyItemRemoved(removedPosition)
-                    }
-                    else                                 ->
-                    {
-                        val originalPosition = chatsList.indexOf(newList.firstOrNull())
-                        if (originalPosition == -1)
-                        {
-                            Log.d(TAG, "moved chat is not in list")
-                            return
-                        }
-                        val movedChat = newList.firstOrNull()!!
-                        chatsList.removeAt(originalPosition)
-                        chatsList.add(0, movedChat)
-                        mainAdapter.notifyItemMoved(originalPosition, 0)
-                        mainAdapter.notifyItemChanged(0)
-                    }
-                }
-            }
-
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
-            {
-                val userNameView =
-                    LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-                return ViewHolder(userNameView, userId!!, applicationContext, database)
-            } //implemented because it must return something, this value is never used
-
-            override fun onBindViewHolder(holder: RecyclerView.ViewHolder,
-                                          position: Int,
-                                          card: Chat)
-            {
-            } //do nothing
-
-            /***
-             * assumes the lists have identical order and returns the first chat and its index that
-             * is in l1 but not in l2
-             */
-            private fun firstMissingChatIndex(l1: List<Chat>, l2: List<Chat>): Int?
-            {
-                l1.forEachIndexed { i, chat ->
-                    if (chat != l2[i]) return i
-                }
-                return null
-            }
-        }
     }
 }

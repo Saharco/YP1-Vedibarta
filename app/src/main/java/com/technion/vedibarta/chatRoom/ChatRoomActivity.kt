@@ -45,7 +45,7 @@ class ChatRoomActivity : VedibartaActivity(),
     private var otherGender: Gender? = null
     private var partnerHobbies: Array<String> = emptyArray()
     private var firstVisibleMessagePosition = 0
-    private val systemSenderId = "-1"
+    private val systemSenderId = "-1" // cloud function filters by this value (hard coded)
 
     companion object
     {
