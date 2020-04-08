@@ -1,6 +1,7 @@
-package com.technion.vedibarta.userProfile
+package com.technion.vedibarta.fragments
 
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -16,16 +17,14 @@ import com.technion.vedibarta.POJOs.Student
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.HobbiesAdapter
-import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
-import kotlinx.android.synthetic.main.fragment_profile_edit_hobbies.*
+import kotlinx.android.synthetic.main.fragment_hobbies.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class ProfileEditHobbiesFragment : VedibartaFragment() {
+class HobbiesFragment : VedibartaFragment() {
 
     private val TAG = "HobbiesFragment"
 
@@ -41,15 +40,15 @@ class ProfileEditHobbiesFragment : VedibartaFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile_edit_hobbies, container, false)
+        val view = inflater.inflate(R.layout.fragment_hobbies, container, false)
 
         val argMap = argumentTransfer.getArgs()
         val hobbiesResourceTask = argMap["hobbiesResourceTask"] as Task<MultilingualResource>
         val hobbyCardTask = argMap["hobbyCardTask"] as Task<List<HobbyCard>>
         val student = argMap["student"] as Student
-
+        val act = argMap["activity"] as Activity
         Tasks.whenAll(hobbiesResourceTask, hobbyCardTask)
-            .addOnSuccessListener {
+            .addOnSuccessListener(act) {
                 loading.visibility = View.GONE
                 val hobbyTitlesList = view.findViewById<RecyclerView>(R.id.hobbyTitlesList)
                 hobbyTitlesList.adapter = HobbiesAdapter(hobbyCardTask.result!!,  student, hobbiesResourceTask.result!!)

@@ -17,6 +17,7 @@ import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
@@ -26,7 +27,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
-class UserSetupActivity : VedibartaActivity() {
+class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
 
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
@@ -95,7 +96,7 @@ class UserSetupActivity : VedibartaActivity() {
         val adapter = SectionsPageAdapter(supportFragmentManager)
         adapter.addFragment(ChooseGenderFragment(), "1")
         adapter.addFragment(ChooseCharacteristicsFragment(), "2")
-        adapter.addFragment(ChooseHobbiesFragment(), "3")
+        adapter.addFragment(HobbiesFragment(), "3")
 
         viewPager.setPagingEnabled(false)
         viewPager.setOnInterceptTouchEventCustomBehavior {
@@ -217,5 +218,16 @@ class UserSetupActivity : VedibartaActivity() {
             }
         }
         return result
+    }
+
+    override fun getArgs(): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["student"] = setupStudent
+        map["characteristicsMaleTask"] = characteristicsMaleTask
+        map["characteristicsFemaleTask"] = characteristicsFemaleTask
+        map["hobbiesResourceTask"] = hobbiesResourceTask
+        map["hobbyCardTask"] = hobbyCardTask
+        map["activity"] = this
+        return map
     }
 }
