@@ -38,28 +38,6 @@ class CharacteristicsFragment : VedibartaFragment() {
             R.layout.fragment_characteristics, container,
             false
         )
-//        val table = view.findViewById(R.id.characteristicsTable) as TableLayout
-//        val loading = view.findViewById(R.id.loading) as ProgressBar
-//        val argMap = argumentTransfer.getArgs()
-//        val characteristicsTask = argMap["characteristicsTask"] as Task<MultilingualResource>
-//        val student = argMap["student"] as Student
-//        Tasks.whenAll(characteristicsTask)
-//            .addOnSuccessListener() {
-//                loading.visibility = View.GONE
-//                populateCharacteristicsTable(
-//                    context!!,
-//                    table,
-//                    characteristicsTask.result!!.getAll().shuffled(Random(42)).toTypedArray(),
-//                    student,
-//                    characteristicsTask.result!!
-//                )
-//
-//            }
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val table = view.findViewById(R.id.characteristicsTable) as TableLayout
         val loading = view.findViewById(R.id.loading) as ProgressBar
         val argMap = argumentTransfer.getArgs()
@@ -78,6 +56,7 @@ class CharacteristicsFragment : VedibartaFragment() {
                 )
 
             }
+        return view
     }
 
 }

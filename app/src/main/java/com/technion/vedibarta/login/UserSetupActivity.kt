@@ -8,11 +8,13 @@ import android.text.SpannableStringBuilder
 import android.text.style.AlignmentSpan
 import android.text.style.RelativeSizeSpan
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
@@ -25,6 +27,7 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import java.sql.Timestamp
 
@@ -45,8 +48,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     lateinit var characteristicsMaleTask : Task<MultilingualResource>
     lateinit var characteristicsFemaleTask: Task<MultilingualResource>
 
-    lateinit var schoolsName: Array<String>
-    lateinit var regionsName: Array<String>
+    lateinit var schoolsNameTask: Task<out Resource>
+    lateinit var regionsNameTask: Task<out Resource>
     lateinit var schoolTags: Array<Int>
 
     var chosenFirstName = ""
@@ -74,11 +77,13 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         characteristicsMaleTask = RemoteResourcesManager(this).findMultilingualResource("characteristics", Gender.MALE)
         characteristicsFemaleTask = RemoteResourcesManager(this).findMultilingualResource("characteristics",Gender.FEMALE)
 
-        schoolsName = resources.getStringArray(R.array.schoolNameList)
-        regionsName =
-            resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+        schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
+        regionsNameTask = RemoteResourcesManager(this).findResource("regions")
         schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
-
+        Tasks.whenAll(schoolsNameTask,regionsNameTask)
+            .addOnSuccessListener(this){
+                loading.visibility = View.GONE
+            }
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
         changeStatusBarColor(this, R.color.colorBoarding)
@@ -96,7 +101,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     @SuppressLint("ClickableViewAccessibility")
     fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(ChooseGenderFragment(), "1")
+        adapter.addFragment(ChoosePersonalInfoFragment(), "1")
         adapter.addFragment(ChooseCharacteristicsFragment(), "2")
         adapter.addFragment(HobbiesFragment(), "3")
 
@@ -117,21 +122,24 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     }
 
     private fun onDoneClick(){
-        if (validateUserInput()) {
-            setupStudent.name = "$chosenFirstName $chosenLastName"
-            database.students().userId().build().set(setupStudent)
-                .addOnSuccessListener {
-                    student = setupStudent
-                    startActivity(Intent(this, UserProfileActivity::class.java))
-                    finish()
+        validateUserInput()
+            .addOnSuccessListener(this){
+                if (it) {
+                    setupStudent.name = "$chosenFirstName $chosenLastName"
+                    database.students().userId().build().set(setupStudent)
+                        .addOnSuccessListener {
+                            student = setupStudent
+                            startActivity(Intent(this, UserProfileActivity::class.java))
+                            finish()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
+                                .show()
+                        }
+                } else {
+                    missingDetailsDialog()
                 }
-                .addOnFailureListener {
-                    Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
-                        .show()
-                }
-        } else {
-            missingDetailsDialog()
-        }
+            }
     }
 
     private fun missingDetailsDialog() {
@@ -157,61 +165,70 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         builder.create().show()
     }
 
-    private fun validateUserInput(): Boolean {
-        missingDetailsText = ""
-        val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
+    private fun validateUserInput(): Task<Boolean> {
+        return Tasks.whenAll(characteristicsFemaleTask, characteristicsMaleTask, schoolsNameTask, regionsNameTask, hobbiesResourceTask, hobbyCardTask)
+            .continueWith {
+                missingDetailsText = ""
+                val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
-        if (setupStudent.gender == Gender.NONE) {
-            missingDetailsText += "${resources.getString(R.string.user_setup_gender_missing)}\n"
-            return false
-        }
+                if (setupStudent.gender == Gender.NONE) {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_gender_missing)}\n"
+                    return@continueWith false
+                }
 
-        Log.d(TAG, "first: $chosenFirstName last: $chosenLastName")
+                Log.d(TAG, "first: $chosenFirstName last: $chosenLastName")
 
-        if (chosenFirstName == "") {
-            missingDetailsText += "${resources.getString(R.string.user_setup_first_name_missing)}\n"
-            return false
-        }
+                if (chosenFirstName == "") {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_first_name_missing)}\n"
+                    return@continueWith false
+                }
 
-        if (chosenLastName == "") {
-            missingDetailsText += "${resources.getString(R.string.user_setup_last_name_missing)}\n"
-            return false
-        }
+                if (chosenLastName == "") {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_last_name_missing)}\n"
+                    return@continueWith false
+                }
 
-        if (!schoolsName.contains(setupStudent.school)) {
-            missingDetailsText += "${resources.getString(R.string.user_setup_school_missing)}\n"
-            return false
-        }
+                if (!schoolsNameTask.result!!.getAll().contains(
+                        setupStudent.school
+                    )
+                ) {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_school_missing)}\n"
+                    return@continueWith false
+                }
 
-        if (!regionsName.contains(setupStudent.region)) {
-            missingDetailsText += "${resources.getString(R.string.user_setup_region_missing)}\n"
-            return false
-        }
+                if (!regionsNameTask.result!!.getAll().contains(
+                        setupStudent.region
+                    )
+                ) {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_region_missing)}\n"
+                    return@continueWith false
+                }
 
-        if(!validateSchoolAndRegionExists()){
-            missingDetailsText += "${resources.getString(R.string.user_setup_wrong_school_and_region_combination)}\n"
-            return false
-        }
+                if (!validateSchoolAndRegionExists()) {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_wrong_school_and_region_combination)}\n"
+                    return@continueWith false
+                }
 
-        if (studentsCharacteristics.isEmpty()) {
-            missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
-            return false
-        }
+                if (studentsCharacteristics.isEmpty()) {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
+                    return@continueWith false
+                }
 
-        if (setupStudent.hobbies.isEmpty()) {
-            missingDetailsText += "${resources.getString(R.string.user_setup_hobbies_missing)}\n"
-            return false
-        }
+                if (setupStudent.hobbies.isEmpty()) {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_hobbies_missing)}\n"
+                    return@continueWith false
+                }
 
-        return true
+                true
+            }
     }
 
     private fun validateSchoolAndRegionExists() : Boolean{
         val schoolAndRegionMap =
-            schoolTags.zip(schoolsName.zip(resources.getStringArray(R.array.regionNameList)))
+            schoolTags.zip(schoolsNameTask.result!!.getAll().zip(resources.getStringArray(R.array.regionNameList)))
                 .toMap()
         var result = false
-        schoolsName.forEachIndexed { index, name ->
+        schoolsNameTask.result!!.getAll().forEachIndexed { index, name ->
             if (name == setupStudent.school){
                 result = (schoolAndRegionMap[schoolTags[index]] ?: error("")).second == setupStudent.region
 
@@ -229,6 +246,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         map["characteristicsFemaleTask"] = characteristicsFemaleTask
         map["hobbiesResourceTask"] = hobbiesResourceTask
         map["hobbyCardTask"] = hobbyCardTask
+        map["schoolsNameTask"] = schoolsNameTask
+        map["regionsNameTask"] = regionsNameTask
         map["activity"] = this
         return map
     }
