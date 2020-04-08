@@ -218,7 +218,7 @@ class UserProfileActivity : VedibartaActivity(),
 
     private fun loadUserData() {
         Tasks.whenAll(hobbiesTask, characteristicsTask)
-            .addOnSuccessListener {
+            .addOnSuccessListener(this) {
                 val studentCharacteristics = characteristicsTask.result!!.toCurrentLanguage(student!!.characteristics.keys.toTypedArray())
 
                 VedibartaFragment.populateCharacteristicsTable(

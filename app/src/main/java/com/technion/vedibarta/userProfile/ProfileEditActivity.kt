@@ -15,6 +15,8 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.tasks.Task
 import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.R
+import com.technion.vedibarta.fragments.CharacteristicsFragment
+import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
@@ -66,7 +68,7 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
         adapter.addFragment(CharacteristicsFragment(), getString(R.string.characteristics_tab_title))
-        adapter.addFragment(ProfileEditHobbiesFragment(), getString(R.string.hobbies_tab_title))
+        adapter.addFragment(HobbiesFragment(), getString(R.string.hobbies_tab_title))
         viewPager.adapter = adapter
     }
 
@@ -141,6 +143,7 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
         map["characteristicsTask"] = characteristicsTask
         map["hobbiesResourceTask"] = hobbiesResourceTask
         map["hobbyCardTask"] = hobbyCardTask
+        map["activity"] = this
         return map
     }
 }
