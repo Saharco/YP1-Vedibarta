@@ -81,7 +81,6 @@ class RemoteResourcesManager(
         val localFile = cache.newFile(localFileName)
 
         return fileReference.getFile(localFile)
-            .cancelAfterTimeoutInMillis(MAX_DOWNLOAD_TIME)
             .continueWith {
                 localFile.setReadOnly()
                 FileResource(localFile)
