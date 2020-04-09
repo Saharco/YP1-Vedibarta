@@ -47,6 +47,7 @@ class CharacteristicsFragment : VedibartaFragment() {
         Tasks.whenAll(characteristicsTask)
             .addOnSuccessListener(act) {
                 loading.visibility = View.GONE
+                table.removeAllViews()
                 populateCharacteristicsTable(
                     context!!,
                     table,

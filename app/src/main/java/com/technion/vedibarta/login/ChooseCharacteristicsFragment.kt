@@ -35,6 +35,7 @@ class ChooseCharacteristicsFragment : VedibartaFragment() {
             .addOnSuccessListener(act) {
                 loading.visibility = View.GONE
                 val resource = if (act.setupStudent.gender == Gender.MALE) act.characteristicsMaleTask.result!! else act.characteristicsFemaleTask.result!!
+                searchCharacteristics.removeAllViews()
                 populateCharacteristicsTable(act, searchCharacteristics, resource.getAll().shuffled(Random(42)).toTypedArray(), act.setupStudent, resource)
 
             }

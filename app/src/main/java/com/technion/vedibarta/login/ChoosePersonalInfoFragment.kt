@@ -208,7 +208,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         val act = (activity as UserSetupActivity)
 
         schoolAndRegionMap =
-            act.schoolTags.zip(schoolsNameTask.result!!.getAll().zip(resources.getStringArray(R.array.regionNameList)))
+            act.schoolTags.zip(schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll().distinct()))
                 .toMap()
 
         // ---Student Name Views---
@@ -250,7 +250,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
 
         //---Populate DropDownLists---
         populateAutoTextView(act, schoolListSpinner, schoolsNameTask.result!!.getAll().toTypedArray())
-        populateAutoTextView(act, regionListSpinner, regionsNameTask.result!!.getAll().toTypedArray())
+        populateAutoTextView(act, regionListSpinner, regionsNameTask.result!!.getAll().distinct().toTypedArray())
 
 
         textViewFirstNameTitle.markRequired()
