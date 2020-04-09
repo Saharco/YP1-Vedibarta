@@ -1,9 +1,10 @@
 package com.technion.vedibarta.chatSearch
 
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,12 @@ import androidx.appcompat.widget.SwitchCompat
 
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_search_extra_options.*
-import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.resourcesManagement.Resource
 
 
 /**
@@ -31,6 +34,14 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
 
     private lateinit var schoolTextViewAuto: AutoCompleteTextView
     private lateinit var regionTextViewAuto: AutoCompleteTextView
+
+    private lateinit var argumentTransfer: ArgumentTransfer
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        argumentTransfer = context as? ArgumentTransfer
+            ?: throw ClassCastException("$context must implement ${ArgumentTransfer::class}")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,31 +112,36 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
 
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
-        val act  = activity as ChatSearchActivity
+        val argMap = argumentTransfer.getArgs()
+        val act  = argMap["activity"] as Activity
+        val schoolsNameTask = argMap["schoolsNameTask"] as Task<Resource>
+        val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
+        Tasks.whenAll(regionsNameTask, schoolsNameTask)
+            .addOnSuccessListener(act){
+                schoolAndRegionMap = (act as ChatSearchActivity).schoolTags.zip(act.schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll().distinct())).toMap()
 
-        schoolAndRegionMap = act.schoolTags.zip(act.schoolsName.zip(resources.getStringArray(R.array.regionNameList))).toMap()
+                //---Switch Views---
+                val schoolSwitch : SwitchCompat= v.findViewById(R.id.schoolFilterSwitch)
+                val regionSwitch : SwitchCompat= v.findViewById(R.id.regionFilterSwitch)
 
-        //---Switch Views---
-        val schoolSwitch : SwitchCompat= v.findViewById(R.id.schoolFilterSwitch)
-        val regionSwitch : SwitchCompat= v.findViewById(R.id.regionFilterSwitch)
+                schoolSwitch.setOnCheckedChangeListener { _, isChecked -> schoolOnCheckedChanged(isChecked) }
+                regionSwitch.setOnCheckedChangeListener { _, isChecked -> regionOnCheckedChanged(isChecked) }
 
-        schoolSwitch.setOnCheckedChangeListener { _, isChecked -> schoolOnCheckedChanged(isChecked) }
-        regionSwitch.setOnCheckedChangeListener { _, isChecked -> regionOnCheckedChanged(isChecked) }
+                //---DropDownList Views---
+                schoolTextViewAuto = v.findViewById(R.id.schoolListSpinner)
+                regionTextViewAuto = v.findViewById(R.id.regionListSpinner)
 
-        //---DropDownList Views---
-        schoolTextViewAuto = v.findViewById(R.id.schoolListSpinner)
-        regionTextViewAuto = v.findViewById(R.id.regionListSpinner)
+                schoolTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onSchoolSelectedListener(pos)}
+                regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos)}
 
-        schoolTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onSchoolSelectedListener(pos)}
-        regionTextViewAuto.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos)}
+                regionTextViewAuto.doOnTextChanged { text, _, _, _ ->
+                    populateAutoTextView(act, schoolTextViewAuto, act.schoolsNameTask.result!!.getAll().toTypedArray())
+                    (activity as ChatSearchActivity).chosenRegion = if (text.toString() == "") null else text.toString()}
 
-        regionTextViewAuto.doOnTextChanged { text, _, _, _ ->
-            populateAutoTextView(act, schoolTextViewAuto, act.schoolsName)
-            (activity as ChatSearchActivity).chosenRegion = if (text.toString() == "") null else text.toString()}
+                schoolTextViewAuto.doOnTextChanged { text, _, _, _ -> (activity as ChatSearchActivity).chosenSchool = if (text.toString() == "") null else text.toString() }
 
-        schoolTextViewAuto.doOnTextChanged { text, _, _, _ -> (activity as ChatSearchActivity).chosenSchool = if (text.toString() == "") null else text.toString() }
-
-        populateAutoTextView(activity as VedibartaActivity, regionTextViewAuto, (activity as ChatSearchActivity).regionsName)
-        populateAutoTextView(activity as VedibartaActivity, schoolTextViewAuto, (activity as ChatSearchActivity).schoolsName)
+                populateAutoTextView(activity as VedibartaActivity, regionTextViewAuto, regionsNameTask.result!!.getAll().distinct().toTypedArray())
+                populateAutoTextView(activity as VedibartaActivity, schoolTextViewAuto, schoolsNameTask.result!!.getAll().toTypedArray())
+            }
     }
 }

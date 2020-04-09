@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -31,6 +32,7 @@ import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_chat_search.*
 
 class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
@@ -43,8 +45,8 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
 
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    lateinit var schoolsName: Array<String>
-    lateinit var regionsName: Array<String>
+    lateinit var schoolsNameTask: Task<out Resource>
+    lateinit var regionsNameTask: Task<out Resource>
     lateinit var schoolTags: Array<Int>
 
     lateinit var characteristicsTask : Task<MultilingualResource>
@@ -68,9 +70,10 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
 
         characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics", Gender.NONE)
 
-        schoolsName = resources.getStringArray(R.array.schoolNameList)
-        regionsName =
-            resources.getStringArray(R.array.regionNameList).toList().distinct().toTypedArray()
+
+
+        schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
+        regionsNameTask = RemoteResourcesManager(this).findResource("regions")
         schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         setupViewPager(searchUserContainer)
@@ -111,9 +114,11 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         when (item.itemId) {
             R.id.actionChatSearch -> {
                 //TODO pass the chosen filters to database/other activity fo rmatching
-                if (validateChosenDetails()) {
-                    searchMatch()
-                }
+                validateChosenDetails()
+                    .addOnSuccessListener(this){
+                        if(it)
+                            searchMatch()
+                    }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -148,14 +153,17 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         displayErrorMessage(getString(R.string.chat_search_no_characteristics_chosen_message))
     }
 
-    private fun validateChosenDetails(): Boolean {
-        when {
-            !regionsName.contains(chosenRegion) && chosenRegion != null -> displayIllegalRegion()
-            !schoolsName.contains(chosenSchool) && chosenSchool != null -> displayIllegalSchool()
-            fakeStudent.characteristics.isEmpty() -> displayNoCharacteristicsChosen()
-            else -> return true
-        }
-        return false
+    private fun validateChosenDetails(): Task<Boolean> {
+        return Tasks.whenAll(regionsNameTask, schoolsNameTask)
+            .continueWith {
+                when {
+                    !regionsNameTask.result!!.getAll().contains(chosenRegion) && chosenRegion != null -> displayIllegalRegion()
+                    !schoolsNameTask.result!!.getAll().contains(chosenSchool) && chosenSchool != null -> displayIllegalSchool()
+                    fakeStudent.characteristics.isEmpty() -> displayNoCharacteristicsChosen()
+                    else -> return@continueWith true
+                }
+                return@continueWith false
+            }
     }
 
     private fun setupViewPager(viewPager: CustomViewPager) {
@@ -247,6 +255,8 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         val map = mutableMapOf<String, Any>()
         map["student"] = fakeStudent
         map["characteristicsTask"] = characteristicsTask
+        map["schoolsNameTask"] = schoolsNameTask
+        map["regionsNameTask"] = regionsNameTask
         map["activity"] = this
         return map
     }
