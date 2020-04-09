@@ -45,8 +45,9 @@ class RemoteResourcesManager(
     // Returns the wanted FileResource.
     private fun findFileResource(name: String, gender: Gender?): Task<out FileResource> {
         val folder = storageReference.child(name)
-        val preferencesResolver = PreferencesResolver(getPreferenceMap(preferences, gender))
-        val localFileName = "${name.replace('/', '_')}-$gender-user"
+        val preferencesMap = getPreferenceMap(preferences, gender)
+        val preferencesResolver = PreferencesResolver(preferencesMap)
+        val localFileName = "${name.replace('/', '_')}-${preferencesMap[GENDER_KEY]}-user"
 
         return if (localFileName in cache)
             Tasks.call { FileResource(cache[localFileName]!!) }
