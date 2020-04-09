@@ -9,9 +9,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.extensions.GENDER_KEY
+import com.technion.vedibarta.utilities.extensions.cancelAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.filesCaching.FilesCache
 
 const val CACHE_RELATIVE_PATH = "Resources"
+const val MAX_DOWNLOAD_TIME = 5000L
 val RESOURCES_REFERENCE = FirebaseStorage.getInstance().reference.child("resources")
 
 class RemoteResourcesManager(
@@ -45,8 +47,9 @@ class RemoteResourcesManager(
     // Returns the wanted FileResource.
     private fun findFileResource(name: String, gender: Gender?): Task<out FileResource> {
         val folder = storageReference.child(name)
-        val preferencesResolver = PreferencesResolver(getPreferenceMap(preferences, gender))
-        val localFileName = "${name.replace('/', '_')}-$gender-user"
+        val preferencesMap = getPreferenceMap(preferences, gender)
+        val preferencesResolver = PreferencesResolver(preferencesMap)
+        val localFileName = "${name.replace('/', '_')}-${preferencesMap[GENDER_KEY]}-user"
 
         return if (localFileName in cache)
             Tasks.call { FileResource(cache[localFileName]!!) }
@@ -77,12 +80,14 @@ class RemoteResourcesManager(
     ): Task<FileResource> {
         val localFile = cache.newFile(localFileName)
 
-        return fileReference.getFile(localFile).continueWith {
-            localFile.setReadOnly()
-            FileResource(localFile)
-        }.addOnFailureListener {
-            cache.deleteFile(localFileName)
-        }
+        return fileReference.getFile(localFile)
+            .cancelAfterTimeoutInMillis(MAX_DOWNLOAD_TIME)
+            .continueWith {
+                localFile.setReadOnly()
+                FileResource(localFile)
+            }.addOnFailureListener {
+                cache.deleteFile(localFileName)
+            }
     }
 
     private fun getPreferenceMap(preferences: SharedPreferences, gender: Gender?): Map<String, *> {
