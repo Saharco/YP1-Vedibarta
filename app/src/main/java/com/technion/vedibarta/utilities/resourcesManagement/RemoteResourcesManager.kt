@@ -9,9 +9,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.extensions.GENDER_KEY
+import com.technion.vedibarta.utilities.extensions.cancelAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.filesCaching.FilesCache
 
 const val CACHE_RELATIVE_PATH = "Resources"
+const val MAX_DOWNLOAD_TIME = 5000L
 val RESOURCES_REFERENCE = FirebaseStorage.getInstance().reference.child("resources")
 
 class RemoteResourcesManager(
@@ -78,12 +80,14 @@ class RemoteResourcesManager(
     ): Task<FileResource> {
         val localFile = cache.newFile(localFileName)
 
-        return fileReference.getFile(localFile).continueWith {
-            localFile.setReadOnly()
-            FileResource(localFile)
-        }.addOnFailureListener {
-            cache.deleteFile(localFileName)
-        }
+        return fileReference.getFile(localFile)
+            .cancelAfterTimeoutInMillis(MAX_DOWNLOAD_TIME)
+            .continueWith {
+                localFile.setReadOnly()
+                FileResource(localFile)
+            }.addOnFailureListener {
+                cache.deleteFile(localFileName)
+            }
     }
 
     private fun getPreferenceMap(preferences: SharedPreferences, gender: Gender?): Map<String, *> {
