@@ -4,6 +4,7 @@ package com.technion.vedibarta.login
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.extensions.putGender
 import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_user_setup.*
@@ -158,6 +160,9 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         val schoolsNameTask = argMap["schoolsNameTask"] as Task<Resource>
         val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
         Tasks.whenAll(schoolsNameTask, regionsNameTask)
+            .executeAfterTimeoutInMillis(5000L){
+                act.runOnUiThread {Toast.makeText(context, "קיימת בעיה בחיבור לאינטרנט", Toast.LENGTH_SHORT).show() }
+            }
             .addOnSuccessListener(act){
                 extraOptionsInit(v, schoolsNameTask, regionsNameTask)
             }
