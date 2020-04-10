@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -31,6 +32,7 @@ import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
@@ -78,6 +80,16 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
         regionsNameTask = RemoteResourcesManager(this).findResource("regions")
         schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
+
+        Tasks.whenAll(characteristicsTask, schoolsNameTask, regionsNameTask)
+            .executeAfterTimeoutInMillis(){
+                internetConnectionErrorHandler(this)
+            }
+            .addOnSuccessListener(this){
+                loading.visibility = View.GONE
+                editTabs.visibility = View.VISIBLE
+                searchUserContainer.visibility = View.VISIBLE
+            }
 
         setupViewPager(searchUserContainer)
         editTabs.setupWithViewPager(searchUserContainer)

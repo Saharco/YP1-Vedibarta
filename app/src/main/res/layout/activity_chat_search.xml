@@ -49,7 +49,16 @@
                 </androidx.appcompat.widget.Toolbar>
 
             </com.google.android.material.appbar.AppBarLayout>
-
+            <ProgressBar
+                android:id="@+id/loading"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolBarLayout" />
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/editTabs"
                 android:layout_width="wrap_content"
@@ -62,6 +71,7 @@
                 app:tabSelectedTextColor="@android:color/white"
                 app:tabRippleColor="@null"
                 app:tabIndicatorHeight="0dp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent">
             </com.google.android.material.tabs.TabLayout>
 
@@ -69,6 +79,7 @@
                 android:id="@+id/searchUserContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/editTabs"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
