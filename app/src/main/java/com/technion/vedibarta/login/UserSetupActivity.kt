@@ -25,13 +25,14 @@ import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import java.sql.Timestamp
 
-class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
+class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer, ChoosePersonalInfoFragment.OnGenderSelect {
 
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
@@ -81,8 +82,12 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         regionsNameTask = RemoteResourcesManager(this).findResource("regions")
         schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
         Tasks.whenAll(schoolsNameTask,regionsNameTask)
+            .executeAfterTimeoutInMillis(5000L){
+                internetConnectionErrorHandler(this)
+            }
             .addOnSuccessListener(this){
                 loading.visibility = View.GONE
+                layout.visibility = View.VISIBLE
             }
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
@@ -250,5 +255,10 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         map["regionsNameTask"] = regionsNameTask
         map["activity"] = this
         return map
+    }
+
+    override fun reloadCharacteristics() {
+        (userSetupContainer.adapter as SectionsPageAdapter)
+            .notifyDataSetChanged()
     }
 }

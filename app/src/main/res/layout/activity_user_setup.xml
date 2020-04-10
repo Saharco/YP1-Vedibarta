@@ -8,22 +8,23 @@
     android:fitsSystemWindows="true"
     android:background="@drawable/bg_onboarding"
     tools:context=".login.UserSetupActivity">
+    <ProgressBar
+        android:id="@+id/loading"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/editTabs"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <ProgressBar
-            android:id="@+id/loading"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/editTabs"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/doneButton"
@@ -44,7 +45,7 @@
             android:background="@android:color/transparent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/loading"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/userSetupContainer"
             app:tabBackground="@drawable/tab_layout_selector"
             app:tabIndicatorHeight="0dp"

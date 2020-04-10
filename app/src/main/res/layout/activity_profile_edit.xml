@@ -32,12 +32,23 @@
                 android:text="@string/profile_edit_title" />
 
         </androidx.appcompat.widget.Toolbar>
-
+        <ProgressBar
+            android:id="@+id/loading"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/editTabs"
+            app:layout_constraintTop_toTopOf="parent" />
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/editTabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
+            android:visibility="gone"
             app:tabIndicatorColor="@color/colorAccent"
             app:tabSelectedTextColor="@android:color/white">
         </com.google.android.material.tabs.TabLayout>
@@ -48,6 +59,7 @@
         android:id="@+id/editProfileContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

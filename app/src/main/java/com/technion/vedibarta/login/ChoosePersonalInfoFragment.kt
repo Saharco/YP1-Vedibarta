@@ -4,7 +4,6 @@ package com.technion.vedibarta.login
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
@@ -20,14 +19,13 @@ import com.google.android.gms.tasks.Tasks
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
-import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.extensions.putGender
 import com.technion.vedibarta.utilities.resourcesManagement.Resource
-import kotlinx.android.synthetic.main.activity_user_setup.*
 import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
+import com.technion.vedibarta.login.ChooseCharacteristicsFragment
+
 
 /**
  * A simple [Fragment] subclass.
@@ -41,11 +39,15 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
 
     private lateinit var argumentTransfer: ArgumentTransfer
+    private lateinit var onGenderSelect: OnGenderSelect
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         argumentTransfer = context as? ArgumentTransfer
             ?: throw ClassCastException("$context must implement ${ArgumentTransfer::class}")
+
+        onGenderSelect = context as? OnGenderSelect
+            ?: throw ClassCastException("$context must implement ${OnGenderSelect::class}")
     }
 
     override fun onCreateView(
@@ -73,7 +75,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
         PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
             .putGender(Gender.FEMALE).apply()
-        reloadCharacteristics()
+        onGenderSelect.reloadCharacteristics()
 
     }
 
@@ -94,17 +96,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
         PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
             .putGender(Gender.MALE).apply()
-        reloadCharacteristics()
-    }
-
-    private fun reloadCharacteristics() {
-        val frg =
-            ((activity as UserSetupActivity).userSetupContainer.adapter as SectionsPageAdapter)
-                .getItem(1)
-        val ft = fragmentManager!!.beginTransaction()
-        ft.detach(frg)
-        ft.attach(frg)
-        ft.commit()
+        onGenderSelect.reloadCharacteristics()
     }
 
     override fun onPause() {
@@ -160,9 +152,6 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         val schoolsNameTask = argMap["schoolsNameTask"] as Task<Resource>
         val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
         Tasks.whenAll(schoolsNameTask, regionsNameTask)
-            .executeAfterTimeoutInMillis(5000L){
-                act.runOnUiThread {Toast.makeText(context, "קיימת בעיה בחיבור לאינטרנט", Toast.LENGTH_SHORT).show() }
-            }
             .addOnSuccessListener(act){
                 extraOptionsInit(v, schoolsNameTask, regionsNameTask)
             }
@@ -304,5 +293,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
             schoolArrowButton.switchState()
         }
     }
-
+    interface OnGenderSelect{
+        fun reloadCharacteristics()
+    }
 }

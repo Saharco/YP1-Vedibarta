@@ -17,6 +17,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -107,6 +108,10 @@ open class VedibartaActivity : AppCompatActivity() {
                 view = View(activity)
             }
             imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+        fun internetConnectionErrorHandler(activity: Activity){
+            activity.runOnUiThread { Toast.makeText(activity, activity.resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show() }
         }
 
         /**

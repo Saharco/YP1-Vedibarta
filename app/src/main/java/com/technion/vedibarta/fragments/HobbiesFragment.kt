@@ -49,7 +49,6 @@ class HobbiesFragment : VedibartaFragment() {
         val act = argMap["activity"] as Activity
         Tasks.whenAll(hobbiesResourceTask, hobbyCardTask)
             .addOnSuccessListener(act) {
-                loading.visibility = View.GONE
                 val hobbyTitlesList = view.findViewById<RecyclerView>(R.id.hobbyTitlesList)
                 hobbyTitlesList.adapter = HobbiesAdapter(hobbyCardTask.result!!,  student, hobbiesResourceTask.result!!)
                 hobbyTitlesList.layoutManager = LinearLayoutManager(context)

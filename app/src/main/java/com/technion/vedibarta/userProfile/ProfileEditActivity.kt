@@ -7,12 +7,14 @@ import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.R
 import com.technion.vedibarta.fragments.CharacteristicsFragment
@@ -20,6 +22,7 @@ import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import kotlinx.android.synthetic.main.activity_profile_edit.*
@@ -52,6 +55,14 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
         hobbyCardTask = VedibartaFragment.loadHobbies(this)
 
         characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics")
+
+        Tasks.whenAll(hobbiesResourceTask, hobbyCardTask, characteristicsTask)
+            .executeAfterTimeoutInMillis { internetConnectionErrorHandler(this) }
+            .addOnSuccessListener(this) {
+                loading.visibility = View.GONE
+                editTabs.visibility = View.VISIBLE
+                editProfileContainer.visibility = View.VISIBLE
+            }
 
         editTabs.setupWithViewPager(editProfileContainer)
         setToolbar(toolbar)

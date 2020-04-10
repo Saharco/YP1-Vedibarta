@@ -47,7 +47,7 @@ fun <TResult> CancellableTask<TResult>.cancelAfterTimeoutInMillis(millis: Long):
     return addOnSuccessListener { timer.cancel() }
 }
 
-fun <TResult> Task<TResult>.executeAfterTimeoutInMillis(millis: Long, function: () -> Unit): Task<TResult> {
+fun <TResult> Task<TResult>.executeAfterTimeoutInMillis(millis: Long=5000L, function: () -> Unit): Task<TResult> {
     val timer = Timer().apply {
         schedule(object : TimerTask() {
             override fun run() {

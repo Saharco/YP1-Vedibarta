@@ -9,6 +9,7 @@
     <string name="yes">כן</string>
     <string name="no">לא</string>
     <string name="ok">אישור</string>
+    <string name="net_error">קיימת בעיה בחיבור לאינטרנט</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
