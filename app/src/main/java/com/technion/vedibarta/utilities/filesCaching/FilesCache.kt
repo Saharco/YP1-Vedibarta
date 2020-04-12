@@ -24,11 +24,11 @@ class FilesCache(context: Context, relativePath: String) {
             folder.mkdirs()
     }
 
+    operator fun set(fileName: String, file: File) = filesMap.set(fileName, file)
+
     fun newFile(fileName: String): File {
         val file = File(folder, fileName).also { it.createNewFile() }
         file.deleteOnExit()
-
-        filesMap[fileName] = file
 
         return file
     }

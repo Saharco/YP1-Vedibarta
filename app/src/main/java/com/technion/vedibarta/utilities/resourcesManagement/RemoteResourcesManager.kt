@@ -83,6 +83,7 @@ class RemoteResourcesManager(
         return fileReference.getFile(localFile)
             .continueWith {
                 localFile.setReadOnly()
+                cache[localFileName] = localFile
                 FileResource(localFile)
             }.addOnFailureListener {
                 cache.deleteFile(localFileName)
