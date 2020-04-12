@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ import com.technion.vedibarta.login.ChooseCharacteristicsFragment
 class ChoosePersonalInfoFragment : VedibartaFragment() {
 
 
-    private val TAG = "GenderFragment@Setup"
+    private val TAG = "PersonalInfoFragment"
     private val BORDER_WIDTH = 10
     // Tag -> (schoolName, SchoolRegion)
     private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
@@ -111,6 +112,8 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         val nameList = schoolAndRegionMap.filter {
             it.value.first == schoolListSpinner.adapter.getItem(position)
         }.values.toMutableList()
+        Log.d(TAG, "${schoolListSpinner.adapter.getItem(position)}")
+        Log.d(TAG, "${schoolAndRegionMap.values.map { it.first }}")
         val region = nameList[position % nameList.size].second
         val schoolName = schoolListSpinner.text.toString()
 
@@ -202,7 +205,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         val act = (activity as UserSetupActivity)
 
         schoolAndRegionMap =
-            act.schoolTags.zip(schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll().distinct()))
+            act.schoolTags.zip(schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll()))
                 .toMap()
 
         // ---Student Name Views---

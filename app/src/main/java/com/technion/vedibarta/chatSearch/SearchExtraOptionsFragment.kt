@@ -118,7 +118,7 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
         val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
         Tasks.whenAll(regionsNameTask, schoolsNameTask)
             .addOnSuccessListener(act){
-                schoolAndRegionMap = (act as ChatSearchActivity).schoolTags.zip(act.schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll().distinct())).toMap()
+                schoolAndRegionMap = (act as ChatSearchActivity).schoolTags.zip(act.schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll())).toMap()
 
                 //---Switch Views---
                 val schoolSwitch : SwitchCompat= v.findViewById(R.id.schoolFilterSwitch)

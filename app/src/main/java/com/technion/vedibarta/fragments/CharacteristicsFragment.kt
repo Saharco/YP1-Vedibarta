@@ -39,7 +39,6 @@ class CharacteristicsFragment : VedibartaFragment() {
             false
         )
         val table = view.findViewById(R.id.characteristicsTable) as TableLayout
-        val loading = view.findViewById(R.id.loading) as ProgressBar
         val argMap = argumentTransfer.getArgs()
         val characteristicsTask = argMap["characteristicsTask"] as Task<MultilingualResource>
         val student = argMap["student"] as Student
