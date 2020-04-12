@@ -228,7 +228,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
 
     private fun validateSchoolAndRegionExists() : Boolean{
         val schoolAndRegionMap =
-            schoolTags.zip(schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll().distinct()))
+            schoolTags.zip(schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll()))
                 .toMap()
         var result = false
         schoolsNameTask.result!!.getAll().forEachIndexed { index, name ->
