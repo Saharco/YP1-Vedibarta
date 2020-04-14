@@ -20,7 +20,6 @@ import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
-import java.sql.Timestamp
 
 class UserSetupActivity : VedibartaActivity() {
 
@@ -29,8 +28,7 @@ class UserSetupActivity : VedibartaActivity() {
     private var missingDetailsText = ""
 
     var setupStudent = Student(
-        uid = userId!!,
-        lastActivity = Timestamp(System.currentTimeMillis())
+        uid = userId!!
     )
 
     lateinit var schoolsName: Array<String>

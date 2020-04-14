@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AutoCompleteTextView
-import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -16,10 +14,6 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import kotlinx.android.synthetic.main.fragment_choose_extra_options.*
-import kotlinx.android.synthetic.main.fragment_choose_extra_options.view.*
-import android.view.animation.Animation
-import android.view.animation.Transformation
-import android.widget.LinearLayout
 
 
 /**

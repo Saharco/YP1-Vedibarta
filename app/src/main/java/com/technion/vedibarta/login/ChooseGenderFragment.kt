@@ -213,7 +213,7 @@ class ChooseGenderFragment : VedibartaFragment() {
                 position
             )
         }
-        schoolListSpinner.doOnTextChanged { text, _, _ , _ ->  (activity as UserSetupActivity).setupStudent.school=text.toString()}
+        schoolListSpinner.doOnTextChanged { text, _, _ , _ ->  (activity as UserSetupActivity).setupStudent.school =text.toString()}
 
         regionListSpinner.doOnTextChanged { text, _, _, _ ->
             populateAutoTextView(act, schoolListSpinner, act.schoolsName)
