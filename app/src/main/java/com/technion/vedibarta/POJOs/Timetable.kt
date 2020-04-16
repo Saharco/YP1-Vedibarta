@@ -68,24 +68,18 @@ interface Timetable {
 class MutableTimetable
 internal constructor(private val set: MutableSet<DayHour>) : Timetable {
     override fun contains(dayHour: DayHour): Boolean = set.contains(dayHour)
+
     fun add(dayHour: DayHour) = set.add(dayHour)
+
     fun remove(dayHour: DayHour) = set.remove(dayHour)
 }
 
-class TimetableBuilder
-internal constructor() {
+@DslMarker
+annotation class TimetableBuilderMarker
+
+@TimetableBuilderMarker
+class TimetableBuilder {
     private val dayHours = mutableSetOf<DayHour>()
-
-    class DayHourSetBuilder
-    internal constructor(private val day: Day) {
-
-        private val hours = mutableSetOf<Hour>()
-        infix fun at(hour: Hour) {
-            hours.add(hour)
-        }
-
-        internal fun build() = hours.map { hour -> day at hour }
-    }
 
     fun on(day: Day, func: DayHourSetBuilder.() -> Unit) {
         val hoursSetBuilder = DayHourSetBuilder(day)
@@ -93,7 +87,18 @@ internal constructor() {
         dayHours.addAll(hoursSetBuilder.build())
     }
 
-    internal fun build() = mutableTimetableOf(dayHours)
+    fun build() = mutableTimetableOf(dayHours)
+}
+
+@TimetableBuilderMarker
+class DayHourSetBuilder(private val day: Day) {
+    private val hours = mutableSetOf<Hour>()
+
+    fun at(hour: Hour) {
+        hours.add(hour)
+    }
+
+    fun build() = hours.map { hour -> day at hour }
 }
 
 fun mutableTimetableOf(times: Collection<DayHour> = emptySet()): MutableTimetable =
