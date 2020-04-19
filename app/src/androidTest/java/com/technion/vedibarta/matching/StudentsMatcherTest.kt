@@ -1,27 +1,27 @@
-package com.technion.vedibarta.studentsMatching.impl
+package com.technion.vedibarta.matching
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.database.DatabaseVersioning
-import com.technion.vedibarta.studentsMatching.Matcher
 import org.junit.After
-import org.junit.Before
-
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MatcherImplTest {
-    private val studentsCollection = DatabaseVersioning.getTestVersion("MatcherImplTest").instance
-        .collection("students")
+class StudentsMatcherTest {
+    private val studentsCollection =
+        DatabaseVersioning.getTestVersion("MatcherImplTest").instance.collection("students")
 
     @Before
     fun createUsers() {
         studentsCollection.apply {
-            Tasks.await(Tasks.whenAll(
-                document("Or").set(Student(
+            Tasks.await(
+                Tasks.whenAll(
+                document("Or").set(
+                    Student(
                     name = "Or",
                     region = "Haifa",
                     school = "Makif Haifa",
@@ -29,27 +29,32 @@ class MatcherImplTest {
                         "vegan" to true,
                         "religious" to false
                     )
-                )),
-                document("Victor").set(Student(
+                )
+                ),
+                document("Victor").set(
+                    Student(
                     name = "Victor",
                     region = "Haifa",
                     school = "Haifa's High School",
                     characteristics = mutableMapOf(
                         "vegan" to true,
                         "religious" to true,
-                        "jewish" to false
+                        "failthfull" to false
                     )
-                )),
-                document("Sahar").set(Student(
+                )
+                ),
+                document("Sahar").set(
+                    Student(
                     name = "Sahar",
                     region = "Tel Aviv",
                     school = "Makif Tel Aviv",
                     characteristics = mutableMapOf(
                         "vegan" to true,
                         "religious" to true,
-                        "jewish" to true
+                        "failthfull" to true
                     )
-                ))
+                )
+                )
             ))
         }
     }
@@ -57,7 +62,8 @@ class MatcherImplTest {
     @After
     fun deleteUsers() {
         studentsCollection.apply {
-            Tasks.await(Tasks.whenAll(
+            Tasks.await(
+                Tasks.whenAll(
                 document("Or").delete(),
                 document("Victor").delete(),
                 document("Sahar").delete()
@@ -67,101 +73,104 @@ class MatcherImplTest {
 
     @Test
     fun matcherReturnsNothingIfNoStudentFromTheGivenRegionExists() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("vegan", "religious"),
-            region = "Nowhere"
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("vegan", "religious"),
+            region = "Nowhere"
+        ))
 
         assert(result.isEmpty())
     }
 
     @Test
     fun matcherReturnsNothingIfNoStudentFromTheGivenSchoolExists() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("vegan", "religious"),
-            region = "Fake School"
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("vegan", "religious"),
+            school = "Fake School"
+        ))
 
         assert(result.isEmpty())
     }
 
     @Test
     fun matcherReturnsNothingIfNoStudentWithAWantedCharacteristicExists1() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("fake characteristic")
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("nonreligious")
+        ))
 
         assert(result.isEmpty())
     }
 
     @Test
     fun matcherReturnsNothingIfNoStudentWithAWantedCharacteristicExists2() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("vegan", "fake characteristic")
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("vegan", "nonreligious")
+        ))
 
         assert(result.isEmpty())
     }
 
     @Test
     fun matcherReturnsOnlyStudentsFromWantedRegion() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("vegan"),
-            region = "Haifa"
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("vegan"),
+            region = "Haifa"
+        ))
 
         assert(result.all { it.region == "Haifa" })
     }
 
     @Test
     fun matcherReturnsOnlyStudentsFromWantedSchool() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("vegan"),
-            region = "Makif Haifa"
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("vegan"),
+            region = "Makif Haifa"
+        ))
 
         assert(result.all { it.school == "Makif Haifa" })
     }
 
     @Test
     fun matcherReturnsOnlyStudentsWhoHaveWantedSingleCharacteristic() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("religious")
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("religious")
+        ))
 
         assert(result.all { it.characteristics["religious"] == true })
     }
 
     @Test
     fun matcherReturnsAllStudentsWithWantedSingleCharacteristic() {
-        val matcher: Matcher = MatcherImpl(
-            studentsCollection,
-            setOf("religious")
-        )
+        val matcher = StudentsMatcher(studentsCollection)
 
-        val result = Tasks.await(matcher.match())
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("religious")
+        ))
 
         assertEquals(setOf("Victor", "Sahar"), result.map { it.name }.toSet())
+    }
+
+    @Test
+    fun matcherReturnsStudentsThatAreNotAPerfectMatch() {
+        val matcher = StudentsMatcher(studentsCollection)
+
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("vegan", "religious", "failthfull")
+        ))
+
+        assertEquals(listOf("Sahar", "Victor"), result.map { it.name })
     }
 }

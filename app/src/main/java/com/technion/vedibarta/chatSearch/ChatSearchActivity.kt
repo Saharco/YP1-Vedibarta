@@ -19,8 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
-import com.technion.vedibarta.database.DatabaseVersioning
-import com.technion.vedibarta.studentsMatching.impl.MatcherImpl
+import com.technion.vedibarta.matching.StudentsMatcher
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -159,47 +158,43 @@ class ChatSearchActivity : VedibartaActivity() {
     private fun searchMatch() {
         Log.d(TAG, "Searching a match")
 
-        val studentsCollection = DatabaseVersioning.currentVersion.instance.collection("students")
-
-        MatcherImpl(
-            studentsCollection,
+        StudentsMatcher().match(
             fakeStudent.characteristics.keys,
             chosenRegion,
             chosenSchool
-        ).match()
-            .addOnSuccessListener(this) { students ->
-                val filteredStudents = students.filter { it.uid != student!!.uid }
-                if (filteredStudents.isNotEmpty()) {
-                    Log.d(TAG, "Matched students successfully")
+        ).addOnSuccessListener(this) { students ->
+            val filteredStudents = students.filter { it.uid != student!!.uid }
+            if (filteredStudents.isNotEmpty()) {
+                Log.d(TAG, "Matched students successfully")
 
-                    val intent = Intent(this, ChatCandidatesActivity::class.java)
-                    intent.putExtra("STUDENTS", filteredStudents.toTypedArray())
+                val intent = Intent(this, ChatCandidatesActivity::class.java)
+                intent.putExtra("STUDENTS", filteredStudents.toTypedArray())
 
-                    Handler().postDelayed({
-                        if (this@ChatSearchActivity.isInForeground()) {
-                            startActivity(intent)
-                            finish()
-                        }
-                    }, MINIMUM_TRANSITION_TIME)
-
-                } else {
-                    Log.d(TAG, "No matching students found")
-                    Toast.makeText(this, R.string.no_matching_students, Toast.LENGTH_LONG).show()
+                Handler().postDelayed({
                     if (this@ChatSearchActivity.isInForeground()) {
-                        hideSplash()
-                        viewFlipper.showPrevious()
+                        startActivity(intent)
+                        finish()
                     }
-                }
-            }.addOnFailureListener(this) { exp ->
-                Log.w(TAG, "Matching students failed", exp)
+                }, MINIMUM_TRANSITION_TIME)
+
+            } else {
+                Log.d(TAG, "No matching students found")
+                Toast.makeText(this, R.string.no_matching_students, Toast.LENGTH_LONG).show()
                 if (this@ChatSearchActivity.isInForeground()) {
-                    if (isInternetAvailable(this@ChatSearchActivity))
-                        //TODO: retry search!
-                    else
-                        onBackPressed()
+                    hideSplash()
+                    viewFlipper.showPrevious()
                 }
-                Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
             }
+        }.addOnFailureListener(this) { exp ->
+            Log.w(TAG, "Matching students failed", exp)
+            if (this@ChatSearchActivity.isInForeground()) {
+                if (isInternetAvailable(this@ChatSearchActivity))
+                //TODO: retry search!
+                else
+                    onBackPressed()
+            }
+            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+        }
 
         viewFlipper.showNext()
         showSplash(getString(R.string.chat_search_loading_message))

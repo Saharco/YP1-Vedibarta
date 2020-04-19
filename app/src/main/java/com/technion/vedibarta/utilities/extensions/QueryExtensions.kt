@@ -1,6 +1,8 @@
 package com.technion.vedibarta.utilities.extensions
 
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import kotlin.random.Random
 
@@ -13,17 +15,17 @@ import kotlin.random.Random
  * @param field the document's ID.
  * @param limit the maximal amount of documents to return.
  */
-fun Query.randomCycling(field: String, limit: Long) =
-    this.whereGreaterThanOrEqualTo(field, randomId()).orderBy(field).limit(limit).get()
+fun Query.randomCycling(field: String, limit: Long): Task<List<DocumentSnapshot>> =
+    whereGreaterThanOrEqualTo(field, randomId()).orderBy(field).limit(limit).getAsList()
         .continueWithTask { task1 ->
-            val docSet = task1.result!!.documents.toSet()
-            if (docSet.size < limit) {
-                this.orderBy(field).limit(limit - task1.result!!.size()).get()
+            val docList = task1.result!!
+            if (docList.size < limit) {
+                orderBy(field).limit(limit - docList.size).get()
                     .continueWith { task2 ->
-                        task1.result!!.documents.union(task2.result!!.documents)
+                        docList.apply { addAll(task2.result!!.documents) }.distinct()
                     }
             } else {
-                Tasks.call { docSet }
+                Tasks.call { docList }
             }
         }
 
@@ -37,3 +39,5 @@ private fun randomId(): String {
 
     return builder.toString()
 }
+
+fun Query.getAsList() = get().continueWith { it.result!!.documents }
