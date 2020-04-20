@@ -45,30 +45,60 @@ class QuestionGeneratorManagerTest {
     fun creatingMutualQuestionGenerator() {
         userHobbies.addAll(arrayOf("music, tennis, food"))
         partnerHobbies.addAll(arrayOf("tennis, food"))
-        assertNotNull(QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator())
+        assertNotNull(
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
+        )
     }
 
     @Test
     fun creatingDistinctQuestionGenerator() {
         userHobbies.addAll(arrayOf("music"))
         partnerHobbies.addAll(arrayOf("tennis"))
-        assertNotNull(QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator())
+        assertNotNull(
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
+        )
     }
 
     @Test
     fun createsAGeneratorEvenWithoutHobbies() {
-        assertNotNull(QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator())
+        assertNotNull(
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
+        )
     }
 
     @Test
     fun returnsMutualHobbies() {
-        userHobbies.addAll(arrayOf("music, tennis, food"))
-        partnerHobbies.addAll(arrayOf("tennis, food"))
+        userHobbies.addAll(arrayOf("music", "tennis", "food"))
+        partnerHobbies.addAll(arrayOf("tennis", "food"))
         val mutualGenerator =
-            QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
 
         assertArrayEquals(
-            arrayOf("tennis, food"),
+            arrayOf("tennis", "food"),
             mutualGenerator.getMutualHobbies().toTypedArray()
         )
     }
@@ -78,121 +108,170 @@ class QuestionGeneratorManagerTest {
         userHobbies.addAll(arrayOf("music"))
         partnerHobbies.addAll(arrayOf("tennis"))
         val generator =
-            QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
         assertArrayEquals(emptyArray<String>(), generator.getMutualHobbies().toTypedArray())
     }
 
     @Test
     fun returnsMutualCategories() {
-        userHobbies.addAll(arrayOf("music, tennis, food"))
-        partnerHobbies.addAll(arrayOf("tennis, food"))
+        userHobbies.addAll(arrayOf("music", "tennis", "food"))
+        partnerHobbies.addAll(arrayOf("tennis", "food"))
         val mutualCategories =
-            QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
                 .getMutualCategories()
-        mutualCategories.onSuccessTask {
-            assertArrayEquals(arrayOf("sports, pastime"), it!!.toTypedArray())
-            Tasks.call { emptyList<String>() }
-        }
-            .addOnFailureListener { assertFalse(true) }
+        Tasks.await(mutualCategories)
+        assertArrayEquals(arrayOf("ספורט", "בילויים"), mutualCategories.result!!.toTypedArray())
     }
 
     @Test
     fun returnsEmptyListWhenThereAreNoMutualCategories() {
         userHobbies.addAll(arrayOf("music"))
         partnerHobbies.addAll(arrayOf("tennis"))
-        val mutualCategories =
-            QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
+
+        val mutualCategories = Tasks.await(
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
                 .getMutualCategories()
-        mutualCategories.onSuccessTask {
-            assertArrayEquals(emptyArray(), it!!.toTypedArray())
-            Tasks.call { emptyList<String>() }
-        }
-            .addOnFailureListener { assertFalse(true) }
+        )
+
+        assertArrayEquals(emptyArray(), mutualCategories.toTypedArray())
     }
 
     @Test
     fun returnsQuestionsBasedOnMutualHobbies() {
-        userHobbies.addAll(arrayOf("music, tennis, food"))
-        partnerHobbies.addAll(arrayOf("tennis, food"))
-        val questions =
-            QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
+        userHobbies.addAll(arrayOf("music", "tennis", "food"))
+        partnerHobbies.addAll(arrayOf("tennis", "food"))
+
+        val questions = Tasks.await(
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
                 .getQuestionsBasedOnMutualHobbies()
-        val downloadedQuestions = RemoteResourcesManager(context, storage, preferences)
-            .findMultilingualResources("/questions/tennis", "/questions/food")
-        Tasks.whenAll(questions, downloadedQuestions).onSuccessTask {
-            assertArrayEquals(arrayOf("sports, pastime"), questions.result!!.keys.toTypedArray())
-            downloadedQuestions.result!!.forEachIndexed { index, multilingualResource ->
-                assertArrayEquals(
-                    multilingualResource.getAll().slice(1 until multilingualResource.getAll().size).toTypedArray(),
-                    questions.result!![questions.result!!.keys.toTypedArray()[index]]!!.toTypedArray()
-                )
-            }
-            Tasks.call { emptyList<String>() }
+        )
+        val downloadedQuestions = Tasks.await(
+            RemoteResourcesManager(context, storage, preferences)
+                .findMultilingualResources("/questions/tennis", "/questions/food")
+        )
+
+        assertArrayEquals(arrayOf("ספורט", "בילויים"), questions.keys.toTypedArray())
+        downloadedQuestions.forEachIndexed { index, multilingualResource ->
+            assertArrayEquals(
+                multilingualResource.getAll().slice(1 until multilingualResource.getAll().size)
+                    .toTypedArray(),
+                questions[questions.keys.toTypedArray()[index]]?.toTypedArray()
+            )
         }
-            .addOnFailureListener { assertFalse(true) }
     }
 
 
     @Test
     fun returnsQuestionsBasedOnMutualCategories() {
-        userHobbies.addAll(arrayOf("music, tennis, food"))
-        partnerHobbies.addAll(arrayOf("tennis, food"))
-        val questions =
-            QuestionGeneratorFactory(context, userHobbies, partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
-                .getQuestionsBasedOnMutualHobbies()
-        val downloadedQuestions = RemoteResourcesManager(context, storage, preferences)
-            .findMultilingualResources("/questions/sports", "/questions/pastime")
-        Tasks.whenAll(questions, downloadedQuestions).onSuccessTask {
-            assertArrayEquals(arrayOf("sports, pastime"), questions.result!!.keys.toTypedArray())
-            downloadedQuestions.result!!.forEachIndexed { index, multilingualResource ->
-                assertArrayEquals(
-                    multilingualResource.getAll().toTypedArray(),
-                    questions.result!![questions.result!!.keys.toTypedArray()[index]]!!.toTypedArray()
-                )
-            }
-            Tasks.call { emptyList<String>() }
+        userHobbies.addAll(arrayOf("music", "tennis", "food"))
+        partnerHobbies.addAll(arrayOf("tennis", "food"))
+        val questions = Tasks.await(
+            QuestionGeneratorFactory(
+                context,
+                userHobbies,
+                partnerHobbies,
+                storageReference = storage,
+                preferences = preferences
+            ).getGenerator()
+                .getQuestionsBasedOnMutualCategories()
+        )
+        val downloadedQuestions = Tasks.await(
+            RemoteResourcesManager(context, storage, preferences)
+                .findMultilingualResources("/questions/sports", "/questions/pastime")
+        )
+        assertArrayEquals(
+            arrayOf("ספורט", "בילויים"),
+            questions.keys.toTypedArray()
+        )
+        downloadedQuestions.forEachIndexed { index, multilingualResource ->
+            assertArrayEquals(
+                multilingualResource.getAll().toTypedArray(),
+                questions[questions.keys.toTypedArray()[index]]?.toTypedArray()
+            )
         }
-            .addOnFailureListener { assertFalse(true) }
     }
 
     @Test
     fun returnsAllQuestions() {
         userHobbies.addAll(arrayOf("music"))
         partnerHobbies.addAll(arrayOf("music"))
-        val generalQuestionsTask = RemoteResourcesManager(context,storage,preferences).findMultilingualResource("questions/general")
-        val musicQuestionsTask = RemoteResourcesManager(context,storage,preferences).findMultilingualResource("questions/music")
-        val artsCategoryTask = RemoteResourcesManager(context,storage,preferences).findMultilingualResource("questions/arts")
-        val questions = QuestionGeneratorFactory(context,userHobbies,partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
-            .getQuestions()
-        Tasks.whenAll(generalQuestionsTask, questions, musicQuestionsTask, artsCategoryTask)
-            .onSuccessTask {
-                val list = generalQuestionsTask.result!!.getAll()
-                val musicList = musicQuestionsTask.result!!.getAll()
-                val artsList = artsCategoryTask.result!!.getAll()
-                val map = mapOf<String, List<String>>("כללי" to list.slice(1 until list.size))
-                val finalMap = map.plus(musicList[0] to musicList.slice(1 until musicList.size))
-                    .plus(musicList[0] to artsList)
-                assertEquals(finalMap, questions.result!!)
-                Tasks.call { emptyList<String>() }
-            }
-            .addOnFailureListener { assertFalse(true) }
+        val generalQuestionsTask = Tasks.await(RemoteResourcesManager(
+            context,
+            storage,
+            preferences
+        ).findMultilingualResource("questions/general"))
+        val musicQuestionsTask = Tasks.await(RemoteResourcesManager(
+            context,
+            storage,
+            preferences
+        ).findMultilingualResource("questions/music"))
+        val artsCategoryTask = Tasks.await(RemoteResourcesManager(
+            context,
+            storage,
+            preferences
+        ).findMultilingualResource("questions/arts"))
+        val questions = Tasks.await(QuestionGeneratorFactory(
+            context,
+            userHobbies,
+            partnerHobbies,
+            storageReference = storage,
+            preferences = preferences
+        ).getGenerator()
+            .getQuestions())
+        val list = generalQuestionsTask.getAll()
+        val musicList = musicQuestionsTask.getAll()
+        val artsList = artsCategoryTask.getAll()
+        val map = mapOf("כללי" to list.slice(1 until list.size))
+        val finalMap = map.plus(musicList[0] to musicList.slice(1 until musicList.size))
+            .plus(musicList[0] to artsList)
+        assertEquals(finalMap, questions)
     }
 
     @Test
     fun distinctQuestionGeneratorReturnsOnlyGeneralQuestionsInCaseThereAreNoMutualCategories() {
         userHobbies.addAll(arrayOf("music"))
         partnerHobbies.addAll(arrayOf("tennis"))
-        val generalQuestionsTask = RemoteResourcesManager(context,storage,preferences).findMultilingualResource("questions/general")
-        val questions = QuestionGeneratorFactory(context,userHobbies,partnerHobbies, storageReference = storage, preferences = preferences).getGenerator()
-            .getQuestions()
-        Tasks.whenAll(generalQuestionsTask, questions)
-            .onSuccessTask {
-                val list = generalQuestionsTask.result!!.getAll()
-                val map = "כללי" to list.slice(1 until list.size)
-                assertEquals(map, questions.result!!)
-                Tasks.call { emptyList<String>() }
-            }
-            .addOnFailureListener { assertFalse(true) }
+        val generalQuestionsTask = Tasks.await(RemoteResourcesManager(
+            context,
+            storage,
+            preferences
+        ).findMultilingualResource("questions/general"))
+        val questions = Tasks.await(QuestionGeneratorFactory(
+            context,
+            userHobbies,
+            partnerHobbies,
+            storageReference = storage,
+            preferences = preferences
+        ).getGenerator()
+            .getQuestions())
+
+        val list = generalQuestionsTask.getAll()
+        val map = mapOf("כללי" to list.slice(1 until list.size))
+        assertEquals(map, questions)
     }
 
 }

@@ -1,8 +1,9 @@
 package com.technion.vedibarta.utilities.questionGenerator
 
 import com.google.android.gms.tasks.Task
+import java.io.Serializable
 
-interface QuestionGeneratorManager {
+interface QuestionGeneratorManager : Serializable {
     /**
      * returns a list of the mutual hobbies.
      * in case there are no mutual hobbies returns an empty list

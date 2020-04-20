@@ -10,86 +10,105 @@
         android:id="@+id/categoriesLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
-        <TextView
-            android:id="@+id/questionGeneratorTitle"
+        android:orientation="vertical">
+        <ProgressBar
+            android:id="@+id/loading"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textStyle="bold"
-            android:text="@string/chat_room_question_generator_title"
-            android:textColor="@color/textPrimary"
-            android:textSize="26sp" />
-
-        <View
-            android:id="@+id/divider1"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/editTabs"
+            app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:id="@+id/categoriesLayoutInner"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/colorAccentDark"
-            app:elevation="8dp" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/colorAccent"
-            app:cardElevation="3dp"
-            app:cardCornerRadius="20dp"
-            app:cardUseCompatPadding="true"
-            >
-
-            <LinearLayout
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="invisible"
+            android:padding="8dp">
+            <TextView
+                android:id="@+id/questionGeneratorTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:text="@string/chat_room_question_generator_title"
+                android:textColor="@color/textPrimary"
+                android:textSize="26sp" />
 
-                <TextView
-                    android:id="@+id/alertDescription1"
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/colorAccentDark"
+                app:elevation="8dp" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/colorAccent"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="20dp"
+                app:cardUseCompatPadding="true"
+                >
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="cursive"
-                    android:gravity="start"
-                    android:text="@string/chat_room_question_generator_question_title"
-                    android:textColor="@color/background"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/alertTitle" />
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/alertDescription1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="cursive"
+                        android:gravity="start"
+                        android:text="@string/chat_room_question_generator_question_title"
+                        android:textColor="@color/background"
+                        android:textSize="18sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/alertTitle" />
 
-        </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
 
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/questionCategoriesList"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_margin="8dp"
-            android:background="@color/colorLightDim"
-            android:layoutDirection="rtl">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/questionCategoriesList"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_margin="8dp"
+                android:background="@color/colorLightDim"
+                android:layoutDirection="rtl">
 
-        </androidx.recyclerview.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/questionGeneratorDismissButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/colorAccentDark"
-            android:text="@string/chat_room_abuse_dialog_back_button"
-            android:textSize="20sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/questionGeneratorDismissButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/colorAccentDark"
+                android:text="@string/chat_room_abuse_dialog_back_button"
+                android:textSize="20sp" />
+        </LinearLayout>
+
 
 
     </LinearLayout>
