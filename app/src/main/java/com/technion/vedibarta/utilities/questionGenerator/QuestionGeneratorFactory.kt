@@ -55,7 +55,10 @@ private class MutualQuestionGenerator(
             .continueWith { hobbiesQuestionsList ->
                 val questionsMap: MutableMap<String, List<String>> = mutableMapOf()
                 hobbiesQuestionsList.result!!.forEach {
-                    questionsMap[it.getAll()[0]] = it.getAll().slice(1 until it.getAll().size)
+                    if (!questionsMap.containsKey(it.getAll()[0]))
+                        questionsMap[it.getAll()[0]] = it.getAll().slice(1 until it.getAll().size)
+                    else
+                        questionsMap[it.getAll()[0]] = questionsMap[it.getAll()[0]]!!.plus(it.getAll().slice(1 until it.getAll().size))
                 }
                 return@continueWith questionsMap.toMap()
             }
@@ -96,8 +99,14 @@ private class MutualQuestionGenerator(
                 val mutualHobbiesQuestionsMap = mutualHobbiesTask.result!!
                 val mutualCategoriesQuestionMap = mutualCategoriesTask.result!!
                 val generalQuestionList = generalQuestionsTask.result!!.getAll()
-                val questionsMap = mutualHobbiesQuestionsMap.plus(mutualCategoriesQuestionMap)
-                    .plus(mapOf(generalQuestionList[0] to generalQuestionList.slice(1 until generalQuestionList.size)))
+                val questionsMap: MutableMap<String, List<String>> = mutualHobbiesQuestionsMap
+                    .toMutableMap()
+                for (key in questionsMap.keys){
+                    if (mutualCategoriesQuestionMap.containsKey(key))
+                        questionsMap[key] = questionsMap[key]!!.plus(mutualCategoriesQuestionMap[key]!!.toList()).distinct()
+                }
+                questionsMap[generalQuestionList[0]] =generalQuestionList.slice(1 until generalQuestionList.size)
+
                 questionsMap
             }
     }
@@ -134,6 +143,7 @@ private class DistinctQuestionGenerator(
                 val partnerCategories =
                     partnerHobbiesList.map { reverseHobbies[hobbies.indexOf(it)] }
                 val mutualCategories = userCategories.intersect(partnerCategories).toList()
+                if (mutualCategories.isEmpty()) return@continueWithTask Tasks.call { emptyMap<String, List<String>>() }
                 val mutualCategoriesFirebase = mutualCategories.map { "questions/$it" }
                 val questionsMap: MutableMap<String, List<String>> = mutableMapOf()
                 return@continueWithTask resourcesManager.findMultilingualResources(*mutualCategoriesFirebase.toTypedArray())

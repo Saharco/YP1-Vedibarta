@@ -10,7 +10,6 @@ import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
@@ -28,12 +27,13 @@ import com.google.firebase.firestore.Query
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorFactory
+import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorManager
 
 /***
  * specific chat screen, contains the messages history between 2 users
  */
 class ChatRoomActivity : VedibartaActivity(),
-    ChatRoomQuestionGeneratorDialog.QuestionGeneratorDialogListener,
     ChatRoomAbuseReportDialog.AbuseReportDialogListener
 {
     private lateinit var adapter: ChatRoomAdapter
@@ -46,7 +46,7 @@ class ChatRoomActivity : VedibartaActivity(),
     private var partnerHobbies: Array<String> = emptyArray()
     private var firstVisibleMessagePosition = 0
     private val systemSenderId = "-1"
-
+    private lateinit var questionGenerator : QuestionGeneratorManager
     companion object
     {
         private const val TAG = "Vedibarta/chat"
@@ -75,6 +75,8 @@ class ChatRoomActivity : VedibartaActivity(),
 
         chatPartnerId = partnerId // used by cloud functions
         photoUrl ?: displayDefaultProfilePicture()
+
+        questionGenerator = QuestionGeneratorFactory(this, student!!.hobbies.toList(), partnerHobbies.toList()).getGenerator()
 
         setToolbar(chatToolbar)
         configureAdapter()
@@ -129,19 +131,6 @@ class ChatRoomActivity : VedibartaActivity(),
             else              -> TODO()
         }
         return true
-    }
-
-    override fun onQuestionclick(dialog: DialogFragment, v: View)
-    {
-        try
-        {
-            val question = (v as TextView).text
-            Toast.makeText(this, question, Toast.LENGTH_SHORT).show()
-        }
-        catch (e: ClassCastException)
-        {
-            Log.d("QuestionGenerator", e.toString())
-        }
     }
 
     override fun onAbuseTypeClick(dialog: DialogFragment)
@@ -225,8 +214,7 @@ class ChatRoomActivity : VedibartaActivity(),
             {
                 R.id.generateQuestion ->
                 {
-                    ChatRoomQuestionGeneratorDialog.newInstance(student!!.hobbies.toTypedArray(),
-                                                                partnerHobbies)
+                    ChatRoomQuestionGeneratorDialog.newInstance(questionGenerator)
                         .show(supportFragmentManager, "QuestionGeneratorFragment")
                 }
 
@@ -313,4 +301,5 @@ class ChatRoomActivity : VedibartaActivity(),
             }
         }
     }
+
 }
