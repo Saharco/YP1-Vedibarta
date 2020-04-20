@@ -68,6 +68,9 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             setupStudent = savedInstanceState[STUDENT_KEY] as Student
         }
 
+        loading.visibility = View.VISIBLE
+        layout.visibility = View.GONE
+
         hobbiesResourceTask = RemoteResourcesManager(this)
             .findMultilingualResource("hobbies/all")
 
@@ -86,6 +89,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             .addOnSuccessListener(this){
                 loading.visibility = View.GONE
                 layout.visibility = View.VISIBLE
+                Log.d("abc", "WHY")
             }
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)

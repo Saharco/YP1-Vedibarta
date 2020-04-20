@@ -40,14 +40,12 @@ fun ResourcesManager.findResources(vararg names: String, gender: Gender? = null)
 
 fun ResourcesManager.findMultilingualResources(vararg names: String, gender: Gender? = null):
         Task<List<MultilingualResource>> {
+    if (names.isEmpty()) return Tasks.call { emptyList<MultilingualResource>() }
     val resourcesMap = mutableMapOf<String, MultilingualResource>()
-    Log.d("abc", "$names")
     val tasks = names.map { name ->
         findMultilingualResource(name, gender).continueWith { resourcesMap[name] = it.result!! }
     }
-    Log.d("abc", "Called1")
     return Tasks.whenAll(tasks).continueWith {
-        Log.d("abc", "Called2")
         names.map { resourcesMap[it]!! }
     }
 }

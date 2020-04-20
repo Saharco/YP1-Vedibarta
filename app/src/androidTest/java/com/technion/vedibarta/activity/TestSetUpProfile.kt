@@ -48,21 +48,21 @@ class TestSetUpProfile
         VedibartaActivity.hideKeyboard(getCurrentActivity() as UserSetupActivity)
     }
 
-    @After
-    fun breakDown()
-    {
-        onView(ViewMatchers.withContentDescription("Navigate up")).perform(click())
-        waitForActivity<MainActivity>()
-        val db = (getCurrentActivity() as MainActivity).database
-        var deleted = false
-        db.students().userId().build()
-            .delete()
-            .addOnSuccessListener { deleted = true }
-        while (!deleted) {}
-        logout()
-        waitForActivity<LoginActivity>()
-        registry.unregister(splashScreen)
-    }
+//    @After
+//    fun breakDown()
+//    {
+//        onView(ViewMatchers.withContentDescription("Navigate up")).perform(click())
+//        waitForActivity<MainActivity>()
+//        val db = (getCurrentActivity() as MainActivity).database
+//        var deleted = false
+//        db.students().userId().build()
+//            .delete()
+//            .addOnSuccessListener { deleted = true }
+//        while (!deleted) {}
+//        logout()
+//        waitForActivity<LoginActivity>()
+//        registry.unregister(splashScreen)
+//    }
 
     @Test
     fun can_finish_setUp_only_after_filling_all_fields()
