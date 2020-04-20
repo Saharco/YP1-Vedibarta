@@ -105,27 +105,27 @@ class TestChatCandidates
         sleep(2)
     }
 
-    @Test
-    fun automatically_starts_a_chat_after_choosing_partner_and_it_appears_in_main()
-    {
-        val table = TableLayoutHandler()
-        table.bindTable(R.id.searchCharacteristics)
-        table.performAtPositionInTable(0,0, click())
-        onView(withId(R.id.actionChatSearch)).perform(click())
-        waitForActivity<ChatCandidatesActivity>()
-        sleep(3)
-        onView(firstWithText(R.string.chat_candidate_accept_button_m)).perform(partialyHiddenViewClick(50))
-        waitForActivity<ChatRoomActivity>()
-        val activity = (getCurrentActivity() as ChatRoomActivity)
-        val db = activity.database
-        val chatId = activity.chatId
-        onView(withContentDescription("Navigate up")).perform(click())
-        waitForActivity<MainActivity>()
-
-        // cleanup
-        var deleted = false
-        db.chats().chatId(chatId).build().delete().addOnSuccessListener { deleted = true }
-        while (!deleted) {}
-        sleep(3)
-    }
+//    @Test
+//    fun automatically_starts_a_chat_after_choosing_partner_and_it_appears_in_main()
+//    {
+//        val table = TableLayoutHandler()
+//        table.bindTable(R.id.searchCharacteristics)
+//        table.performAtPositionInTable(0,0, click())
+//        onView(withId(R.id.actionChatSearch)).perform(click())
+//        waitForActivity<ChatCandidatesActivity>()
+//        sleep(3)
+//        onView(firstWithText(R.string.chat_candidate_accept_button_m)).perform(partialyHiddenViewClick(50))
+//        waitForActivity<ChatRoomActivity>()
+//        val activity = (getCurrentActivity() as ChatRoomActivity)
+//        val db = activity.database
+//        val chatId = activity.chatId
+//        onView(withContentDescription("Navigate up")).perform(click())
+//        waitForActivity<MainActivity>()
+//
+//        // cleanup
+//        var deleted = false
+//        db.chats().chatId(chatId).build().delete().addOnSuccessListener { deleted = true }
+//        while (!deleted) {}
+//        sleep(3)
+//    }
 }
