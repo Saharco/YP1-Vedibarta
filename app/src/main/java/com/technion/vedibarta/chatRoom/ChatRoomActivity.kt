@@ -214,7 +214,7 @@ class ChatRoomActivity : VedibartaActivity(),
             {
                 R.id.generateQuestion ->
                 {
-                    ChatRoomQuestionGeneratorDialog.newInstance(questionGenerator)
+                    ChatRoomQuestionGeneratorDialog.newInstance(questionGenerator, this)
                         .show(supportFragmentManager, "QuestionGeneratorFragment")
                 }
 
