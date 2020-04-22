@@ -1,5 +1,6 @@
 package com.technion.vedibarta.chatRoom
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.QuestionGeneratorCategoryAdapter
+import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorFactory
 import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorManager
 import kotlinx.android.synthetic.main.question_generator_dialog.*
@@ -26,10 +29,13 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment()
 
     companion object
     {
+        lateinit var act: Activity
         fun newInstance(
-            questionGenerator: QuestionGeneratorManager
+            questionGenerator: QuestionGeneratorManager,
+            activity: Activity
         ): ChatRoomQuestionGeneratorDialog
         {
+            act = activity
             val fragment = ChatRoomQuestionGeneratorDialog()
             val args = Bundle()
             args.putSerializable("generator", questionGenerator)
@@ -60,11 +66,12 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment()
         super.onViewCreated(view, savedInstanceState)
         questions = questionGenerator.getQuestions()
         Tasks.whenAll(questions)
-            .addOnSuccessListener {
+            .continueWith{
                 loading.visibility = View.GONE
                 categoriesLayoutInner.visibility = View.VISIBLE
             categoriesLayoutInit()
         }
+            .executeAfterTimeoutInMillis { VedibartaActivity.internetConnectionErrorHandler(act) }
         questionsLayout.visibility = View.GONE
 
         viewFlipper.setInAnimation(context, android.R.anim.fade_in)
