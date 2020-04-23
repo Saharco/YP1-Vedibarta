@@ -334,7 +334,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                     student = document.toObject(Student::class.java)
                     PreferenceManager.getDefaultSharedPreferences(this).edit()
                         .putGender(student!!.gender)
-                        .putLanguage(Locale.getDefault().displayLanguage).apply()
+                        .putLanguage(Locale.getDefault().language).apply()
                     startActivity(Intent(this, MainActivity::class.java)) // change to Main later
                     finish()
                 }
