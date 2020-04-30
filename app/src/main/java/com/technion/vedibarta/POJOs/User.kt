@@ -2,6 +2,7 @@ package com.technion.vedibarta.POJOs
 
 import android.os.Parcelable
 import com.google.firebase.firestore.Exclude
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
@@ -21,6 +22,7 @@ data class Student(
     override val uid: String = "",
     var region: String = "",
     var school: String = "",
+    var grade: Grade = Grade.NONE,
     var characteristics: MutableMap<String, Boolean> = mutableMapOf(),
     var hobbies: List<String> = emptyList()
 ): User(name, photo, gender, uid)
@@ -65,5 +67,23 @@ internal constructor(
         val tenth: Boolean = false,
         val eleventh: Boolean = false,
         val twelfth: Boolean = false
-    ): Parcelable
+    ): Parcelable {
+
+        constructor(vararg grades: Grade): this(
+            tenth = Grade.TENTH in grades,
+            eleventh = Grade.ELEVENTH in grades,
+            twelfth = Grade.TWELFTH in grades
+        )
+
+        @Exclude
+        fun toList(): List<Grade> {
+            val list = mutableListOf<Grade>()
+
+            if (tenth) list.add(Grade.TENTH)
+            if (eleventh) list.add(Grade.ELEVENTH)
+            if (twelfth) list.add(Grade.TWELFTH)
+
+            return list
+        }
+    }
 }
