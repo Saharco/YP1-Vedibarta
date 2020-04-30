@@ -26,7 +26,6 @@ import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.fragments.CharacteristicsFragment
 import com.technion.vedibarta.matching.StudentsMatcher
-import com.technion.vedibarta.fragments.CharacteristicsFragment
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
