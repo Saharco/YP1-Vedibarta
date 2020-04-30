@@ -24,9 +24,7 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
 import com.technion.vedibarta.database.DatabaseVersioning
-import com.technion.vedibarta.studentsMatching.impl.MatcherImpl
 import com.technion.vedibarta.fragments.CharacteristicsFragment
-import com.technion.vedibarta.userProfile.CharacteristicsFragment
 import com.technion.vedibarta.matching.StudentsMatcher
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter

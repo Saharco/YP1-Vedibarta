@@ -262,5 +262,6 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     override fun reloadCharacteristics() {
         (userSetupContainer.adapter as SectionsPageAdapter)
             .notifyDataSetChanged()
+        //TODO call this function on Next button click (after the UI Change)
     }
 }
