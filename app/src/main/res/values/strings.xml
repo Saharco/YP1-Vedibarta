@@ -9,6 +9,7 @@
     <string name="yes">כן</string>
     <string name="no">לא</string>
     <string name="ok">אישור</string>
+    <string name="next">הבא</string>
     <string name="net_error">קיימת בעיה בחיבור לאינטרנט</string>
 
     <!--    UserProfile attribute   -->
@@ -62,6 +63,10 @@
     <string name="user_setup_school_info_title">פרטי בית הספר</string>
     <string name="user_setup_hobbies_title">תחביבים</string>
     <string name="user_setup_region_title">מיקום בית ספר</string>
+    <string name="user_setup_grade_title">שכבה</string>
+    <string name="user_setup_grade_tenth">י</string>
+    <string name="user_setup_grade_eleventh">יא</string>
+    <string name="user_setup_grade_twelfth">יב</string>
     <string name="user_setup_school_title">בית ספר</string>
     <string name="user_setup_first_name_title">שם פרטי</string>
     <string name="user_setup_last_name_title">שם משפחה</string>
@@ -69,8 +74,6 @@
     <string name="text_field_hint">עברית/ערבית בלבד</string>
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>
     <string name="checking_document">מסתנכרן עם השרת</string>
-    <string name="user_setup_dialog_message_m">החלק שמאלה על מנת לעבור לעמוד הבא</string>
-    <string name="user_setup_dialog_message_f">החליקי שמאלה על מנת לעבור לעמוד הבא</string>
     <string name="user_setup_male_option">בן</string>
     <string name="user_setup_female_option">בת</string>
     <string name="user_setup_gender_missing">יש לבחור בן/בת</string>
@@ -79,6 +82,7 @@
     <string name="user_setup_last_name_missing">יש למלא את השדה שם משפחה</string>
     <string name="user_setup_school_missing">יש לבחור בית ספר מהרשימה</string>
     <string name="user_setup_region_missing">יש לבחור מקום מגורים מהרשימה</string>
+    <string name="user_setup_grade_missing">יש לבחור שכבה</string>
     <string name="user_setup_characteristics_missing">יש לבחור מאפייני זהות</string>
     <string name="user_setup_hobbies_missing">יש לבחור תחביבים</string>
 

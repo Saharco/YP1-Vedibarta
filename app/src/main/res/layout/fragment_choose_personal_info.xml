@@ -122,9 +122,9 @@
                         android:id="@+id/nameArrowButton"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        app:eiv_color="@color/colorAccentDark"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginStart="8dp" />
+                        android:layout_marginStart="8dp"
+                        app:eiv_color="@color/colorAccentDark" />
 
                     <TextView
                         android:id="@+id/personalInfoButton"
@@ -243,9 +243,9 @@
                         android:id="@+id/schoolArrowButton"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        app:eiv_color="@color/colorAccentDark"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginStart="8dp" />
+                        android:layout_marginStart="8dp"
+                        app:eiv_color="@color/colorAccentDark" />
 
                     <TextView
                         android:id="@+id/schoolInfoButton"
@@ -328,6 +328,54 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/regionFilterSwitchText" />
 
+                    <TextView
+                        android:id="@+id/gradeText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/user_setup_grade_title"
+                        android:textColor="@color/textPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/gradeRadioGroup"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/regionListSpinner">
+
+                    </TextView>
+
+                    <RadioGroup
+                        android:id="@+id/gradeRadioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/gradeText">
+
+                        <RadioButton
+                            android:id="@+id/gradeTwelfth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:onClick="onRadioButtonClicked"
+                            android:text="@string/user_setup_grade_twelfth"/>
+                        <RadioButton
+                            android:id="@+id/gradeEleventh"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:onClick="onRadioButtonClicked"
+                            android:text="@string/user_setup_grade_eleventh"/>
+                        <RadioButton
+                            android:id="@+id/gradeTenth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:onClick="onRadioButtonClicked"
+                            android:text="@string/user_setup_grade_tenth"/>
+
+                    </RadioGroup>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

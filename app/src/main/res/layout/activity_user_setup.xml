@@ -36,6 +36,17 @@
             app:layout_constraintTop_toTopOf="@id/editTabs"
             app:layout_constraintBottom_toBottomOf="@id/editTabs"
             android:contentDescription="@string/user_setup_done_title" />
+        <ImageView
+            android:id="@+id/backButton"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:srcCompat="@drawable/ic_back_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/editTabs"
+            app:layout_constraintBottom_toBottomOf="@id/editTabs"/>
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/editTabs"
             android:layout_marginTop="8dp"
@@ -64,6 +75,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editTabs"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/nextButton"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"
+            android:textSize="18sp"
+            app:backgroundTint="@color/colorAccentDark"
+            android:text="@string/next"
+            app:layout_constraintBottom_toBottomOf="@id/userSetupContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

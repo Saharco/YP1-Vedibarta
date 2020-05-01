@@ -16,6 +16,7 @@ import androidx.core.text.bold
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
@@ -30,8 +31,9 @@ import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_user_setup.*
+import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
-class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer, ChoosePersonalInfoFragment.OnGenderSelect {
+class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer{
 
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
@@ -56,6 +58,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
 
     companion object {
         const val STUDENT_KEY = "student"
+        const val FIRST_NAME_KEY = "firstname"
+        const val LAST_NAME_KEY = "lastname"
         private const val TAG = "UserSetupActivity"
     }
 
@@ -67,6 +71,12 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         if (savedInstanceState?.get(STUDENT_KEY) != null) {
             setupStudent = savedInstanceState[STUDENT_KEY] as Student
         }
+
+        if(savedInstanceState?.get(FIRST_NAME_KEY) != null)
+            chosenFirstName = savedInstanceState.getString(FIRST_NAME_KEY)!!
+
+        if(savedInstanceState?.get(LAST_NAME_KEY) != null)
+            chosenLastName = savedInstanceState.getString(LAST_NAME_KEY)!!
 
         loading.visibility = View.VISIBLE
         layout.visibility = View.GONE
@@ -94,14 +104,23 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
         changeStatusBarColor(this, R.color.colorBoarding)
+        editTabs.touchables.forEach { it.isEnabled = false }
+        initButtons()
+    }
+
+    private fun initButtons() {
         doneButton.bringToFront()
         doneButton.setOnClickListener { onDoneClick() }
-        editTabs.touchables.forEach { it.isEnabled = false }
+        nextButton.setOnClickListener { onNextClick() }
+        backButton.setOnClickListener { onBackClick() }
+        backButton.bringToFront()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
 
         outState.putSerializable(STUDENT_KEY, setupStudent)
+        outState.putString(FIRST_NAME_KEY, chosenFirstName)
+        outState.putString(LAST_NAME_KEY, chosenLastName)
         super.onSaveInstanceState(outState)
     }
 
@@ -111,15 +130,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         adapter.addFragment(ChoosePersonalInfoFragment(), "1")
         adapter.addFragment(ChooseCharacteristicsFragment(), "2")
         adapter.addFragment(HobbiesFragment(), "3")
-
         viewPager.setPagingEnabled(false)
-        viewPager.setOnInterceptTouchEventCustomBehavior {
-            if (setupStudent.gender != Gender.NONE) {
-                viewPager.setPagingEnabled(true)
-                viewPager.setOnInterceptTouchEventCustomBehavior { }
-            }
-        }
-
         viewPager.adapter = adapter
         viewPager.offscreenPageLimit = 1
     }
@@ -147,6 +158,39 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
                     missingDetailsDialog()
                 }
             }
+    }
+
+    private fun onBackClick(){
+        when(userSetupContainer.currentItem){
+            1 -> {
+                userSetupContainer.currentItem -= 1
+                backButton.visibility = View.GONE
+            }
+            2-> {
+                userSetupContainer.currentItem -= 1
+                nextButton.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun onNextClick(){
+        when(userSetupContainer.currentItem){
+            0 -> {
+                if (setupStudent.gender != Gender.NONE) {
+                    (userSetupContainer.adapter as SectionsPageAdapter).notifyDataSetChanged()
+                    userSetupContainer.currentItem += 1
+                    backButton.visibility = View.VISIBLE
+                }
+                else{
+                    Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+            1 -> {
+                userSetupContainer.currentItem += 1
+                nextButton.visibility = View.GONE
+            }
+        }
     }
 
     private fun missingDetailsDialog() {
@@ -216,6 +260,11 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
                     return@continueWith false
                 }
 
+                if (setupStudent.grade == Grade.NONE){
+                    missingDetailsText+="${resources.getString(R.string.user_setup_grade_missing)}\n"
+                    return@continueWith false
+                }
+
                 if (studentsCharacteristics.isEmpty()) {
                     missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
                     return@continueWith false
@@ -259,9 +308,13 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         return map
     }
 
-    override fun reloadCharacteristics() {
-        (userSetupContainer.adapter as SectionsPageAdapter)
-            .notifyDataSetChanged()
-        //TODO call this function on Next button click (after the UI Change)
+    fun onRadioButtonClicked(view: View) {
+        when (view.id) {
+            R.id.gradeTenth -> setupStudent.grade = Grade.TENTH
+            R.id.gradeEleventh -> setupStudent.grade = Grade.ELEVENTH
+            R.id.gradeTwelfth -> setupStudent.grade = Grade.TWELFTH
+            else -> {
+            }
+        }
     }
 }
