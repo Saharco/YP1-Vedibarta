@@ -136,7 +136,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     }
 
     override fun onBackPressed() {
-
+        onBackClick()
     }
 
     private fun onDoneClick(){
