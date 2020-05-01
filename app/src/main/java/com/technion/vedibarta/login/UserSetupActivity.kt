@@ -188,6 +188,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             }
             1 -> {
                 userSetupContainer.currentItem += 1
+                doneButton.visibility = View.VISIBLE
                 nextButton.visibility = View.GONE
             }
         }
