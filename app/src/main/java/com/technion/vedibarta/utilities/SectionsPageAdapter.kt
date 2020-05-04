@@ -29,6 +29,10 @@ class SectionsPageAdapter(val fm: FragmentManager) :
         return fragmentsTitleList[position]
     }
 
+    fun setPageTitle(position: Int, str: String){
+        fragmentsTitleList[position] = str
+    }
+
     override fun getItem(position: Int): Fragment {
         return fragmentsList[position]
     }

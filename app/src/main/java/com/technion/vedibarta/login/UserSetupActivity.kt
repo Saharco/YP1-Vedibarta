@@ -9,10 +9,12 @@ import android.text.style.AlignmentSpan
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
+import androidx.core.view.children
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.Gender
@@ -203,14 +205,27 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
                         if (it == true) {
                             userSetupContainer.currentItem -= 1
                             backButton.visibility = View.GONE
+                        } else {
+                            updateTitle(false)
                         }
                         Tasks.call { }
                     }
             }
             2 -> {
+
                 userSetupContainer.currentItem -= 1
                 nextButton.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun updateTitle(increase: Boolean) {
+        (0..2).forEach {
+            val title = editTabs.getTabAt(it)!!.text.toString().toInt()
+            if (increase)
+                editTabs.getTabAt(it)!!.text = title.inc().toString()
+            else
+                editTabs.getTabAt(it)!!.text = title.dec().toString()
         }
     }
 
@@ -233,6 +248,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
                             userSetupContainer.currentItem += 1
                             doneButton.visibility = View.VISIBLE
                             nextButton.visibility = View.GONE
+                        } else {
+                            updateTitle(true)
                         }
                         Tasks.call { }
                     }
