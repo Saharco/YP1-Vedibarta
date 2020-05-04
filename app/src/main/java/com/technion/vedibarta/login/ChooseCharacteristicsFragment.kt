@@ -78,8 +78,8 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
     override fun onNextClick(): Task<Boolean> {
         return Tasks.whenAll(characteristicsMaleTask, characteristicsFemaleTask, characteristicsWithCategoriesMaleTask, characteristicsWithCategoriesFemaleTask)
             .continueWith {
-                currentIndex++
-                if (currentIndex < characteristicsWithCategoriesMaleTask.result!!.keys.size){
+                if (currentIndex < characteristicsWithCategoriesMaleTask.result!!.keys.size-1){
+                    currentIndex++
                     val resource = if (setupStudent.gender == Gender.MALE) characteristicsMaleTask.result!! else characteristicsFemaleTask.result!!
                     val characteristics = if (setupStudent.gender == Gender.MALE) characteristicsWithCategoriesMaleTask.result!! else characteristicsWithCategoriesFemaleTask.result!!
                     characteristicsTitle.text = characteristics.keys.toList()[currentIndex]
@@ -93,8 +93,8 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
     override fun onBackClick(): Task<Boolean> {
         return Tasks.whenAll(characteristicsMaleTask, characteristicsFemaleTask, characteristicsWithCategoriesMaleTask, characteristicsWithCategoriesFemaleTask)
             .continueWith {
-                currentIndex--
                 if (currentIndex > 0){
+                    currentIndex--
                     val resource = if (setupStudent.gender == Gender.MALE) characteristicsMaleTask.result!! else characteristicsFemaleTask.result!!
                     val characteristics = if (setupStudent.gender == Gender.MALE) characteristicsWithCategoriesMaleTask.result!! else characteristicsWithCategoriesFemaleTask.result!!
                     characteristicsTitle.text = characteristics.keys.toList()[currentIndex]
