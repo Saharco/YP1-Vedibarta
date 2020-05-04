@@ -129,6 +129,31 @@ open class VedibartaFragment : Fragment() {
             return student.characteristics.contains(characteristic)
         }
 
+        fun loadCharacteristics(
+            context: Context,
+            gender: Gender
+        ): Task<Map<String, Array<String>>> {
+
+            return RemoteResourcesManager(context)
+                .findMultilingualResource("characteristics/categories")
+                .continueWithTask {
+                    val categories = it.result!!.getAllBase()
+                    val categoryResource = it.result!!
+                    val characteristicsMap = mutableMapOf<String, Array<String>>()
+                    val categoryResourceList = categories.map { category -> "characteristics/category-$category" }
+                    RemoteResourcesManager(context)
+                        .findMultilingualResources(*categoryResourceList.toTypedArray(), gender = gender)
+                        .continueWith {
+                            categories.forEachIndexed { index, category ->
+                                characteristicsMap[categoryResource.toCurrentLanguage(category)] = it.result!![index].getAll().toTypedArray()
+                            }
+                        }.continueWith {
+                            characteristicsMap.toMap()
+                        }
+                }
+        }
+
+
         private fun characteristicsTableItemClickHandler(
             view: View,
             context: Context,

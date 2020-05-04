@@ -92,7 +92,7 @@ class UserProfileActivity : VedibartaActivity(),
         Log.d(TAG, "created UserProfileActivity")
         initWidgets()
         characteristicsTask = RemoteResourcesManager(this)
-            .findMultilingualResource("characteristics")
+            .findMultilingualResource("characteristics/all")
         hobbiesTask = RemoteResourcesManager(this)
             .findMultilingualResource("hobbies/all")
     }

@@ -54,7 +54,7 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
 
         hobbyCardTask = VedibartaFragment.loadHobbies(this)
 
-        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics")
+        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics/all")
 
         Tasks.whenAll(hobbiesResourceTask, hobbyCardTask, characteristicsTask)
             .executeAfterTimeoutInMillis { internetConnectionErrorHandler(this) }

@@ -33,7 +33,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_user_setup.*
 import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
-class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer{
+class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
 
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
@@ -43,11 +43,16 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         uid = userId!!
     )
 
+    private lateinit var characteristicsNext: OnNextClickForCharacteristics
+
     lateinit var hobbyCardTask: Task<List<HobbyCard>>
     lateinit var hobbiesResourceTask: Task<MultilingualResource>
 
-    lateinit var characteristicsMaleTask : Task<MultilingualResource>
+    lateinit var characteristicsMaleTask: Task<MultilingualResource>
     lateinit var characteristicsFemaleTask: Task<MultilingualResource>
+    private lateinit var characteristicsWithCategoriesMaleTask: Task<Map<String, Array<String>>>
+    private lateinit var characteristicsWithCategoriesFemaleTask: Task<Map<String, Array<String>>>
+
 
     lateinit var schoolsNameTask: Task<out Resource>
     lateinit var regionsNameTask: Task<out Resource>
@@ -72,39 +77,39 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             setupStudent = savedInstanceState[STUDENT_KEY] as Student
         }
 
-        if(savedInstanceState?.get(FIRST_NAME_KEY) != null)
+        if (savedInstanceState?.get(FIRST_NAME_KEY) != null)
             chosenFirstName = savedInstanceState.getString(FIRST_NAME_KEY)!!
 
-        if(savedInstanceState?.get(LAST_NAME_KEY) != null)
+        if (savedInstanceState?.get(LAST_NAME_KEY) != null)
             chosenLastName = savedInstanceState.getString(LAST_NAME_KEY)!!
 
         loading.visibility = View.VISIBLE
         layout.visibility = View.GONE
 
-        hobbiesResourceTask = RemoteResourcesManager(this)
-            .findMultilingualResource("hobbies/all")
+        loadResources()
 
-        hobbyCardTask = VedibartaFragment.loadHobbies(this)
-
-        characteristicsMaleTask = RemoteResourcesManager(this).findMultilingualResource("characteristics", Gender.MALE)
-        characteristicsFemaleTask = RemoteResourcesManager(this).findMultilingualResource("characteristics",Gender.FEMALE)
-
-        schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
-        regionsNameTask = RemoteResourcesManager(this).findResource("regions")
-        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
-        Tasks.whenAll(schoolsNameTask,regionsNameTask)
-            .executeAfterTimeoutInMillis(5000L){
+        Tasks.whenAll(
+            schoolsNameTask,
+            regionsNameTask,
+            characteristicsMaleTask,
+            characteristicsFemaleTask,
+            characteristicsWithCategoriesFemaleTask,
+            characteristicsWithCategoriesMaleTask
+        )
+            .executeAfterTimeoutInMillis(5000L) {
                 internetConnectionErrorHandler(this)
             }
-            .addOnSuccessListener(this){
+            .addOnSuccessListener(this) {
                 loading.visibility = View.GONE
                 layout.visibility = View.VISIBLE
-                Log.d("abc", "WHY")
             }
+
         setupViewPager(userSetupContainer)
         editTabs.setupWithViewPager(userSetupContainer)
-        changeStatusBarColor(this, R.color.colorBoarding)
         editTabs.touchables.forEach { it.isEnabled = false }
+
+        changeStatusBarColor(this, R.color.colorBoarding)
+
         initButtons()
     }
 
@@ -114,6 +119,33 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         nextButton.setOnClickListener { onNextClick() }
         backButton.setOnClickListener { onBackClick() }
         backButton.bringToFront()
+    }
+
+    private fun loadResources() {
+        hobbiesResourceTask = RemoteResourcesManager(this)
+            .findMultilingualResource("hobbies/all")
+
+        hobbyCardTask = VedibartaFragment.loadHobbies(this)
+
+        characteristicsMaleTask =
+            RemoteResourcesManager(this).findMultilingualResource(
+                "characteristics/all",
+                Gender.MALE
+            )
+        characteristicsFemaleTask =
+            RemoteResourcesManager(this).findMultilingualResource(
+                "characteristics/all",
+                Gender.FEMALE
+            )
+
+        characteristicsWithCategoriesMaleTask =
+            VedibartaFragment.loadCharacteristics(this, Gender.MALE)
+        characteristicsWithCategoriesFemaleTask =
+            VedibartaFragment.loadCharacteristics(this, Gender.FEMALE)
+
+        schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
+        regionsNameTask = RemoteResourcesManager(this).findResource("regions")
+        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -127,8 +159,11 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     @SuppressLint("ClickableViewAccessibility")
     fun setupViewPager(viewPager: CustomViewPager) {
         val adapter = SectionsPageAdapter(supportFragmentManager)
+        val characteristicsFragment = ChooseCharacteristicsFragment()
+        characteristicsNext = characteristicsFragment as? OnNextClickForCharacteristics
+            ?: throw ClassCastException("$characteristicsFragment must implement ${OnNextClickForCharacteristics::class}")
         adapter.addFragment(ChoosePersonalInfoFragment(), "1")
-        adapter.addFragment(ChooseCharacteristicsFragment(), "2")
+        adapter.addFragment(characteristicsFragment, "2")
         adapter.addFragment(HobbiesFragment(), "3")
         viewPager.setPagingEnabled(false)
         viewPager.adapter = adapter
@@ -139,9 +174,9 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         onBackClick()
     }
 
-    private fun onDoneClick(){
+    private fun onDoneClick() {
         validateUserInput()
-            .addOnSuccessListener(this){
+            .addOnSuccessListener(this) {
                 if (it) {
                     setupStudent.name = "$chosenFirstName $chosenLastName"
                     database.students().userId().build().set(setupStudent)
@@ -160,49 +195,67 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             }
     }
 
-    private fun onBackClick(){
-        when(userSetupContainer.currentItem){
+    private fun onBackClick() {
+        when (userSetupContainer.currentItem) {
             1 -> {
-                userSetupContainer.currentItem -= 1
-                backButton.visibility = View.GONE
+                characteristicsNext.onBackClick()
+                    .onSuccessTask {
+                        if (it == true) {
+                            userSetupContainer.currentItem -= 1
+                            backButton.visibility = View.GONE
+                        }
+                        Tasks.call { }
+                    }
             }
-            2-> {
+            2 -> {
                 userSetupContainer.currentItem -= 1
                 nextButton.visibility = View.VISIBLE
             }
         }
     }
 
-    private fun onNextClick(){
-        when(userSetupContainer.currentItem){
+    private fun onNextClick() {
+        when (userSetupContainer.currentItem) {
             0 -> {
                 if (setupStudent.gender != Gender.NONE) {
                     (userSetupContainer.adapter as SectionsPageAdapter).notifyDataSetChanged()
                     userSetupContainer.currentItem += 1
                     backButton.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT)
                         .show()
                 }
             }
             1 -> {
-                userSetupContainer.currentItem += 1
-                doneButton.visibility = View.VISIBLE
-                nextButton.visibility = View.GONE
+                characteristicsNext.onNextClick()
+                    .onSuccessTask {
+                        if (it == true) {
+                            userSetupContainer.currentItem += 1
+                            doneButton.visibility = View.VISIBLE
+                            nextButton.visibility = View.GONE
+                        }
+                        Tasks.call { }
+                    }
             }
         }
     }
 
     private fun missingDetailsDialog() {
         val message = SpannableStringBuilder()
-            .bold { append(missingDetailsText).setSpan(RelativeSizeSpan(1f), 0, missingDetailsText.length, 0) }
+            .bold {
+                append(missingDetailsText).setSpan(
+                    RelativeSizeSpan(1f),
+                    0,
+                    missingDetailsText.length,
+                    0
+                )
+            }
 
         val text = resources.getString(R.string.user_setup_missing_details_dialog_title)
 
         val titleText = SpannableStringBuilder()
-            .bold { append(text).setSpan(RelativeSizeSpan(1.2f),0,text.length,0) }
-        titleText.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),0,text.length,0)
+            .bold { append(text).setSpan(RelativeSizeSpan(1.2f), 0, text.length, 0) }
+        titleText.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length, 0)
 
         val positiveButtonText = SpannableStringBuilder()
             .bold { append(resources.getString(R.string.ok)) }
@@ -210,7 +263,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         val builder = AlertDialog.Builder(this)
         builder
             .setTitle(titleText)
-            .setIcon(ContextCompat.getDrawable(this,R.drawable.ic_error))
+            .setIcon(ContextCompat.getDrawable(this, R.drawable.ic_error))
             .setMessage(message)
             .setPositiveButton(positiveButtonText) { _, _ -> }
 
@@ -218,7 +271,14 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     }
 
     private fun validateUserInput(): Task<Boolean> {
-        return Tasks.whenAll(characteristicsFemaleTask, characteristicsMaleTask, schoolsNameTask, regionsNameTask, hobbiesResourceTask, hobbyCardTask)
+        return Tasks.whenAll(
+            characteristicsFemaleTask,
+            characteristicsMaleTask,
+            schoolsNameTask,
+            regionsNameTask,
+            hobbiesResourceTask,
+            hobbyCardTask
+        )
             .continueWith {
                 missingDetailsText = ""
                 val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
@@ -261,8 +321,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
                     return@continueWith false
                 }
 
-                if (setupStudent.grade == Grade.NONE){
-                    missingDetailsText+="${resources.getString(R.string.user_setup_grade_missing)}\n"
+                if (setupStudent.grade == Grade.NONE) {
+                    missingDetailsText += "${resources.getString(R.string.user_setup_grade_missing)}\n"
                     return@continueWith false
                 }
 
@@ -280,14 +340,15 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             }
     }
 
-    private fun validateSchoolAndRegionExists() : Boolean{
+    private fun validateSchoolAndRegionExists(): Boolean {
         val schoolAndRegionMap =
             schoolTags.zip(schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll()))
                 .toMap()
         var result = false
         schoolsNameTask.result!!.getAll().forEachIndexed { index, name ->
-            if (name == setupStudent.school){
-                result = (schoolAndRegionMap[schoolTags[index]] ?: error("")).second == setupStudent.region
+            if (name == setupStudent.school) {
+                result = (schoolAndRegionMap[schoolTags[index]]
+                    ?: error("")).second == setupStudent.region
 
                 if (result)
                     return result
@@ -301,6 +362,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         map["student"] = setupStudent
         map["characteristicsMaleTask"] = characteristicsMaleTask
         map["characteristicsFemaleTask"] = characteristicsFemaleTask
+        map["characteristicsWithCategoriesMaleTask"] = characteristicsWithCategoriesMaleTask
+        map["characteristicsWithCategoriesFemaleTask"] = characteristicsWithCategoriesFemaleTask
         map["hobbiesResourceTask"] = hobbiesResourceTask
         map["hobbyCardTask"] = hobbyCardTask
         map["schoolsNameTask"] = schoolsNameTask
@@ -317,5 +380,10 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             else -> {
             }
         }
+    }
+
+    interface OnNextClickForCharacteristics {
+        fun onNextClick(): Task<Boolean>
+        fun onBackClick(): Task<Boolean>
     }
 }
