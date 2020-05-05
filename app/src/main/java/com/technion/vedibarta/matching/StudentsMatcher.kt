@@ -2,6 +2,7 @@ package com.technion.vedibarta.matching
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
+import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.database.DatabaseVersioning
 
@@ -40,12 +41,14 @@ class StudentsMatcher(studentsCollection: CollectionReference = DEFAULT_STUDENTS
         characteristics: Collection<String>,
         region: String? = null,
         school: String? = null,
+        grade: Grade? = null,
         limit: Long = STUDENTS_LIMIT
     ): Task<List<Student>> {
         var matcher = matcher
 
         if (region != null) matcher = matcher.whereFieldsMatch("region" to region)
         if (school != null) matcher = matcher.whereFieldsMatch("school" to school)
+        if (grade != null) matcher = matcher.whereFieldsMatch("grade" to grade.toString())
 
         matcher = if (characteristics.size > 1) {
             matcher.whereAtLeastOneFieldMatch(characteristics.map { "characteristics.$it" to true }.toMap())

@@ -2,7 +2,6 @@ package com.technion.vedibarta.POJOs
 
 import android.os.Parcelable
 import com.google.firebase.firestore.Exclude
-import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 

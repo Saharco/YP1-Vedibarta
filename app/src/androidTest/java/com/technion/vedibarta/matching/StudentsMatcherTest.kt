@@ -2,6 +2,7 @@ package com.technion.vedibarta.matching
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.gms.tasks.Tasks
+import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.database.DatabaseVersioning
 import org.junit.After
@@ -22,38 +23,41 @@ class StudentsMatcherTest {
                 Tasks.whenAll(
                 document("Or").set(
                     Student(
-                    name = "Or",
-                    region = "Haifa",
-                    school = "Makif Haifa",
-                    characteristics = mutableMapOf(
-                        "vegan" to true,
-                        "religious" to false
+                        name = "Or",
+                        region = "Haifa",
+                        school = "Makif Haifa",
+                        grade = Grade.TENTH,
+                        characteristics = mutableMapOf(
+                            "vegan" to true,
+                            "religious" to false
+                        )
                     )
-                )
                 ),
                 document("Victor").set(
                     Student(
-                    name = "Victor",
-                    region = "Haifa",
-                    school = "Haifa's High School",
-                    characteristics = mutableMapOf(
-                        "vegan" to true,
-                        "religious" to true,
-                        "failthfull" to false
+                        name = "Victor",
+                        region = "Haifa",
+                        school = "Haifa's High School",
+                        grade = Grade.ELEVENTH,
+                        characteristics = mutableMapOf(
+                            "vegan" to true,
+                            "religious" to true,
+                            "failthfull" to false
+                        )
                     )
-                )
                 ),
                 document("Sahar").set(
                     Student(
-                    name = "Sahar",
-                    region = "Tel Aviv",
-                    school = "Makif Tel Aviv",
-                    characteristics = mutableMapOf(
-                        "vegan" to true,
-                        "religious" to true,
-                        "failthfull" to true
+                        name = "Sahar",
+                        region = "Tel Aviv",
+                        school = "Makif Tel Aviv",
+                        grade = Grade.TENTH,
+                        characteristics = mutableMapOf(
+                            "vegan" to true,
+                            "religious" to true,
+                            "failthfull" to true
+                        )
                     )
-                )
                 )
             ))
         }
@@ -139,6 +143,18 @@ class StudentsMatcherTest {
         ))
 
         assert(result.all { it.school == "Makif Haifa" })
+    }
+
+    @Test
+    fun matcherReturnsOnlyStudentsOfWantedGraded() {
+        val matcher = StudentsMatcher(studentsCollection)
+
+        val result = Tasks.await(matcher.match(
+            characteristics = setOf("vegan"),
+            grade = Grade.TENTH
+        ))
+
+        assert(result.all { it.grade == Grade.TENTH })
     }
 
     @Test
