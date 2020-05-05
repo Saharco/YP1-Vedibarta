@@ -197,5 +197,14 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_class_title">יצירת כיתה חדשה</string>
+    <string name="class_name_hint">שם הכיתה</string>
+    <string name="subject_hint">מקצוע</string>
+    <string name="accept_text">אישור</string>
+    <string name="teacher_profile_title">פרופיל מורה</string>
+    <string name="enter_family_name_hint">שם משפחה</string>
+    <string name="grade_10_radio_text">כיתה י</string>
+    <string name="grade_11_radio_text">כיתה יא</string>
+    <string name="grade_12_radio_text">כיתה יב</string>
 
 </resources>
