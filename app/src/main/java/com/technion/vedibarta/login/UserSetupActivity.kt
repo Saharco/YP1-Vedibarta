@@ -179,6 +179,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             .addOnSuccessListener(this) {
                 if (it) {
                     setupStudent.name = "$chosenFirstName $chosenLastName"
+                    setupStudent.school = setupStudent.school.substringBefore(" -")
                     database.students().userId().build().set(setupStudent)
                         .addOnSuccessListener {
                             student = setupStudent
