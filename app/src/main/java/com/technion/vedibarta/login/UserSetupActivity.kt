@@ -58,7 +58,6 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
 
     lateinit var schoolsNameTask: Task<out Resource>
     lateinit var regionsNameTask: Task<out Resource>
-    lateinit var schoolTags: Array<Int>
 
     var chosenFirstName = ""
     var chosenLastName = ""
@@ -147,7 +146,6 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
 
         schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
         regionsNameTask = RemoteResourcesManager(this).findResource("regions")
-        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -359,19 +357,9 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
 
     private fun validateSchoolAndRegionExists(): Boolean {
         val schoolAndRegionMap =
-            schoolTags.zip(schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll()))
-                .toMap()
-        var result = false
-        schoolsNameTask.result!!.getAll().forEachIndexed { index, name ->
-            if (name == setupStudent.school) {
-                result = (schoolAndRegionMap[schoolTags[index]]
-                    ?: error("")).second == setupStudent.region
+            schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll()).toMap()
 
-                if (result)
-                    return result
-            }
-        }
-        return result
+        return schoolAndRegionMap.containsKey(setupStudent.school) && schoolAndRegionMap[setupStudent.school] == setupStudent.region
     }
 
     override fun getArgs(): Map<String, Any> {

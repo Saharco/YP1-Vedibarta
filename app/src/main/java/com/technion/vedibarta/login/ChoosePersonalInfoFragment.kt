@@ -38,7 +38,9 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     private val BORDER_WIDTH = 10
 
     // Tag -> (schoolName, SchoolRegion)
-    private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
+//    private lateinit var schoolAndRegionMap: Map<Int, Pair<String, String>>
+    private lateinit var schoolAndRegionMap: Map<String, String>
+
 
     private lateinit var argumentTransfer: ArgumentTransfer
 
@@ -89,14 +91,8 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     }
 
     private fun onSchoolSelectedListener(position: Int) {
-
-        val nameList = schoolAndRegionMap.filter {
-            it.value.first == schoolListSpinner.adapter.getItem(position)
-        }.values.toMutableList()
-        Log.d(TAG, "${schoolListSpinner.adapter.getItem(position)}")
-        Log.d(TAG, "${schoolAndRegionMap.values.map { it.first }}")
-        val region = nameList[position % nameList.size].second
-        val schoolName = schoolListSpinner.text.toString()
+        val schoolName = schoolListSpinner.adapter.getItem(position).toString()
+        val region = schoolAndRegionMap[schoolName].toString()
 
         regionListSpinner.text = SpannableStringBuilder(region)
         (activity as UserSetupActivity).setupStudent.school = schoolName
@@ -113,9 +109,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         (activity as UserSetupActivity).setupStudent.region = region
         (activity as UserSetupActivity).setupStudent.school = ""
 
-        val schoolList =
-            schoolAndRegionMap.filter { it.value.second == region }.values.toMutableList().unzip()
-                .first.toTypedArray()
+        val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
 
         populateAutoTextView(activity as UserSetupActivity, schoolListSpinner, schoolList)
 
@@ -185,11 +179,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
 
         val act = (activity as UserSetupActivity)
 
-        schoolAndRegionMap =
-            act.schoolTags.zip(
-                schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll())
-            )
-                .toMap()
+        schoolAndRegionMap = schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll()).toMap()
 
         // ---Student Name Views---
         val firstName: TextInputEditText = v.findViewById(R.id.textFieldFirstName)
