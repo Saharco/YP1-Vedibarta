@@ -8,9 +8,13 @@ import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Task
@@ -21,6 +25,8 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.putGender
+import com.technion.vedibarta.viewModels.UserSetupViewModel
+import com.technion.vedibarta.viewModels.userSetupViewModelFactory
 import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
@@ -58,10 +64,10 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     private fun onButtonFemaleClickListener() {
 
         imageFemale.borderWidth = BORDER_WIDTH
-        imageFemale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+        imageFemale.borderColor = ContextCompat.getColor(requireContext(), R.color.colorAccentDark)
         imageMale.borderWidth = 0
-        textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
-        textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
+        textOptionFemale.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentDark))
+        textOptionMale.setTextColor(ContextCompat.getColor(requireContext(), R.color.background))
         (activity as UserSetupActivity).setupStudent.gender = Gender.FEMALE
         PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
             .putGender(Gender.FEMALE).apply()
@@ -70,10 +76,10 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     private fun onButtonMaleClickListener() {
 
         imageMale.borderWidth = BORDER_WIDTH
-        imageMale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+        imageMale.borderColor = ContextCompat.getColor(requireContext(), R.color.colorAccentDark)
         imageFemale.borderWidth = 0
-        textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
-        textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
+        textOptionMale.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccentDark))
+        textOptionFemale.setTextColor(ContextCompat.getColor(requireContext(), R.color.background))
 
         (activity as UserSetupActivity).setupStudent.gender = Gender.MALE
         PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
@@ -133,35 +139,35 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     }
 
     private fun genderInit() {
-        Glide.with(context!!).load(R.drawable.ic_photo_default_profile_man).into(imageMale)
-        Glide.with(context!!).load(R.drawable.ic_photo_default_profile_girl).into(imageFemale)
+        Glide.with(requireContext()).load(R.drawable.ic_photo_default_profile_man).into(imageMale)
+        Glide.with(requireContext()).load(R.drawable.ic_photo_default_profile_girl).into(imageFemale)
         imageMale.setOnClickListener { onButtonMaleClickListener() }
         imageFemale.setOnClickListener { onButtonFemaleClickListener() }
 
         when ((activity as UserSetupActivity).setupStudent.gender) {
             Gender.MALE -> {
                 imageMale.borderWidth = BORDER_WIDTH
-                imageMale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+                imageMale.borderColor = ContextCompat.getColor(requireContext(), R.color.colorAccentDark)
                 imageFemale.borderWidth = 0
                 textOptionMale.setTextColor(
                     ContextCompat.getColor(
-                        context!!,
+                        requireContext(),
                         R.color.colorAccentDark
                     )
                 )
-                textOptionFemale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
+                textOptionFemale.setTextColor(ContextCompat.getColor(requireContext(), R.color.background))
             }
             Gender.FEMALE -> {
                 imageFemale.borderWidth = BORDER_WIDTH
-                imageFemale.borderColor = ContextCompat.getColor(context!!, R.color.colorAccentDark)
+                imageFemale.borderColor = ContextCompat.getColor(requireContext(), R.color.colorAccentDark)
                 imageMale.borderWidth = 0
                 textOptionFemale.setTextColor(
                     ContextCompat.getColor(
-                        context!!,
+                        requireContext(),
                         R.color.colorAccentDark
                     )
                 )
-                textOptionMale.setTextColor(ContextCompat.getColor(context!!, R.color.background))
+                textOptionMale.setTextColor(ContextCompat.getColor(requireContext(), R.color.background))
             }
             Gender.NONE -> {
             }
