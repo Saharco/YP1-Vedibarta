@@ -296,7 +296,7 @@ class LoginActivity : AppCompatActivity(),
                     finish()
                 } else {
                     Log.d(TAG, "document doesn't exist. redirecting to user setup")
-                    startActivity(Intent(this, UserSetupActivity::class.java))
+                    startActivity(Intent(this, ChooseRoleActivity::class.java))
                     finish()
                 }
                 true

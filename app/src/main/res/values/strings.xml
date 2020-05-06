@@ -209,5 +209,9 @@
     <string name="grade_10_radio_text">כיתה י</string>
     <string name="grade_11_radio_text">כיתה יא</string>
     <string name="grade_12_radio_text">כיתה יב</string>
+    <string name="choose_role_text">ספרו לנו מי אתם</string>
+    <string name="student">תלמיד</string>
+    <string name="teacher">מורה</string>
+    <string name="teacher_add_school">הוסף בית ספר</string>
 
 </resources>
