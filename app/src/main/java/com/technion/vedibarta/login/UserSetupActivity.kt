@@ -7,20 +7,15 @@ import android.text.Layout
 import android.text.SpannableStringBuilder
 import android.text.style.AlignmentSpan
 import android.text.style.RelativeSizeSpan
-import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
-import androidx.core.view.children
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Grade
-import com.technion.vedibarta.POJOs.HobbyCard
-import com.technion.vedibarta.POJOs.Student
+import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
@@ -32,8 +27,9 @@ import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.Resource
+import com.technion.vedibarta.viewModels.UserSetupViewModel
+import com.technion.vedibarta.viewModels.userSetupViewModelFactory
 import kotlinx.android.synthetic.main.activity_user_setup.*
-import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
 class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
 
@@ -55,6 +51,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     private lateinit var characteristicsWithCategoriesMaleTask: Task<Map<String, Array<String>>>
     private lateinit var characteristicsWithCategoriesFemaleTask: Task<Map<String, Array<String>>>
 
+    private val viewModel: UserSetupViewModel by viewModels { userSetupViewModelFactory(userId!!) }
+
 
     lateinit var schoolsNameTask: Task<out Resource>
     lateinit var regionsNameTask: Task<out Resource>
@@ -72,6 +70,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_setup)
+
+
         sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
         if (savedInstanceState?.get(STUDENT_KEY) != null) {
@@ -176,13 +176,11 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
 
     private fun onDoneClick() {
         validateUserInput()
-            .addOnSuccessListener(this) {
-                if (it) {
-                    setupStudent.name = "$chosenFirstName $chosenLastName"
-                    setupStudent.school = setupStudent.school.substringBefore(" -")
-                    database.students().userId().build().set(setupStudent)
+            .addOnSuccessListener(this) {StudentResult ->
+                when(StudentResult){
+                    is Success -> database.students().userId().build().set(StudentResult.student)
                         .addOnSuccessListener {
-                            student = setupStudent
+                            student = StudentResult.student
                             startActivity(Intent(this, UserProfileActivity::class.java))
                             finish()
                         }
@@ -190,9 +188,24 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
                             Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
                                 .show()
                         }
-                } else {
-                    missingDetailsDialog()
+                    is Failure -> missingDetailsDialog(StudentResult.msg)
                 }
+//                if (it) {
+//                    setupStudent.name = "$chosenFirstName $chosenLastName"
+//                    setupStudent.school = setupStudent.school.substringBefore(" -")
+//                    database.students().userId().build().set(setupStudent)
+//                        .addOnSuccessListener {
+//                            student = setupStudent
+//                            startActivity(Intent(this, UserProfileActivity::class.java))
+//                            finish()
+//                        }
+//                        .addOnFailureListener {
+//                            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
+//                                .show()
+//                        }
+//                } else {
+//                    missingDetailsDialog()
+//                }
             }
     }
 
@@ -256,13 +269,13 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         }
     }
 
-    private fun missingDetailsDialog() {
+    private fun missingDetailsDialog(msg: String) {
         val message = SpannableStringBuilder()
             .bold {
-                append(missingDetailsText).setSpan(
+                append(msg).setSpan(
                     RelativeSizeSpan(1f),
                     0,
-                    missingDetailsText.length,
+                    msg.length,
                     0
                 )
             }
@@ -286,7 +299,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         builder.create().show()
     }
 
-    private fun validateUserInput(): Task<Boolean> {
+    private fun validateUserInput(): Task<StudentResult> {
         return Tasks.whenAll(
             characteristicsFemaleTask,
             characteristicsMaleTask,
@@ -296,71 +309,137 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             hobbyCardTask
         )
             .continueWith {
-                missingDetailsText = ""
-                val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
+//                missingDetailsText = ""
+//                val studentsCharacteristics = setupStudent.characteristics.filter { it.value }.keys
 
-                if (setupStudent.gender == Gender.NONE) {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_gender_missing)}\n"
-                    return@continueWith false
+                val chosenFirstName = viewModel.chosenFirstName
+                val chosenLastName = viewModel.chosenLastName
+                val gender = viewModel.gender
+                val grade = viewModel.grade
+                val chosenSchool = viewModel.chosenSchool
+                val chosenRegion = viewModel.chosenRegion
+                val studentHobbies = viewModel.chosenHobbies
+                val studentsCharacteristics = viewModel.chosenCharacteristics
+
+                if (gender == Gender.NONE)
+                    return@continueWith Failure(resources.getString(R.string.user_setup_gender_missing))
+
+                val firstName = when (chosenFirstName) {
+                    is Unfilled -> return@continueWith Failure(resources.getString(R.string.user_setup_first_name_missing))
+                    is Filled -> chosenFirstName.text
                 }
 
-                Log.d(TAG, "first: $chosenFirstName last: $chosenLastName")
-
-                if (chosenFirstName == "") {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_first_name_missing)}\n"
-                    return@continueWith false
+                val lastName = when (chosenLastName) {
+                    is Unfilled -> return@continueWith Failure(resources.getString(R.string.user_setup_last_name_missing))
+                    is Filled -> chosenFirstName.text
                 }
 
-                if (chosenLastName == "") {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_last_name_missing)}\n"
-                    return@continueWith false
+                val school = when (chosenSchool) {
+                    is Unfilled -> return@continueWith Failure(resources.getString(R.string.user_setup_school_missing))
+                    is Filled -> chosenSchool.text.substringBefore(" -")
                 }
 
-                if (!schoolsNameTask.result!!.getAll().contains(
-                        setupStudent.school
-                    )
-                ) {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_school_missing)}\n"
-                    return@continueWith false
+                if (!schoolsNameTask.result!!.getAll().contains(school))
+                    return@continueWith Failure(resources.getString(R.string.user_setup_school_missing))
+
+                val region = when (chosenRegion) {
+                    is Unfilled -> return@continueWith Failure(resources.getString(R.string.user_setup_region_missing))
+                    is Filled -> chosenRegion.text
                 }
 
-                if (!regionsNameTask.result!!.getAll().contains(
-                        setupStudent.region
-                    )
-                ) {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_region_missing)}\n"
-                    return@continueWith false
-                }
+                if (regionsNameTask.result!!.getAll().contains(region))
+                    return@continueWith Failure(resources.getString(R.string.user_setup_region_missing))
 
-                if (!validateSchoolAndRegionExists()) {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_wrong_school_and_region_combination)}\n"
-                    return@continueWith false
+                if (!validateSchoolAndRegionExists(school, region)) {
+                    return@continueWith Failure(resources.getString(R.string.user_setup_wrong_school_and_region_combination))
                 }
 
                 if (setupStudent.grade == Grade.NONE) {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_grade_missing)}\n"
-                    return@continueWith false
+                    return@continueWith Failure(resources.getString(R.string.user_setup_grade_missing))
                 }
 
                 if (studentsCharacteristics.isEmpty()) {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
-                    return@continueWith false
+                    return@continueWith Failure(resources.getString(R.string.user_setup_characteristics_missing))
                 }
 
-                if (setupStudent.hobbies.isEmpty()) {
-                    missingDetailsText += "${resources.getString(R.string.user_setup_hobbies_missing)}\n"
-                    return@continueWith false
+                if (studentHobbies.isEmpty()) {
+                    return@continueWith Failure(resources.getString(R.string.user_setup_hobbies_missing))
                 }
 
-                true
+                return@continueWith Success(
+                    Student(
+                        uid = viewModel.uid,
+                        name = "$firstName $lastName",
+                        gender = gender,
+                        region = region,
+                        school = school,
+                        grade = grade,
+                        characteristics = studentsCharacteristics,
+                        hobbies = studentHobbies
+                    )
+                )
+//                if (setupStudent.gender == Gender.NONE) {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_gender_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                Log.d(TAG, "first: $chosenFirstName last: $chosenLastName")
+//
+//                if (chosenFirstName == "") {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_first_name_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                if (chosenLastName == "") {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_last_name_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                if (!schoolsNameTask.result!!.getAll().contains(
+//                        setupStudent.school
+//                    )
+//                ) {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_school_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                if (!regionsNameTask.result!!.getAll().contains(
+//                        setupStudent.region
+//                    )
+//                ) {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_region_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                if (!validateSchoolAndRegionExists()) {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_wrong_school_and_region_combination)}\n"
+//                    return@continueWith false
+//                }
+//
+//                if (setupStudent.grade == Grade.NONE) {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_grade_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                if (studentsCharacteristics.isEmpty()) {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_characteristics_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                if (setupStudent.hobbies.isEmpty()) {
+//                    missingDetailsText += "${resources.getString(R.string.user_setup_hobbies_missing)}\n"
+//                    return@continueWith false
+//                }
+//
+//                true
             }
     }
 
-    private fun validateSchoolAndRegionExists(): Boolean {
+    private fun validateSchoolAndRegionExists(school: String, region: String): Boolean {
         val schoolAndRegionMap =
             schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll()).toMap()
 
-        return schoolAndRegionMap.containsKey(setupStudent.school) && schoolAndRegionMap[setupStudent.school] == setupStudent.region
+        return schoolAndRegionMap.containsKey(school) && schoolAndRegionMap[school] == region
     }
 
     override fun getArgs(): Map<String, Any> {
@@ -392,4 +471,11 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         fun onNextClick(): Task<Boolean>
         fun onBackClick(): Task<Boolean>
     }
+
 }
+
+sealed class StudentResult
+
+data class Success(val student: Student) : StudentResult()
+
+data class Failure(val msg: String) : StudentResult()
