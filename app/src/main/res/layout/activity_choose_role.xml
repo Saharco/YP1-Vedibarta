@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_onboarding"
+    tools:context=".login.ChooseRoleActivity">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/roleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text="@string/choose_role_text"
+        android:textColor="@color/textPrimaryOnDarkSurface"
+        android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/roleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="30dp"
+        android:orientation="vertical" >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chooseStudentRoleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/student"
+            android:textSize="18sp"
+            android:padding="24dp"
+            android:background="@drawable/rounded_rectangle"
+            android:layout_marginHorizontal="56dp"
+            android:layout_marginVertical="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chooseTeacherRoleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/teacher"
+            android:textSize="18sp"
+            android:padding="24dp"
+            android:background="@drawable/rounded_rectangle"
+            android:layout_marginHorizontal="56dp"
+            android:layout_marginVertical="16dp"/>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
