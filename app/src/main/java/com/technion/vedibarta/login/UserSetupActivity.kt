@@ -55,6 +55,7 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             if (it) {
                 loading.visibility = View.GONE
                 layout.visibility = View.VISIBLE
+                viewModel.resourcesMediator.removeObservers(this)
             }
         })
 
