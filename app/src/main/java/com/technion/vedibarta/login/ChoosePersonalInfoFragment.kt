@@ -146,8 +146,10 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         super.setupAndInitViews(v)
         genderInit()
         viewModel.resourcesMediator.observe(viewLifecycleOwner, Observer {
-            if (it)
+            if (it) {
                 extraOptionsInit(v, viewModel.schoolsName, viewModel.regionsName)
+                viewModel.resourcesMediator.removeObservers(viewLifecycleOwner)
+            }
         })
     }
 

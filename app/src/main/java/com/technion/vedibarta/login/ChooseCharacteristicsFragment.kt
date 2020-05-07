@@ -54,13 +54,17 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         currentIndex = 0
+        val observer =  Observer<Boolean> {
+            if(it) {
+                val resource = (viewModel.characteristics.value as Loaded).data
+                val characteristics = (viewModel.characteristicsByCategory.value as Loaded).data
+                characteristicsTitle.text = characteristics.keys.toList().first()
+                loadCharacteristics(characteristics[characteristics.keys.toList().first()] ?: emptyArray(), resource)
+                viewModel.resourcesMediator.removeObservers(viewLifecycleOwner)
+            }
+        }
+        viewModel.resourcesMediator.observe(viewLifecycleOwner,observer)
 
-        viewModel.resourcesMediator.observe(viewLifecycleOwner, Observer {
-            val resource = (viewModel.characteristics.value as Loaded).data
-            val characteristics = (viewModel.characteristicsByCategory.value as Loaded).data
-            characteristicsTitle.text = characteristics.keys.toList().first()
-            loadCharacteristics(characteristics[characteristics.keys.toList().first()]?: emptyArray(), resource)
-        })
 
         //TODO add observe for gender change
 
