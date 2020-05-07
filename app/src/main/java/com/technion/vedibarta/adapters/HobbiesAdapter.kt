@@ -7,14 +7,13 @@ import android.widget.TableLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.POJOs.HobbyCard
-import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 
 class HobbiesAdapter(
     private val hobbyCard: List<HobbyCard>,
-    val student: Student,
+    val chosenHobbies: MutableList<String>,
     private val hobbiesResource: MultilingualResource
 ) :
     RecyclerView.Adapter<HobbiesAdapter.HobbyCardViewHolder>() {
@@ -31,7 +30,7 @@ class HobbiesAdapter(
     }
 
     override fun onBindViewHolder(holder: HobbyCardViewHolder, position: Int) {
-        holder.bind(hobbyCard[holder.adapterPosition], student, hobbiesResource)
+        holder.bind(hobbyCard[holder.adapterPosition], chosenHobbies, hobbiesResource)
     }
 
     class HobbyCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -41,7 +40,7 @@ class HobbiesAdapter(
 
         fun bind(
             hobbyCard: HobbyCard,
-            student: Student,
+            chosenHobbies: MutableList<String>,
             hobbiesResource: MultilingualResource
         ) {
             header = itemView.findViewById(R.id.hobbyCardTitle)
@@ -53,7 +52,7 @@ class HobbiesAdapter(
                 itemView.context,
                 table,
                 hobbyCard.hobbies,
-                student,
+                chosenHobbies,
                 hobbiesResource
             )
 

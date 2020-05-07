@@ -2,6 +2,7 @@ package com.technion.vedibarta.utilities.resourcesManagement
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
