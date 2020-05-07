@@ -130,6 +130,14 @@
     <string name="email_format_error">הכנס כתובת מהצורה mail@client.com</string>
     <string name="short_password_error">על הסיסמה להכיל לפחות 8 תווים</string>
     <string name="wrong_password_repeat">הסיסמאות לא זהות</string>
+    <string name="home">בית</string>
+    <string name="profile">פרופיל</string>
+    <string name="chat">צ\'אט</string>
+    <string name="search">חיפוש</string>
+    <string name="reports">דיווחים</string>
+    <string name="class_creation_fab_text">יצירת כיתה</string>
+    <string name="finding_connections_text">מוצאים חיבורים</string>
+    <string name="teacher_main_title">ודיברת</string>
     <string name="email_not_verified_error">אנא אמת דוא\"ל</string>
     <string name="timeout_error">שגיאה: הפעולה נמשכת זמן רב מידי</string>
 
@@ -189,5 +197,18 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_class_title">יצירת כיתה חדשה</string>
+    <string name="class_name_hint">שם הכיתה</string>
+    <string name="subject_hint">מקצוע</string>
+    <string name="accept_text">אישור</string>
+    <string name="teacher_profile_title">פרופיל מורה</string>
+    <string name="enter_family_name_hint">שם משפחה</string>
+    <string name="grade_10_radio_text">כיתה י</string>
+    <string name="grade_11_radio_text">כיתה יא</string>
+    <string name="grade_12_radio_text">כיתה יב</string>
+    <string name="choose_role_text">ספרו לנו מי אתם</string>
+    <string name="student">תלמיד</string>
+    <string name="teacher">מורה</string>
+    <string name="teacher_add_school">הוסף בית ספר</string>
 
 </resources>

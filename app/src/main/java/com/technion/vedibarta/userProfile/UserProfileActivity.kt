@@ -192,11 +192,9 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun initWidgets() {
-        setToolbar(toolbar)
         enlargedToolbar.title = student!!.name
         enlargedToolbar.setTitleTextColor(ContextCompat.getColor(this, android.R.color.white))
 
-        titlePicture.bringToFront()
         profilePicture.bringToFront()
         changeProfilePictureButton.bringToFront()
 
@@ -211,6 +209,14 @@ class UserProfileActivity : VedibartaActivity(),
             Log.d(TAG, "clicked profile picture")
             zoomImageFromThumb(profilePicture)
         }
+
+        actionEditProfile.setOnClickListener {
+            startActivityForResult(Intent(this, ProfileEditActivity::class.java), EDIT_PROFILE)
+        }
+        actionLogOut.setOnClickListener {
+            onLogoutClick()
+        }
+
         mShortAnimationDuration =
             resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
@@ -327,22 +333,34 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun toggleToolbars() {
-        if (!isImageFullscreen) {
-            Log.d(TAG, "toggleToolbars: setting the real toolbar")
-            enlargedToolbar.visibility = View.GONE
-            toolbar.visibility = View.VISIBLE
-            setToolbar(toolbar)
-            supportActionBar?.setDisplayShowTitleEnabled(false)
-            changeStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-        } else {
+        if (isImageFullscreen) {
             Log.d(TAG, "toggleToolbars: setting the fake toolbar")
-            toolbar.visibility = View.GONE
             enlargedToolbar.visibility = View.VISIBLE
             setToolbar(enlargedToolbar)
             supportActionBar?.setDisplayShowTitleEnabled(true)
             supportActionBar?.title = student!!.name
             changeStatusBarColor(ContextCompat.getColor(this, android.R.color.black))
         }
+        else {
+            Log.d(TAG, "toggleToolbars: removing the fake toolbar")
+            enlargedToolbar.visibility = View.GONE
+        }
+//        if (!isImageFullscreen) {
+//            Log.d(TAG, "toggleToolbars: setting the real toolbar")
+//            enlargedToolbar.visibility = View.GONE
+//            toolbar.visibility = View.VISIBLE
+//            setToolbar(toolbar)
+//            supportActionBar?.setDisplayShowTitleEnabled(false)
+//            changeStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+//        } else {
+//            Log.d(TAG, "toggleToolbars: setting the fake toolbar")
+//            toolbar.visibility = View.GONE
+//            enlargedToolbar.visibility = View.VISIBLE
+//            setToolbar(enlargedToolbar)
+//            supportActionBar?.setDisplayShowTitleEnabled(true)
+//            supportActionBar?.title = student!!.name
+//            changeStatusBarColor(ContextCompat.getColor(this, android.R.color.black))
+//        }
     }
 
     /**

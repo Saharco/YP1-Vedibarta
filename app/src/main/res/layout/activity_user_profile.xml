@@ -7,36 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".userProfile.UserProfileActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/AppToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-        <TextView
-            android:id="@+id/toolbar_title"
-            style="@style/ToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/user_profile_title" />
-    </androidx.appcompat.widget.Toolbar>
-
     <ImageView
         android:id="@+id/titlePicture"
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:contentDescription="@string/user_title_picture_overlay"
-        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:srcCompat="@drawable/photo_flower" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/colorAccent" />
+
+    <ImageButton
+        android:id="@+id/actionLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_exit_white"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:scaleY="1.2"
+        android:scaleX="1.2"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/action_logout_title"/>
+
+    <ImageButton
+        android:id="@+id/actionEditProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_edit_white"
+        app:layout_constraintEnd_toStartOf="@id/actionLogOut"
+        app:layout_constraintTop_toTopOf="@id/actionLogOut"
+        android:padding="8dp"
+        android:scaleY="1.2"
+        android:scaleX="1.2"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/profile_edit_title"/>
 
     <!-- change android:src to app:srcCompat with support library !-->
     <ImageView
@@ -101,26 +109,16 @@
         app:layout_constraintTop_toBottomOf="@+id/userName" />
 
     <!--    need to add support library-->
-    <View
-        android:id="@+id/divider1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/textSecondary"
-        android:elevation="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userDescription" />
 
     <ScrollView
         android:id="@+id/scrollViewLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider1">
+        app:layout_constraintTop_toBottomOf="@id/userName">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -129,17 +127,6 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
-
-            <TextView
-                android:id="@+id/characteristicsTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="@color/background"
-                android:gravity="center"
-                android:text="@string/user_profile_characteristics"
-                android:textColor="@color/textSecondary"
-                android:textSize="18sp" />
 
             <TableLayout
                 android:id="@+id/characteristicsTable"
@@ -152,18 +139,6 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="16dp"
                 android:background="@color/colorDivider" />
-
-            <TextView
-                android:id="@+id/hobbiesTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="@color/background"
-                android:gravity="center"
-                android:text="@string/user_profile_hobbies"
-                android:textColor="@color/textSecondary"
-                android:textSize="18sp" />
-
 
             <TableLayout
                 android:id="@+id/hobbiesTable"
@@ -207,5 +182,25 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleTextColor="@android:color/white" />
     </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        style="@style/Widget.MaterialComponents.BottomNavigationView"
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/student_bottom_navigation_menu"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
