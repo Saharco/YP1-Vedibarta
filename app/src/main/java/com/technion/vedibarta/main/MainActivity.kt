@@ -17,6 +17,7 @@ import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
+import com.technion.vedibarta.data.loadHobbies
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -64,7 +65,7 @@ class MainActivity : VedibartaActivity()
         RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
 
-        VedibartaFragment.loadHobbies(this)
+        loadHobbies(this)
     }
 
     override fun onStart()

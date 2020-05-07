@@ -225,7 +225,7 @@ class UserProfileActivity : VedibartaActivity(),
                     this,
                     characteristicsTable,
                     studentCharacteristics,
-                    student!!,
+                    student!!.characteristics,
                     characteristicsTask.result!!
                 )
                 characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
@@ -236,7 +236,7 @@ class UserProfileActivity : VedibartaActivity(),
                     this,
                     hobbiesTable,
                     hobbies,
-                    student!!,
+                    student!!.hobbies.toMutableList(),
                     hobbiesTask.result!!
                 )
                 hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }

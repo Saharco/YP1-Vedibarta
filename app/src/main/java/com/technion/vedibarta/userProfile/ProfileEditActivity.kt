@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.loadHobbies
 import com.technion.vedibarta.fragments.CharacteristicsFragment
 import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.utilities.SectionsPageAdapter
@@ -52,7 +53,7 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
         hobbiesResourceTask = RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
 
-        hobbyCardTask = VedibartaFragment.loadHobbies(this)
+        hobbyCardTask = loadHobbies(this)
 
         characteristicsTask = RemoteTextResourcesManager(this).findMultilingualResource("characteristics/all")
 

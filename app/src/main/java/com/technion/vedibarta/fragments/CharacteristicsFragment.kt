@@ -45,10 +45,10 @@ class CharacteristicsFragment : VedibartaFragment() {
             .addOnSuccessListener(act) {
                 table.removeAllViews()
                 populateCharacteristicsTable(
-                    context!!,
+                    requireContext(),
                     table,
                     characteristicsTask.result!!.getAll().shuffled(Random(42)).toTypedArray(),
-                    student,
+                    student.characteristics,
                     characteristicsTask.result!!
                 )
 

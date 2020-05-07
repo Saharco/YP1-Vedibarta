@@ -1,18 +1,21 @@
 package com.technion.vedibarta.login
 
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.viewModels.Loaded
+import com.technion.vedibarta.data.viewModels.UserSetupViewModel
+import com.technion.vedibarta.data.viewModels.userSetupViewModelFactory
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 import kotlinx.android.synthetic.main.fragment_choose_characteristics.*
@@ -27,13 +30,14 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
     private val TAG = "CharFragment@Setup"
     private lateinit var argumentTransfer: ArgumentTransfer
 
-    private lateinit var characteristicsWithCategoriesMaleTask: Task<Map<String,Array<String>>>
-    private lateinit var characteristicsWithCategoriesFemaleTask: Task<Map<String,Array<String>>>
-    lateinit var characteristicsMaleTask: Task<MultilingualTextResource>
-    lateinit var characteristicsFemaleTask: Task<MultilingualTextResource>
-    lateinit var setupStudent: Student
-    lateinit var act: Activity
     private var currentIndex = 0
+
+    private val viewModel: UserSetupViewModel by activityViewModels {
+        userSetupViewModelFactory(
+            requireActivity().applicationContext
+        )
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         argumentTransfer = context as? ArgumentTransfer
@@ -49,22 +53,17 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupStudent = argumentTransfer.getArgs()["student"] as Student
-        characteristicsMaleTask = argumentTransfer.getArgs()["characteristicsMaleTask"] as Task<MultilingualTextResource>
-        characteristicsFemaleTask = argumentTransfer.getArgs()["characteristicsFemaleTask"] as Task<MultilingualTextResource>
-        characteristicsWithCategoriesMaleTask = argumentTransfer.getArgs()["characteristicsWithCategoriesMaleTask"] as Task<Map<String,Array<String>>>
-        characteristicsWithCategoriesFemaleTask = argumentTransfer.getArgs()["characteristicsWithCategoriesFemaleTask"] as Task<Map<String,Array<String>>>
-
         currentIndex = 0
 
-        act = argumentTransfer.getArgs()["activity"] as Activity
-        Tasks.whenAll(characteristicsMaleTask, characteristicsFemaleTask, characteristicsWithCategoriesMaleTask, characteristicsWithCategoriesFemaleTask)
-            .addOnSuccessListener(act) {
-                val resource = if (setupStudent.gender == Gender.MALE) characteristicsMaleTask.result!! else characteristicsFemaleTask.result!!
-                val characteristics = if (setupStudent.gender == Gender.MALE) characteristicsWithCategoriesMaleTask.result!! else characteristicsWithCategoriesFemaleTask.result!!
-                characteristicsTitle.text = characteristics.keys.toList().first()
-                loadCharacteristics(characteristics[characteristics.keys.toList().first()]?: emptyArray(), resource)
-            }
+        viewModel.resourcesMediator.observe(viewLifecycleOwner, Observer {
+            val resource = (viewModel.characteristics.value as Loaded).data
+            val characteristics = (viewModel.characteristicsByCategory.value as Loaded).data
+            characteristicsTitle.text = characteristics.keys.toList().first()
+            loadCharacteristics(characteristics[characteristics.keys.toList().first()]?: emptyArray(), resource)
+        })
+
+        //TODO add observe for gender change
+
     }
 
     private fun loadCharacteristics(
@@ -72,36 +71,30 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
         resource: MultilingualTextResource
     ) {
         characteristicsTable.removeAllViews()
-        populateCharacteristicsTable(context!!, characteristicsTable, characteristics.toList().shuffled(Random(42)).toTypedArray(), setupStudent, resource)
+        populateCharacteristicsTable(requireContext(), characteristicsTable, characteristics.toList().shuffled(Random(42)).toTypedArray(), viewModel.chosenCharacteristics, resource)
     }
 
-    override fun onNextClick(): Task<Boolean> {
-        return Tasks.whenAll(characteristicsMaleTask, characteristicsFemaleTask, characteristicsWithCategoriesMaleTask, characteristicsWithCategoriesFemaleTask)
-            .continueWith {
-                if (currentIndex < characteristicsWithCategoriesMaleTask.result!!.keys.size-1){
-                    currentIndex++
-                    val resource = if (setupStudent.gender == Gender.MALE) characteristicsMaleTask.result!! else characteristicsFemaleTask.result!!
-                    val characteristics = if (setupStudent.gender == Gender.MALE) characteristicsWithCategoriesMaleTask.result!! else characteristicsWithCategoriesFemaleTask.result!!
-                    characteristicsTitle.text = characteristics.keys.toList()[currentIndex]
-                    loadCharacteristics(characteristics[characteristics.keys.toList()[currentIndex]]?: emptyArray(), resource)
-                    return@continueWith false
-                }
-                return@continueWith true
-            }
+    override fun onNextClick(): Boolean {
+        val resource = viewModel.characteristics.value as Loaded
+        val characteristics = viewModel.characteristicsByCategory.value as Loaded
+        if (currentIndex < characteristics.data.keys.size-1){
+            currentIndex++
+            characteristicsTitle.text = characteristics.data.keys.toList()[currentIndex]
+            loadCharacteristics(characteristics.data[characteristics.data.keys.toList()[currentIndex]]?: emptyArray(), resource.data)
+            return false
+        }
+        return true
     }
 
-    override fun onBackClick(): Task<Boolean> {
-        return Tasks.whenAll(characteristicsMaleTask, characteristicsFemaleTask, characteristicsWithCategoriesMaleTask, characteristicsWithCategoriesFemaleTask)
-            .continueWith {
-                if (currentIndex > 0){
-                    currentIndex--
-                    val resource = if (setupStudent.gender == Gender.MALE) characteristicsMaleTask.result!! else characteristicsFemaleTask.result!!
-                    val characteristics = if (setupStudent.gender == Gender.MALE) characteristicsWithCategoriesMaleTask.result!! else characteristicsWithCategoriesFemaleTask.result!!
-                    characteristicsTitle.text = characteristics.keys.toList()[currentIndex]
-                    loadCharacteristics(characteristics[characteristics.keys.toList()[currentIndex]]?: emptyArray(), resource)
-                    return@continueWith false
-                }
-                return@continueWith true
-            }
+    override fun onBackClick(): Boolean {
+        val resource = viewModel.characteristics.value as Loaded
+        val characteristics = viewModel.characteristicsByCategory.value as Loaded
+        if (currentIndex > 0){
+            currentIndex--
+            characteristicsTitle.text = characteristics.data.keys.toList()[currentIndex]
+            loadCharacteristics(characteristics.data[characteristics.data.keys.toList()[currentIndex]]?: emptyArray(), resource.data)
+            return false
+        }
+        return true
     }
 }
