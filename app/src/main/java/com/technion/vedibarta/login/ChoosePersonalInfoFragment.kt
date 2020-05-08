@@ -1,7 +1,6 @@
 package com.technion.vedibarta.login
 
 
-import android.content.Context
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -18,9 +17,9 @@ import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.LoadableData
+import com.technion.vedibarta.POJOs.Loaded
 import com.technion.vedibarta.R
-import com.technion.vedibarta.data.viewModels.LoadableData
-import com.technion.vedibarta.data.viewModels.Loaded
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.putGender
@@ -45,14 +44,6 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         userSetupViewModelFactory(
             requireActivity().applicationContext
         )
-    }
-
-    private lateinit var argumentTransfer: ArgumentTransfer
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        argumentTransfer = context as? ArgumentTransfer
-            ?: throw ClassCastException("$context must implement ${ArgumentTransfer::class}")
     }
 
     override fun onCreateView(
@@ -144,9 +135,11 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         super.setupAndInitViews(v)
         genderInit()
         viewModel.resourcesMediator.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                extraOptionsInit(v, viewModel.schoolsName, viewModel.regionsName)
-                viewModel.resourcesMediator.removeObservers(viewLifecycleOwner)
+            when (it) {
+                is Loaded -> {
+                    extraOptionsInit(v, viewModel.schoolsName, viewModel.regionsName)
+                    viewModel.resourcesMediator.removeObservers(viewLifecycleOwner)
+                }
             }
         })
     }
