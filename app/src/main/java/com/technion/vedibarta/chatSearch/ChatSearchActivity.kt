@@ -19,13 +19,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.fragments.CharacteristicsFragment
+import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.matching.StudentsMatcher
+import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.CustomViewPager
 import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -52,6 +55,7 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
     lateinit var schoolTags: Array<Int>
 
     lateinit var characteristicsTask : Task<MultilingualResource>
+    lateinit var bottomNavigation: BottomNavigationView
 
     var chosenSchool: String? = null
     var chosenRegion: String? = null
@@ -96,6 +100,16 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
 
         viewFlipper.setInAnimation(this, android.R.anim.fade_in)
         viewFlipper.setOutAnimation(this, android.R.anim.fade_out)
+
+        bottomNavigation = findViewById(R.id.search_bottom_navigation)
+        bottomNavigation.selectedItemId = R.id.search
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.profile -> { startActivity(Intent(this, UserProfileActivity::class.java)); finish() }
+                R.id.chat -> { startActivity(Intent(this, MainActivity::class.java)); finish() }
+            }
+            true
+        }
     }
 
     override fun onStop() {

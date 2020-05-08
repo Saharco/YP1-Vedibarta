@@ -38,6 +38,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.facebook.login.LoginManager
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -47,6 +48,7 @@ import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
+import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
@@ -85,6 +87,7 @@ class UserProfileActivity : VedibartaActivity(),
 
     private lateinit var characteristicsTask : Task<MultilingualResource>
     private lateinit var hobbiesTask: Task<MultilingualResource>
+    lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +98,16 @@ class UserProfileActivity : VedibartaActivity(),
             .findMultilingualResource("characteristics/all")
         hobbiesTask = RemoteResourcesManager(this)
             .findMultilingualResource("hobbies/all")
+
+        bottomNavigation = findViewById(R.id.profile_bottom_navigation)
+        bottomNavigation.selectedItemId = R.id.profile
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.chat -> { startActivity(Intent(this, MainActivity::class.java)); finish() }
+                R.id.search -> { startActivity(Intent(this, ChatSearchActivity::class.java)); finish() }
+            }
+            true
+        }
     }
 
     override fun onStart() {

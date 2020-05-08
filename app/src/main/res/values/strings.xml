@@ -210,5 +210,6 @@
     <string name="student">תלמיד</string>
     <string name="teacher">מורה</string>
     <string name="teacher_add_school">הוסף בית ספר</string>
+    <string name="chats_title">השיחות שלי</string>
 
 </resources>

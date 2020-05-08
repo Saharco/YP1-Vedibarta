@@ -6,43 +6,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/toolbarContainer"
+    <ImageView
+        android:id="@+id/titleContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="96dp"
+        android:contentDescription="@string/user_title_picture_overlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/colorPrimary" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/main_toolbar"
-            style="@style/AppToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chats_title"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/titleContainer"
+        app:layout_constraintBottom_toBottomOf="@id/titleContainer" />
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                style="@style/ToolbarTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/main_title"
-                android:textDirection="anyRtl"
-                tools:layout_editor_absoluteX="186dp"
-                tools:layout_editor_absoluteY="14dp" />
 
-        </androidx.appcompat.widget.Toolbar>
-
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </FrameLayout>
-
-<!--Add relevant code in MainActivity-->
+    <!--Add relevant code in MainActivity-->
 <!--    <ProgressBar-->
 <!--        android:id="@+id/loading"-->
 <!--        style="@style/Widget.AppCompat.ProgressBar.Horizontal"-->
@@ -62,7 +48,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarContainer">
+        app:layout_constraintTop_toBottomOf="@id/titleContainer">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,6 +75,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!--
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/extendedFloatingActionButton"
         android:layout_width="wrap_content"
@@ -96,9 +83,30 @@
         android:layout_margin="8dp"
         android:text="@string/main_fab_title"
         app:icon="@drawable/ic_find_friends"
-        app:layout_anchor="@id/toolbarContainer"
+        app:layout_anchor="@id/titleContainer"
         app:layout_anchorGravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+        -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/main_bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        style="@style/Widget.MaterialComponents.BottomNavigationView"
+        android:id="@+id/main_bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/student_bottom_navigation_menu"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

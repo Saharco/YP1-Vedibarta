@@ -87,6 +87,26 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
             </com.technion.vedibarta.utilities.CustomViewPager>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/search_bottom_navigation"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                style="@style/Widget.MaterialComponents.BottomNavigationView"
+                android:id="@+id/search_bottom_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                app:menu="@menu/student_bottom_navigation_menu"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.iid.FirebaseInstanceId
 import com.miguelcatalan.materialsearchview.MaterialSearchView
@@ -33,6 +34,7 @@ class MainActivity : VedibartaActivity()
     private val chatPartnersMap = HashMap<String, ChatMetadata>()
     private lateinit var mainAdapter: MainAdapter
     private lateinit var searchAdapter: MainsSearchAdapter<String>
+    lateinit var bottomNavigation: BottomNavigationView
 
     companion object
     {
@@ -44,15 +46,23 @@ class MainActivity : VedibartaActivity()
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById<Toolbar>(R.id.main_toolbar)
-        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         chat_history.layoutManager = LinearLayoutManager(this)
         configureSearchView()
 
-        extendedFloatingActionButton.setOnClickListener {
-            startActivity(Intent(this, ChatSearchActivity::class.java))
+        bottomNavigation = findViewById(R.id.main_bottom_navigation)
+        bottomNavigation.selectedItemId = R.id.chat
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.profile -> { startActivity(Intent(this, UserProfileActivity::class.java)); finish() }
+                R.id.search -> { startActivity(Intent(this, ChatSearchActivity::class.java)); finish() }
+            }
+            true
         }
+
+//        extendedFloatingActionButton.setOnClickListener {
+//            startActivity(Intent(this, ChatSearchActivity::class.java))
+//        }
 
         updateUserToken()
 
@@ -82,11 +92,11 @@ class MainActivity : VedibartaActivity()
         mainAdapter.startListening()
     }
 
-    override fun onStop()
-    {
-        super.onStop()
-        searchView.closeSearch()
-    }
+//    override fun onStop()
+//    {
+//        super.onStop()
+//        searchView.closeSearch()
+//    }
 
     override fun onDestroy()
     {
@@ -98,15 +108,15 @@ class MainActivity : VedibartaActivity()
     {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
-        searchView.setMenuItem(menu.findItem(R.id.search))
+       // searchView.setMenuItem(menu.findItem(R.id.search))
         return true
     }
 
-    override fun onBackPressed()
-    {
-        if (searchView.isSearchOpen) searchView.closeSearch()
-        else super.onBackPressed()
-    }
+//    override fun onBackPressed()
+//    {
+//        if (searchView.isSearchOpen) searchView.closeSearch()
+//        else super.onBackPressed()
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean
     {
@@ -167,11 +177,11 @@ class MainActivity : VedibartaActivity()
                 mainAdapter.stopListening()
                 searchAdapter.startListening()
                 searchAdapter.filter("")
-                searchView.setOnQueryTextListener(queryListener)
+                //searchView.setOnQueryTextListener(queryListener)
             }
         }
 
-        searchView.setOnSearchViewListener(searchListener)
+        //searchView.setOnSearchViewListener(searchListener)
     }
 
     private fun onChatPopulate(): RecyclerView.AdapterDataObserver
