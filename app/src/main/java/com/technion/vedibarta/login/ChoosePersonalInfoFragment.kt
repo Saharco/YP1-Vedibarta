@@ -120,9 +120,9 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
 
         val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
 
-        populateAutoTextView(activity as UserSetupActivity, schoolListSpinner, schoolList)
+        populateAutoTextView(requireContext(), schoolListSpinner, schoolList)
 
-        VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
+        VedibartaActivity.hideKeyboard(requireActivity())
 
     }
 

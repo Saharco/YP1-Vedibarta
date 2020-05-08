@@ -212,7 +212,7 @@ class UserSetupActivity : VedibartaActivity(){
 
         val school = when (val chosenSchool = userSetupViewModel.chosenSchool) {
             is Unfilled -> return Failure(resources.getString(R.string.user_setup_school_missing))
-            is Filled -> chosenSchool.text.substringBefore(" -")
+            is Filled -> chosenSchool.text
         }
 
 
@@ -224,7 +224,7 @@ class UserSetupActivity : VedibartaActivity(){
             is Filled -> chosenRegion.text
         }
 
-        if (regionNamesList.data.getAll().contains(region))
+        if (!regionNamesList.data.getAll().contains(region))
             return Failure(resources.getString(R.string.user_setup_region_missing))
 
         if (!validateSchoolAndRegionExists(school, region)) {
