@@ -1,6 +1,5 @@
 package com.technion.vedibarta.login
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Layout
@@ -13,40 +12,32 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
-import com.technion.vedibarta.data.viewModels.Loaded
+import com.technion.vedibarta.adapters.FragmentListStateAdapter
+import com.technion.vedibarta.data.viewModels.HobbiesViewModel
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
+import com.technion.vedibarta.data.viewModels.hobbiesViewModelFactory
 import com.technion.vedibarta.data.viewModels.userSetupViewModelFactory
 import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
-import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
-import com.technion.vedibarta.viewModels.UserSetupViewModel
-import com.technion.vedibarta.viewModels.userSetupViewModelFactory
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
-class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
+class UserSetupActivity : VedibartaActivity(){
 
-    private lateinit var sectionsPageAdapter: SectionsPageAdapter
-
-    private lateinit var characteristicsNext: OnNextClickForCharacteristics
-
-    private val viewModel: UserSetupViewModel by viewModels {
+    private val userSetupViewModel: UserSetupViewModel by viewModels {
         userSetupViewModelFactory(
             applicationContext
         )
     }
-
+    private val hobbiesViewModel: HobbiesViewModel by viewModels {
+        hobbiesViewModelFactory(applicationContext)
+    }
     companion object {
         private const val TAG = "UserSetupActivity"
     }
@@ -55,25 +46,18 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_setup)
-        sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
+        userSetupViewModel.resourcesMediator.observe(this, Observer {observerHandler(it) })
 
-        viewModel.resourcesMediator.observe(this, Observer {
-            if (it) {
-                loading.visibility = View.GONE
-                layout.visibility = View.VISIBLE
-                viewModel.resourcesMediator.removeObservers(this)
-            }
-        })
+        hobbiesViewModel.startLoading()
+
+        if (userSetupViewModel.reachedLastPage)
+            doneButton.visibility = View.VISIBLE
+        if(userSetupViewModel.backButtonVisible)
+            backButton.visibility = View.VISIBLE
 
         loading.visibility = View.VISIBLE
         layout.visibility = View.GONE
-
-        setupViewPager(userSetupContainer)
-        editTabs.setupWithViewPager(userSetupContainer)
-        editTabs.touchables.forEach { it.isEnabled = false }
-
         changeStatusBarColor(this, R.color.colorBoarding)
-
         initButtons()
     }
 
@@ -85,18 +69,35 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         backButton.bringToFront()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    fun setupViewPager(viewPager: CustomViewPager) {
-        val adapter = SectionsPageAdapter(supportFragmentManager)
-        val characteristicsFragment = ChooseCharacteristicsFragment()
-        characteristicsNext = characteristicsFragment as? OnNextClickForCharacteristics
-            ?: throw ClassCastException("$characteristicsFragment must implement ${OnNextClickForCharacteristics::class}")
-        adapter.addFragment(ChoosePersonalInfoFragment(), "1")
-        adapter.addFragment(characteristicsFragment, "2")
-        adapter.addFragment(HobbiesFragment(), "3")
-        viewPager.setPagingEnabled(false)
+    private fun observerHandler(value: LoadableData<Unit>){
+        when(value){
+            is Loaded -> {
+                loading.visibility = View.GONE
+                layout.visibility = View.VISIBLE
+                setupViewPager(userSetupContainer)
+                TabLayoutMediator(editTabs, userSetupContainer){tab, position ->
+                    tab.text = "${(position + 1)}"
+                }.attach()
+                editTabs.touchables.forEach { it.isEnabled = false }
+
+                userSetupViewModel.resourcesMediator.removeObservers(this)
+            }
+            is Error -> Toast.makeText(this, value.reason, Toast.LENGTH_LONG).show()
+            is SlowLoadingEvent -> if (!userSetupViewModel.slowLoadingEventHandled){
+                Toast.makeText(this, resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show()
+            userSetupViewModel.slowLoadingEventHandled = true}
+        }
+    }
+
+    private fun setupViewPager(viewPager: ViewPager2) {
+        val characteristicsFragmentList: List<Fragment> = (userSetupViewModel.characteristicsByCategory.value as Loaded).data
+            .keys.map { ChooseCharacteristicsFragment(it) }
+
+        val adapter = FragmentListStateAdapter(this, characteristicsFragmentList)
+        adapter.addFragment(0, ChoosePersonalInfoFragment())
+        adapter.addFragment(HobbiesFragment())
+        viewPager.isUserInputEnabled = false
         viewPager.adapter = adapter
-        viewPager.offscreenPageLimit = 1
     }
 
     override fun onBackPressed() {
@@ -118,190 +119,162 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
             is Failure -> missingDetailsDialog(result.msg)
         }
     }
-}
 
-private fun onBackClick() {
-    when (userSetupContainer.currentItem) {
-        1 -> {
-            if (characteristicsNext.onBackClick()) {
-                userSetupContainer.currentItem -= 1
+    private fun onBackClick() {
+        when (userSetupContainer.currentItem) {
+            1 -> {
                 backButton.visibility = View.GONE
-            } else {
-                updateTitle(false)
+                userSetupViewModel.backButtonVisible = false
+                userSetupContainer.currentItem -= 1
             }
-        }
-        2 -> {
-            userSetupContainer.currentItem -= 1
-            nextButton.visibility = View.VISIBLE
+            userSetupContainer.adapter!!.itemCount-1 -> {
+                userSetupContainer.currentItem -= 1
+                nextButton.visibility = View.VISIBLE
+            }
+            else -> userSetupContainer.currentItem -= 1
         }
     }
-}
 
-private fun updateTitle(increase: Boolean) {
-    (0..2).forEach {
-        val title = editTabs.getTabAt(it)!!.text.toString().toInt()
-        if (increase)
-            editTabs.getTabAt(it)!!.text = title.inc().toString()
-        else
-            editTabs.getTabAt(it)!!.text = title.dec().toString()
-    }
-}
-
-private fun onNextClick() {
-    when (userSetupContainer.currentItem) {
-        0 -> {
-            if (viewModel.gender.value != Gender.NONE) {
-                (userSetupContainer.adapter as SectionsPageAdapter).notifyDataSetChanged()
-                userSetupContainer.currentItem += 1
-                backButton.visibility = View.VISIBLE
-            } else {
-                Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT)
-                    .show()
+    private fun onNextClick() {
+        when (userSetupContainer.currentItem) {
+            0 -> {
+                if (userSetupViewModel.gender.value != Gender.NONE) {
+                    userSetupContainer.currentItem += 1
+                    backButton.visibility = View.VISIBLE
+                    userSetupViewModel.backButtonVisible = true
+                } else {
+                    Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
-        }
-        1 -> {
-            if (characteristicsNext.onNextClick()) {
+            userSetupContainer.adapter!!.itemCount-2 -> {
                 userSetupContainer.currentItem += 1
+                userSetupViewModel.reachedLastPage = true
                 doneButton.visibility = View.VISIBLE
                 nextButton.visibility = View.GONE
-            } else {
-                updateTitle(true)
+            }
+            else -> userSetupContainer.currentItem += 1
+        }
+    }
+
+    private fun missingDetailsDialog(msg: String) {
+        val message = SpannableStringBuilder()
+            .bold {
+                append(msg).setSpan(
+                    RelativeSizeSpan(1f),
+                    0,
+                    msg.length,
+                    0
+                )
+            }
+
+        val text = resources.getString(R.string.user_setup_missing_details_dialog_title)
+
+        val titleText = SpannableStringBuilder()
+            .bold { append(text).setSpan(RelativeSizeSpan(1.2f), 0, text.length, 0) }
+        titleText.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length, 0)
+
+        val positiveButtonText = SpannableStringBuilder()
+            .bold { append(resources.getString(R.string.ok)) }
+
+        val builder = AlertDialog.Builder(this)
+        builder
+            .setTitle(titleText)
+            .setIcon(ContextCompat.getDrawable(this, R.drawable.ic_error))
+            .setMessage(message)
+            .setPositiveButton(positiveButtonText) { _, _ -> }
+
+        builder.create().show()
+    }
+
+    private fun validateUserInput(): StudentResult {
+        val gender = userSetupViewModel.gender
+        val grade = userSetupViewModel.grade
+
+        val studentHobbies = hobbiesViewModel.chosenHobbies
+        val studentsCharacteristics = userSetupViewModel.chosenCharacteristics
+
+        val schoolNamesList = userSetupViewModel.schoolsName.value as Loaded
+        val regionNamesList = userSetupViewModel.regionsName.value as Loaded
+
+        if (gender.value == Gender.NONE)
+            return Failure(resources.getString(R.string.user_setup_gender_missing))
+
+        val firstName = when (val chosenFirstName = userSetupViewModel.chosenFirstName) {
+            is Unfilled -> return Failure(resources.getString(R.string.user_setup_first_name_missing))
+            is Filled -> chosenFirstName.text
+        }
+
+        val lastName = when (val chosenLastName = userSetupViewModel.chosenLastName) {
+            is Unfilled -> return Failure(resources.getString(R.string.user_setup_last_name_missing))
+            is Filled -> chosenLastName.text
+        }
+
+        val school = when (val chosenSchool = userSetupViewModel.chosenSchool) {
+            is Unfilled -> return Failure(resources.getString(R.string.user_setup_school_missing))
+            is Filled -> chosenSchool.text.substringBefore(" -")
+        }
+
+
+        if (!schoolNamesList.data.getAll().contains(school))
+            return Failure(resources.getString(R.string.user_setup_school_missing))
+
+        val region = when (val chosenRegion = userSetupViewModel.chosenRegion) {
+            is Unfilled -> return Failure(resources.getString(R.string.user_setup_region_missing))
+            is Filled -> chosenRegion.text
+        }
+
+        if (regionNamesList.data.getAll().contains(region))
+            return Failure(resources.getString(R.string.user_setup_region_missing))
+
+        if (!validateSchoolAndRegionExists(school, region)) {
+            return Failure(resources.getString(R.string.user_setup_wrong_school_and_region_combination))
+        }
+
+        if (grade == Grade.NONE) {
+            return Failure(resources.getString(R.string.user_setup_grade_missing))
+        }
+
+        if (studentsCharacteristics.isEmpty()) {
+            return Failure(resources.getString(R.string.user_setup_characteristics_missing))
+        }
+
+        if (studentHobbies.isEmpty()) {
+            return Failure(resources.getString(R.string.user_setup_hobbies_missing))
+        }
+
+        return Success(
+            Student(
+                uid = userId!!,
+                name = "$firstName $lastName",
+                gender = gender.value!!,
+                region = region,
+                school = school,
+                grade = grade,
+                characteristics = studentsCharacteristics,
+                hobbies = studentHobbies
+            )
+        )
+    }
+
+    private fun validateSchoolAndRegionExists(school: String, region: String): Boolean {
+        val schoolNamesList = userSetupViewModel.schoolsName.value as Loaded
+        val regionNamesList = userSetupViewModel.regionsName.value as Loaded
+        val schoolAndRegionMap =
+            schoolNamesList.data.getAll().zip(regionNamesList.data.getAll()).toMap()
+
+        return schoolAndRegionMap.containsKey(school) && schoolAndRegionMap[school] == region
+    }
+
+    fun onRadioButtonClicked(view: View) {
+        when (view.id) {
+            R.id.gradeTenth -> userSetupViewModel.grade = Grade.TENTH
+            R.id.gradeEleventh -> userSetupViewModel.grade = Grade.ELEVENTH
+            R.id.gradeTwelfth -> userSetupViewModel.grade = Grade.TWELFTH
+            else -> {
             }
         }
     }
-}
-
-private fun missingDetailsDialog(msg: String) {
-    val message = SpannableStringBuilder()
-        .bold {
-            append(msg).setSpan(
-                RelativeSizeSpan(1f),
-                0,
-                msg.length,
-                0
-            )
-        }
-
-    val text = resources.getString(R.string.user_setup_missing_details_dialog_title)
-
-    val titleText = SpannableStringBuilder()
-        .bold { append(text).setSpan(RelativeSizeSpan(1.2f), 0, text.length, 0) }
-    titleText.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length, 0)
-
-    val positiveButtonText = SpannableStringBuilder()
-        .bold { append(resources.getString(R.string.ok)) }
-
-    val builder = AlertDialog.Builder(this)
-    builder
-        .setTitle(titleText)
-        .setIcon(ContextCompat.getDrawable(this, R.drawable.ic_error))
-        .setMessage(message)
-        .setPositiveButton(positiveButtonText) { _, _ -> }
-
-    builder.create().show()
-}
-
-private fun validateUserInput(): StudentResult {
-    val gender = viewModel.gender
-    val grade = viewModel.grade
-
-    val studentHobbies = viewModel.chosenHobbies
-    val studentsCharacteristics = viewModel.chosenCharacteristics
-
-    val schoolNamesList = viewModel.schoolsName.value as Loaded
-    val regionNamesList = viewModel.regionsName.value as Loaded
-
-    if (gender.value == Gender.NONE)
-        return Failure(resources.getString(R.string.user_setup_gender_missing))
-
-    val firstName = when (val chosenFirstName = viewModel.chosenFirstName) {
-        is Unfilled -> return Failure(resources.getString(R.string.user_setup_first_name_missing))
-        is Filled -> chosenFirstName.text
-    }
-
-    val lastName = when (val chosenLastName = viewModel.chosenLastName) {
-        is Unfilled -> return Failure(resources.getString(R.string.user_setup_last_name_missing))
-        is Filled -> chosenLastName.text
-    }
-
-    val school = when (val chosenSchool = viewModel.chosenSchool) {
-        is Unfilled -> return Failure(resources.getString(R.string.user_setup_school_missing))
-        is Filled -> chosenSchool.text.substringBefore(" -")
-    }
-
-
-    if (!schoolNamesList.data.getAll().contains(school))
-        return Failure(resources.getString(R.string.user_setup_school_missing))
-
-    val region = when (val chosenRegion = viewModel.chosenRegion) {
-        is Unfilled -> return Failure(resources.getString(R.string.user_setup_region_missing))
-        is Filled -> chosenRegion.text
-    }
-
-    if (regionNamesList.data.getAll().contains(region))
-        return Failure(resources.getString(R.string.user_setup_region_missing))
-
-    if (!validateSchoolAndRegionExists(school, region)) {
-        return Failure(resources.getString(R.string.user_setup_wrong_school_and_region_combination))
-    }
-
-    if (grade == Grade.NONE) {
-        return Failure(resources.getString(R.string.user_setup_grade_missing))
-    }
-
-    if (studentsCharacteristics.isEmpty()) {
-        return Failure(resources.getString(R.string.user_setup_characteristics_missing))
-    }
-
-    if (studentHobbies.isEmpty()) {
-        return Failure(resources.getString(R.string.user_setup_hobbies_missing))
-    }
-
-    return Success(
-        Student(
-            uid = viewModel.uid,
-            name = "$firstName $lastName",
-            gender = gender,
-            region = region,
-            school = school,
-            grade = grade,
-            characteristics = studentsCharacteristics,
-            hobbies = studentHobbies
-        )
-    )
-}
-}
-
-private fun validateSchoolAndRegionExists(school: String, region: String): Boolean {
-    val schoolNamesList = viewModel.schoolsName.value as Loaded
-    val regionNamesList = viewModel.regionsName.value as Loaded
-    val schoolAndRegionMap =
-        schoolNamesList.data.getAll().zip(regionNamesList.data.getAll()).toMap()
-
-    return schoolAndRegionMap.containsKey(school) && schoolAndRegionMap[school] == region
-}
-
-override fun getArgs(): Map<String, Any> {
-    val map = mutableMapOf<String, Any>()
-
-    map["activity"] = this
-    return map
-}
-
-fun onRadioButtonClicked(view: View) {
-    when (view.id) {
-        R.id.gradeTenth -> viewModel.grade = Grade.TENTH
-        R.id.gradeEleventh -> viewModel.grade = Grade.ELEVENTH
-        R.id.gradeTwelfth -> viewModel.grade = Grade.TWELFTH
-        else -> {
-        }
-    }
-}
-
-interface OnNextClickForCharacteristics {
-    fun onNextClick(): Boolean
-    fun onBackClick(): Boolean
-}
 
 }
 
