@@ -1,23 +1,21 @@
 package com.technion.vedibarta.login
 
-
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.LoadableData
 import com.technion.vedibarta.POJOs.Loaded
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -27,7 +25,6 @@ import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
 import com.technion.vedibarta.data.viewModels.userSetupViewModelFactory
 import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
-
 
 /**
  * A simple [Fragment] subclass.
@@ -40,6 +37,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     }
 
     private lateinit var schoolAndRegionMap: Map<String, String>
+
     private val viewModel: UserSetupViewModel by activityViewModels {
         userSetupViewModelFactory(
             requireActivity().applicationContext
@@ -55,7 +53,6 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     }
 
     private fun onButtonFemaleClickListener() {
-
         imageFemale.borderWidth = BORDER_WIDTH
         imageFemale.borderColor = ContextCompat.getColor(requireContext(), R.color.colorAccentDark)
         imageMale.borderWidth = 0
@@ -69,12 +66,12 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
 
         viewModel.gender.value = Gender.FEMALE
 
-        PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
-            .putGender(Gender.FEMALE).apply()
+        PreferenceManager.getDefaultSharedPreferences(activity).edit {
+            putGender(Gender.FEMALE)
+        }
     }
 
     private fun onButtonMaleClickListener() {
-
         imageMale.borderWidth = BORDER_WIDTH
         imageMale.borderColor = ContextCompat.getColor(requireContext(), R.color.colorAccentDark)
         imageFemale.borderWidth = 0
@@ -88,8 +85,9 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
 
         viewModel.gender.value = Gender.MALE
 
-        PreferenceManager.getDefaultSharedPreferences(activity as UserSetupActivity).edit()
-            .putGender(Gender.MALE).apply()
+        PreferenceManager.getDefaultSharedPreferences(activity).edit {
+            putGender(Gender.MALE)
+        }
     }
 
     override fun onPause() {
@@ -108,11 +106,9 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         viewModel.chosenRegion = Filled(region)
 
         VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
-
     }
 
     private fun onRegionSelectedListener(position: Int) {
-
         schoolListSpinner.text = SpannableStringBuilder("")
         val region = regionListSpinner.adapter.getItem(position).toString()
         viewModel.chosenRegion = Filled(region)
@@ -123,7 +119,6 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         populateAutoTextView(requireContext(), schoolListSpinner, schoolList)
 
         VedibartaActivity.hideKeyboard(requireActivity())
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -134,20 +129,15 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
         genderInit()
-        viewModel.resourcesMediator.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Loaded -> {
-                    extraOptionsInit(v, viewModel.schoolsName, viewModel.regionsName)
-                    viewModel.resourcesMediator.removeObservers(viewLifecycleOwner)
-                }
-            }
+        viewModel.userSetupResources.observe(viewLifecycleOwner, Observer {
+            if (it is Loaded)
+                extraOptionsInit(v, it.data.schoolsName, it.data.regionsName)
         })
     }
 
     private fun genderInit() {
         Glide.with(requireContext()).load(R.drawable.ic_photo_default_profile_man).into(imageMale)
-        Glide.with(requireContext()).load(R.drawable.ic_photo_default_profile_girl)
-            .into(imageFemale)
+        Glide.with(requireContext()).load(R.drawable.ic_photo_default_profile_girl).into(imageFemale)
         imageMale.setOnClickListener { onButtonMaleClickListener() }
         imageFemale.setOnClickListener { onButtonFemaleClickListener() }
 
@@ -195,13 +185,10 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
 
     private fun extraOptionsInit(
         v: View,
-        schoolsName: LiveData<LoadableData<Resource>>,
-        regionsName: LiveData<LoadableData<Resource>>
+        schoolsName: Resource,
+        regionsName: Resource
     ) {
-        val schoolsNameList = schoolsName.value as Loaded
-        val regionsNameList = regionsName.value as Loaded
-        schoolAndRegionMap =
-            schoolsNameList.data.getAll().zip(regionsNameList.data.getAll()).toMap()
+        schoolAndRegionMap = schoolsName.getAll().zip(regionsName.getAll()).toMap()
 
         // ---Student Name Views---
         val firstName: TextInputEditText = v.findViewById(R.id.textFieldFirstName)
@@ -213,9 +200,8 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 ) || text.isBlank()
             )
                 viewModel.chosenFirstName = Filled(text.toString())
-            else {
+            else
                 firstName.text = SpannableStringBuilder("")
-            }
         }
 
         textFieldLastName.doOnTextChanged { text, _, _, _ ->
@@ -224,9 +210,8 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 ) || text.isBlank()
             )
                 viewModel.chosenLastName = Filled(text.toString())
-            else {
+            else
                 lastName.text = SpannableStringBuilder("")
-            }
         }
 
         schoolListSpinner.setOnItemClickListener { _, _, position, _ ->
@@ -242,12 +227,11 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         schoolListSpinner.doOnTextChanged { text, _, _, _ ->
             viewModel.chosenSchool = Filled(text.toString())
         }
-
         regionListSpinner.doOnTextChanged { text, _, _, _ ->
             populateAutoTextView(
                 requireContext(),
                 schoolListSpinner,
-                schoolsNameList.data.getAll().toTypedArray()
+                schoolsName.getAll().toTypedArray()
             )
             viewModel.chosenRegion = Filled(text.toString())
         }
@@ -256,14 +240,13 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         populateAutoTextView(
             requireContext(),
             schoolListSpinner,
-            schoolsNameList.data.getAll().toTypedArray()
+            schoolsName.getAll().toTypedArray()
         )
         populateAutoTextView(
             requireContext(),
             regionListSpinner,
-            regionsNameList.data.getAll().distinct().toTypedArray()
+            regionsName.getAll().distinct().toTypedArray()
         )
-
 
         textViewFirstNameTitle.markRequired()
         textViewLastNameTitle.markRequired()
@@ -279,7 +262,6 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
             nameArrowButton.switchState()
         }
 
-
         schoolInfoButton.setOnClickListener {
             if (cardViewSchoolBody.visibility == View.VISIBLE)
                 cardViewSchoolBody.visibility = View.GONE
@@ -287,11 +269,11 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 cardViewSchoolBody.visibility = View.VISIBLE
             schoolArrowButton.switchState()
         }
+
         when (val it = viewModel.chosenSchool) {
             is Filled -> schoolListSpinner.text = SpannableStringBuilder(it.text)
-            else -> {
-            }
         }
+
         when (val it = viewModel.chosenRegion) {
             is Filled -> regionListSpinner.text = SpannableStringBuilder(it.text)
         }
@@ -317,6 +299,5 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 cardViewSchoolBody.visibility = View.VISIBLE
             schoolArrowButton.switchState()
         }
-
     }
 }

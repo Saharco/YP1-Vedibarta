@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.google.android.gms.tasks.Task
 import com.technion.vedibarta.POJOs.*
+import com.technion.vedibarta.data.CategoriesMapper
 import com.technion.vedibarta.data.loadCharacteristics
 import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
@@ -21,15 +22,11 @@ fun userSetupViewModelFactory(context: Context) = object : ViewModelProvider.Fac
 
 class UserSetupViewModel(private val context: Context) : ViewModel() {
 
-    private val characteristicsMale =
-        MutableLiveData<LoadableData<MultilingualResource>>(NormalLoading())
-    private val characteristicsFemale =
-        MutableLiveData<LoadableData<MultilingualResource>>(NormalLoading())
+    private val _characteristicsResourcesMale =
+        MutableLiveData<LoadableData<CharacteristicsResources>>(NormalLoading())
 
-    private val characteristicsWithCategoriesMale =
-        MutableLiveData<LoadableData<Map<String, Array<String>>>>(NormalLoading())
-    private val characteristicsWithCategoriesFemale =
-        MutableLiveData<LoadableData<Map<String, Array<String>>>>(NormalLoading())
+    private val _characteristicsResourcesFemale =
+        MutableLiveData<LoadableData<CharacteristicsResources>>(NormalLoading())
 
     private val _schoolsName = MutableLiveData<LoadableData<Resource>>(NormalLoading())
     private val _regionsName = MutableLiveData<LoadableData<Resource>>(NormalLoading())
@@ -44,39 +41,34 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
 
     var reachedLastPage: Boolean = false
     var backButtonVisible: Boolean = false
-    var slowLoadingEventHandled: Boolean = false
 
     val chosenCharacteristics = mutableMapOf<String, Boolean>()
 
-    val characteristicsByCategory: LiveData<LoadableData<Map<String, Array<String>>>> =
+    val characteristicsResources: LiveData<LoadableData<CharacteristicsResources>> =
         Transformations.switchMap(gender) {
             when (it!!) {
-                Gender.MALE -> characteristicsWithCategoriesMale
-                Gender.FEMALE -> characteristicsWithCategoriesFemale
-                Gender.NONE -> characteristicsWithCategoriesMale
-            }
-        }
-
-    val characteristics: LiveData<LoadableData<MultilingualResource>> =
-        Transformations.switchMap(gender) {
-            when (it!!) {
-                Gender.MALE -> characteristicsMale
-                Gender.FEMALE -> characteristicsFemale
-                Gender.NONE -> characteristicsMale
+                Gender.MALE -> _characteristicsResourcesMale
+                Gender.FEMALE -> _characteristicsResourcesFemale
+                Gender.NONE -> _characteristicsResourcesMale
             }
         }
 
     val schoolsName: LiveData<LoadableData<Resource>> = _schoolsName
     val regionsName: LiveData<LoadableData<Resource>> = _regionsName
-    val resourcesMediator = MediatorLiveData<LoadableData<Unit>>()
+
+    val userSetupResources = combineResources(
+        schoolsName,
+        regionsName,
+        characteristicsResources
+    )
 
     init {
         loadResources()
-        resourcesMediatorInit()
     }
 
     private fun loadResources() {
         val resourcesManager = RemoteResourcesManager(context)
+
         fun <T> Task<*>.handleError(data: MutableLiveData<LoadableData<T>>) =
             this.addOnFailureListener {
                 data.value = Error(it.message)
@@ -92,6 +84,24 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
                 data.postValue(SlowLoadingEvent())
             }
 
+        fun getCharacteristicsResources(gender: Gender, into: MutableLiveData<LoadableData<CharacteristicsResources>>) {
+            val task1 = resourcesManager.findMultilingualResource("characteristics/all", gender)
+            val task2 = loadCharacteristics(context, gender)
+
+            task1.continueWithTask { allTask ->
+                val allCharacteristics = allTask.result!!
+
+                task2.continueWith { mapperTask ->
+                    val characteristicsMapper = mapperTask.result!!
+
+                    CharacteristicsResources(allCharacteristics, characteristicsMapper)
+                }
+            }
+                .handleSuccess(into)
+                .handleError(into)
+                .handleTimeout(into)
+        }
+
         resourcesManager.findResource("schools")
             .handleSuccess(_schoolsName)
             .handleError(_schoolsName)
@@ -102,84 +112,72 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
             .handleError(_regionsName)
             .handleTimeout(_regionsName)
 
-
-        resourcesManager.findMultilingualResource("characteristics/all", Gender.MALE)
-            .handleSuccess(characteristicsMale)
-            .handleError(characteristicsMale)
-            .handleTimeout(characteristicsMale)
-
-        resourcesManager.findMultilingualResource("characteristics/all", Gender.FEMALE)
-            .handleSuccess(characteristicsFemale)
-            .handleError(characteristicsFemale)
-            .handleTimeout(characteristicsFemale)
-
-        loadCharacteristics(context, Gender.MALE)
-            .handleSuccess(characteristicsWithCategoriesMale)
-            .handleError(characteristicsWithCategoriesMale)
-            .handleTimeout(characteristicsWithCategoriesMale)
-
-        loadCharacteristics(context, Gender.FEMALE)
-            .handleSuccess(characteristicsWithCategoriesFemale)
-            .handleError(characteristicsWithCategoriesFemale)
-            .handleTimeout(characteristicsWithCategoriesFemale)
+        getCharacteristicsResources(Gender.MALE, _characteristicsResourcesMale)
+        getCharacteristicsResources(Gender.FEMALE, _characteristicsResourcesFemale)
     }
-
-    private fun resourcesMediatorInit() {
-
-        resourcesMediator.addSource(schoolsName) {
-            resourcesMediator.value = areResourcesLoaded()
-        }
-        resourcesMediator.addSource(regionsName) {
-            resourcesMediator.value = areResourcesLoaded()
-        }
-        resourcesMediator.addSource(characteristics) {
-            resourcesMediator.value = areResourcesLoaded()
-        }
-        resourcesMediator.addSource(characteristicsByCategory) {
-            resourcesMediator.value = areResourcesLoaded()
-        }
-
-    }
-
-    private fun areResourcesLoaded(): LoadableData<Unit> {
-
-        fun <T> handleResourceState(data: LiveData<LoadableData<T>>) : LoadableData<Unit> =
-            when (val it = data.value) {
-                is Error -> Error(it.reason)
-                is SlowLoadingEvent -> SlowLoadingEvent()
-                is NormalLoading -> NormalLoading()
-                else -> Loaded(Unit)
-            }
-
-        when (val it = handleResourceState(schoolsName)) {
-            is Loaded -> {
-            }
-            else -> return it
-        }
-
-        when (val it = handleResourceState(regionsName)) {
-            is Loaded -> {
-            }
-            else -> return it
-        }
-
-        when (val it = handleResourceState(characteristics)) {
-            is Loaded -> {
-            }
-            else -> return it
-        }
-
-        when (val it = handleResourceState(characteristicsByCategory)) {
-            is Loaded -> {
-            }
-            else -> return it
-        }
-
-        return Loaded(Unit)
-    }
-
 }
 
+private fun combineResources(
+    schoolsNameLiveData: LiveData<LoadableData<Resource>>,
+    regionsNameLiveData: LiveData<LoadableData<Resource>>,
+    characteristicsResourcesLiveData: LiveData<LoadableData<CharacteristicsResources>>
+): LiveData<LoadableData<UserSetupResources>> {
+    val mediator = MediatorLiveData<LoadableData<UserSetupResources>>()
+        .apply { value = NormalLoading() }
 
+    fun refreshCombination() {
+        // cannot go back after reaching an end-state
+        if (mediator.value is Error) return
 
+        val schoolsName = schoolsNameLiveData.value
+        val regionsName = regionsNameLiveData.value
+        val characteristicsResources = characteristicsResourcesLiveData.value
 
+        // become Loaded when all resources have been loaded
+        if (schoolsName is Loaded
+            && regionsName is Loaded
+            && characteristicsResources is Loaded
+        ) {
+            mediator.value = Loaded(UserSetupResources(
+                schoolsName = schoolsName.data,
+                regionsName = regionsName.data,
+                allCharacteristics = characteristicsResources.data.allCharacteristics,
+                characteristicsByCategory = characteristicsResources.data.characteristicsByCategory
+            ))
+            return
+        }
+
+        // become Error when the first error occurs
+        schoolsName?.let { if (it is Error) {mediator.value = Error(it.reason); return }}
+        regionsName?.let { if (it is Error) {mediator.value = Error(it.reason); return }}
+        characteristicsResources?.let { if (it is Error) {mediator.value = Error(it.reason); return }}
+
+        // trigger SlowLoadingEvent when the first SlowLoadingEvent occurs
+        if (mediator.value !is SlowLoadingEvent
+            && (schoolsName is SlowLoadingEvent
+            || regionsName is SlowLoadingEvent
+            || characteristicsResources is SlowLoadingEvent)
+        ) {
+            mediator.value = SlowLoadingEvent()
+            return
+        }
+    }
+
+    mediator.addSource(schoolsNameLiveData) { refreshCombination() }
+    mediator.addSource(regionsNameLiveData) { refreshCombination() }
+    mediator.addSource(characteristicsResourcesLiveData) { refreshCombination() }
+
+    return mediator
+}
+
+data class CharacteristicsResources(
+    val allCharacteristics: MultilingualResource,
+    val characteristicsByCategory: CategoriesMapper
+)
+
+data class UserSetupResources(
+    val schoolsName: Resource,
+    val regionsName: Resource,
+    val allCharacteristics: MultilingualResource,
+    val characteristicsByCategory: CategoriesMapper
+)

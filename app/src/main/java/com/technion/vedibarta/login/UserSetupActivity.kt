@@ -19,34 +19,32 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
-import com.technion.vedibarta.data.viewModels.HobbiesViewModel
-import com.technion.vedibarta.data.viewModels.UserSetupViewModel
-import com.technion.vedibarta.data.viewModels.hobbiesViewModelFactory
-import com.technion.vedibarta.data.viewModels.userSetupViewModelFactory
+import com.technion.vedibarta.data.viewModels.*
 import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
-class UserSetupActivity : VedibartaActivity(){
+class UserSetupActivity : VedibartaActivity() {
 
     private val userSetupViewModel: UserSetupViewModel by viewModels {
-        userSetupViewModelFactory(
-            applicationContext
-        )
+        userSetupViewModelFactory(applicationContext)
     }
+
     private val hobbiesViewModel: HobbiesViewModel by viewModels {
         hobbiesViewModelFactory(applicationContext)
     }
+
+    private var loadedHandled = false
+
     companion object {
         private const val TAG = "UserSetupActivity"
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_setup)
-        userSetupViewModel.resourcesMediator.observe(this, Observer {observerHandler(it) })
+        userSetupViewModel.userSetupResources.observe(this, Observer { observerHandler(it) })
 
         hobbiesViewModel.startLoading()
 
@@ -69,29 +67,34 @@ class UserSetupActivity : VedibartaActivity(){
         backButton.bringToFront()
     }
 
-    private fun observerHandler(value: LoadableData<Unit>){
-        when(value){
+    private fun observerHandler(value: LoadableData<UserSetupResources>) {
+        when(value) {
             is Loaded -> {
-                loading.visibility = View.GONE
-                layout.visibility = View.VISIBLE
-                setupViewPager(userSetupContainer)
-                TabLayoutMediator(editTabs, userSetupContainer){tab, position ->
-                    tab.text = "${(position + 1)}"
-                }.attach()
-                editTabs.touchables.forEach { it.isEnabled = false }
-
-                userSetupViewModel.resourcesMediator.removeObservers(this)
+                if (!loadedHandled) {
+                    loading.visibility = View.GONE
+                    layout.visibility = View.VISIBLE
+                    setupViewPager(userSetupContainer, value.data.characteristicsByCategory)
+                    TabLayoutMediator(editTabs, userSetupContainer) { tab, position ->
+                        tab.text = "${(position + 1)}"
+                    }.attach()
+                    editTabs.touchables.forEach { it.isEnabled = false }
+                    loadedHandled = true
+                }
             }
             is Error -> Toast.makeText(this, value.reason, Toast.LENGTH_LONG).show()
-            is SlowLoadingEvent -> if (!userSetupViewModel.slowLoadingEventHandled){
-                Toast.makeText(this, resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show()
-            userSetupViewModel.slowLoadingEventHandled = true}
+            is SlowLoadingEvent -> {
+                if (!value.handled)
+                    Toast.makeText(this, resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    private fun setupViewPager(viewPager: ViewPager2) {
-        val characteristicsFragmentList: List<Fragment> = (userSetupViewModel.characteristicsByCategory.value as Loaded).data
-            .keys.map { ChooseCharacteristicsFragment(it) }
+    private fun setupViewPager(
+        viewPager: ViewPager2,
+        characteristicsByCategory: Map<String, Array<String>>
+    ) {
+        val characteristicsFragmentList: List<Fragment> =
+            characteristicsByCategory.keys.map { ChooseCharacteristicsFragment(it) }
 
         val adapter = FragmentListStateAdapter(this, characteristicsFragmentList)
         adapter.addFragment(0, ChoosePersonalInfoFragment())
@@ -113,8 +116,7 @@ class UserSetupActivity : VedibartaActivity(){
                     finish()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_LONG).show()
                 }
             is Failure -> missingDetailsDialog(result.msg)
         }
@@ -127,7 +129,7 @@ class UserSetupActivity : VedibartaActivity(){
                 userSetupViewModel.backButtonVisible = false
                 userSetupContainer.currentItem -= 1
             }
-            userSetupContainer.adapter!!.itemCount-1 -> {
+            userSetupContainer.adapter!!.itemCount - 1 -> {
                 userSetupContainer.currentItem -= 1
                 nextButton.visibility = View.VISIBLE
             }
@@ -143,11 +145,10 @@ class UserSetupActivity : VedibartaActivity(){
                     backButton.visibility = View.VISIBLE
                     userSetupViewModel.backButtonVisible = true
                 } else {
-                    Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT).show()
                 }
             }
-            userSetupContainer.adapter!!.itemCount-2 -> {
+            userSetupContainer.adapter!!.itemCount - 2 -> {
                 userSetupContainer.currentItem += 1
                 userSetupViewModel.reachedLastPage = true
                 doneButton.visibility = View.VISIBLE
@@ -188,14 +189,17 @@ class UserSetupActivity : VedibartaActivity(){
     }
 
     private fun validateUserInput(): StudentResult {
+        val resourcesCombo = userSetupViewModel.userSetupResources.value as? Loaded ?:
+                error("tried to validate the user before done loading resources")
+
         val gender = userSetupViewModel.gender
         val grade = userSetupViewModel.grade
 
         val studentHobbies = hobbiesViewModel.chosenHobbies
         val studentsCharacteristics = userSetupViewModel.chosenCharacteristics
 
-        val schoolNamesList = userSetupViewModel.schoolsName.value as Loaded
-        val regionNamesList = userSetupViewModel.regionsName.value as Loaded
+        val schoolNamesList = resourcesCombo.data.schoolsName
+        val regionNamesList = resourcesCombo.data.regionsName
 
         if (gender.value == Gender.NONE)
             return Failure(resources.getString(R.string.user_setup_gender_missing))
@@ -215,8 +219,7 @@ class UserSetupActivity : VedibartaActivity(){
             is Filled -> chosenSchool.text
         }
 
-
-        if (!schoolNamesList.data.getAll().contains(school))
+        if (!schoolNamesList.getAll().contains(school))
             return Failure(resources.getString(R.string.user_setup_school_missing))
 
         val region = when (val chosenRegion = userSetupViewModel.chosenRegion) {
@@ -224,10 +227,10 @@ class UserSetupActivity : VedibartaActivity(){
             is Filled -> chosenRegion.text
         }
 
-        if (!regionNamesList.data.getAll().contains(region))
+        if (!regionNamesList.getAll().contains(region))
             return Failure(resources.getString(R.string.user_setup_region_missing))
 
-        if (!validateSchoolAndRegionExists(school, region)) {
+        if (!validateSchoolAndRegionExists(resourcesCombo.data, school, region)) {
             return Failure(resources.getString(R.string.user_setup_wrong_school_and_region_combination))
         }
 
@@ -257,11 +260,10 @@ class UserSetupActivity : VedibartaActivity(){
         )
     }
 
-    private fun validateSchoolAndRegionExists(school: String, region: String): Boolean {
-        val schoolNamesList = userSetupViewModel.schoolsName.value as Loaded
-        val regionNamesList = userSetupViewModel.regionsName.value as Loaded
-        val schoolAndRegionMap =
-            schoolNamesList.data.getAll().zip(regionNamesList.data.getAll()).toMap()
+    private fun validateSchoolAndRegionExists(resources: UserSetupResources, school: String, region: String): Boolean {
+        val schoolNamesList = resources.schoolsName
+        val regionNamesList = resources.regionsName
+        val schoolAndRegionMap = schoolNamesList.getAll().zip(regionNamesList.getAll()).toMap()
 
         return schoolAndRegionMap.containsKey(school) && schoolAndRegionMap[school] == region
     }
@@ -271,11 +273,8 @@ class UserSetupActivity : VedibartaActivity(){
             R.id.gradeTenth -> userSetupViewModel.grade = Grade.TENTH
             R.id.gradeEleventh -> userSetupViewModel.grade = Grade.ELEVENTH
             R.id.gradeTwelfth -> userSetupViewModel.grade = Grade.TWELFTH
-            else -> {
-            }
         }
     }
-
 }
 
 sealed class StudentResult
