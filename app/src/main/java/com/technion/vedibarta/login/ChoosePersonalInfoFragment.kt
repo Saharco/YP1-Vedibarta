@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Loaded
+import com.technion.vedibarta.POJOs.Unfilled
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
@@ -195,38 +196,37 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         val lastName: TextInputEditText = v.findViewById(R.id.textFieldLastName)
 
         textFieldFirstName.doOnTextChanged { text, _, _, _ ->
-            if (text!!.matches(
-                    resources.getString(R.string.allowed_letters_regex).toRegex()
-                ) || text.isBlank()
-            )
-                viewModel.chosenFirstName = Filled(text.toString())
-            else
-                firstName.text = SpannableStringBuilder("")
+            when {
+                text!!.matches(resources.getString(R.string.allowed_letters_regex).toRegex()) ->
+                    viewModel.chosenFirstName = Filled(text.toString())
+                text.isBlank() ->
+                    viewModel.chosenFirstName = Unfilled
+                else -> firstName.text = SpannableStringBuilder("")
+            }
         }
 
         textFieldLastName.doOnTextChanged { text, _, _, _ ->
-            if (text!!.matches(
-                    resources.getString(R.string.allowed_letters_regex).toRegex()
-                ) || text.isBlank()
-            )
-                viewModel.chosenLastName = Filled(text.toString())
-            else
-                lastName.text = SpannableStringBuilder("")
+            when {
+                text!!.matches(resources.getString(R.string.allowed_letters_regex).toRegex()) ->
+                    viewModel.chosenLastName = Filled(text.toString())
+                text.isBlank() ->
+                    viewModel.chosenLastName = Unfilled
+                else -> lastName.text = SpannableStringBuilder("")
+            }
         }
 
         schoolListSpinner.setOnItemClickListener { _, _, position, _ ->
-            onSchoolSelectedListener(
-                position
-            )
+            onSchoolSelectedListener(position)
         }
+
         regionListSpinner.setOnItemClickListener { _, _, position, _ ->
-            onRegionSelectedListener(
-                position
-            )
+            onRegionSelectedListener(position)
         }
+
         schoolListSpinner.doOnTextChanged { text, _, _, _ ->
             viewModel.chosenSchool = Filled(text.toString())
         }
+
         regionListSpinner.doOnTextChanged { text, _, _, _ ->
             populateAutoTextView(
                 requireContext(),
