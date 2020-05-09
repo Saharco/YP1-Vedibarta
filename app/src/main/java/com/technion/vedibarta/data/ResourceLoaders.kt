@@ -9,10 +9,12 @@ import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManag
 import com.technion.vedibarta.utilities.resourcesManagement.findMultilingualResources
 import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
+typealias CategoriesMapper = Map<String, Array<String>>
+
 fun loadCharacteristics(
     context: Context,
     gender: Gender
-): Task<Map<String, Array<String>>> {
+): Task<CategoriesMapper> {
 
     return RemoteResourcesManager(context)
         .findMultilingualResource("characteristics/categories")
