@@ -6,19 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import com.technion.vedibarta.R
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
-import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.facebook.login.widget.LoginButton
-import com.google.firebase.auth.*
+import com.technion.vedibarta.databinding.FragmentLoginOptionsBinding
 import kotlin.ClassCastException
 
 
@@ -32,6 +26,10 @@ private const val TAG = "LoginScreenFragment"
  * @see R.layout.fragment_login_options
  */
 class LoginOptionsFragment : Fragment() {
+    private var _binding: FragmentLoginOptionsBinding? = null
+    // binding is only available between onCreateView and onDestroyView
+    private val binding get() = _binding!!
+
     // Buttons listeners.
     private lateinit var signInListener : OnSignInButtonClickListener
     private lateinit var signUpWithEmailListener: OnSignUpWithEmailButtonClickListener
@@ -62,25 +60,26 @@ class LoginOptionsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_login_options, container, false)
+        _binding = FragmentLoginOptionsBinding.inflate(inflater, container, false)
 
         // Set up login button listener.
-        val loginButton = view.findViewById<Button>(R.id.sign_in_link)
-        loginButton.setOnClickListener { signIn() }
+        binding.signInLink.setOnClickListener { signIn() }
         // Set up sign-up with email listener.
-        val signUpWithEmailButton = view.findViewById<Button>(R.id.sign_up_with_email_button)
-        signUpWithEmailButton.setOnClickListener { signUpWithEmail() }
+        binding.signUpWithEmailButton.setOnClickListener { signUpWithEmail() }
         // Set up sign-in with google listener.
-        val signInWithGoogleButton = view.findViewById<Button>(R.id.google_login_button)
-        signInWithGoogleButton.setOnClickListener { continueWithGoogle() }
+        binding.googleLoginButton.setOnClickListener { continueWithGoogle() }
         // Set up sign-in with facebook listener.
-        val signInWithFacebookButton = view.findViewById<LoginButton>(R.id.facebook_login_button)
+        val signInWithFacebookButton = binding.facebookLoginButton
         signInWithFacebookButton.fragment = this
         signInWithFacebookButton.setPermissions("email")
         signInWithFacebookButton.registerCallback(callbackManager, getFacebookCallbackForLogin())
 
-        return view
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun signIn() {

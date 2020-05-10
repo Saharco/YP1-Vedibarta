@@ -1,14 +1,11 @@
 package com.technion.vedibarta.login
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentTransaction
 import androidx.preference.PreferenceManager
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
@@ -35,7 +32,6 @@ import com.technion.vedibarta.utilities.extensions.putGender
 import com.technion.vedibarta.utilities.extensions.putLanguage
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
-
 
 private const val REQ_GOOGLE_SIGN_IN = 1
 private const val TAG = "LoginActivity"
