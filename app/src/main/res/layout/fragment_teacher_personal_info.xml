@@ -10,9 +10,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        tools:context=".teacher.TeacherProfileFragment">
+        tools:context=".teacher.TeacherPersonalInfoFragment">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/genderText"
@@ -102,7 +102,7 @@
             android:animateLayoutChanges="true"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp"
-            app:layout_constraintBottom_toTopOf="@id/cardViewSchool"
+            app:layout_constraintBottom_toTopOf="@id/schoolListLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/genderLayout">
@@ -212,210 +212,20 @@
 
         </androidx.cardview.widget.CardView>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewSchool"
+        <LinearLayout
+            android:id="@+id/schoolListLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="56dp"
-            android:layout_marginBottom="40dp"
-            android:animateLayoutChanges="true"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewName"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardViewName">
+            app:layout_constraintEnd_toEndOf="parent" >
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/schoolList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="vertical">
+                android:layout_height="wrap_content" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.github.zagum.expandicon.ExpandIconView
-                        android:id="@+id/schoolArrowButton"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="8dp"
-                        app:eiv_color="@color/colorAccentDark" />
-
-                    <TextView
-                        android:id="@+id/schoolInfoButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:drawableEnd="@drawable/ic_school"
-                        android:drawablePadding="8dp"
-                        android:gravity="center_vertical"
-                        android:padding="8dp"
-                        android:text="@string/user_setup_school_info_title"
-                        android:textColor="@color/textPrimary"
-                        android:textSize="20sp" />
-
-                </LinearLayout>
-
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cardViewSchoolBody"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
-                    android:padding="24dp"
-                    android:visibility="visible">
-
-                    <TextView
-                        android:id="@+id/schoolFilterSwitchText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/user_setup_school_title"
-                        android:textColor="@color/textPrimary"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@id/schoolListSpinner"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:id="@+id/schoolListSpinner"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:completionThreshold="0"
-                        android:imeOptions="flagNoExtractUi"
-                        android:visibility="visible"
-                        app:autoSizeMaxTextSize="13sp"
-                        app:autoSizeMinTextSize="11sp"
-                        app:autoSizeTextType="uniform"
-                        app:layout_constraintBottom_toTopOf="@id/regionFilterSwitchText"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/schoolFilterSwitchText" />
-
-                    <TextView
-                        android:id="@+id/regionFilterSwitchText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/user_setup_region_title"
-                        android:textColor="@color/textPrimary"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@id/regionListSpinner"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/schoolListSpinner">
-
-                    </TextView>
-
-                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:id="@+id/regionListSpinner"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:completionThreshold="0"
-                        android:dropDownHeight="150dp"
-                        android:imeOptions="flagNoExtractUi"
-                        android:visibility="visible"
-                        app:autoSizeMaxTextSize="13sp"
-                        app:autoSizeMinTextSize="11sp"
-                        app:autoSizeTextType="uniform"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/regionFilterSwitchText" />
-
-                    <TextView
-                        android:id="@+id/gradeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/user_setup_grade_title"
-                        android:textColor="@color/textPrimary"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@id/gradeRadioGroup"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/regionListSpinner">
-
-                    </TextView>
-
-                    <RadioGroup
-                        android:id="@+id/gradeRadioGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/gradeText">
-
-                        <RadioButton
-                            android:id="@+id/gradeTwelfth"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_twelfth"/>
-                        <RadioButton
-                            android:id="@+id/gradeEleventh"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_eleventh"/>
-                        <RadioButton
-                            android:id="@+id/gradeTenth"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_tenth"/>
-
-                    </RadioGroup>
-
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/addSchoolButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/gradeRadioGroup"
-                        app:layout_constraintRight_toRightOf="parent"
-                        android:layout_marginTop="16dp"
-                        app:elevation="0dp"
-                        app:srcCompat="@drawable/ic_add_black"
-                        android:background="@color/colorPrimary"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/teacher_add_school"
-                        app:layout_constraintTop_toTopOf="@id/addSchoolButton"
-                        app:layout_constraintBottom_toBottomOf="@id/addSchoolButton"
-                        app:layout_constraintRight_toLeftOf="@id/addSchoolButton"
-                        android:layout_marginEnd="8dp"/>
-
-                    <ImageButton
-                        android:id="@+id/removeSchoolButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_remove_circle"
-                        android:scaleX="1.5"
-                        android:scaleY="1.5"
-                        android:background="@android:color/transparent"
-                        app:layout_constraintTop_toTopOf="@id/addSchoolButton"
-                        app:layout_constraintBottom_toBottomOf="@id/addSchoolButton"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        android:layout_marginStart="8dp"/>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
