@@ -157,6 +157,7 @@ class LoginActivity : AppCompatActivity(),
             if (!task.isSuccessful) {
                 Toast.makeText(this, task.exception!!.message, Toast.LENGTH_LONG).show()
             } else {
+                hideKeyboard(this)
                 val user = auth.currentUser
                 sendEmailVerification(user!!)
             }
