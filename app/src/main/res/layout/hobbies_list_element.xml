@@ -26,7 +26,7 @@
                 android:layout_height="48dp"
                 android:orientation="horizontal"
                 android:alpha="0.8"
-                android:background="@color/colorAccentDark" >
+                android:background="@color/colorPrimaryDark" >
 
                 <TextView
                     android:id="@+id/hobbyCardTitle"

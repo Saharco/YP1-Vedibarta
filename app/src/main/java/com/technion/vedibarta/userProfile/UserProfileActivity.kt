@@ -571,10 +571,9 @@ class UserProfileActivity : VedibartaActivity(),
         fullscreenImageContainer.visibility = View.GONE
 
         scrollViewLayout.visibility = View.VISIBLE
-        titlePicture.visibility = View.VISIBLE
+        titleContainer.visibility = View.VISIBLE
         userName.visibility = View.VISIBLE
         userDescription.visibility = View.VISIBLE
-        divider1.visibility = View.VISIBLE
         changeProfilePictureButton.visibility = View.VISIBLE
 
         root.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
@@ -591,10 +590,9 @@ class UserProfileActivity : VedibartaActivity(),
         scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black))
 
         scrollViewLayout.visibility = View.GONE
-        titlePicture.visibility = View.GONE
+        titleContainer.visibility = View.GONE
         userName.visibility = View.GONE
         userDescription.visibility = View.GONE
-        divider1.visibility = View.GONE
         changeProfilePictureButton.visibility = View.GONE
     }
 
@@ -670,7 +668,7 @@ class UserProfileActivity : VedibartaActivity(),
                 SELECT_IMAGE -> checkImageAndUpload(data!!.data)
                 EDIT_PROFILE -> {
                     val snackbar = Snackbar.make(
-                        toolbar,
+                        titleContainer,
                         resources.getString(R.string.edit_changes_saved_successfully),
                         Snackbar.LENGTH_LONG
                     )
