@@ -11,6 +11,8 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.view.isInvisible
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -19,7 +21,6 @@ import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
 import kotlinx.android.synthetic.main.teacher_setup_school_card.*
 
 class TeacherPersonalInfoFragment : Fragment() {
-    private var numOfSchools: Int = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,10 +28,11 @@ class TeacherPersonalInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_teacher_personal_info, container, false)
 
+        view.findViewById<NestedScrollView>(R.id.teacherPersonalInfoScrollView).isNestedScrollingEnabled = false
         val schoolList = view.findViewById<RecyclerView>(R.id.schoolList)
         schoolList.isNestedScrollingEnabled = false
         schoolList.layoutManager = LinearLayoutManager(activity)
-        val adapter = SchoolsAdapter(numOfSchools)
+        val adapter = SchoolsAdapter(schoolList)
         schoolList.adapter = adapter
 
         return view
@@ -55,37 +57,66 @@ class TeacherPersonalInfoFragment : Fragment() {
     }
 }
 
-class SchoolsAdapter(private var numOfSchools: Int): RecyclerView.Adapter<SchoolsAdapter.SchoolsViewHolder>() {
+class SchoolsAdapter(private val recyclerView: RecyclerView): RecyclerView.Adapter<SchoolsAdapter.SchoolsViewHolder>() {
     private val TAG = "SchoolsAdapter"
+    private var numOfSchools = 1
 
     private val schoolCardsList = mutableListOf<Int>()
 
     class SchoolsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val addSchool = v.findViewById<FloatingActionButton>(R.id.addSchoolButton)
+        val addSchoolText = v.findViewById<TextView>(R.id.addSchoolText)
         val removeSchool = v.findViewById<ImageButton>(R.id.removeSchoolButton)
-        var garbage: Int = 0
+        var dummy: Int = 0
+
+        fun makeAddSchoolInvisible() {
+            addSchool.isInvisible = true
+            addSchoolText.isInvisible = true
+        }
+
+        fun makeAddSchoolVisible() {
+            addSchool.isInvisible = false
+            addSchoolText.isInvisible = false
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SchoolsViewHolder {
         schoolCardsList.add(1)
         val v = LayoutInflater.from(parent.context).inflate(R.layout.teacher_setup_school_card, parent, false)
-        return SchoolsViewHolder(v)
+        val holder = SchoolsViewHolder(v)
+        if (numOfSchools == 1) {
+            holder.removeSchool.isInvisible = true
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: SchoolsViewHolder, position: Int) {
         holder.addSchool.setOnClickListener {
-            Log.d(TAG, "numOfSchools: $numOfSchools")
             numOfSchools++
+            Log.d(TAG, "numOfSchools: $numOfSchools")
+            Log.d(TAG, "position: $position")
             schoolCardsList.add(1)
-            holder.garbage = schoolCardsList[position]
-            notifyDataSetChanged()
+            holder.dummy = schoolCardsList[position]
+            holder.makeAddSchoolInvisible()
+            holder.removeSchool.isInvisible = false
+            notifyItemInserted(position+1)
         }
         holder.removeSchool.setOnClickListener {
-            Log.d(TAG, "numOfSchools: $numOfSchools")
             numOfSchools--
+            Log.d(TAG, "numOfSchools: $numOfSchools")
+            Log.d(TAG, "position: $position")
+
+            if (position == numOfSchools) {
+                val prevHolder = recyclerView.findViewHolderForAdapterPosition(position - 1)
+                (prevHolder as SchoolsViewHolder).makeAddSchoolVisible()
+            }
+            if (numOfSchools == 1) {
+                val prevHolder = recyclerView.findViewHolderForAdapterPosition(0)
+                (prevHolder as SchoolsViewHolder).removeSchool.isInvisible = true
+            }
+
             schoolCardsList.removeAt(position)
-            holder.garbage = schoolCardsList[position]
-            notifyDataSetChanged()
+            notifyItemRemoved(position)
         }
     }
 
