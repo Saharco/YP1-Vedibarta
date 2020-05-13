@@ -24,6 +24,7 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.splashScreen
@@ -47,19 +48,21 @@ private const val TAG = "LoginActivity"
  * @see SignUpWithEmailFragment
  * @see R.layout.activity_login
  */
-class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonClickListener,
+class LoginActivity : AppCompatActivity(),
+    LoginOptionsFragment.OnSignInButtonClickListener,
     LoginOptionsFragment.OnSignUpWithEmailButtonClickListener,
     LoginOptionsFragment.OnContinueWithGoogleButtonClickListener,
-    LoginOptionsFragment.OnContinueWithFacebookCallback, LoginFragment.OnBackButtonClickListener,
-    LoginFragment.OnLoginButtonClickListener, SignUpWithEmailFragment.OnBackButtonClickListener,
+    LoginOptionsFragment.OnContinueWithFacebookCallback,
+    LoginFragment.OnBackButtonClickListener,
+    LoginFragment.OnLoginButtonClickListener,
+    SignUpWithEmailFragment.OnBackButtonClickListener,
     SignUpWithEmailFragment.OnSignUpButtonClickListener
 {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
@@ -74,8 +77,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         // If activity is being restored from a previous state, then do nothing.
-        if (savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             return
         }
 
@@ -92,8 +94,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         }
     }
 
-    override fun onStart()
-    {
+    override fun onStart() {
         super.onStart()
 
         // Reloading the current user because he could have been deleted since the last login.
@@ -104,8 +105,7 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                 updateUIForCurrentUser(auth.currentUser)
             }.addOnSuccessListener { willRedirect ->
                 // Hide splash-screen if we are not about to be redirected to another activity.
-                if (!willRedirect)
-                {
+                if (!willRedirect) {
                     deactivateSplash()
                 }
             }
@@ -113,73 +113,57 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
     }
 
     // splash screen stops with this activity and for testing purposes needs to call hideSplash()
-    override fun onStop()
-    {
+    override fun onStop() {
         super.onStop()
         if (!splashScreen.isIdleNow) hideSplash(this)
     }
 
-    override fun onSignInButtonClick()
-    {
+    override fun onSignInButtonClick() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.login_screen_fragment, LoginFragment())
             addToBackStack(null)
         }.commit()
     }
 
-    override fun onContinueWithGoogleButtonClick()
-    {
+    override fun onContinueWithGoogleButtonClick() {
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(signInIntent, REQ_GOOGLE_SIGN_IN)
     }
 
-    override fun getCallbackForLogin(): FacebookCallback<LoginResult>
-    {
-        return object : FacebookCallback<LoginResult>
-        {
-            override fun onSuccess(loginResult: LoginResult)
-            {
-                Log.d(TAG, "facebook:onSuccess $loginResult")
-                handleFacebookAccessToken(loginResult.accessToken)
-            }
+    override fun getCallbackForLogin() = object : FacebookCallback<LoginResult> {
+        override fun onSuccess(loginResult: LoginResult) {
+            Log.d(TAG, "facebook:onSuccess $loginResult")
+            handleFacebookAccessToken(loginResult.accessToken)
+        }
 
-            override fun onCancel()
-            {
-                Log.d(TAG, "facebook:onCancel")
-            }
+        override fun onCancel() {
+            Log.d(TAG, "facebook:onCancel")
+        }
 
-            override fun onError(e: FacebookException)
-            {
-                Log.d(TAG, "facebook:onError", e)
-            }
+        override fun onError(e: FacebookException) {
+            Log.d(TAG, "facebook:onError", e)
         }
     }
 
-    override fun onSignUpWithEmailButtonClick()
-    {
+    override fun onSignUpWithEmailButtonClick() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.login_screen_fragment, SignUpWithEmailFragment())
             addToBackStack(null)
         }.commit()
     }
 
-    override fun onSignUpButtonClick(email: String, password: String)
-    {
+    override fun onSignUpButtonClick(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (!task.isSuccessful)
-            {
+            if (!task.isSuccessful) {
                 Toast.makeText(this, task.exception!!.message, Toast.LENGTH_LONG).show()
-            }
-            else
-            {
+            } else {
                 val user = auth.currentUser
                 sendEmailVerification(user!!)
             }
         }
     }
 
-    private fun sendEmailVerification(user: FirebaseUser)
-    {
+    private fun sendEmailVerification(user: FirebaseUser) {
         val dialog = ProgressDialog(this).apply {
             setMessage(getString(R.string.sending_verification_email))
             setCancelable(false)
@@ -188,14 +172,11 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         }
 
         user.sendEmailVerification().addOnCompleteListener { task ->
-            if (!task.isSuccessful)
-            {
+            if (!task.isSuccessful) {
                 Log.w(TAG, "Failed to send verification email")
                 Toast.makeText(this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG)
                     .show()
-            }
-            else
-            {
+            } else {
                 Log.w(TAG, "Verification email sent")
                 Toast.makeText(this, getString(R.string.email_sent_successfully), Toast.LENGTH_LONG)
                     .show()
@@ -206,73 +187,55 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         }
     }
 
-    override fun onLoginButtonClick(email: String, password: String)
-    {
+    override fun onLoginButtonClick(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (!task.isSuccessful)
-            {
+            if (!task.isSuccessful) {
                 Log.w(TAG, "Failed to sign in with email")
                 Toast.makeText(this, task.exception!!.message, Toast.LENGTH_LONG).show()
             }
-            else
-            {
+            else {
+                hideKeyboard(this)
                 val user = auth.currentUser
-                if (user!!.isEmailVerified)
-                {
+                if (user!!.isEmailVerified) {
                     updateUIForCurrentUser(user, true)
-                }
-                else
-                {
-                    Toast.makeText(this,
-                                   getString(R.string.email_not_verified_error),
-                                   Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, getString(R.string.email_not_verified_error), Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
-    override fun onBackButtonClick()
-    {
+    override fun onBackButtonClick() {
         supportFragmentManager.popBackStack()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (data == null)
-        {
+        if (data == null) {
             Log.w(TAG, "Intent is null")
             return
         }
 
-        if (requestCode == REQ_GOOGLE_SIGN_IN)
-        {
+        if (requestCode == REQ_GOOGLE_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            if (!task.isSuccessful)
-            {
+            if (!task.isSuccessful) {
                 Log.w(TAG, "Failed to get account from intent")
             }
 
-            try
-            {
+            try {
                 val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account)
-            }
-            catch (e: ApiException)
-            {
+            } catch (e: ApiException) {
                 Log.w(TAG, "Google sign in failed", e)
-            }
-            catch (e: Exception)
-            {
+            } catch (e: Exception) {
                 Log.w(TAG, "Caught unexpected exception: $e")
             }
             return
         }
     }
 
-    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount)
-    {
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         Log.d(TAG, "firebaseAuthWithGoogle: ${account.id!!}")
         val dialog = ProgressDialog(this).apply {
             setMessage(getString(R.string.progress_dialog_loading))
@@ -283,14 +246,11 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
 
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
-            if (task.isSuccessful)
-            {
+            if (task.isSuccessful) {
                 Log.w(TAG, "signInWithCredential: success")
                 val user = auth.currentUser
                 updateUIForCurrentUser(user, true)
-            }
-            else
-            {
+            } else {
                 // Sign in failed
                 Log.w(TAG, "signInWithCredential: failure", task.exception)
             }
@@ -299,9 +259,10 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         }
     }
 
-    private fun isUserVerified(user: FirebaseUser) = user.providerData.any {
-        it.providerId !in listOf(EmailAuthProvider.PROVIDER_ID, FirebaseAuthProvider.PROVIDER_ID)
-    } || user.isEmailVerified
+    private fun isUserVerified(user: FirebaseUser) =
+        user.providerData.any {
+            it.providerId !in listOf(EmailAuthProvider.PROVIDER_ID, FirebaseAuthProvider.PROVIDER_ID)
+        } || user.isEmailVerified
 
     /**
      * Redirect the current user to its desired activity.
@@ -312,20 +273,19 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
      * @param displaySplash if true displays the splash screen (only if a redirection occurs)
      * @return will a redirection occur
      */
-    private fun updateUIForCurrentUser(user: FirebaseUser?,
-                                       displaySplash: Boolean = false): Task<Boolean> =
-        if (user != null && isUserVerified(user))
-        {
-            if (displaySplash)
-            {
+    private fun updateUIForCurrentUser(
+        user: FirebaseUser?,
+        displaySplash: Boolean = false
+    ): Task<Boolean> =
+        if (user != null && isUserVerified(user)) {
+            if (displaySplash) {
                 viewFlipper.showNext()
                 showSplash(this, getString(R.string.default_loading_message))
             }
             database.userId = user.uid
             database.students().userId().build().get().continueWith { task ->
                 val document = task.result
-                if (document != null && document.exists())
-                {
+                if (document != null && document.exists()) {
                     Log.d(TAG, "document exists. redirecting to main activity")
                     student = document.toObject(Student::class.java)
                     PreferenceManager.getDefaultSharedPreferences(this).edit()
@@ -333,65 +293,49 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
                         .putLanguage(Locale.getDefault().language).apply()
                     startActivity(Intent(this, MainActivity::class.java)) // change to Main later
                     finish()
-                }
-                else
-                {
+                } else {
                     Log.d(TAG, "document doesn't exist. redirecting to user setup")
                     startActivity(Intent(this, UserSetupActivity::class.java))
                     finish()
                 }
                 true
             }
-        }
-        else Tasks.call { false }
+        } else
+            Tasks.call { false }
 
-    fun handleFacebookAccessToken(token: AccessToken)
-    {
+    fun handleFacebookAccessToken(token: AccessToken) {
         Log.d(TAG, "handleFacebookAccessToken: ${token.token}")
         val authCredential = FacebookAuthProvider.getCredential(token.token)
         auth.signInWithCredential(authCredential).addOnCompleteListener(this) {
-            if (it.isSuccessful)
-            {
+            if (it.isSuccessful) {
                 Log.d(TAG, "signInWithCredential: success")
                 updateUIForCurrentUser(auth.currentUser, true)
-            }
-            else
-            {
-                try
-                {
+            } else {
+                try {
                     throw it.exception!!
-                }
-                catch (e: FirebaseAuthInvalidCredentialsException)
-                {
+                } catch (e: FirebaseAuthInvalidCredentialsException) {
                     Log.d(TAG, "Credentials has been malformed or expired")
                     Toast.makeText(this, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
-                }
-                catch (e: FirebaseAuthUserCollisionException)
-                {
+                } catch (e: FirebaseAuthUserCollisionException) {
                     Log.d(TAG, "User with same credentials already exists")
                     Toast.makeText(this, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
                     val email = authCredential.signInMethod
                     var providers: List<String>? = null
-                    try
-                    {
+                    try {
                         val resultTask = auth.fetchSignInMethodsForEmail(email)
                         if (!it.isSuccessful) Log.w(TAG, "Task is not successful")
-                        else
-                        {
+                        else {
                             providers = resultTask.result!!.signInMethods
                         }
                     }
-                    catch (nullptrEx: NullPointerException)
-                    {
+                    catch (nullptrEx: NullPointerException) {
                         Log.w(TAG, "NullPointerException from getSignInMethods")
                     }
-                    if (providers == null || providers.isEmpty()) Log.w(TAG,
-                                                                        "No existing sign in providers")
+                    if (providers == null || providers.isEmpty())
+                        Log.w(TAG, "No existing sign in providers")
                     auth.signOut()
                     LoginManager.getInstance().logOut()
-                }
-                catch (e: Exception)
-                {
+                } catch (e: Exception) {
                     Log.d(TAG, "Authentication failed")
                     Toast.makeText(this, R.string.sign_in_error, Toast.LENGTH_SHORT).show()
                 }
@@ -401,14 +345,12 @@ class LoginActivity : AppCompatActivity(), LoginOptionsFragment.OnSignInButtonCl
         }
     }
 
-    private fun activateSplash()
-    {
+    private fun activateSplash() {
         viewFlipper.showNext()
         showSplash(this, getString(R.string.default_loading_message))
     }
 
-    private fun deactivateSplash()
-    {
+    private fun deactivateSplash() {
         hideSplash(this)
         viewFlipper.showPrevious()
     }
