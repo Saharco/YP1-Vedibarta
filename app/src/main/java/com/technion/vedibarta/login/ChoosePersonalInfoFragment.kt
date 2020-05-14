@@ -63,7 +63,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 R.color.colorAccentDark
             )
         )
-        textOptionMale.setTextColor(ContextCompat.getColor(requireContext(), R.color.background))
+        textOptionMale.setTextColor(ContextCompat.getColor(requireContext(), R.color.textPrimary))
 
         viewModel.gender.value = Gender.FEMALE
 
@@ -82,7 +82,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 R.color.colorAccentDark
             )
         )
-        textOptionFemale.setTextColor(ContextCompat.getColor(requireContext(), R.color.background))
+        textOptionFemale.setTextColor(ContextCompat.getColor(requireContext(), R.color.textPrimary))
 
         viewModel.gender.value = Gender.MALE
 
@@ -157,7 +157,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 textOptionFemale.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.background
+                        R.color.textPrimary
                     )
                 )
             }
@@ -175,7 +175,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
                 textOptionMale.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.background
+                        R.color.textPrimary
                     )
                 )
             }

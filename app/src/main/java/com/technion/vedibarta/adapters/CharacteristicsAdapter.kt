@@ -63,6 +63,7 @@ class CharacteristicsAdapter(
                 else
                     table.visibility = View.VISIBLE
                 arrowButton.switchState()
+
             }
             arrowButton.switchState()
             arrowButton.setAnimationDuration(200)

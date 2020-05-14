@@ -77,11 +77,11 @@ open class VedibartaFragment : Fragment() {
                 for (j in 0 until steps) {
                     if (i + j >= characteristics.size)
                         break
-                    val bubbleFrame = LayoutInflater.from(context).inflate(
-                        R.layout.user_profile_bubble_blue,
+                    val bubbleFrame = LayoutInflater.from(context).inflate(R.layout.characteristic_bubble,
                         null
-                    ) as FrameLayout
+                    ) as ConstraintLayout
                     val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
+                    val text = bubbleFrame.findViewById(R.id.characteristicText) as TextView
 
                     if (isContained(
                             studentCharacteristics,
@@ -89,12 +89,10 @@ open class VedibartaFragment : Fragment() {
                             characteristicsResource
                         )
                     ) {
-                        bubbleFrame.alpha = 1f
+                        bubble.alpha = 1f
                         bubbleFrame.tag = SELECTED_BUBBLE
                     } else {
-                        bubble.background =
-                            ContextCompat.getDrawable(context, R.drawable.circle_cyan)
-                        bubbleFrame.alpha = 0.6f
+                        bubble.alpha = 0.3f
                         bubbleFrame.tag = NON_SELECTED_BUBBLE
                     }
                     bubbleFrame.id = i + j
@@ -108,7 +106,7 @@ open class VedibartaFragment : Fragment() {
                             characteristicsResource
                         )
                     }
-                    bubble.text = characteristics[i + j]
+                    text.text = characteristics[i + j]
                     bubbleFrame.layoutParams = bubbleParams
                     tableRow.addView(bubbleFrame)
                 }
@@ -122,11 +120,7 @@ open class VedibartaFragment : Fragment() {
             s: String,
             characteristics: MultilingualResource
         ): Boolean {
-
-//           if(student.gender == Gender.NONE)
-//               return false
             val characteristic = characteristics.toBaseLanguage(s)
-
             return student.contains(characteristic)
         }
 
@@ -142,21 +136,19 @@ open class VedibartaFragment : Fragment() {
             val steps = calculateBubblesInRow(context)
             val row = view.id / steps
             val tableRow = table[row] as TableRow
-            val bubbleFrame = view as FrameLayout
+            val bubbleFrame = view as ConstraintLayout
             val viewPos = view.id % steps
             val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
 
             val char = characteristicsResource.toBaseLanguage(characteristics[view.id])
 
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
-                bubble.background = ContextCompat.getDrawable(context, R.drawable.circle_blue)
-                bubbleFrame.alpha = 1f
+                bubble.alpha = 1f
                 bubbleFrame.tag = SELECTED_BUBBLE
                 studentCharacteristics[char] = true
 
             } else {
-                bubble.background = ContextCompat.getDrawable(context, R.drawable.circle_cyan)
-                bubbleFrame.alpha = 0.6f
+                bubble.alpha = 0.3f
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
                 studentCharacteristics.remove(char)
 
@@ -174,7 +166,6 @@ open class VedibartaFragment : Fragment() {
                 )
             }
 
-            bubble.text = characteristics[view.id]
             bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
 
             tableRow.removeViewAt(viewPos)
@@ -192,8 +183,6 @@ open class VedibartaFragment : Fragment() {
             studentHobbies: MutableList<String>,
             hobbiesResource: MultilingualResource
         ) {
-            val allHobbies = context.resources.getStringArray(R.array.hobbies)
-
             val tableRowParams = TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
                 TableLayout.LayoutParams.WRAP_CONTENT
@@ -227,7 +216,7 @@ open class VedibartaFragment : Fragment() {
                     Glide.with(context)
                         .asBitmap()
                         .apply(myOptions)
-                        .load(hobbyToPhoto(hobbies[i + j], allHobbies))
+                        .load(hobbyToPhoto(hobbies[i + j], hobbiesResource.getAll().toTypedArray()))
                         .into(bubblePhoto)
                     val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
 
@@ -319,13 +308,11 @@ open class VedibartaFragment : Fragment() {
             val hobby = hobbiesResource.toBaseLanguage(hobbies[view.id])
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
                 bubblePhoto.animate().alpha(1f).duration = 400
-//                bubbleText.visibility = View.GONE
                 bubbleFrame.tag = SELECTED_BUBBLE
                 studentHobbies.add(hobby)
 
             } else {
                 bubblePhoto.animate().alpha(0.4f).duration = 400
-//                bubbleText.visibility = View.VISIBLE
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
                 studentHobbies.remove(hobby)
             }

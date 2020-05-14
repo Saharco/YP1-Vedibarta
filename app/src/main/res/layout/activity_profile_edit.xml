@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@drawable/bg_onboarding"
+    android:background="@color/colorDivider"
     tools:context=".userProfile.ProfileEditActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            app:tabIndicatorColor="@android:color/white"
+            app:tabIndicatorColor="@color/colorAccent"
             app:tabSelectedTextColor="@android:color/white">
         </com.google.android.material.tabs.TabLayout>
 
