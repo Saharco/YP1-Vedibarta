@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/bg_onboarding"
+    android:background="@android:color/transparent"
     tools:context=".fragments.HobbiesFragment">
 
     <androidx.recyclerview.widget.RecyclerView

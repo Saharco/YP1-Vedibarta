@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.HobbyCard
+import com.technion.vedibarta.POJOs.CategoryCard
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.findMultilingualResources
 import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
@@ -37,14 +37,14 @@ fun loadCharacteristics(
 
 fun loadHobbies(
     context: Context
-): Task<List<HobbyCard>> {
+): Task<List<CategoryCard>> {
 
     return RemoteResourcesManager(context)
         .findMultilingualResource("hobbies/categories")
         .continueWithTask {
             val categories = it.result!!.getAllBase()
             val categoryResource = it.result!!
-            val hobbyCards = mutableListOf<HobbyCard>()
+            val hobbyCards = mutableListOf<CategoryCard>()
             Log.d("abc", "LoadHobbies")
             val categoryResourceList = categories.map { category -> "hobbies/category-$category" }
             RemoteResourcesManager(context)
@@ -54,7 +54,7 @@ fun loadHobbies(
                     categories.forEachIndexed { index, category ->
                         hobbyCards.add(
                             index,
-                            HobbyCard(categoryResource.toCurrentLanguage(category), it.result!![index].getAll().toTypedArray())
+                            CategoryCard(categoryResource.toCurrentLanguage(category), it.result!![index].getAll().toTypedArray())
                         )
                     }
                 }.continueWith {

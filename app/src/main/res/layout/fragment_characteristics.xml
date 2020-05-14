@@ -7,19 +7,10 @@
     android:background="@android:color/transparent"
     tools:context=".fragments.CharacteristicsFragment">
 
-
-
-    <ScrollView
-        android:id="@+id/scrollView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/characteristicsTitlesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent">
-
-        <TableLayout
-            android:id="@+id/characteristicsTable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </ScrollView>
+        android:layout_margin="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

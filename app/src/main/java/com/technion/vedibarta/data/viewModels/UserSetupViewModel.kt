@@ -2,11 +2,12 @@ package com.technion.vedibarta.data.viewModels
 
 import android.content.Context
 import androidx.lifecycle.*
-import com.google.android.gms.tasks.Task
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.data.CategoriesMapper
 import com.technion.vedibarta.data.loadCharacteristics
-import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
+import com.technion.vedibarta.utilities.extensions.handleError
+import com.technion.vedibarta.utilities.extensions.handleSuccess
+import com.technion.vedibarta.utilities.extensions.handleTimeout
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.Resource
@@ -44,7 +45,7 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
 
     val chosenCharacteristics = mutableMapOf<String, Boolean>()
 
-    val characteristicsResources: LiveData<LoadableData<CharacteristicsResources>> =
+    private val characteristicsResources: LiveData<LoadableData<CharacteristicsResources>> =
         Transformations.switchMap(gender) {
             when (it!!) {
                 Gender.MALE -> _characteristicsResourcesMale
@@ -53,8 +54,8 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
             }
         }
 
-    val schoolsName: LiveData<LoadableData<Resource>> = _schoolsName
-    val regionsName: LiveData<LoadableData<Resource>> = _regionsName
+    private val schoolsName: LiveData<LoadableData<Resource>> = _schoolsName
+    private val regionsName: LiveData<LoadableData<Resource>> = _regionsName
 
     val userSetupResources = combineResources(
         schoolsName,
@@ -69,20 +70,6 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
     private fun loadResources() {
         val resourcesManager = RemoteResourcesManager(context)
 
-        fun <T> Task<*>.handleError(data: MutableLiveData<LoadableData<T>>) =
-            this.addOnFailureListener {
-                data.value = Error(it.message)
-            }
-
-        fun <T> Task<out T>.handleSuccess(data: MutableLiveData<LoadableData<T>>) =
-            this.addOnSuccessListener {
-                data.value = Loaded<T>(it)
-            }
-
-        fun <T> Task<*>.handleTimeout(data: MutableLiveData<LoadableData<T>>) =
-            this.executeAfterTimeoutInMillis {
-                data.postValue(SlowLoadingEvent())
-            }
 
         fun getCharacteristicsResources(gender: Gender, into: MutableLiveData<LoadableData<CharacteristicsResources>>) {
             val task1 = resourcesManager.findMultilingualResource("characteristics/all", gender)

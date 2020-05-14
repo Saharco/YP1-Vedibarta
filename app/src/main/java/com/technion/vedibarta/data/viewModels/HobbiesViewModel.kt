@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.data.loadHobbies
+import com.technion.vedibarta.utilities.extensions.handleError
+import com.technion.vedibarta.utilities.extensions.handleSuccess
+import com.technion.vedibarta.utilities.extensions.handleTimeout
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import java.lang.Class
@@ -19,52 +22,50 @@ fun hobbiesViewModelFactory(context: Context) = object : ViewModelProvider.Facto
 
 class HobbiesViewModel(private val context: Context) : ViewModel() {
 
-    private val _hobbyCardList = MutableLiveData<LoadableData<List<HobbyCard>>>(NormalLoading())
-    private val _hobbiesResource = MutableLiveData<LoadableData<MultilingualResource>>(NormalLoading())
+    private val _hobbiesResources =
+        MutableLiveData<LoadableData<HobbiesResources>>(NormalLoading())
 
-    val hobbyCardList: LiveData<LoadableData<List<HobbyCard>>> = _hobbyCardList
-    val hobbiesResource: LiveData<LoadableData<MultilingualResource>> = _hobbiesResource
+    val hobbiesResources: LiveData<LoadableData<HobbiesResources>> = _hobbiesResources
 
     val chosenHobbies = mutableListOf<String>()
-
-    val resourcesMediator = MediatorLiveData<Boolean>()
 
     private var startedLoading = false
 
     fun startLoading() {
         if (!startedLoading) {
             val resourcesManager = RemoteResourcesManager(context)
-
-            loadHobbies(context).addOnSuccessListener {
-                _hobbyCardList.value = Loaded(it)
-            }
-
-            resourcesManager.findMultilingualResource("hobbies/all").addOnSuccessListener {
-                _hobbiesResource.value = Loaded(it)
-            }
-
-            resourcesMediatorInit()
+            getHobbiesResources(resourcesManager, _hobbiesResources)
             startedLoading = true
         }
     }
 
-    private fun resourcesMediatorInit() {
-        resourcesMediator.addSource(hobbyCardList) {
-            resourcesMediator.value = areResourcesLoaded()
-        }
-        resourcesMediator.addSource(hobbiesResource) {
-            resourcesMediator.value = areResourcesLoaded()
+    private fun getHobbiesResources(
+        resourcesManager: RemoteResourcesManager,
+        into: MutableLiveData<LoadableData<HobbiesResources>>
+    ) {
+        val task1 = resourcesManager.findMultilingualResource("hobbies/all")
+        val task2 = loadHobbies(context)
+
+        task1.run {
+
+            continueWithTask { allTask ->
+                val allHobbies = allTask.result!!
+
+                task2.continueWith { mapperTask ->
+                    val hobbiesCardList = mapperTask.result!!
+
+                    HobbiesResources(allHobbies, hobbiesCardList)
+                }
+            }
+                .handleSuccess(into)
+                .handleError(into)
+                .handleTimeout(into)
         }
     }
 
-    private fun areResourcesLoaded(): Boolean {
-        when (hobbyCardList.value) {
-            is Loading -> return false
-        }
-        when (hobbiesResource.value) {
-            is Loading -> return false
-        }
-        return true
-    }
+    data class HobbiesResources(
+        val allHobbies: MultilingualResource,
+        val hobbyCardList: List<CategoryCard>
+    )
 
 }
