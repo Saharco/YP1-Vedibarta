@@ -1,8 +1,13 @@
 package com.technion.vedibarta.utilities.extensions
 
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.storage.CancellableTask
+import com.technion.vedibarta.POJOs.Error
+import com.technion.vedibarta.POJOs.LoadableData
+import com.technion.vedibarta.POJOs.Loaded
+import com.technion.vedibarta.POJOs.SlowLoadingEvent
 import java.lang.Exception
 import java.util.*
 
@@ -58,3 +63,18 @@ fun <TResult> Task<TResult>.executeAfterTimeoutInMillis(millis: Long=5000L, func
     }
     return addOnSuccessListener { timer.cancel() }
 }
+
+fun <T> Task<*>.handleError(data: MutableLiveData<LoadableData<T>>) =
+    this.addOnFailureListener {
+        data.value = Error(it.message)
+    }
+
+fun <T> Task<out T>.handleSuccess(data: MutableLiveData<LoadableData<T>>) =
+    this.addOnSuccessListener {
+        data.value = Loaded<T>(it)
+    }
+
+fun <T> Task<*>.handleTimeout(data: MutableLiveData<LoadableData<T>>) =
+    this.executeAfterTimeoutInMillis {
+        data.postValue(SlowLoadingEvent())
+    }

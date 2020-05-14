@@ -9,15 +9,25 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
-import com.google.android.gms.tasks.Task
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.tasks.Tasks
-import com.technion.vedibarta.POJOs.HobbyCard
+import com.google.android.material.tabs.TabLayoutMediator
+import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
-import com.technion.vedibarta.data.loadHobbies
+import com.technion.vedibarta.adapters.FragmentListStateAdapter
+import com.technion.vedibarta.data.viewModels.CharacteristicsViewModel
+import com.technion.vedibarta.data.viewModels.HobbiesViewModel
+import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
+import com.technion.vedibarta.data.viewModels.hobbiesViewModelFactory
 import com.technion.vedibarta.fragments.CharacteristicsFragment
 import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.utilities.SectionsPageAdapter
@@ -28,44 +38,52 @@ import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextReso
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 
-class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
+class ProfileEditActivity : VedibartaActivity(){
 
     private val TAG = "ProfileEditActivity"
-    private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    lateinit var hobbyCardTask: Task<List<HobbyCard>>
-    lateinit var hobbiesResourceTask: Task<MultilingualTextResource>
+    private val characteristicsViewModel: CharacteristicsViewModel by viewModels {
+        characteristicsViewModelFactory(applicationContext, student!!.gender)
+    }
 
-    lateinit var characteristicsTask : Task<MultilingualTextResource>
-
-    private var startingCharacteristics = student!!.characteristics.toMutableMap()
-    private var startingHobbies = student!!.hobbies.toMutableSet()
+    private val hobbiesViewModel: HobbiesViewModel by viewModels {
+        hobbiesViewModelFactory(applicationContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_edit)
         Log.d(TAG, "created ProfileEditActivity")
 
-        sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
-
+        if (characteristicsViewModel.chosenCharacteristics.isEmpty())
+            characteristicsViewModel.chosenCharacteristics.putAll(student!!.characteristics)
+        if (hobbiesViewModel.chosenHobbies.isEmpty())
+            hobbiesViewModel.chosenHobbies.addAll(student!!.hobbies)
+        characteristicsViewModel.startLoading()
+        hobbiesViewModel.startLoading()
+        combineResources(
+            hobbiesViewModel.hobbiesResources,
+            characteristicsViewModel.characteristicsResources
+        )
+            .observe(this, Observer {
+                when (it) {
+                    is Loaded -> {
+                        loading.visibility = View.GONE
+                        toolBarLayout.visibility = View.VISIBLE
+                        editProfileContainer.visibility = View.VISIBLE
+                    }
+                    is Error -> Toast.makeText(this, it.reason, Toast.LENGTH_LONG).show()
+                    is SlowLoadingEvent -> {
+                        if (!it.handled)
+                            Toast.makeText(
+                                this,
+                                resources.getString(R.string.net_error),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                    }
+                }
+            })
         setupViewPager(editProfileContainer)
-
-        hobbiesResourceTask = RemoteTextResourcesManager(this)
-            .findMultilingualResource("hobbies/all")
-
-        hobbyCardTask = loadHobbies(this)
-
-        characteristicsTask = RemoteTextResourcesManager(this).findMultilingualResource("characteristics/all")
-
-        Tasks.whenAll(hobbiesResourceTask, hobbyCardTask, characteristicsTask)
-            .executeAfterTimeoutInMillis { internetConnectionErrorHandler(this) }
-            .addOnSuccessListener(this) {
-                loading.visibility = View.GONE
-                editTabs.visibility = View.VISIBLE
-                editProfileContainer.visibility = View.VISIBLE
-            }
-
-        editTabs.setupWithViewPager(editProfileContainer)
         setToolbar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
     }
@@ -77,11 +95,13 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    private fun setupViewPager(viewPager: ViewPager) {
-        val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(CharacteristicsFragment(), getString(R.string.characteristics_tab_title))
-        adapter.addFragment(HobbiesFragment(), getString(R.string.hobbies_tab_title))
-        viewPager.adapter = adapter
+    private fun setupViewPager(viewPager: ViewPager2) {
+        viewPager.isUserInputEnabled = true
+        viewPager.adapter = FragmentListStateAdapter(this, mutableListOf(CharacteristicsFragment(), HobbiesFragment()))
+        val titleList = listOf(getString(R.string.characteristics_tab_title), getString(R.string.hobbies_tab_title))
+        TabLayoutMediator(editTabs, editProfileContainer) { tab, position ->
+            tab.text = titleList[position]
+        }.attach()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -93,16 +113,18 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
     }
 
     private fun commitEditChanges() {
-//        Toast.makeText(this, "Committing changes", Toast.LENGTH_LONG).show()
-        //TODO: push to the database first!
-         startingCharacteristics = student!!.characteristics
-        startingHobbies = student!!.hobbies.toMutableSet()
+        val startingCharacteristics =  student!!.characteristics
+        val startingHobbies = student!!.hobbies
+        student!!.characteristics = characteristicsViewModel.chosenCharacteristics
+        student!!.hobbies = hobbiesViewModel.chosenHobbies
         database.students().userId().build().set(student!!).addOnSuccessListener {
             Log.d("profileEdit", "saved profile changes")
             setResult(Activity.RESULT_OK)
             finish()
         }.addOnFailureListener {
             Log.d("profileEdit", "${it.message}, cause: ${it.cause?.message}")
+            student!!.characteristics = startingCharacteristics
+            student!!.hobbies = startingHobbies
         }
     }
 
@@ -120,17 +142,17 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
             title.textSize = 20f
             title.setTypeface(null, Typeface.BOLD)
             title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
-            title.setTextColor(ContextCompat.getColor(this,R.color.textPrimary))
             title.gravity = Gravity.CENTER
             title.setPadding(10, 40, 10, 24)
             val builder = AlertDialog.Builder(this)
             builder.setCustomTitle(title)
                 .setMessage(R.string.edit_discard_changes_message)
                 .setPositiveButton(R.string.yes) { _, _ ->
-                    student!!.hobbies = startingHobbies.toList()
-                    student!!.characteristics = startingCharacteristics
-                    super.onBackPressed() }
-                .setNegativeButton(R.string.no) { _, _ -> }
+                    student!!.hobbies = hobbiesViewModel.chosenHobbies
+                    student!!.characteristics = characteristicsViewModel.chosenCharacteristics
+                    super.onBackPressed()
+                }
+                .setNegativeButton(R.string.no) { _, _ -> super.onBackPressed()}
                 .show()
             builder.create()
             return
@@ -140,22 +162,75 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
     }
 
     private fun changesOccurred(): Boolean {
-        if (startingCharacteristics.filter { it.value } != student!!.characteristics.filter { it.value })
+        if (student!!.characteristics.keys != characteristicsViewModel.chosenCharacteristics.keys)
             return true
-        if (!(startingHobbies.containsAll(student!!.hobbies.toSet()) &&
-                    student!!.hobbies.toSet().containsAll(startingHobbies))
-        )
+        if (student!!.hobbies.toSet() != hobbiesViewModel.chosenHobbies.toSet())
             return true
         return false
     }
 
-    override fun getArgs(): Map<String, Any> {
-        val map = mutableMapOf<String, Any>()
-        map["student"] = student!!
-        map["characteristicsTask"] = characteristicsTask
-        map["hobbiesResourceTask"] = hobbiesResourceTask
-        map["hobbyCardTask"] = hobbyCardTask
-        map["activity"] = this
-        return map
+    private fun combineResources(
+        hobbiesResourcesLiveData: LiveData<LoadableData<HobbiesViewModel.HobbiesResources>>,
+        characteristicsResourcesLiveData: LiveData<LoadableData<CharacteristicsViewModel.CharacteristicsResources>>
+    ): LiveData<LoadableData<ProfileEditResources>> {
+        val mediator = MediatorLiveData<LoadableData<ProfileEditResources>>()
+            .apply { value = NormalLoading() }
+
+        fun refreshCombination() {
+            // cannot go back after reaching an end-state
+            if (mediator.value is Error) return
+
+            val hobbiesResources = hobbiesResourcesLiveData.value
+            val characteristicsResources = characteristicsResourcesLiveData.value
+
+            // become Loaded when all resources have been loaded
+            if (hobbiesResources is Loaded
+                && characteristicsResources is Loaded
+            ) {
+                mediator.value = Loaded(
+                    ProfileEditResources(
+                        allHobbies = hobbiesResources.data.allHobbies,
+                        hobbyCardList = hobbiesResources.data.hobbyCardList,
+                        allCharacteristics = characteristicsResources.data.allCharacteristics,
+                        characteristicsCardList = characteristicsResources.data.characteristicsCardList
+                    )
+                )
+                return
+            }
+
+            // become Error when the first error occurs
+            hobbiesResources?.let {
+                if (it is Error) {
+                    mediator.value = Error(it.reason); return
+                }
+            }
+            characteristicsResources?.let {
+                if (it is Error) {
+                    mediator.value = Error(it.reason); return
+                }
+            }
+
+            // trigger SlowLoadingEvent when the first SlowLoadingEvent occurs
+            if (mediator.value !is SlowLoadingEvent
+                && (hobbiesResources is SlowLoadingEvent
+                        || characteristicsResources is SlowLoadingEvent)
+            ) {
+                mediator.value = SlowLoadingEvent()
+                return
+            }
+        }
+
+        mediator.addSource(hobbiesResourcesLiveData) { refreshCombination() }
+        mediator.addSource(characteristicsResourcesLiveData) { refreshCombination() }
+
+        return mediator
     }
+
+    data class ProfileEditResources(
+        val allCharacteristics: MultilingualResource,
+        val characteristicsCardList: List<CategoryCard>,
+        val allHobbies: MultilingualResource,
+        val hobbyCardList: List<CategoryCard>
+    )
+
 }

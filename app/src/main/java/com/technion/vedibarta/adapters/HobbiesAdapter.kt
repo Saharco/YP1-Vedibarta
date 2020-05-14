@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import android.widget.TableLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.technion.vedibarta.POJOs.HobbyCard
+import com.technion.vedibarta.POJOs.CategoryCard
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 
 class HobbiesAdapter(
-    private val hobbyCard: List<HobbyCard>,
+    private val categoryCardList: List<CategoryCard>,
     val chosenHobbies: MutableList<String>,
     private val hobbiesResource: MultilingualTextResource
 ) :
@@ -26,11 +26,11 @@ class HobbiesAdapter(
     }
 
     override fun getItemCount(): Int {
-        return hobbyCard.size
+        return categoryCardList.size
     }
 
     override fun onBindViewHolder(holder: HobbyCardViewHolder, position: Int) {
-        holder.bind(hobbyCard[holder.adapterPosition], chosenHobbies, hobbiesResource)
+        holder.bind(categoryCardList[holder.adapterPosition], chosenHobbies, hobbiesResource)
     }
 
     class HobbyCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -39,7 +39,7 @@ class HobbiesAdapter(
         lateinit var table: TableLayout
 
         fun bind(
-            hobbyCard: HobbyCard,
+            categoryCard: CategoryCard,
             chosenHobbies: MutableList<String>,
             hobbiesResource: MultilingualTextResource
         ) {
@@ -47,11 +47,11 @@ class HobbiesAdapter(
             table = itemView.findViewById(R.id.hobbiesTables)
             table.removeAllViews()
 
-            header.text = hobbyCard.title
+            header.text = categoryCard.title
             VedibartaFragment.populateHobbiesTable(
                 itemView.context,
                 table,
-                hobbyCard.hobbies,
+                categoryCard.values,
                 chosenHobbies,
                 hobbiesResource
             )
