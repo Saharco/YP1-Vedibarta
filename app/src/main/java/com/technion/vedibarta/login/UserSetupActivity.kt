@@ -55,7 +55,6 @@ class UserSetupActivity : VedibartaActivity() {
 
         loading.visibility = View.VISIBLE
         layout.visibility = View.GONE
-        changeStatusBarColor(this, R.color.colorBoarding)
         initButtons()
     }
 
