@@ -15,29 +15,35 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Student
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
+import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
+import com.technion.vedibarta.adapters.FragmentListStateAdapter
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
-import com.technion.vedibarta.database.DatabaseVersioning
+import com.technion.vedibarta.data.viewModels.CharacteristicsViewModel
+import com.technion.vedibarta.data.viewModels.ChatSearchViewModel
+import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
+import com.technion.vedibarta.data.viewModels.chatSearchViewModelFactory
 import com.technion.vedibarta.fragments.CharacteristicsFragment
 import com.technion.vedibarta.matching.StudentsMatcher
-import com.technion.vedibarta.utilities.CustomViewPager
-import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.Resource
 import kotlinx.android.synthetic.main.activity_chat_search.*
+import kotlinx.android.synthetic.main.activity_chat_search.editTabs
+import kotlinx.android.synthetic.main.activity_chat_search.loading
+import kotlinx.android.synthetic.main.activity_chat_search.toolbar
 
-class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
+class ChatSearchActivity : VedibartaActivity() {
 
     companion object {
         private const val MATCHING_TIMEOUT = 10L
@@ -45,52 +51,48 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         private const val TAG = "ChatSearchActivity"
     }
 
-    private lateinit var sectionsPageAdapter: SectionsPageAdapter
+    private val characteristicsViewModel: CharacteristicsViewModel by viewModels {
+        characteristicsViewModelFactory(applicationContext, Gender.NONE)
+    }
 
-    lateinit var schoolsNameTask: Task<out Resource>
-    lateinit var regionsNameTask: Task<out Resource>
-    lateinit var schoolTags: Array<Int>
-
-    lateinit var characteristicsTask : Task<MultilingualResource>
-
-    var chosenSchool: String? = null
-    var chosenRegion: String? = null
-
-    var fakeStudent: Student =
-        Student(gender = student!!.gender)
-
+    private val chatSearchViewModel: ChatSearchViewModel by viewModels {
+        chatSearchViewModelFactory(applicationContext)
+    }
+    private lateinit var chatSearchResources: LiveData<LoadableData<ChatSearchResources>>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_search)
         Log.d(TAG, "ChatSearchActivity Created")
-        sectionsPageAdapter = SectionsPageAdapter(supportFragmentManager)
 
-        if (savedInstanceState != null) {
-            fakeStudent = savedInstanceState.getSerializable("STUDENT") as Student
-            chosenSchool = savedInstanceState.getString("SCHOOL")
-            chosenRegion = savedInstanceState.getString("REGION")
-        }
+        characteristicsViewModel.startLoading()
 
-        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics/all", Gender.NONE)
+        chatSearchResources = combineResources(
+            chatSearchViewModel.schoolsName,
+            chatSearchViewModel.regionsName,
+            characteristicsViewModel.characteristicsResources
+        )
 
-
-
-        schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
-        regionsNameTask = RemoteResourcesManager(this).findResource("regions")
-        schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
-
-        Tasks.whenAll(characteristicsTask, schoolsNameTask, regionsNameTask)
-            .executeAfterTimeoutInMillis(){
-                internetConnectionErrorHandler(this)
+        chatSearchResources.observe(this, Observer {
+            when (it) {
+                is Loaded -> {
+                    loading.visibility = View.GONE
+                    editTabs.visibility = View.VISIBLE
+                    toolBarLayout.visibility = View.VISIBLE
+                    searchUserContainer.visibility = View.VISIBLE
+                }
+                is Error -> Toast.makeText(this, it.reason, Toast.LENGTH_LONG).show()
+                is SlowLoadingEvent -> {
+                    if (!it.handled)
+                        Toast.makeText(
+                            this,
+                            resources.getString(R.string.net_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                }
             }
-            .addOnSuccessListener(this){
-                loading.visibility = View.GONE
-                editTabs.visibility = View.VISIBLE
-                searchUserContainer.visibility = View.VISIBLE
-            }
+        })
 
         setupViewPager(searchUserContainer)
-        editTabs.setupWithViewPager(searchUserContainer)
         setToolbar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
@@ -102,13 +104,6 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         super.onStop()
         if (!splashScreen.isIdleNow)
             splashScreen.decrement()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("STUDENT", fakeStudent)
-        outState.putString("SCHOOL", chosenSchool)
-        outState.putString("REGION", chosenRegion)
-        super.onSaveInstanceState(outState)
     }
 
     private fun setToolbar(tb: Toolbar) {
@@ -127,23 +122,29 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         when (item.itemId) {
             R.id.actionChatSearch -> {
                 //TODO pass the chosen filters to database/other activity fo rmatching
-                validateChosenDetails()
-                    .addOnSuccessListener(this){
-                        if(it)
-                            searchMatch()
-                    }
+                when(val result = validateChosenDetails()){
+                    is Success -> searchMatch()
+                    is Failure -> displayErrorMessage(result.msg)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    @Suppress("DEPRECATION")
+    fun onRadioButtonClicked(view: View) {
+        when (view.id) {
+            R.id.gradeTenth -> chatSearchViewModel.grade = Grade.TENTH
+            R.id.gradeEleventh -> chatSearchViewModel.grade = Grade.ELEVENTH
+            R.id.gradeTwelfth -> chatSearchViewModel.grade = Grade.TWELFTH
+        }
+    }
+
     private fun displayErrorMessage(message: String) {
         val title = TextView(this)
         title.setText(R.string.chat_search_wrong_details_title)
         title.textSize = 20f
         title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(resources.getColor(R.color.textPrimary))
+        title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
         title.gravity = Gravity.CENTER
         title.setPadding(10, 40, 10, 24)
         val builder = AlertDialog.Builder(this)
@@ -154,45 +155,49 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         builder.create()
     }
 
-    private fun displayIllegalRegion() {
-        displayErrorMessage(getString(R.string.chat_search_wrong_region_message))
-    }
+    private fun validateChosenDetails(): SearchResult {
+        val resourcesCombo = chatSearchResources.value as? Loaded
+            ?: error("tried to validate the user before done loading resources")
 
-    private fun displayIllegalSchool() {
-        displayErrorMessage(getString(R.string.chat_search_wrong_school_message))
-    }
-
-    private fun displayNoCharacteristicsChosen() {
-        displayErrorMessage(getString(R.string.chat_search_no_characteristics_chosen_message))
-    }
-
-    private fun validateChosenDetails(): Task<Boolean> {
-        return Tasks.whenAll(regionsNameTask, schoolsNameTask)
-            .continueWith {
-                when {
-                    !regionsNameTask.result!!.getAll().contains(chosenRegion) && chosenRegion != null -> displayIllegalRegion()
-                    !schoolsNameTask.result!!.getAll().contains(chosenSchool) && chosenSchool != null -> displayIllegalSchool()
-                    fakeStudent.characteristics.isEmpty() -> displayNoCharacteristicsChosen()
-                    else -> return@continueWith true
-                }
-                return@continueWith false
+        when(val region = chatSearchViewModel.chosenRegion){
+            is Filled -> {
+                if (!resourcesCombo.data.regionsName.getAll().contains(region.text))
+                    return Failure(getString(R.string.chat_search_wrong_region_message))
             }
+        }
+
+        when(val school = chatSearchViewModel.chosenSchool){
+            is Filled ->{
+                if (!resourcesCombo.data.schoolsName.getAll().contains(school.text))
+                    return Failure(getString(R.string.chat_search_wrong_school_message))
+            }
+        }
+
+        if (characteristicsViewModel.chosenCharacteristics.isEmpty())
+            return Failure(getString(R.string.chat_search_no_characteristics_chosen_message))
+
+        return Success
     }
 
-    private fun setupViewPager(viewPager: CustomViewPager) {
-        val adapter = SectionsPageAdapter(supportFragmentManager)
-        adapter.addFragment(CharacteristicsFragment(), "1")
-        adapter.addFragment(SearchExtraOptionsFragment(), "2")
-        viewPager.adapter = adapter
+    private fun setupViewPager(viewPager: ViewPager2) {
+        viewPager.isUserInputEnabled = true
+        viewPager.adapter = FragmentListStateAdapter(
+            this,
+            mutableListOf(CharacteristicsFragment(), SearchExtraOptionsFragment())
+        )
+        TabLayoutMediator(editTabs, searchUserContainer) { tab, position ->
+            tab.text = "${position + 1}"
+        }.attach()
     }
 
     private fun searchMatch() {
         Log.d(TAG, "Searching a match")
+        val attributes: SearchAttributes = getSearchAttributes()
 
         StudentsMatcher().match(
-            fakeStudent.characteristics.keys,
-            chosenRegion,
-            chosenSchool
+            attributes.characteristics,
+            attributes.region,
+            attributes.school
         ).addOnSuccessListener(this) { students ->
             val filteredStudents = students.filter { it.uid != student!!.uid }
             if (filteredStudents.isNotEmpty()) {
@@ -231,6 +236,18 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         showSplash(getString(R.string.chat_search_loading_message))
     }
 
+    private fun getSearchAttributes(): SearchAttributes {
+        val school = when(val school = chatSearchViewModel.chosenSchool){
+            is Filled -> school.text
+            else -> null
+        }
+        val region = when(val region = chatSearchViewModel.chosenRegion){
+            is Filled -> region.text
+            else -> null
+        }
+        return SearchAttributes(characteristicsViewModel.chosenCharacteristics.keys, region, school, chatSearchViewModel.grade)
+    }
+
     @Suppress("DEPRECATION")
     private fun isInternetAvailable(context: Context): Boolean {
         var result = false
@@ -260,13 +277,90 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
         return result
     }
 
-    override fun getArgs(): Map<String, Any> {
-        val map = mutableMapOf<String, Any>()
-        map["student"] = fakeStudent
-        map["characteristicsTask"] = characteristicsTask
-        map["schoolsNameTask"] = schoolsNameTask
-        map["regionsNameTask"] = regionsNameTask
-        map["activity"] = this
-        return map
+    private fun combineResources(
+        schoolsNameLiveData: LiveData<LoadableData<Resource>>,
+        regionsNameLiveData: LiveData<LoadableData<Resource>>,
+        characteristicsResourcesLiveData: LiveData<LoadableData<CharacteristicsViewModel.CharacteristicsResources>>
+    ): LiveData<LoadableData<ChatSearchResources>> {
+        val mediator = MediatorLiveData<LoadableData<ChatSearchResources>>()
+            .apply { value = NormalLoading() }
+
+        fun refreshCombination() {
+            // cannot go back after reaching an end-state
+            if (mediator.value is Error) return
+
+            val schoolsName = schoolsNameLiveData.value
+            val regionsName = regionsNameLiveData.value
+            val characteristicsResources = characteristicsResourcesLiveData.value
+
+            // become Loaded when all resources have been loaded
+            if (schoolsName is Loaded
+                && regionsName is Loaded
+                && characteristicsResources is Loaded
+            ) {
+                mediator.value = Loaded(
+                    ChatSearchResources(
+                        schoolsName = schoolsName.data,
+                        regionsName = regionsName.data,
+                        allCharacteristics = characteristicsResources.data.allCharacteristics,
+                        characteristicsCardList = characteristicsResources.data.characteristicsCardList
+                    )
+                )
+                return
+            }
+
+            // become Error when the first error occurs
+            schoolsName?.let {
+                if (it is Error) {
+                    mediator.value = Error(it.reason); return
+                }
+            }
+            regionsName?.let {
+                if (it is Error) {
+                    mediator.value = Error(it.reason); return
+                }
+            }
+            characteristicsResources?.let {
+                if (it is Error) {
+                    mediator.value = Error(it.reason); return
+                }
+            }
+
+            // trigger SlowLoadingEvent when the first SlowLoadingEvent occurs
+            if (mediator.value !is SlowLoadingEvent
+                && (schoolsName is SlowLoadingEvent
+                        || regionsName is SlowLoadingEvent
+                        || characteristicsResources is SlowLoadingEvent)
+            ) {
+                mediator.value = SlowLoadingEvent()
+                return
+            }
+        }
+
+        mediator.addSource(schoolsNameLiveData) { refreshCombination() }
+        mediator.addSource(regionsNameLiveData) { refreshCombination() }
+        mediator.addSource(characteristicsResourcesLiveData) { refreshCombination() }
+
+        return mediator
     }
+
+
+    data class ChatSearchResources(
+        val allCharacteristics: MultilingualResource,
+        val characteristicsCardList: List<CategoryCard>,
+        val schoolsName: Resource,
+        val regionsName: Resource
+        )
+
+    data class SearchAttributes(
+        val characteristics: Collection<String>,
+        val region: String?,
+        val school: String?,
+        val grade: Grade
+    )
 }
+sealed class SearchResult
+
+object Success : SearchResult()
+
+data class Failure(val msg: String) : SearchResult()
