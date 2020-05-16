@@ -97,7 +97,8 @@ class ProfileEditActivity : VedibartaActivity(){
 
     private fun setupViewPager(viewPager: ViewPager2) {
         viewPager.isUserInputEnabled = true
-        viewPager.adapter = FragmentListStateAdapter(this, mutableListOf(CharacteristicsFragment(), HobbiesFragment()))
+        viewPager.adapter = FragmentListStateAdapter(this, mutableListOf(CharacteristicsFragment(
+            student!!.gender), HobbiesFragment()))
         val titleList = listOf(getString(R.string.characteristics_tab_title), getString(R.string.hobbies_tab_title))
         TabLayoutMediator(editTabs, editProfileContainer) { tab, position ->
             tab.text = titleList[position]

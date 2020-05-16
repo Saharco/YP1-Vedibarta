@@ -48,6 +48,7 @@
     <string name="chat_search_title">חיפוש</string>
     <string name="filter_by_school_text">סינון לפי בית ספר</string>
     <string name="filter_by_region_text">סינון לפי מקום מגורים</string>
+    <string name="filter_by_grade_text">סינון לפי שכבה</string>
     <string name="chat_search_button">חפש</string>
     <string name="chat_search_wrong_details_title">פרטים שגויים</string>
     <string name="chat_search_wrong_region_message">יש לבחור מקום מגורים הנמצא ברשימה</string>

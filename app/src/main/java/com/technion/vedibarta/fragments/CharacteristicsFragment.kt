@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Loaded
 
 import com.technion.vedibarta.R
@@ -18,13 +19,13 @@ import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 
-class CharacteristicsFragment : VedibartaFragment() {
+class CharacteristicsFragment(gender: Gender = Gender.NONE) : VedibartaFragment() {
 
     private val TAG = "CharacteristicsFragment"
     private val viewModel: CharacteristicsViewModel by activityViewModels {
         characteristicsViewModelFactory(
             requireActivity().applicationContext,
-            VedibartaActivity.student!!.gender
+            gender
         )
     }
 
