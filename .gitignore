@@ -30,3 +30,4 @@ app/google-services.json
 **/node_modules/*
 
 .idea/codeStyles/
+/.idea/kotlinc.xml
