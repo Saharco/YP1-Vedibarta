@@ -23,8 +23,8 @@ import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 
 class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
@@ -33,9 +33,9 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
     lateinit var hobbyCardTask: Task<List<HobbyCard>>
-    lateinit var hobbiesResourceTask: Task<MultilingualResource>
+    lateinit var hobbiesResourceTask: Task<MultilingualTextResource>
 
-    lateinit var characteristicsTask : Task<MultilingualResource>
+    lateinit var characteristicsTask : Task<MultilingualTextResource>
 
     private var startingCharacteristics = student!!.characteristics.toMutableMap()
     private var startingHobbies = student!!.hobbies.toMutableSet()
@@ -49,12 +49,12 @@ class ProfileEditActivity : VedibartaActivity(), VedibartaFragment.ArgumentTrans
 
         setupViewPager(editProfileContainer)
 
-        hobbiesResourceTask = RemoteResourcesManager(this)
+        hobbiesResourceTask = RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
 
         hobbyCardTask = VedibartaFragment.loadHobbies(this)
 
-        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics/all")
+        characteristicsTask = RemoteTextResourcesManager(this).findMultilingualResource("characteristics/all")
 
         Tasks.whenAll(hobbiesResourceTask, hobbyCardTask, characteristicsTask)
             .executeAfterTimeoutInMillis { internetConnectionErrorHandler(this) }

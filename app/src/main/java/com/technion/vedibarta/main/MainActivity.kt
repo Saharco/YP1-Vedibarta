@@ -21,7 +21,7 @@ import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -61,7 +61,7 @@ class MainActivity : VedibartaActivity()
         mainAdapter = getMainAdapter()
 
         //ResourceDownload
-        RemoteResourcesManager(this)
+        RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
 
         VedibartaFragment.loadHobbies(this)

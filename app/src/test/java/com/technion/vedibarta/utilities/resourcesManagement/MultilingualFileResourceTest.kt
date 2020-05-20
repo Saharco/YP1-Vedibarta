@@ -39,7 +39,7 @@ class MultilingualFileResourceTest {
 
     @Test
     fun `getAll should return the content of userFile`() {
-        val resource = MultilingualFileResource(userFile, baseFile)
+        val resource = MultilingualFileTextResource(userFile, baseFile)
 
         val result = resource.getAll()
 
@@ -48,7 +48,7 @@ class MultilingualFileResourceTest {
 
     @Test
     fun `getAllBase should return the content of baseFile`() {
-        val resource = MultilingualFileResource(userFile, baseFile)
+        val resource = MultilingualFileTextResource(userFile, baseFile)
 
         val result = resource.getAllBase()
 
@@ -57,7 +57,7 @@ class MultilingualFileResourceTest {
 
     @Test
     fun `toCurrentLanguage translates correctly`() {
-        val resource = MultilingualFileResource(userFile, baseFile)
+        val resource = MultilingualFileTextResource(userFile, baseFile)
 
         val result = resource.toCurrentLanguage("GOODBYE")
 
@@ -66,7 +66,7 @@ class MultilingualFileResourceTest {
 
     @Test
     fun `toBaseLanguage translates correctly`() {
-        val resource = MultilingualFileResource(userFile, baseFile)
+        val resource = MultilingualFileTextResource(userFile, baseFile)
 
         val result = resource.toBaseLanguage("Goodbye")
 

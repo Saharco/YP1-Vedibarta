@@ -10,12 +10,12 @@ import com.technion.vedibarta.POJOs.HobbyCard
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 
 class HobbiesAdapter(
     private val hobbyCard: List<HobbyCard>,
     val student: Student,
-    private val hobbiesResource: MultilingualResource
+    private val hobbiesResource: MultilingualTextResource
 ) :
     RecyclerView.Adapter<HobbiesAdapter.HobbyCardViewHolder>() {
 
@@ -42,7 +42,7 @@ class HobbiesAdapter(
         fun bind(
             hobbyCard: HobbyCard,
             student: Student,
-            hobbiesResource: MultilingualResource
+            hobbiesResource: MultilingualTextResource
         ) {
             header = itemView.findViewById(R.id.hobbyCardTitle)
             table = itemView.findViewById(R.id.hobbiesTables)

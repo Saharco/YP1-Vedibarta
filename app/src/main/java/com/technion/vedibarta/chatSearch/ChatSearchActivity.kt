@@ -23,7 +23,6 @@ import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
-import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.fragments.CharacteristicsFragment
 import com.technion.vedibarta.matching.StudentsMatcher
 import com.technion.vedibarta.utilities.CustomViewPager
@@ -32,9 +31,9 @@ import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.extensions.isInForeground
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.Resource
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.activity_chat_search.*
 
 class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
@@ -47,11 +46,11 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
 
     private lateinit var sectionsPageAdapter: SectionsPageAdapter
 
-    lateinit var schoolsNameTask: Task<out Resource>
-    lateinit var regionsNameTask: Task<out Resource>
+    lateinit var schoolsNameTask: Task<out TextResource>
+    lateinit var regionsNameTask: Task<out TextResource>
     lateinit var schoolTags: Array<Int>
 
-    lateinit var characteristicsTask : Task<MultilingualResource>
+    lateinit var characteristicsTask : Task<MultilingualTextResource>
 
     var chosenSchool: String? = null
     var chosenRegion: String? = null
@@ -71,12 +70,12 @@ class ChatSearchActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransf
             chosenRegion = savedInstanceState.getString("REGION")
         }
 
-        characteristicsTask = RemoteResourcesManager(this).findMultilingualResource("characteristics/all", Gender.NONE)
+        characteristicsTask = RemoteTextResourcesManager(this).findMultilingualResource("characteristics/all", Gender.NONE)
 
 
 
-        schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
-        regionsNameTask = RemoteResourcesManager(this).findResource("regions")
+        schoolsNameTask = RemoteTextResourcesManager(this).findResource("schools")
+        regionsNameTask = RemoteTextResourcesManager(this).findResource("regions")
         schoolTags = resources.getIntArray(R.array.schoolTagList).toTypedArray()
 
         Tasks.whenAll(characteristicsTask, schoolsNameTask, regionsNameTask)

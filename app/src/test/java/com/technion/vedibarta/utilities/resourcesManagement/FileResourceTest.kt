@@ -28,40 +28,10 @@ class FileResourceTest {
 
     @Test
     fun `getAll should return the content of userFile`() {
-        val resource = FileResource(file)
+        val resource = FileTextResource(file)
 
         val result = resource.getAll()
 
         assertEquals(result, listOf("Hello", "World", "Goodbye", "Moon"))
-    }
-
-    @Test
-    fun `assert close calls a listener`() {
-        var called = false
-
-        val resource = FileResource(file).apply {
-            addOnCloseListener { called = true }
-        }
-
-        resource.close()
-
-        assert(called)
-    }
-
-    @Test
-    fun `assert close calls multiple listeners`() {
-        var called1 = false
-        var called2 = false
-        var called3 = false
-
-        val resource = FileResource(file).apply {
-            addOnCloseListener { called1 = true }
-            addOnCloseListener { called2 = true }
-            addOnCloseListener { called3 = true }
-        }
-
-        resource.close()
-
-        assert(called1 && called2 && called3)
     }
 }

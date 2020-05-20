@@ -18,8 +18,7 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.HobbiesAdapter
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import kotlinx.android.synthetic.main.fragment_hobbies.*
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 
 /**
  * A simple [Fragment] subclass.
@@ -43,7 +42,7 @@ class HobbiesFragment : VedibartaFragment() {
         val view = inflater.inflate(R.layout.fragment_hobbies, container, false)
 
         val argMap = argumentTransfer.getArgs()
-        val hobbiesResourceTask = argMap["hobbiesResourceTask"] as Task<MultilingualResource>
+        val hobbiesResourceTask = argMap["hobbiesResourceTask"] as Task<MultilingualTextResource>
         val hobbyCardTask = argMap["hobbyCardTask"] as Task<List<HobbyCard>>
         val student = argMap["student"] as Student
         val act = argMap["activity"] as Activity

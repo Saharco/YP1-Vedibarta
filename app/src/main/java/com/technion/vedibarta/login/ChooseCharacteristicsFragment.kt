@@ -14,7 +14,7 @@ import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 import kotlinx.android.synthetic.main.fragment_choose_characteristics.*
 import kotlin.random.Random
 
@@ -29,8 +29,8 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
 
     private lateinit var characteristicsWithCategoriesMaleTask: Task<Map<String,Array<String>>>
     private lateinit var characteristicsWithCategoriesFemaleTask: Task<Map<String,Array<String>>>
-    lateinit var characteristicsMaleTask: Task<MultilingualResource>
-    lateinit var characteristicsFemaleTask: Task<MultilingualResource>
+    lateinit var characteristicsMaleTask: Task<MultilingualTextResource>
+    lateinit var characteristicsFemaleTask: Task<MultilingualTextResource>
     lateinit var setupStudent: Student
     lateinit var act: Activity
     private var currentIndex = 0
@@ -50,8 +50,8 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupStudent = argumentTransfer.getArgs()["student"] as Student
-        characteristicsMaleTask = argumentTransfer.getArgs()["characteristicsMaleTask"] as Task<MultilingualResource>
-        characteristicsFemaleTask = argumentTransfer.getArgs()["characteristicsFemaleTask"] as Task<MultilingualResource>
+        characteristicsMaleTask = argumentTransfer.getArgs()["characteristicsMaleTask"] as Task<MultilingualTextResource>
+        characteristicsFemaleTask = argumentTransfer.getArgs()["characteristicsFemaleTask"] as Task<MultilingualTextResource>
         characteristicsWithCategoriesMaleTask = argumentTransfer.getArgs()["characteristicsWithCategoriesMaleTask"] as Task<Map<String,Array<String>>>
         characteristicsWithCategoriesFemaleTask = argumentTransfer.getArgs()["characteristicsWithCategoriesFemaleTask"] as Task<Map<String,Array<String>>>
 
@@ -69,7 +69,7 @@ class ChooseCharacteristicsFragment : VedibartaFragment(), UserSetupActivity.OnN
 
     private fun loadCharacteristics(
         characteristics: Array<String>,
-        resource: MultilingualResource
+        resource: MultilingualTextResource
     ) {
         characteristicsTable.removeAllViews()
         populateCharacteristicsTable(context!!, characteristicsTable, characteristics.toList().shuffled(Random(42)).toTypedArray(), setupStudent, resource)

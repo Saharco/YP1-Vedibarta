@@ -9,12 +9,10 @@ import android.text.style.AlignmentSpan
 import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
-import androidx.core.view.children
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.Gender
@@ -29,11 +27,10 @@ import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.Resource
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.activity_user_setup.*
-import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
 class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfer {
 
@@ -48,16 +45,16 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     private lateinit var characteristicsNext: OnNextClickForCharacteristics
 
     lateinit var hobbyCardTask: Task<List<HobbyCard>>
-    lateinit var hobbiesResourceTask: Task<MultilingualResource>
+    lateinit var hobbiesResourceTask: Task<MultilingualTextResource>
 
-    lateinit var characteristicsMaleTask: Task<MultilingualResource>
-    lateinit var characteristicsFemaleTask: Task<MultilingualResource>
+    lateinit var characteristicsMaleTask: Task<MultilingualTextResource>
+    lateinit var characteristicsFemaleTask: Task<MultilingualTextResource>
     private lateinit var characteristicsWithCategoriesMaleTask: Task<Map<String, Array<String>>>
     private lateinit var characteristicsWithCategoriesFemaleTask: Task<Map<String, Array<String>>>
 
 
-    lateinit var schoolsNameTask: Task<out Resource>
-    lateinit var regionsNameTask: Task<out Resource>
+    lateinit var schoolsNameTask: Task<out TextResource>
+    lateinit var regionsNameTask: Task<out TextResource>
 
     var chosenFirstName = ""
     var chosenLastName = ""
@@ -123,18 +120,18 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
     }
 
     private fun loadResources() {
-        hobbiesResourceTask = RemoteResourcesManager(this)
+        hobbiesResourceTask = RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
 
         hobbyCardTask = VedibartaFragment.loadHobbies(this)
 
         characteristicsMaleTask =
-            RemoteResourcesManager(this).findMultilingualResource(
+            RemoteTextResourcesManager(this).findMultilingualResource(
                 "characteristics/all",
                 Gender.MALE
             )
         characteristicsFemaleTask =
-            RemoteResourcesManager(this).findMultilingualResource(
+            RemoteTextResourcesManager(this).findMultilingualResource(
                 "characteristics/all",
                 Gender.FEMALE
             )
@@ -144,8 +141,8 @@ class UserSetupActivity : VedibartaActivity(), VedibartaFragment.ArgumentTransfe
         characteristicsWithCategoriesFemaleTask =
             VedibartaFragment.loadCharacteristics(this, Gender.FEMALE)
 
-        schoolsNameTask = RemoteResourcesManager(this).findResource("schools")
-        regionsNameTask = RemoteResourcesManager(this).findResource("regions")
+        schoolsNameTask = RemoteTextResourcesManager(this).findResource("schools")
+        regionsNameTask = RemoteTextResourcesManager(this).findResource("regions")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

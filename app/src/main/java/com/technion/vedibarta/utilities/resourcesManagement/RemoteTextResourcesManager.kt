@@ -9,35 +9,33 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.extensions.GENDER_KEY
-import com.technion.vedibarta.utilities.extensions.cancelAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.filesCaching.FilesCache
 
-const val CACHE_RELATIVE_PATH = "Resources"
-const val MAX_DOWNLOAD_TIME = 5000L
-val RESOURCES_REFERENCE = FirebaseStorage.getInstance().reference.child("resources")
+private const val CACHE_RELATIVE_PATH = "TEXT_RESOURCES"
+private val RESOURCES_REFERENCE = FirebaseStorage.getInstance().reference.child("resources")
 
-class RemoteResourcesManager(
+class RemoteTextResourcesManager(
     private val context: Context,
     private val storageReference: StorageReference = RESOURCES_REFERENCE,
     private val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-) : ResourcesManager {
+) : TextResourcesManager {
     private val cache = FilesCache(
         context,
         CACHE_RELATIVE_PATH
     )
 
-    override fun findResource(name: String, gender: Gender?): Task<out Resource> =
+    override fun findResource(name: String, gender: Gender?): Task<out TextResource> =
         findFileResource(name, gender)
 
-    override fun findMultilingualResource(name: String, gender: Gender?): Task<MultilingualResource> {
-        var userRes: FileResource? = null
-        var baseRes: FileResource? = null
+    override fun findMultilingualResource(name: String, gender: Gender?): Task<MultilingualTextResource> {
+        var userRes: FileTextResource? = null
+        var baseRes: FileTextResource? = null
 
         val task1 = findFileResource(name, gender).continueWith { userRes = it.result!! }
         val task2 = fetchBase(name).continueWith { baseRes = it.result!! }
 
-        return Tasks.whenAll(task1, task2).continueWith<MultilingualResource> {
-            MultilingualFileResource(userRes!!, baseRes!!)
+        return Tasks.whenAll(task1, task2).continueWith<MultilingualTextResource> {
+            MultilingualFileTextResource(userRes!!, baseRes!!)
         }.addOnFailureListener {
             userRes?.apply { cache.deleteFile(file) }
             baseRes?.apply { cache.deleteFile(file) }
@@ -45,14 +43,14 @@ class RemoteResourcesManager(
     }
 
     // Returns the wanted FileResource.
-    private fun findFileResource(name: String, gender: Gender?): Task<out FileResource> {
+    private fun findFileResource(name: String, gender: Gender?): Task<out FileTextResource> {
         val folder = storageReference.child(name)
         val preferencesMap = getPreferenceMap(preferences, gender)
         val preferencesResolver = PreferencesResolver(preferencesMap)
         val localFileName = "${name.replace('/', '_')}-${preferencesMap[GENDER_KEY]}-user"
 
         return if (localFileName in cache)
-            Tasks.call { FileResource(cache[localFileName]!!) }
+            Tasks.call { FileTextResource(cache[localFileName]!!) }
 
         else folder.listAll().continueWithTask { task ->
             val filesList = task.result!!.items.map { it.name }
@@ -63,12 +61,12 @@ class RemoteResourcesManager(
         }
     }
 
-    private fun fetchBase(name: String): Task<FileResource> {
+    private fun fetchBase(name: String): Task<FileTextResource> {
         val baseRef = storageReference.child(name).child("base")
         val localFileName = "${name.replace('/', '_')}-base"
 
         return if (localFileName in cache)
-            Tasks.call { FileResource(cache[localFileName]!!) }
+            Tasks.call { FileTextResource(cache[localFileName]!!) }
 
         else fetchFromDatabase(baseRef, localFileName)
     }
@@ -77,14 +75,14 @@ class RemoteResourcesManager(
     private fun fetchFromDatabase(
         fileReference: StorageReference,
         localFileName: String
-    ): Task<FileResource> {
+    ): Task<FileTextResource> {
         val localFile = cache.newFile(localFileName)
 
         return fileReference.getFile(localFile)
             .continueWith {
                 localFile.setReadOnly()
                 cache[localFileName] = localFile
-                FileResource(localFile)
+                FileTextResource(localFile)
             }.addOnFailureListener {
                 cache.deleteFile(localFileName)
             }

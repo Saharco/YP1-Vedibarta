@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TableLayout
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -15,8 +14,7 @@ import com.technion.vedibarta.POJOs.Student
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import kotlinx.android.synthetic.main.fragment_characteristics.*
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 import kotlin.random.Random
 
 class CharacteristicsFragment : VedibartaFragment() {
@@ -40,7 +38,7 @@ class CharacteristicsFragment : VedibartaFragment() {
         )
         val table = view.findViewById(R.id.characteristicsTable) as TableLayout
         val argMap = argumentTransfer.getArgs()
-        val characteristicsTask = argMap["characteristicsTask"] as Task<MultilingualResource>
+        val characteristicsTask = argMap["characteristicsTask"] as Task<MultilingualTextResource>
         val student = argMap["student"] as Student
         val act = argMap["activity"] as Activity
         Tasks.whenAll(characteristicsTask)

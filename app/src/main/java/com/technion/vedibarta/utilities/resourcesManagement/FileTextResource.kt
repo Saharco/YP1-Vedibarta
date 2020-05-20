@@ -2,22 +2,22 @@ package com.technion.vedibarta.utilities.resourcesManagement
 
 import java.io.File
 
-class FileResource
+class FileTextResource
 internal constructor(
     internal val file: File
-) : Resource {
+) : TextResource {
     override fun getAll(): List<String> = file.readLines()
 }
 
-class MultilingualFileResource
+class MultilingualFileTextResource
 internal constructor(
-    internal val userResource: FileResource,
-    internal val baseResource: FileResource
-) : Resource by userResource, MultilingualResource {
+    internal val userResource: FileTextResource,
+    internal val baseResource: FileTextResource
+) : TextResource by userResource, MultilingualTextResource {
 
     constructor(userFile: File, baseFile: File): this(
-        FileResource(userFile),
-        FileResource(baseFile)
+        FileTextResource(userFile),
+        FileTextResource(baseFile)
     )
 
     override fun getAllBase(): List<String> = baseResource.getAll()

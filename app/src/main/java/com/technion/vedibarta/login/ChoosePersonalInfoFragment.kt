@@ -5,12 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -24,7 +21,7 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.extensions.putGender
-import com.technion.vedibarta.utilities.resourcesManagement.Resource
+import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
 
@@ -127,8 +124,8 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         val argMap = argumentTransfer.getArgs()
         genderInit()
         val act = argMap["activity"] as Activity
-        val schoolsNameTask = argMap["schoolsNameTask"] as Task<Resource>
-        val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
+        val schoolsNameTask = argMap["schoolsNameTask"] as Task<TextResource>
+        val regionsNameTask = argMap["regionsNameTask"] as Task<TextResource>
         Tasks.whenAll(schoolsNameTask, regionsNameTask)
             .addOnSuccessListener(act) {
                 extraOptionsInit(v, schoolsNameTask, regionsNameTask)
@@ -173,8 +170,8 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
 
     private fun extraOptionsInit(
         v: View,
-        schoolsNameTask: Task<Resource>,
-        regionsNameTask: Task<Resource>
+        schoolsNameTask: Task<TextResource>,
+        regionsNameTask: Task<TextResource>
     ) {
 
         val act = (activity as UserSetupActivity)

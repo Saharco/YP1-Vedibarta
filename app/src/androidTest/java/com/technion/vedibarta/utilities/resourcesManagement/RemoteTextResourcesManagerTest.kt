@@ -2,7 +2,6 @@ package com.technion.vedibarta.utilities.resourcesManagement
 
 import android.content.Context
 import androidx.core.content.edit
-import androidx.preference.PreferenceManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.gms.tasks.Tasks
@@ -15,7 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class RemoteResourcesManagerTest {
+class RemoteTextResourcesManagerTest {
     private val storage = FirebaseStorage.getInstance().reference.child("/tests/RemoteResourcesManager")
     private val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
     private val preferences = context.getSharedPreferences("test", Context.MODE_PRIVATE)
@@ -29,7 +28,7 @@ class RemoteResourcesManagerTest {
     @Test
     fun gettingRemoteResourcesWithoutPreferences() {
         val resource = Tasks.await(
-                RemoteResourcesManager(context, storage, preferences)
+                RemoteTextResourcesManager(context, storage, preferences)
                         .findMultilingualResource("religions")
         )
 
@@ -46,7 +45,7 @@ class RemoteResourcesManagerTest {
         }
 
         val resource = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResource("religions")
         )
 
@@ -63,7 +62,7 @@ class RemoteResourcesManagerTest {
         }
 
         val resource = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResource("religions")
         )
 
@@ -75,7 +74,7 @@ class RemoteResourcesManagerTest {
     @Test
     fun gettingBaseLanguageWithNoPreferences() {
         val resource = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResource("religions")
         )
 
@@ -92,7 +91,7 @@ class RemoteResourcesManagerTest {
         }
 
         val resource = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResource("religions")
         )
 
@@ -109,7 +108,7 @@ class RemoteResourcesManagerTest {
         }
 
         val resource = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResource("religions", gender = Gender.FEMALE)
         )
 
@@ -125,7 +124,7 @@ class RemoteResourcesManagerTest {
         }
 
         val resource = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResource("religions", gender = Gender.FEMALE)
         )
 

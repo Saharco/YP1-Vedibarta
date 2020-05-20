@@ -51,7 +51,7 @@ open class VedibartaFragment : Fragment() {
             table: TableLayout,
             studentCharacteristics: Array<String>,
             student: Student,
-            characteristics: MultilingualResource
+            characteristics: MultilingualTextResource
         ) {
 
             val tableRowParams = TableLayout.LayoutParams(
@@ -119,7 +119,7 @@ open class VedibartaFragment : Fragment() {
         private fun isContained(
             student: Student,
             s: String,
-            characteristics: MultilingualResource
+            characteristics: MultilingualTextResource
         ): Boolean {
 
            if(student.gender == Gender.NONE)
@@ -134,14 +134,14 @@ open class VedibartaFragment : Fragment() {
             gender: Gender
         ): Task<Map<String, Array<String>>> {
 
-            return RemoteResourcesManager(context)
+            return RemoteTextResourcesManager(context)
                 .findMultilingualResource("characteristics/categories")
                 .continueWithTask {
                     val categories = it.result!!.getAllBase()
                     val categoryResource = it.result!!
                     val characteristicsMap = mutableMapOf<String, Array<String>>()
                     val categoryResourceList = categories.map { category -> "characteristics/category-$category" }
-                    RemoteResourcesManager(context)
+                    RemoteTextResourcesManager(context)
                         .findMultilingualResources(*categoryResourceList.toTypedArray(), gender = gender)
                         .continueWith {
                             categories.forEachIndexed { index, category ->
@@ -160,7 +160,7 @@ open class VedibartaFragment : Fragment() {
             studentCharacteristics: Array<String>,
             table: TableLayout,
             student: Student,
-            characteristics: MultilingualResource
+            characteristics: MultilingualTextResource
         ) {
             val steps = calculateBubblesInRow(context)
             val row = view.id / steps
@@ -213,7 +213,7 @@ open class VedibartaFragment : Fragment() {
             table: TableLayout,
             studentHobbies: Array<String>,
             student: Student,
-            hobbiesResource: MultilingualResource
+            hobbiesResource: MultilingualTextResource
         ) {
             val allHobbies = context.resources.getStringArray(R.array.hobbies)
 
@@ -328,7 +328,7 @@ open class VedibartaFragment : Fragment() {
             context: Context
         ): Task<List<HobbyCard>> {
 
-            return RemoteResourcesManager(context)
+            return RemoteTextResourcesManager(context)
                 .findMultilingualResource("hobbies/categories")
                 .continueWithTask {
                     val categories = it.result!!.getAllBase()
@@ -336,7 +336,7 @@ open class VedibartaFragment : Fragment() {
                     val hobbyCards = mutableListOf<HobbyCard>()
                     Log.d("abc", "LoadHobbies")
                     val categoryResourceList = categories.map { category -> "hobbies/category-$category" }
-                    RemoteResourcesManager(context)
+                    RemoteTextResourcesManager(context)
                         .findMultilingualResources(*categoryResourceList.toTypedArray())
                         .continueWith {
                             Log.d("abc", "${it.result!!.size}")
@@ -358,7 +358,7 @@ open class VedibartaFragment : Fragment() {
             hobbies: Array<String>,
             table: TableLayout,
             student: Student,
-            hobbiesResource: MultilingualResource
+            hobbiesResource: MultilingualTextResource
         ) {
             val steps = calculateBubblesInRow(context)
             val row = view.id / steps

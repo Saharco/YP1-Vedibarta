@@ -52,12 +52,12 @@ import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
 
@@ -83,17 +83,17 @@ class UserProfileActivity : VedibartaActivity(),
 
     private var minimizer: View.OnClickListener? = null
 
-    private lateinit var characteristicsTask : Task<MultilingualResource>
-    private lateinit var hobbiesTask: Task<MultilingualResource>
+    private lateinit var characteristicsTask : Task<MultilingualTextResource>
+    private lateinit var hobbiesTask: Task<MultilingualTextResource>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
         Log.d(TAG, "created UserProfileActivity")
         initWidgets()
-        characteristicsTask = RemoteResourcesManager(this)
+        characteristicsTask = RemoteTextResourcesManager(this)
             .findMultilingualResource("characteristics/all")
-        hobbiesTask = RemoteResourcesManager(this)
+        hobbiesTask = RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
     }
 

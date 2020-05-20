@@ -22,7 +22,7 @@ import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
 open class CarouselAdapter(
@@ -179,7 +179,7 @@ open class CarouselAdapter(
 
                         val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
                         val loading = bubbleFrame.findViewById(R.id.loading) as ProgressBar
-                        RemoteResourcesManager(context).findMultilingualResource("characteristics/all", student.gender)
+                        RemoteTextResourcesManager(context).findMultilingualResource("characteristics/all", student.gender)
                             .addOnSuccessListener { bubble.text = it.toCurrentLanguage(studentsCharacteristics[i+j]); loading.visibility = View.GONE}
 
                         bubbleFrame.layoutParams = bubbleParams

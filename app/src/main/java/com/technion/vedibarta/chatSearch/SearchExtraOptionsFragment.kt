@@ -19,7 +19,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.Resource
+import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 
 
 /**
@@ -114,8 +114,8 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
         super.setupAndInitViews(v)
         val argMap = argumentTransfer.getArgs()
         val act  = argMap["activity"] as Activity
-        val schoolsNameTask = argMap["schoolsNameTask"] as Task<Resource>
-        val regionsNameTask = argMap["regionsNameTask"] as Task<Resource>
+        val schoolsNameTask = argMap["schoolsNameTask"] as Task<TextResource>
+        val regionsNameTask = argMap["regionsNameTask"] as Task<TextResource>
         Tasks.whenAll(regionsNameTask, schoolsNameTask)
             .addOnSuccessListener(act){
                 schoolAndRegionMap = (act as ChatSearchActivity).schoolTags.zip(act.schoolsNameTask.result!!.getAll().zip(regionsNameTask.result!!.getAll())).toMap()

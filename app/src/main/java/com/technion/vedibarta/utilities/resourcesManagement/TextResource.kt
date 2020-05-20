@@ -1,11 +1,9 @@
 package com.technion.vedibarta.utilities.resourcesManagement
 
-import java.io.Closeable
-
 /**
  * An Interface for texts resource.
  */
-interface Resource {
+interface TextResource {
     /**
      * @return all the texts of the resource
      */
@@ -20,7 +18,7 @@ interface Resource {
  * [getAllBase] at the same index. Use [toCurrentLanguage] and [toBaseLanguage] in order to perform
  * translations from one of the languages to the other.
  */
-interface MultilingualResource: Resource {
+interface MultilingualTextResource: TextResource {
 
     /**
      * @return a dictionary ([List] of [String]) in the app's universal language
@@ -32,26 +30,26 @@ interface MultilingualResource: Resource {
  * @param textBase the text in the universal language to be translated
  * @return the translation of [textBase]
  */
-fun MultilingualResource.toCurrentLanguage(textBase: String): String =
+fun MultilingualTextResource.toCurrentLanguage(textBase: String): String =
     getAll().atSameIndexOf(textBase, getAllBase())
 
-fun MultilingualResource.toCurrentLanguage(textBase: Iterable<String>): Iterable<String> =
+fun MultilingualTextResource.toCurrentLanguage(textBase: Iterable<String>): Iterable<String> =
     textBase.map { getAll().atSameIndexOf(it, getAllBase()) }
 
-fun MultilingualResource.toCurrentLanguage(textBase: Array<String>): Array<String> =
+fun MultilingualTextResource.toCurrentLanguage(textBase: Array<String>): Array<String> =
     textBase.map { getAll().atSameIndexOf(it, getAllBase()) }.toTypedArray()
 
 /**
  * @param text the text in the universal language to be translated
  * @return the translation of [text]
  */
-fun MultilingualResource.toBaseLanguage(text: String): String =
+fun MultilingualTextResource.toBaseLanguage(text: String): String =
     getAllBase().atSameIndexOf(text, getAll())
 
-fun MultilingualResource.toBaseLanguage(text: Iterable<String>): Iterable<String> =
+fun MultilingualTextResource.toBaseLanguage(text: Iterable<String>): Iterable<String> =
     text.map { getAllBase().atSameIndexOf(it, getAll())}
 
-fun MultilingualResource.toBaseLanguage(text: Array<String>): Array<String> =
+fun MultilingualTextResource.toBaseLanguage(text: Array<String>): Array<String> =
     text.map { getAllBase().atSameIndexOf(it, getAll())}.toTypedArray()
 
 private fun <T, G> List<T>.atSameIndexOf(element: G, other: List<G>): T =

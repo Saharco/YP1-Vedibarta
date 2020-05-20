@@ -17,7 +17,7 @@ class QuestionGeneratorFactory(
 ) {
 
     private val mutualHobbies: List<String> = userHobbiesList.intersect(partnerHobbiesList).toList()
-    private val resourcesManager = RemoteResourcesManager(context, storageReference, preferences)
+    private val resourcesManager = RemoteTextResourcesManager(context, storageReference, preferences)
 
     fun getGenerator(): QuestionGeneratorManager {
         return if (mutualHobbies.isEmpty()) DistinctQuestionGenerator(
@@ -31,7 +31,7 @@ class QuestionGeneratorFactory(
 
 private class MutualQuestionGenerator(
     private val mutualHobbies: List<String>,
-    private val resourcesManager: RemoteResourcesManager
+    private val resourcesManager: RemoteTextResourcesManager
 ) : QuestionGeneratorManager {
 
     private val generalQuestionsTask =
@@ -115,7 +115,7 @@ private class MutualQuestionGenerator(
 private class DistinctQuestionGenerator(
     private val userHobbiesList: List<String>,
     private val partnerHobbiesList: List<String>,
-    private val resourcesManager: RemoteResourcesManager
+    private val resourcesManager: RemoteTextResourcesManager
 ) : QuestionGeneratorManager {
 
     private val generalQuestionsTask =

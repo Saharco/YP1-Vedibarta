@@ -3,14 +3,12 @@ package com.technion.vedibarta.utillities.questionGenerator
 
 import android.content.Context
 import androidx.core.content.edit
-import androidx.preference.PreferenceManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.FirebaseStorage
-import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorFactory
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.findMultilingualResources
 import org.junit.After
 import org.junit.Assert.*
@@ -170,7 +168,7 @@ class QuestionGeneratorManagerTest {
                 .getQuestionsBasedOnMutualHobbies()
         )
         val downloadedQuestions = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResources("/questions/tennis", "/questions/food")
         )
 
@@ -200,7 +198,7 @@ class QuestionGeneratorManagerTest {
                 .getQuestionsBasedOnMutualCategories()
         )
         val downloadedQuestions = Tasks.await(
-            RemoteResourcesManager(context, storage, preferences)
+            RemoteTextResourcesManager(context, storage, preferences)
                 .findMultilingualResources("/questions/sports", "/questions/pastime")
         )
         assertArrayEquals(
@@ -219,17 +217,17 @@ class QuestionGeneratorManagerTest {
     fun returnsAllQuestions() {
         userHobbies.addAll(arrayOf("music"))
         partnerHobbies.addAll(arrayOf("music"))
-        val generalQuestionsTask = Tasks.await(RemoteResourcesManager(
+        val generalQuestionsTask = Tasks.await(RemoteTextResourcesManager(
             context,
             storage,
             preferences
         ).findMultilingualResource("questions/general"))
-        val musicQuestionsTask = Tasks.await(RemoteResourcesManager(
+        val musicQuestionsTask = Tasks.await(RemoteTextResourcesManager(
             context,
             storage,
             preferences
         ).findMultilingualResource("questions/music"))
-        val artsCategoryTask = Tasks.await(RemoteResourcesManager(
+        val artsCategoryTask = Tasks.await(RemoteTextResourcesManager(
             context,
             storage,
             preferences
@@ -255,7 +253,7 @@ class QuestionGeneratorManagerTest {
     fun distinctQuestionGeneratorReturnsOnlyGeneralQuestionsInCaseThereAreNoMutualCategories() {
         userHobbies.addAll(arrayOf("music"))
         partnerHobbies.addAll(arrayOf("tennis"))
-        val generalQuestionsTask = Tasks.await(RemoteResourcesManager(
+        val generalQuestionsTask = Tasks.await(RemoteTextResourcesManager(
             context,
             storage,
             preferences
