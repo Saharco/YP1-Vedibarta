@@ -5,7 +5,7 @@
     android:id="@+id/userSetup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorDivider"
+    android:background="@color/background"
     android:fitsSystemWindows="true"
     tools:context=".login.UserSetupActivity">
 
@@ -27,57 +27,45 @@
         android:layout_height="match_parent"
         android:visibility="visible">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageView
+            android:id="@+id/doneButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/user_setup_done_title"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/editTabs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/editTabs"
+            app:srcCompat="@drawable/ic_done_accent" />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/editTabs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/editTabs"
+            app:srcCompat="@drawable/ic_arrow_back_accent" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/editTabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toTopOf="@id/userSetupContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/doneButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/user_setup_done_title"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/editTabs"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/editTabs"
-                app:srcCompat="@drawable/ic_done_accent" />
-
-            <ImageView
-                android:id="@+id/backButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/editTabs"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/editTabs"
-                app:srcCompat="@drawable/ic_arrow_back_accent" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/editTabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@android:color/transparent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tabBackground="@drawable/tab_layout_selector"
-                app:tabGravity="center"
-                app:tabIndicatorHeight="0dp"
-                app:tabRippleColor="@null"
-                app:tabSelectedTextColor="@android:color/white"
-                app:tabTextColor="@color/textPrimary" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabBackground="@drawable/tab_layout_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabRippleColor="@null"
+            app:tabSelectedTextColor="@android:color/white"
+            app:tabTextColor="@color/textPrimary" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/userSetupContainer"

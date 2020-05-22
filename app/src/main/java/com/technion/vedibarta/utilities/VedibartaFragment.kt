@@ -125,7 +125,7 @@ open class VedibartaFragment : Fragment() {
         }
 
 
-        private fun characteristicsTableItemClickHandler(
+        fun characteristicsTableItemClickHandler(
             view: View,
             context: Context,
             characteristics: Array<String>,
@@ -153,24 +153,6 @@ open class VedibartaFragment : Fragment() {
                 studentCharacteristics.remove(char)
 
             }
-
-            bubbleFrame.id = view.id
-            bubbleFrame.setOnClickListener {
-                characteristicsTableItemClickHandler(
-                    it,
-                    context,
-                    characteristics,
-                    table,
-                    studentCharacteristics,
-                    characteristicsResource
-                )
-            }
-
-            bubbleFrame.layoutParams = tableRow[viewPos].layoutParams
-
-            tableRow.removeViewAt(viewPos)
-            tableRow.addView(bubbleFrame, viewPos)
-
         }
         //-------------------------------
 

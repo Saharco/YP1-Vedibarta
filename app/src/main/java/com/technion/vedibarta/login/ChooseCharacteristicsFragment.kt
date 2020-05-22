@@ -1,9 +1,13 @@
 package com.technion.vedibarta.login
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TableRow
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -16,6 +20,7 @@ import com.technion.vedibarta.data.viewModels.userSetupViewModelFactory
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
 import kotlinx.android.synthetic.main.fragment_choose_characteristics.*
+import java.lang.ClassCastException
 import kotlin.random.Random
 
 /**
@@ -29,6 +34,14 @@ class ChooseCharacteristicsFragment(private var category: String = "") : Vedibar
         userSetupViewModelFactory(
             requireActivity().applicationContext
         )
+    }
+
+    private lateinit var onCharacteristicClick: OnCharacteristicClickListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onCharacteristicClick = context as? OnCharacteristicClickListener
+            ?: throw ClassCastException("$context must implement ${OnCharacteristicClickListener::class}")
     }
 
     override fun onCreateView(
@@ -57,6 +70,7 @@ class ChooseCharacteristicsFragment(private var category: String = "") : Vedibar
 
             characteristicsTitle.text = category
             loadCharacteristics(characteristics[category] ?: emptyArray(), resource)
+
         }
     }
 
@@ -72,6 +86,28 @@ class ChooseCharacteristicsFragment(private var category: String = "") : Vedibar
             viewModel.chosenCharacteristics,
             resource
         )
+        characteristicsTable.forEach { row ->
+            if (row is TableRow) {
+                row.forEach {
+                    if (it is ConstraintLayout)
+                        it.setOnClickListener { view ->
+                            characteristicsTableItemClickHandler(
+                                view,
+                                requireContext(),
+                                characteristics.toList().shuffled(Random(42)).toTypedArray(),
+                                characteristicsTable,
+                                viewModel.chosenCharacteristics,
+                                resource
+                            )
+                            onCharacteristicClick.onCharacteristicClick(category)
+                        }
+                }
+            }
+        }
     }
 
+}
+
+interface OnCharacteristicClickListener {
+    fun onCharacteristicClick(category: String)
 }
