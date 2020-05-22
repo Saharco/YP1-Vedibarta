@@ -10,6 +10,7 @@
     <string name="no">לא</string>
     <string name="ok">אישור</string>
     <string name="next">הבא</string>
+    <string name="skip">דלג</string>
     <string name="net_error">קיימת בעיה בחיבור לאינטרנט</string>
 
     <!--    UserProfile attribute   -->
@@ -71,6 +72,7 @@
     <string name="user_setup_school_title">בית ספר</string>
     <string name="user_setup_first_name_title">שם פרטי</string>
     <string name="user_setup_last_name_title">שם משפחה</string>
+    <string name="user_setup_characteristics_hint_text">אפשר לבחור יותר מאחד</string>
     <string name="user_setup_done_title">סיים</string>
     <string name="text_field_hint">עברית/ערבית בלבד</string>
     <string name="user_setup_missing_details_dialog_title">פרטים חסרים</string>

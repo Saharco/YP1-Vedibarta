@@ -7,14 +7,15 @@
         android:id="@+id/invisibleBubble"
         style="@style/CarouselBubble"
         app:autoSizeMaxTextSize="6.5sp"
-        app:autoSizeMinTextSize="4.5sp"
+        app:autoSizeMinTextSize="2.5sp"
         android:maxLines="1"
         app:autoSizeTextType="uniform"/>
     <ProgressBar
         android:id="@+id/loading"
+        android:theme="@style/AppTheme.ProgressBar"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:padding="3dp"
         android:indeterminate="true"
-        android:layout_margin="4dp"/>
+        android:layout_margin="4dp" />
 </FrameLayout>

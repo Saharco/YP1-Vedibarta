@@ -1,8 +1,10 @@
 package com.technion.vedibarta.data.viewModels
 
 import android.content.Context
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.technion.vedibarta.POJOs.*
+import com.technion.vedibarta.R
 import com.technion.vedibarta.data.CategoriesMapper
 import com.technion.vedibarta.data.loadCharacteristics
 import com.technion.vedibarta.utilities.extensions.handleError
@@ -42,6 +44,8 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
 
     var reachedLastPage: Boolean = false
     var backButtonVisible: Boolean = false
+    var nextButtonText: String = context.resources.getString(R.string.next)
+
 
     val chosenCharacteristics = mutableMapOf<String, Boolean>()
 

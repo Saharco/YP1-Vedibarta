@@ -23,9 +23,10 @@ import com.technion.vedibarta.data.viewModels.*
 import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.resourcesManagement.toBaseLanguage
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
-class UserSetupActivity : VedibartaActivity() {
+class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
 
     private val userSetupViewModel: UserSetupViewModel by viewModels {
         userSetupViewModelFactory(applicationContext)
@@ -50,7 +51,7 @@ class UserSetupActivity : VedibartaActivity() {
 
         if (userSetupViewModel.reachedLastPage)
             doneButton.visibility = View.VISIBLE
-        if(userSetupViewModel.backButtonVisible)
+        if (userSetupViewModel.backButtonVisible)
             backButton.visibility = View.VISIBLE
 
         loading.visibility = View.VISIBLE
@@ -64,10 +65,11 @@ class UserSetupActivity : VedibartaActivity() {
         nextButton.setOnClickListener { onNextClick() }
         backButton.setOnClickListener { onBackClick() }
         backButton.bringToFront()
+        nextButton.text = userSetupViewModel.nextButtonText
     }
 
     private fun observerHandler(value: LoadableData<UserSetupResources>) {
-        when(value) {
+        when (value) {
             is Loaded -> {
                 if (!loadedHandled) {
                     loading.visibility = View.GONE
@@ -83,7 +85,11 @@ class UserSetupActivity : VedibartaActivity() {
             is Error -> Toast.makeText(this, value.reason, Toast.LENGTH_LONG).show()
             is SlowLoadingEvent -> {
                 if (!value.handled)
-                    Toast.makeText(this, resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        resources.getString(R.string.net_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
             }
         }
     }
@@ -127,12 +133,19 @@ class UserSetupActivity : VedibartaActivity() {
                 backButton.visibility = View.GONE
                 userSetupViewModel.backButtonVisible = false
                 userSetupContainer.currentItem -= 1
+                nextButton.text = resources.getString(R.string.next)
             }
             userSetupContainer.adapter!!.itemCount - 1 -> {
                 userSetupContainer.currentItem -= 1
                 nextButton.visibility = View.VISIBLE
+                userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem-2)
+                nextButton.text = userSetupViewModel.nextButtonText
             }
-            else -> userSetupContainer.currentItem -= 1
+            else -> {
+                userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem-2)
+                nextButton.text = userSetupViewModel.nextButtonText
+                userSetupContainer.currentItem -= 1
+            }
         }
     }
 
@@ -143,8 +156,11 @@ class UserSetupActivity : VedibartaActivity() {
                     userSetupContainer.currentItem += 1
                     backButton.visibility = View.VISIBLE
                     userSetupViewModel.backButtonVisible = true
+                    userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem)
+                    nextButton.text = userSetupViewModel.nextButtonText
                 } else {
-                    Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
             userSetupContainer.adapter!!.itemCount - 2 -> {
@@ -153,8 +169,23 @@ class UserSetupActivity : VedibartaActivity() {
                 doneButton.visibility = View.VISIBLE
                 nextButton.visibility = View.GONE
             }
-            else -> userSetupContainer.currentItem += 1
+            else -> {
+                userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem)
+                nextButton.text = userSetupViewModel.nextButtonText
+                userSetupContainer.currentItem += 1
+            }
         }
+    }
+
+    private fun getNextButtonText(index: Int): String {
+        val characteristicsByCategory =
+            (userSetupViewModel.userSetupResources.value as Loaded).data.characteristicsByCategory
+        val category = characteristicsByCategory.keys.toList()[index]
+        val characteristics = (userSetupViewModel.userSetupResources.value as Loaded).data.allCharacteristics.toBaseLanguage(
+            characteristicsByCategory.getValue(category)
+        )
+        return if (userSetupViewModel.chosenCharacteristics.keys.intersect(characteristics.toList()).isEmpty()
+        ) resources.getString(R.string.skip) else resources.getString(R.string.next)
     }
 
     private fun missingDetailsDialog(msg: String) {
@@ -188,8 +219,8 @@ class UserSetupActivity : VedibartaActivity() {
     }
 
     private fun validateUserInput(): StudentResult {
-        val resourcesCombo = userSetupViewModel.userSetupResources.value as? Loaded ?:
-                error("tried to validate the user before done loading resources")
+        val resourcesCombo = userSetupViewModel.userSetupResources.value as? Loaded
+            ?: error("tried to validate the user before done loading resources")
 
         val gender = userSetupViewModel.gender
         val grade = userSetupViewModel.grade
@@ -259,7 +290,11 @@ class UserSetupActivity : VedibartaActivity() {
         )
     }
 
-    private fun validateSchoolAndRegionExists(resources: UserSetupResources, school: String, region: String): Boolean {
+    private fun validateSchoolAndRegionExists(
+        resources: UserSetupResources,
+        school: String,
+        region: String
+    ): Boolean {
         val schoolNamesList = resources.schoolsName
         val regionNamesList = resources.regionsName
         val schoolAndRegionMap = schoolNamesList.getAll().zip(regionNamesList.getAll()).toMap()
@@ -273,6 +308,14 @@ class UserSetupActivity : VedibartaActivity() {
             R.id.gradeEleventh -> userSetupViewModel.grade = Grade.ELEVENTH
             R.id.gradeTwelfth -> userSetupViewModel.grade = Grade.TWELFTH
         }
+    }
+
+    override fun onCharacteristicClick(category: String) {
+        val characteristicsByCategory =
+            (userSetupViewModel.userSetupResources.value as Loaded).data.characteristicsByCategory
+        val index = characteristicsByCategory.keys.toList().indexOf(category)
+        userSetupViewModel.nextButtonText = getNextButtonText(index)
+        nextButton.text =userSetupViewModel.nextButtonText
     }
 }
 
