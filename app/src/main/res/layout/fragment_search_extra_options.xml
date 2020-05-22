@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/scrollView"
@@ -14,9 +15,9 @@
             android:id="@+id/cardViewSchool"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="56dp"
             android:layout_marginTop="112dp"
             android:layout_marginEnd="56dp"
-            android:layout_marginStart="56dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -55,12 +56,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
+                    android:completionThreshold="0"
+                    android:imeOptions="flagNoExtractUi"
+                    android:popupBackground="@android:color/white"
+                    android:visibility="gone"
                     app:autoSizeMaxTextSize="13sp"
                     app:autoSizeMinTextSize="11sp"
-                    android:imeOptions="flagNoExtractUi"
                     app:autoSizeTextType="uniform"
-                    android:visibility="gone"
-                    android:completionThreshold="0"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/schoolFilterSwitch"
                     app:layout_constraintTop_toBottomOf="@+id/schoolFilterSwitch" />
@@ -72,12 +74,12 @@
             android:id="@+id/cardViewRegion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="56dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="56dp"
-            android:layout_marginStart="56dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/cardViewGrade"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardViewSchool">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -103,24 +105,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
-                    app:showText="false"
                     android:checked="false"
                     app:layout_constraintBottom_toBottomOf="@+id/regionFilterSwitchText"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/regionFilterSwitchText"/>
+                    app:layout_constraintTop_toTopOf="@+id/regionFilterSwitchText"
+                    app:showText="false" />
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/regionListSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:imeOptions="flagNoExtractUi"
                     android:layout_marginTop="20dp"
+                    android:completionThreshold="0"
+                    android:dropDownHeight="150dp"
+                    android:imeOptions="flagNoExtractUi"
+                    android:popupBackground="@android:color/white"
+                    android:visibility="gone"
                     app:autoSizeMaxTextSize="13sp"
                     app:autoSizeMinTextSize="11sp"
                     app:autoSizeTextType="uniform"
-                    android:dropDownHeight="150dp"
-                    android:visibility="gone"
-                    android:completionThreshold="0"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/regionFilterSwitch"
                     app:layout_constraintTop_toBottomOf="@+id/regionFilterSwitch" />
@@ -133,13 +136,13 @@
             android:id="@+id/cardViewGrade"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="56dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="56dp"
-            android:layout_marginStart="56dp"
             android:layout_marginBottom="40dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardViewRegion">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -165,20 +168,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
-                    app:showText="false"
                     android:checked="false"
                     app:layout_constraintBottom_toBottomOf="@+id/gradeFilterSwitchText"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/gradeFilterSwitchText"/>
+                    app:layout_constraintTop_toTopOf="@+id/gradeFilterSwitchText"
+                    app:showText="false" />
 
                 <RadioGroup
                     android:id="@+id/gradeRadioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
+                    android:gravity="center"
                     android:orientation="horizontal"
                     android:visibility="gone"
-                    android:gravity="center"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/gradeFilterSwitch"
                     app:layout_constraintTop_toBottomOf="@+id/gradeFilterSwitch">
@@ -189,28 +192,29 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:onClick="onRadioButtonClicked"
-                        android:text="@string/user_setup_grade_twelfth"/>
+                        android:text="@string/user_setup_grade_twelfth" />
+
                     <RadioButton
                         android:id="@+id/gradeEleventh"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:onClick="onRadioButtonClicked"
-                        android:text="@string/user_setup_grade_eleventh"/>
+                        android:text="@string/user_setup_grade_eleventh" />
+
                     <RadioButton
                         android:id="@+id/gradeTenth"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:onClick="onRadioButtonClicked"
-                        android:text="@string/user_setup_grade_tenth"/>
+                        android:text="@string/user_setup_grade_tenth" />
 
                 </RadioGroup>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

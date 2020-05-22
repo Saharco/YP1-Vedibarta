@@ -289,6 +289,7 @@
                         android:layout_marginTop="20dp"
                         android:completionThreshold="0"
                         android:imeOptions="flagNoExtractUi"
+                        android:popupBackground="@android:color/white"
                         android:visibility="visible"
                         app:autoSizeMaxTextSize="13sp"
                         app:autoSizeMinTextSize="11sp"
@@ -320,6 +321,7 @@
                         android:completionThreshold="0"
                         android:dropDownHeight="150dp"
                         android:imeOptions="flagNoExtractUi"
+                        android:popupBackground="@android:color/white"
                         android:visibility="visible"
                         app:autoSizeMaxTextSize="13sp"
                         app:autoSizeMinTextSize="11sp"
@@ -347,8 +349,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:orientation="horizontal"
                         android:gravity="center"
+                        android:orientation="horizontal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/gradeText">
@@ -359,21 +361,23 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_twelfth"/>
+                            android:text="@string/user_setup_grade_twelfth" />
+
                         <RadioButton
                             android:id="@+id/gradeEleventh"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_eleventh"/>
+                            android:text="@string/user_setup_grade_eleventh" />
+
                         <RadioButton
                             android:id="@+id/gradeTenth"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_tenth"/>
+                            android:text="@string/user_setup_grade_tenth" />
 
                     </RadioGroup>
 

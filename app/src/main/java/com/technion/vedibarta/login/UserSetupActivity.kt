@@ -141,6 +141,7 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
                 userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem-2)
                 nextButton.text = userSetupViewModel.nextButtonText
             }
+            0 -> {}
             else -> {
                 userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem-2)
                 nextButton.text = userSetupViewModel.nextButtonText

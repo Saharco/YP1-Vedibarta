@@ -91,9 +91,11 @@ open class VedibartaFragment : Fragment() {
                     ) {
                         bubble.alpha = 1f
                         bubbleFrame.tag = SELECTED_BUBBLE
+                        text.setTextColor(ContextCompat.getColor(context, R.color.textPrimaryOnDarkSurface))
                     } else {
                         bubble.alpha = 0.3f
                         bubbleFrame.tag = NON_SELECTED_BUBBLE
+                        text.setTextColor(ContextCompat.getColor(context, R.color.textPrimary))
                     }
                     bubbleFrame.id = i + j
                     bubbleFrame.setOnClickListener {
@@ -164,19 +166,20 @@ open class VedibartaFragment : Fragment() {
             val bubbleFrame = view as ConstraintLayout
             val viewPos = view.id % steps
             val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
-
+            val text = bubbleFrame.findViewById(R.id.characteristicText) as TextView
             val char = characteristicsResource.toBaseLanguage(characteristics[view.id])
 
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
                 bubble.alpha = 1f
                 bubbleFrame.tag = SELECTED_BUBBLE
+                text.setTextColor(ContextCompat.getColor(context, R.color.textPrimaryOnDarkSurface))
                 studentCharacteristics[char] = true
 
             } else {
                 bubble.alpha = 0.3f
                 bubbleFrame.tag = NON_SELECTED_BUBBLE
                 studentCharacteristics.remove(char)
-
+                text.setTextColor(ContextCompat.getColor(context, R.color.textPrimary))
             }
         }
         //-------------------------------
