@@ -118,39 +118,13 @@ open class VedibartaFragment : Fragment() {
         }
 
         private fun isContained(
-            student: MutableMap<String, Boolean>,
+            studentCharacteristics: MutableMap<String, Boolean>,
             s: String,
             characteristics: MultilingualTextResource
         ): Boolean {
             val characteristic = characteristics.toBaseLanguage(s)
-            return student.contains(characteristic)
-            return student.characteristics.contains(characteristic)
+            return studentCharacteristics.contains(characteristic)
         }
-
-        fun loadCharacteristics(
-            context: Context,
-            gender: Gender
-        ): Task<Map<String, Array<String>>> {
-
-            return RemoteTextResourcesManager(context)
-                .findMultilingualResource("characteristics/categories")
-                .continueWithTask {
-                    val categories = it.result!!.getAllBase()
-                    val categoryResource = it.result!!
-                    val characteristicsMap = mutableMapOf<String, Array<String>>()
-                    val categoryResourceList = categories.map { category -> "characteristics/category-$category" }
-                    RemoteTextResourcesManager(context)
-                        .findMultilingualResources(*categoryResourceList.toTypedArray(), gender = gender)
-                        .continueWith {
-                            categories.forEachIndexed { index, category ->
-                                characteristicsMap[categoryResource.toCurrentLanguage(category)] = it.result!![index].getAll().toTypedArray()
-                            }
-                        }.continueWith {
-                            characteristicsMap.toMap()
-                        }
-                }
-        }
-
 
         fun characteristicsTableItemClickHandler(
             view: View,

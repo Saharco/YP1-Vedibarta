@@ -17,9 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.gms.tasks.Tasks
 import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
@@ -30,12 +28,8 @@ import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
 import com.technion.vedibarta.data.viewModels.hobbiesViewModelFactory
 import com.technion.vedibarta.fragments.CharacteristicsFragment
 import com.technion.vedibarta.fragments.HobbiesFragment
-import com.technion.vedibarta.utilities.SectionsPageAdapter
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.extensions.executeAfterTimeoutInMillis
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 
 class ProfileEditActivity : VedibartaActivity(){
@@ -228,9 +222,9 @@ class ProfileEditActivity : VedibartaActivity(){
     }
 
     data class ProfileEditResources(
-        val allCharacteristics: MultilingualResource,
+        val allCharacteristics: MultilingualTextResource,
         val characteristicsCardList: List<CategoryCard>,
-        val allHobbies: MultilingualResource,
+        val allHobbies: MultilingualTextResource,
         val hobbyCardList: List<CategoryCard>
     )
 

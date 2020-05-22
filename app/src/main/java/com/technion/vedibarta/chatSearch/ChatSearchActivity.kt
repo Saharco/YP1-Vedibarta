@@ -279,8 +279,8 @@ class ChatSearchActivity : VedibartaActivity() {
     }
 
     private fun combineResources(
-        schoolsNameLiveData: LiveData<LoadableData<Resource>>,
-        regionsNameLiveData: LiveData<LoadableData<Resource>>,
+        schoolsNameLiveData: LiveData<LoadableData<TextResource>>,
+        regionsNameLiveData: LiveData<LoadableData<TextResource>>,
         characteristicsResourcesLiveData: LiveData<LoadableData<CharacteristicsViewModel.CharacteristicsResources>>
     ): LiveData<LoadableData<ChatSearchResources>> {
         val mediator = MediatorLiveData<LoadableData<ChatSearchResources>>()
@@ -347,10 +347,10 @@ class ChatSearchActivity : VedibartaActivity() {
 
 
     data class ChatSearchResources(
-        val allCharacteristics: MultilingualResource,
+        val allCharacteristics: MultilingualTextResource,
         val characteristicsCardList: List<CategoryCard>,
-        val schoolsName: Resource,
-        val regionsName: Resource
+        val schoolsName: TextResource,
+        val regionsName: TextResource
         )
 
     data class SearchAttributes(

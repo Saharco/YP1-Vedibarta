@@ -159,8 +159,8 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
     }
 
     private fun combineResources(
-        schoolsNameLiveData: LiveData<LoadableData<Resource>>,
-        regionsNameLiveData: LiveData<LoadableData<Resource>>
+        schoolsNameLiveData: LiveData<LoadableData<TextResource>>,
+        regionsNameLiveData: LiveData<LoadableData<TextResource>>
     ): LiveData<LoadableData<ExtraOptionsResources>> {
         val mediator = MediatorLiveData<LoadableData<ExtraOptionsResources>>()
             .apply { value = NormalLoading() }
@@ -214,7 +214,7 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
     }
 
     data class ExtraOptionsResources(
-        val schoolsName: Resource,
-        val regionsName: Resource
+        val schoolsName: TextResource,
+        val regionsName: TextResource
     )
 }

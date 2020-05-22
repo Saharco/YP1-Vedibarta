@@ -7,8 +7,8 @@ import com.technion.vedibarta.data.loadHobbies
 import com.technion.vedibarta.utilities.extensions.handleError
 import com.technion.vedibarta.utilities.extensions.handleSuccess
 import com.technion.vedibarta.utilities.extensions.handleTimeout
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import java.lang.Class
 import java.lang.IllegalArgumentException
 
@@ -33,14 +33,14 @@ class HobbiesViewModel(private val context: Context) : ViewModel() {
 
     fun startLoading() {
         if (!startedLoading) {
-            val resourcesManager = RemoteResourcesManager(context)
+            val resourcesManager = RemoteTextResourcesManager(context)
             getHobbiesResources(resourcesManager, _hobbiesResources)
             startedLoading = true
         }
     }
 
     private fun getHobbiesResources(
-        resourcesManager: RemoteResourcesManager,
+        resourcesManager: RemoteTextResourcesManager,
         into: MutableLiveData<LoadableData<HobbiesResources>>
     ) {
         val task1 = resourcesManager.findMultilingualResource("hobbies/all")
@@ -64,7 +64,7 @@ class HobbiesViewModel(private val context: Context) : ViewModel() {
     }
 
     data class HobbiesResources(
-        val allHobbies: MultilingualResource,
+        val allHobbies: MultilingualTextResource,
         val hobbyCardList: List<CategoryCard>
     )
 

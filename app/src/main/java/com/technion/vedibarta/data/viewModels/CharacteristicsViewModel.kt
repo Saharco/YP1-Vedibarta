@@ -8,8 +8,8 @@ import com.technion.vedibarta.data.loadCharacteristics
 import com.technion.vedibarta.utilities.extensions.handleError
 import com.technion.vedibarta.utilities.extensions.handleSuccess
 import com.technion.vedibarta.utilities.extensions.handleTimeout
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import java.lang.Class
 import java.lang.IllegalArgumentException
 
@@ -36,7 +36,7 @@ class CharacteristicsViewModel(private val context: Context, private val gender:
 
     fun startLoading() {
         if (!startedLoading) {
-            val resourcesManager = RemoteResourcesManager(context)
+            val resourcesManager = RemoteTextResourcesManager(context)
 
             getCharacteristicsResources(resourcesManager, gender,_characteristicsResources)
 
@@ -45,7 +45,7 @@ class CharacteristicsViewModel(private val context: Context, private val gender:
     }
 
     private fun getCharacteristicsResources(
-        resourcesManager: RemoteResourcesManager,
+        resourcesManager: RemoteTextResourcesManager,
         gender: Gender,
         into: MutableLiveData<LoadableData<CharacteristicsResources>>
     ) {
@@ -76,7 +76,7 @@ class CharacteristicsViewModel(private val context: Context, private val gender:
     }
 
     data class CharacteristicsResources(
-        val allCharacteristics: MultilingualResource,
+        val allCharacteristics: MultilingualTextResource,
         val characteristicsCardList: List<CategoryCard>
     )
 }

@@ -5,8 +5,11 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.technion.vedibarta.utilities.resourcesManagement.*
+
+private val RESOURCES_REFERENCE = FirebaseStorage.getInstance().reference.child("resources")
 
 class QuestionGeneratorFactory(
     context: Context,

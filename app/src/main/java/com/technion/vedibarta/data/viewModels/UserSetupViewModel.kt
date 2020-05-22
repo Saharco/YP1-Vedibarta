@@ -10,9 +10,9 @@ import com.technion.vedibarta.data.loadCharacteristics
 import com.technion.vedibarta.utilities.extensions.handleError
 import com.technion.vedibarta.utilities.extensions.handleSuccess
 import com.technion.vedibarta.utilities.extensions.handleTimeout
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.Resource
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import java.lang.Class
 
 fun userSetupViewModelFactory(context: Context) = object : ViewModelProvider.Factory {
@@ -31,8 +31,8 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
     private val _characteristicsResourcesFemale =
         MutableLiveData<LoadableData<CharacteristicsResources>>(NormalLoading())
 
-    private val _schoolsName = MutableLiveData<LoadableData<Resource>>(NormalLoading())
-    private val _regionsName = MutableLiveData<LoadableData<Resource>>(NormalLoading())
+    private val _schoolsName = MutableLiveData<LoadableData<TextResource>>(NormalLoading())
+    private val _regionsName = MutableLiveData<LoadableData<TextResource>>(NormalLoading())
 
     val gender = MutableLiveData(Gender.NONE)
 
@@ -58,8 +58,8 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
             }
         }
 
-    private val schoolsName: LiveData<LoadableData<Resource>> = _schoolsName
-    private val regionsName: LiveData<LoadableData<Resource>> = _regionsName
+    private val schoolsName: LiveData<LoadableData<TextResource>> = _schoolsName
+    private val regionsName: LiveData<LoadableData<TextResource>> = _regionsName
 
     val userSetupResources = combineResources(
         schoolsName,
@@ -72,7 +72,7 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
     }
 
     private fun loadResources() {
-        val resourcesManager = RemoteResourcesManager(context)
+        val resourcesManager = RemoteTextResourcesManager(context)
 
 
         fun getCharacteristicsResources(gender: Gender, into: MutableLiveData<LoadableData<CharacteristicsResources>>) {
@@ -109,8 +109,8 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
 }
 
 private fun combineResources(
-    schoolsNameLiveData: LiveData<LoadableData<Resource>>,
-    regionsNameLiveData: LiveData<LoadableData<Resource>>,
+    schoolsNameLiveData: LiveData<LoadableData<TextResource>>,
+    regionsNameLiveData: LiveData<LoadableData<TextResource>>,
     characteristicsResourcesLiveData: LiveData<LoadableData<CharacteristicsResources>>
 ): LiveData<LoadableData<UserSetupResources>> {
     val mediator = MediatorLiveData<LoadableData<UserSetupResources>>()
@@ -162,13 +162,13 @@ private fun combineResources(
 }
 
 data class CharacteristicsResources(
-    val allCharacteristics: MultilingualResource,
+    val allCharacteristics: MultilingualTextResource,
     val characteristicsByCategory: CategoriesMapper
 )
 
 data class UserSetupResources(
-    val schoolsName: Resource,
-    val regionsName: Resource,
-    val allCharacteristics: MultilingualResource,
+    val schoolsName: TextResource,
+    val regionsName: TextResource,
+    val allCharacteristics: MultilingualTextResource,
     val characteristicsByCategory: CategoriesMapper
 )

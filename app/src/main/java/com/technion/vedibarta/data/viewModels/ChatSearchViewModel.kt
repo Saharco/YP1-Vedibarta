@@ -9,8 +9,8 @@ import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.utilities.extensions.handleError
 import com.technion.vedibarta.utilities.extensions.handleSuccess
 import com.technion.vedibarta.utilities.extensions.handleTimeout
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.Resource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import java.lang.Class
 
 fun chatSearchViewModelFactory(context: Context) = object : ViewModelProvider.Factory {
@@ -23,11 +23,11 @@ fun chatSearchViewModelFactory(context: Context) = object : ViewModelProvider.Fa
 
 class ChatSearchViewModel(private val context: Context) : ViewModel() {
 
-    private val _schoolsName = MutableLiveData<LoadableData<Resource>>(NormalLoading())
-    private val _regionsName = MutableLiveData<LoadableData<Resource>>(NormalLoading())
+    private val _schoolsName = MutableLiveData<LoadableData<TextResource>>(NormalLoading())
+    private val _regionsName = MutableLiveData<LoadableData<TextResource>>(NormalLoading())
 
-    val schoolsName: LiveData<LoadableData<Resource>> = _schoolsName
-    val regionsName: LiveData<LoadableData<Resource>> = _regionsName
+    val schoolsName: LiveData<LoadableData<TextResource>> = _schoolsName
+    val regionsName: LiveData<LoadableData<TextResource>> = _regionsName
 
     var grade: Grade = Grade.NONE
     var chosenSchool: TextContainer = Unfilled
@@ -38,7 +38,7 @@ class ChatSearchViewModel(private val context: Context) : ViewModel() {
     }
 
     private fun loadResources() {
-        val resourcesManager = RemoteResourcesManager(context)
+        val resourcesManager = RemoteTextResourcesManager(context)
 
         resourcesManager.findResource("schools")
             .handleSuccess(_schoolsName)

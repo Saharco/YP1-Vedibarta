@@ -11,12 +11,12 @@ import com.github.zagum.expandicon.ExpandIconView
 import com.technion.vedibarta.POJOs.CategoryCard
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualResource
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 
 class CharacteristicsAdapter(
     private val categoryCardList: List<CategoryCard>,
     private val chosenCharacteristics: MutableMap<String, Boolean>,
-    private val characteristicsResource: MultilingualResource
+    private val characteristicsResource: MultilingualTextResource
 ) : RecyclerView.Adapter<CharacteristicsAdapter.CharacteristicCardViewHolder>()  {
 
     override fun onCreateViewHolder(
@@ -42,7 +42,7 @@ class CharacteristicsAdapter(
         fun bind(
             categoryCard: CategoryCard,
             chosenCharacteristics: MutableMap<String, Boolean>,
-            characteristicsResource: MultilingualResource
+            characteristicsResource: MultilingualTextResource
         ) {
             val title: TextView = itemView.findViewById(R.id.characteristicCardTitle)
             val table: TableLayout = itemView.findViewById(R.id.characteristicsTable)
