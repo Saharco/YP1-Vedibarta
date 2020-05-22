@@ -10,11 +10,13 @@ import com.technion.vedibarta.POJOs.CategoryCard
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import java.io.File
 
 class HobbiesAdapter(
     private val categoryCardList: List<CategoryCard>,
-    val chosenHobbies: MutableList<String>,
-    private val hobbiesResource: MultilingualTextResource
+    private val chosenHobbies: MutableList<String>,
+    private val hobbiesResource: MultilingualTextResource,
+    private val hobbiesPhotos: Map<String, File>
 ) :
     RecyclerView.Adapter<HobbiesAdapter.HobbyCardViewHolder>() {
 
@@ -30,7 +32,7 @@ class HobbiesAdapter(
     }
 
     override fun onBindViewHolder(holder: HobbyCardViewHolder, position: Int) {
-        holder.bind(categoryCardList[holder.adapterPosition], chosenHobbies, hobbiesResource)
+        holder.bind(categoryCardList[holder.adapterPosition], chosenHobbies, hobbiesResource, hobbiesPhotos)
     }
 
     class HobbyCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -41,7 +43,8 @@ class HobbiesAdapter(
         fun bind(
             categoryCard: CategoryCard,
             chosenHobbies: MutableList<String>,
-            hobbiesResource: MultilingualTextResource
+            hobbiesResource: MultilingualTextResource,
+            hobbiesPhotos: Map<String, File>
         ) {
             header = itemView.findViewById(R.id.hobbyCardTitle)
             table = itemView.findViewById(R.id.hobbiesTables)
@@ -53,7 +56,8 @@ class HobbiesAdapter(
                 table,
                 categoryCard.values,
                 chosenHobbies,
-                hobbiesResource
+                hobbiesResource,
+                hobbiesPhotos
             )
 
         }

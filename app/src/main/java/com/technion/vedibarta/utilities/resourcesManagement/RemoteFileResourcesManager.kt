@@ -44,7 +44,7 @@ class RemoteFileResourcesManager(
     }
 
     override fun listFilesInDir(dirName: String): Task<List<String>> =
-        storageReference.listAll().continueWith { task ->
+        storageReference.child(dirName).listAll().continueWith { task ->
             task.result!!.items.map { it.name }
         }
 }

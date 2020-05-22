@@ -52,13 +52,11 @@ import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.*
 import kotlinx.android.synthetic.main.activity_user_profile.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
 
 class UserProfileActivity : VedibartaActivity(),
@@ -85,6 +83,7 @@ class UserProfileActivity : VedibartaActivity(),
 
     private lateinit var characteristicsTask : Task<MultilingualTextResource>
     private lateinit var hobbiesTask: Task<MultilingualTextResource>
+    private lateinit var hobbiesImagesTask: Task<Map<String, File>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +94,8 @@ class UserProfileActivity : VedibartaActivity(),
             .findMultilingualResource("characteristics/all")
         hobbiesTask = RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
+        hobbiesImagesTask = RemoteFileResourcesManager(this)
+            .getAllInDirectory("images/hobbies")
     }
 
     override fun onStart() {
@@ -217,7 +218,7 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun loadUserData() {
-        Tasks.whenAll(hobbiesTask, characteristicsTask)
+        Tasks.whenAll(hobbiesTask, characteristicsTask, hobbiesImagesTask)
             .addOnSuccessListener(this) {
                 val studentCharacteristics = characteristicsTask.result!!.toCurrentLanguage(student!!.characteristics.keys.toTypedArray())
 
@@ -237,7 +238,8 @@ class UserProfileActivity : VedibartaActivity(),
                     hobbiesTable,
                     hobbies,
                     student!!.hobbies.toMutableList(),
-                    hobbiesTask.result!!
+                    hobbiesTask.result!!,
+                    hobbiesImagesTask.result!!
                 )
                 hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
             }

@@ -18,6 +18,7 @@ import com.technion.vedibarta.R
 import de.hdodenhof.circleimageview.CircleImageView
 import com.bumptech.glide.request.RequestOptions
 import com.technion.vedibarta.utilities.resourcesManagement.*
+import java.io.File
 
 
 open class VedibartaFragment : Fragment() {
@@ -165,7 +166,8 @@ open class VedibartaFragment : Fragment() {
             table: TableLayout,
             hobbies: Array<String>,
             studentHobbies: MutableList<String>,
-            hobbiesResource: MultilingualTextResource
+            hobbiesResource: MultilingualTextResource,
+            hobbiesPhotos: Map<String, File>
         ) {
             val tableRowParams = TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
@@ -200,7 +202,7 @@ open class VedibartaFragment : Fragment() {
                     Glide.with(context)
                         .asBitmap()
                         .apply(myOptions)
-                        .load(hobbyToPhoto(hobbies[i + j], hobbiesResource.getAll().toTypedArray()))
+                        .load(hobbiesPhotos["${hobbiesResource.toBaseLanguage(hobbies[i + j])}.jpg"])
                         .into(bubblePhoto)
                     val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
 
@@ -231,49 +233,6 @@ open class VedibartaFragment : Fragment() {
                 table.addView(tableRow)
             }
         }
-
-        private fun hobbyToPhoto(hobby: String, hobbies: Array<String>): Int {
-
-            return when (hobby) {
-                hobbies[0] -> R.drawable.music
-                hobbies[1] -> R.drawable.theatre
-                hobbies[2] -> R.drawable.dance
-                hobbies[3] -> R.drawable.photography
-                hobbies[4] -> R.drawable.drawing
-
-                hobbies[5] -> R.drawable.soccer
-                hobbies[6] -> R.drawable.basketball
-                hobbies[7] -> R.drawable.tennis
-                hobbies[8] -> R.drawable.swimming
-                hobbies[9] -> R.drawable.hiking
-                hobbies[10] -> R.drawable.bicycle
-                hobbies[11] -> R.drawable.martial_arts
-
-                hobbies[12] -> R.drawable.robotics
-                hobbies[13] -> R.drawable.science
-                hobbies[14] -> R.drawable.math
-                hobbies[15] -> R.drawable.computers
-
-                hobbies[16] -> R.drawable.movies
-                hobbies[17] -> R.drawable.shopping
-                hobbies[18] -> R.drawable.friends
-                hobbies[19] -> R.drawable.food
-                hobbies[20] -> R.drawable.tv_series
-                hobbies[21] -> R.drawable.youth_organization
-                hobbies[22] -> R.drawable.fashion
-
-                hobbies[23] -> R.drawable.video_games
-                hobbies[24] -> R.drawable.board_games
-
-                hobbies[25] -> R.drawable.books
-                hobbies[26] -> R.drawable.nature
-                hobbies[27] -> R.drawable.politics
-                hobbies[28] -> R.drawable.cooking
-
-                else -> android.R.drawable.ic_menu_help
-            }
-        }
-
 
         private fun hobbiesItemClickHandler(
             view: View,

@@ -45,8 +45,9 @@ class HobbiesFragment : VedibartaFragment() {
                 is Loaded ->{
                     val hobbyCard = it.data.hobbyCardList
                     val hobbiesResource = it.data.allHobbies
+                    val hobbiesImages = it.data.hobbiesPhotos
                     val hobbyTitlesList = view.findViewById<RecyclerView>(R.id.hobbyTitlesList)
-                    hobbyTitlesList.adapter = HobbiesAdapter(hobbyCard,  viewModel.chosenHobbies, hobbiesResource)
+                    hobbyTitlesList.adapter = HobbiesAdapter(hobbyCard,  viewModel.chosenHobbies, hobbiesResource, hobbiesImages)
                     hobbyTitlesList.layoutManager = LinearLayoutManager(context)
                 }
 

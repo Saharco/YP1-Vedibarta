@@ -8,7 +8,10 @@ import com.technion.vedibarta.utilities.extensions.handleError
 import com.technion.vedibarta.utilities.extensions.handleSuccess
 import com.technion.vedibarta.utilities.extensions.handleTimeout
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.resourcesManagement.RemoteFileResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
+import com.technion.vedibarta.utilities.resourcesManagement.getAllInDirectory
+import java.io.File
 import java.lang.Class
 import java.lang.IllegalArgumentException
 
@@ -33,28 +36,33 @@ class HobbiesViewModel(private val context: Context) : ViewModel() {
 
     fun startLoading() {
         if (!startedLoading) {
-            val resourcesManager = RemoteTextResourcesManager(context)
-            getHobbiesResources(resourcesManager, _hobbiesResources)
+            val textResourcesManager = RemoteTextResourcesManager(context)
+            val fileResourcesManager = RemoteFileResourcesManager(context)
+            getHobbiesResources(textResourcesManager, fileResourcesManager, _hobbiesResources)
             startedLoading = true
         }
     }
 
     private fun getHobbiesResources(
-        resourcesManager: RemoteTextResourcesManager,
+        textResourcesManager: RemoteTextResourcesManager,
+        fileResourcesManager: RemoteFileResourcesManager,
         into: MutableLiveData<LoadableData<HobbiesResources>>
     ) {
-        val task1 = resourcesManager.findMultilingualResource("hobbies/all")
+        val task1 = textResourcesManager.findMultilingualResource("hobbies/all")
         val task2 = loadHobbies(context)
+        val task3 = fileResourcesManager.getAllInDirectory("images/hobbies")
 
         task1.run {
 
             continueWithTask { allTask ->
                 val allHobbies = allTask.result!!
 
-                task2.continueWith { mapperTask ->
+                task2.continueWithTask { mapperTask ->
                     val hobbiesCardList = mapperTask.result!!
 
-                    HobbiesResources(allHobbies, hobbiesCardList)
+                    task3.continueWith { imageMap ->
+                        HobbiesResources(allHobbies, hobbiesCardList, imageMap.result!!)
+                    }
                 }
             }
                 .handleSuccess(into)
@@ -65,7 +73,8 @@ class HobbiesViewModel(private val context: Context) : ViewModel() {
 
     data class HobbiesResources(
         val allHobbies: MultilingualTextResource,
-        val hobbyCardList: List<CategoryCard>
+        val hobbyCardList: List<CategoryCard>,
+        val hobbiesPhotos: Map<String, File>
     )
 
 }

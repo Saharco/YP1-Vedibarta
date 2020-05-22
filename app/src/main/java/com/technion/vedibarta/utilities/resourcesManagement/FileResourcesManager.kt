@@ -26,7 +26,7 @@ fun FileResourcesManager.getAllInDirectory(dirName: String): Task<Map<String, Fi
     listFilesInDir(dirName).continueWithTask { namesTask ->
         val filesName = namesTask.result!!
 
-        Tasks.whenAllSuccess<File>(filesName.map { findResource(it) })
+        Tasks.whenAllSuccess<File>(filesName.map { findResource("$dirName/$it") })
             .continueWith { filesTask ->
                 val files = filesTask.result!!
 
