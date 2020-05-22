@@ -73,7 +73,7 @@
                 app:tabIndicatorHeight="0dp"
                 app:tabRippleColor="@null"
                 app:tabSelectedTextColor="@android:color/white"
-                app:tabTextColor="@color/colorPrimaryDark" />
+                app:tabTextColor="@color/textPrimary" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/searchUserContainer"
