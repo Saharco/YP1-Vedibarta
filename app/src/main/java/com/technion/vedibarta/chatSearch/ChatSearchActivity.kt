@@ -184,7 +184,7 @@ class ChatSearchActivity : VedibartaActivity() {
         viewPager.isUserInputEnabled = true
         viewPager.adapter = FragmentListStateAdapter(
             this,
-            mutableListOf(CharacteristicsFragment(), SearchExtraOptionsFragment())
+            mutableListOf({CharacteristicsFragment()}, {SearchExtraOptionsFragment()})
         )
         TabLayoutMediator(editTabs, searchUserContainer) { tab, position ->
             tab.text = "${position + 1}"
@@ -246,7 +246,7 @@ class ChatSearchActivity : VedibartaActivity() {
             is Filled -> region.text
             else -> null
         }
-        return SearchAttributes(characteristicsViewModel.chosenCharacteristics.keys, region, school, chatSearchViewModel.grade)
+        return SearchAttributes(characteristicsViewModel.chosenCharacteristics, region, school, chatSearchViewModel.grade)
     }
 
     @Suppress("DEPRECATION")

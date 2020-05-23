@@ -30,7 +30,7 @@ class CharacteristicsViewModel(private val context: Context, private val gender:
 
     val characteristicsResources: LiveData<LoadableData<CharacteristicsResources>> = _characteristicsResources
 
-    val chosenCharacteristics = mutableMapOf<String, Boolean>()
+    val chosenCharacteristics = mutableListOf<String>()
 
     private var startedLoading = false
 
@@ -71,7 +71,7 @@ class CharacteristicsViewModel(private val context: Context, private val gender:
 
     private fun CategoriesMapper.toCategoryCardList(): List<CategoryCard> {
         return this.map { (key, value) ->
-            CategoryCard(key, value)
+            CategoryCard(key, value.getAll().toTypedArray())
         }
     }
 

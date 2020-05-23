@@ -5,11 +5,12 @@ import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.CategoryCard
+import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.findMultilingualResources
 import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
-typealias CategoriesMapper = Map<String, Array<String>>
+typealias CategoriesMapper = Map<String, MultilingualTextResource>
 
 fun loadCharacteristics(
     context: Context,
@@ -21,13 +22,13 @@ fun loadCharacteristics(
         .continueWithTask {
             val categories = it.result!!.getAllBase()
             val categoryResource = it.result!!
-            val characteristicsMap = mutableMapOf<String, Array<String>>()
+            val characteristicsMap = mutableMapOf<String, MultilingualTextResource>()
             val categoryResourceList = categories.map { category -> "characteristics/category-$category" }
             RemoteTextResourcesManager(context)
                 .findMultilingualResources(*categoryResourceList.toTypedArray(), gender = gender)
                 .continueWith {
                     categories.forEachIndexed { index, category ->
-                        characteristicsMap[categoryResource.toCurrentLanguage(category)] = it.result!![index].getAll().toTypedArray()
+                        characteristicsMap[categoryResource.toCurrentLanguage(category)] = it.result!![index]
                     }
                 }.continueWith {
                     characteristicsMap.toMap()

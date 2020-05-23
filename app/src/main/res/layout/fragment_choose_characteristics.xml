@@ -7,7 +7,7 @@
     android:background="@android:color/transparent"
     android:orientation="vertical"
     android:tag="chooseCharacteristics"
-    tools:context=".login.ChooseCharacteristicsFragment">
+    tools:context=".login.ChooseElementsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -13,12 +13,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
+import com.technion.vedibarta.data.CategoriesMapper
 import com.technion.vedibarta.data.viewModels.*
 import com.technion.vedibarta.fragments.HobbiesFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
@@ -45,7 +48,9 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_setup)
-        userSetupViewModel.userSetupResources.observe(this, Observer { observerHandler(it) })
+        userSetupViewModel.userSetupResources.observe(
+            this,
+            Observer { observerHandler(userSetupViewModel.userSetupResources) })
 
         hobbiesViewModel.startLoading()
 
@@ -68,18 +73,15 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
         nextButton.text = userSetupViewModel.nextButtonText
     }
 
-    private fun observerHandler(value: LoadableData<UserSetupResources>) {
-        when (value) {
+    private fun observerHandler(liveData: LiveData<LoadableData<UserSetupResources>>) {
+        when (val value = liveData.value) {
             is Loaded -> {
                 if (!loadedHandled) {
                     loading.visibility = View.GONE
                     layout.visibility = View.VISIBLE
-                    setupViewPager(userSetupContainer, value.data.characteristicsByCategory)
-                    TabLayoutMediator(editTabs, userSetupContainer) { tab, position ->
-                        tab.text = "${(position + 1)}"
-                    }.attach()
-                    editTabs.touchables.forEach { it.isEnabled = false }
-                    loadedHandled = true
+                    setupViewPager(
+                        userSetupContainer,
+                        Transformations.map(liveData) { (it as Loaded).data.characteristicsByCategory })
                 }
             }
             is Error -> Toast.makeText(this, value.reason, Toast.LENGTH_LONG).show()
@@ -96,16 +98,28 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
 
     private fun setupViewPager(
         viewPager: ViewPager2,
-        characteristicsByCategory: Map<String, Array<String>>
+        characteristicsByCategory: LiveData<CategoriesMapper>
     ) {
-        val characteristicsFragmentList: List<Fragment> =
-            characteristicsByCategory.keys.map { ChooseCharacteristicsFragment(it) }
-
-        val adapter = FragmentListStateAdapter(this, characteristicsFragmentList)
-        adapter.addFragment(0, ChoosePersonalInfoFragment())
-        adapter.addFragment(HobbiesFragment())
-        viewPager.isUserInputEnabled = false
-        viewPager.adapter = adapter
+        characteristicsByCategory.observe(this, Observer {
+           val characteristicsFragmentList: List<()-> Fragment> = it.keys.map { category ->
+               {ChooseElementsFragment(
+                   title = category,
+                   resource = Transformations.map(characteristicsByCategory) { it[category] },
+                   chosenList = userSetupViewModel.chosenCharacteristics
+               )}
+           }
+            val adapter = FragmentListStateAdapter(this, characteristicsFragmentList)
+            adapter.addFragment(0) {ChoosePersonalInfoFragment()}
+            adapter.addFragment {HobbiesFragment()}
+            viewPager.isUserInputEnabled = false
+            viewPager.adapter = adapter
+            TabLayoutMediator(editTabs, userSetupContainer) { tab, position ->
+                tab.text = "${(position + 1)}"
+            }.attach()
+            editTabs.touchables.forEach { it.isEnabled = false }
+            loadedHandled = true
+            characteristicsByCategory.removeObservers(this)
+        })
     }
 
     override fun onBackPressed() {
@@ -138,12 +152,15 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
             userSetupContainer.adapter!!.itemCount - 1 -> {
                 userSetupContainer.currentItem -= 1
                 nextButton.visibility = View.VISIBLE
-                userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem-2)
+                userSetupViewModel.nextButtonText =
+                    getNextButtonText(userSetupContainer.currentItem - 2)
                 nextButton.text = userSetupViewModel.nextButtonText
             }
-            0 -> {}
+            0 -> {
+            }
             else -> {
-                userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem-2)
+                userSetupViewModel.nextButtonText =
+                    getNextButtonText(userSetupContainer.currentItem - 2)
                 nextButton.text = userSetupViewModel.nextButtonText
                 userSetupContainer.currentItem -= 1
             }
@@ -157,7 +174,8 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
                     userSetupContainer.currentItem += 1
                     backButton.visibility = View.VISIBLE
                     userSetupViewModel.backButtonVisible = true
-                    userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem)
+                    userSetupViewModel.nextButtonText =
+                        getNextButtonText(userSetupContainer.currentItem)
                     nextButton.text = userSetupViewModel.nextButtonText
                 } else {
                     Toast.makeText(this, R.string.user_setup_gender_missing, Toast.LENGTH_SHORT)
@@ -171,7 +189,8 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
                 nextButton.visibility = View.GONE
             }
             else -> {
-                userSetupViewModel.nextButtonText = getNextButtonText(userSetupContainer.currentItem)
+                userSetupViewModel.nextButtonText =
+                    getNextButtonText(userSetupContainer.currentItem)
                 nextButton.text = userSetupViewModel.nextButtonText
                 userSetupContainer.currentItem += 1
             }
@@ -182,10 +201,10 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
         val characteristicsByCategory =
             (userSetupViewModel.userSetupResources.value as Loaded).data.characteristicsByCategory
         val category = characteristicsByCategory.keys.toList()[index]
-        val characteristics = (userSetupViewModel.userSetupResources.value as Loaded).data.allCharacteristics.toBaseLanguage(
-            characteristicsByCategory.getValue(category)
-        )
-        return if (userSetupViewModel.chosenCharacteristics.keys.intersect(characteristics.toList()).isEmpty()
+        val characteristics = characteristicsByCategory.getValue(category).getAllBase()
+
+        return if (userSetupViewModel.chosenCharacteristics.intersect(characteristics.toList())
+                .isEmpty()
         ) resources.getString(R.string.skip) else resources.getString(R.string.next)
     }
 
@@ -285,7 +304,7 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
                 region = region,
                 school = school,
                 grade = grade,
-                characteristics = studentsCharacteristics,
+                characteristics = studentsCharacteristics.map { it to true }.toMap().toMutableMap(),
                 hobbies = studentHobbies
             )
         )
@@ -316,7 +335,7 @@ class UserSetupActivity : VedibartaActivity(), OnCharacteristicClickListener {
             (userSetupViewModel.userSetupResources.value as Loaded).data.characteristicsByCategory
         val index = characteristicsByCategory.keys.toList().indexOf(category)
         userSetupViewModel.nextButtonText = getNextButtonText(index)
-        nextButton.text =userSetupViewModel.nextButtonText
+        nextButton.text = userSetupViewModel.nextButtonText
     }
 }
 

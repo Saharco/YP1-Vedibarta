@@ -46,7 +46,7 @@ open class VedibartaFragment : Fragment() {
             context: Context,
             table: TableLayout,
             characteristics: Array<String>,
-            studentCharacteristics: MutableMap<String, Boolean>,
+            studentCharacteristics: MutableList<String>,
             characteristicsResource: MultilingualTextResource
         ) {
 
@@ -119,7 +119,7 @@ open class VedibartaFragment : Fragment() {
         }
 
         private fun isContained(
-            studentCharacteristics: MutableMap<String, Boolean>,
+            studentCharacteristics: MutableList<String>,
             s: String,
             characteristics: MultilingualTextResource
         ): Boolean {
@@ -132,7 +132,7 @@ open class VedibartaFragment : Fragment() {
             context: Context,
             characteristics: Array<String>,
             table: TableLayout,
-            studentCharacteristics: MutableMap<String, Boolean>,
+            studentCharacteristics: MutableList<String>,
             characteristicsResource: MultilingualTextResource
         ) {
             val steps = calculateBubblesInRow(context)
@@ -148,7 +148,7 @@ open class VedibartaFragment : Fragment() {
                 bubble.alpha = 1f
                 bubbleFrame.tag = SELECTED_BUBBLE
                 text.setTextColor(ContextCompat.getColor(context, R.color.textPrimaryOnDarkSurface))
-                studentCharacteristics[char] = true
+                studentCharacteristics.add(char)
 
             } else {
                 bubble.alpha = 0.3f

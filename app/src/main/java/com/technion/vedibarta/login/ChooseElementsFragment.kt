@@ -9,39 +9,38 @@ import android.widget.TableRow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import com.technion.vedibarta.POJOs.LoadableData
-import com.technion.vedibarta.POJOs.Loaded
 import com.technion.vedibarta.R
-import com.technion.vedibarta.data.viewModels.UserSetupResources
-import com.technion.vedibarta.data.viewModels.UserSetupViewModel
-import com.technion.vedibarta.data.viewModels.userSetupViewModelFactory
+import com.technion.vedibarta.data.viewModels.*
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 import kotlinx.android.synthetic.main.fragment_choose_characteristics.*
-import java.lang.ClassCastException
 import kotlin.random.Random
 
 /**
  * A simple [Fragment] subclass.
  */
-class ChooseCharacteristicsFragment(private var category: String = "") : VedibartaFragment() {
+class ChooseElementsFragment(
+    private var title: String = "",
+    resource: LiveData<MultilingualTextResource>? = null,
+    chosenList: MutableList<String> = mutableListOf()
+) : VedibartaFragment() {
 
     private val TAG = "CharFragment@Setup"
 
-    private val viewModel: UserSetupViewModel by activityViewModels {
-        userSetupViewModelFactory(
-            requireActivity().applicationContext
+    private val viewModel: ChooseElementsViewModel by viewModels {
+        chooseElementsViewModelFactory(
+            resource, chosenList
         )
     }
 
-    private lateinit var onCharacteristicClick: OnCharacteristicClickListener
+    private var onCharacteristicClick: OnCharacteristicClickListener? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onCharacteristicClick = context as? OnCharacteristicClickListener
-            ?: throw ClassCastException("$context must implement ${OnCharacteristicClickListener::class}")
     }
 
     override fun onCreateView(
@@ -54,24 +53,21 @@ class ChooseCharacteristicsFragment(private var category: String = "") : Vedibar
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("category", category)
+        outState.putString("category", title)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        category = savedInstanceState?.getString("category") ?: category
-        viewModel.userSetupResources.observe(viewLifecycleOwner, Observer { observerHandler(it) })
+        title = savedInstanceState?.getString("category") ?: title
+        viewModel.resource?.observe(viewLifecycleOwner, Observer { observerHandler(it) })
     }
 
-    private fun observerHandler(value: LoadableData<UserSetupResources>) {
-        if (value is Loaded) {
-            val resource = value.data.allCharacteristics
-            val characteristics = value.data.characteristicsByCategory
+    private fun observerHandler(resource: MultilingualTextResource) {
+        val characteristics = resource.getAll().toTypedArray()
 
-            characteristicsTitle.text = category
-            loadCharacteristics(characteristics[category] ?: emptyArray(), resource)
+        characteristicsTitle.text = title
+        loadCharacteristics(characteristics, resource)
 
-        }
     }
 
     private fun loadCharacteristics(
@@ -83,7 +79,7 @@ class ChooseCharacteristicsFragment(private var category: String = "") : Vedibar
             requireContext(),
             characteristicsTable,
             characteristics.toList().shuffled(Random(42)).toTypedArray(),
-            viewModel.chosenCharacteristics,
+            viewModel.chosenList,
             resource
         )
         characteristicsTable.forEach { row ->
@@ -96,10 +92,10 @@ class ChooseCharacteristicsFragment(private var category: String = "") : Vedibar
                                 requireContext(),
                                 characteristics.toList().shuffled(Random(42)).toTypedArray(),
                                 characteristicsTable,
-                                viewModel.chosenCharacteristics,
+                                viewModel.chosenList,
                                 resource
                             )
-                            onCharacteristicClick.onCharacteristicClick(category)
+                            onCharacteristicClick?.onCharacteristicClick(title)
                         }
                 }
             }

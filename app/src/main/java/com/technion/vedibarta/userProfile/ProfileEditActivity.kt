@@ -50,7 +50,7 @@ class ProfileEditActivity : VedibartaActivity(){
         Log.d(TAG, "created ProfileEditActivity")
 
         if (characteristicsViewModel.chosenCharacteristics.isEmpty())
-            characteristicsViewModel.chosenCharacteristics.putAll(student!!.characteristics)
+            characteristicsViewModel.chosenCharacteristics.addAll(student!!.characteristics.keys)
         if (hobbiesViewModel.chosenHobbies.isEmpty())
             hobbiesViewModel.chosenHobbies.addAll(student!!.hobbies)
         characteristicsViewModel.startLoading()
@@ -91,8 +91,8 @@ class ProfileEditActivity : VedibartaActivity(){
 
     private fun setupViewPager(viewPager: ViewPager2) {
         viewPager.isUserInputEnabled = true
-        viewPager.adapter = FragmentListStateAdapter(this, mutableListOf(CharacteristicsFragment(
-            student!!.gender), HobbiesFragment()))
+        viewPager.adapter = FragmentListStateAdapter(this, mutableListOf({CharacteristicsFragment(
+            student!!.gender)}, {HobbiesFragment()}))
         val titleList = listOf(getString(R.string.characteristics_tab_title), getString(R.string.hobbies_tab_title))
         TabLayoutMediator(editTabs, editProfileContainer) { tab, position ->
             tab.text = titleList[position]
@@ -110,7 +110,7 @@ class ProfileEditActivity : VedibartaActivity(){
     private fun commitEditChanges() {
         val startingCharacteristics =  student!!.characteristics
         val startingHobbies = student!!.hobbies
-        student!!.characteristics = characteristicsViewModel.chosenCharacteristics
+        student!!.characteristics = characteristicsViewModel.chosenCharacteristics.map { it to true }.toMap()
         student!!.hobbies = hobbiesViewModel.chosenHobbies
         database.students().userId().build().set(student!!).addOnSuccessListener {
             Log.d("profileEdit", "saved profile changes")
@@ -144,7 +144,7 @@ class ProfileEditActivity : VedibartaActivity(){
                 .setMessage(R.string.edit_discard_changes_message)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     student!!.hobbies = hobbiesViewModel.chosenHobbies
-                    student!!.characteristics = characteristicsViewModel.chosenCharacteristics
+                    student!!.characteristics = characteristicsViewModel.chosenCharacteristics.map { it to true }.toMap()
                     super.onBackPressed()
                 }
                 .setNegativeButton(R.string.no) { _, _ -> super.onBackPressed()}
@@ -157,7 +157,7 @@ class ProfileEditActivity : VedibartaActivity(){
     }
 
     private fun changesOccurred(): Boolean {
-        if (student!!.characteristics.keys != characteristicsViewModel.chosenCharacteristics.keys)
+        if (student!!.characteristics.keys != characteristicsViewModel.chosenCharacteristics.toSet())
             return true
         if (student!!.hobbies.toSet() != hobbiesViewModel.chosenHobbies.toSet())
             return true

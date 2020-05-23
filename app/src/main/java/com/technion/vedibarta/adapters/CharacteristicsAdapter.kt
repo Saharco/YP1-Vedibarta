@@ -3,7 +3,6 @@ package com.technion.vedibarta.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TableLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +14,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextReso
 
 class CharacteristicsAdapter(
     private val categoryCardList: List<CategoryCard>,
-    private val chosenCharacteristics: MutableMap<String, Boolean>,
+    private val chosenCharacteristics: MutableList<String>,
     private val characteristicsResource: MultilingualTextResource
 ) : RecyclerView.Adapter<CharacteristicsAdapter.CharacteristicCardViewHolder>()  {
 
@@ -41,7 +40,7 @@ class CharacteristicsAdapter(
 
         fun bind(
             categoryCard: CategoryCard,
-            chosenCharacteristics: MutableMap<String, Boolean>,
+            chosenCharacteristics: MutableList<String>,
             characteristicsResource: MultilingualTextResource
         ) {
             val title: TextView = itemView.findViewById(R.id.characteristicCardTitle)

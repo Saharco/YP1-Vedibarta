@@ -47,7 +47,7 @@ class UserSetupViewModel(private val context: Context) : ViewModel() {
     var nextButtonText: String = context.resources.getString(R.string.next)
 
 
-    val chosenCharacteristics = mutableMapOf<String, Boolean>()
+    val chosenCharacteristics = mutableListOf<String>()
 
     private val characteristicsResources: LiveData<LoadableData<CharacteristicsResources>> =
         Transformations.switchMap(gender) {

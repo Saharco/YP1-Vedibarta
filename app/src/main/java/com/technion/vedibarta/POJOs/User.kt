@@ -15,14 +15,14 @@ sealed class User(
 
 @Parcelize
 data class Student(
-    override var name: String = "",
+    override val name: String = "",
     override var photo: String? = null,
-    override var gender: Gender = Gender.NONE,
+    override val gender: Gender = Gender.NONE,
     override val uid: String = "",
-    var region: String = "",
-    var school: String = "",
-    var grade: Grade = Grade.NONE,
-    var characteristics: MutableMap<String, Boolean> = mutableMapOf(),
+    val region: String = "",
+    val school: String = "",
+    val grade: Grade = Grade.NONE,
+    var characteristics: Map<String, Boolean> = mapOf(),
     var hobbies: List<String> = emptyList()
 ): User(name, photo, gender, uid)
 

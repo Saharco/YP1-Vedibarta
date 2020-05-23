@@ -226,7 +226,7 @@ class UserProfileActivity : VedibartaActivity(),
                     this,
                     characteristicsTable,
                     studentCharacteristics,
-                    student!!.characteristics,
+                    student!!.characteristics.keys.toMutableList(),
                     characteristicsTask.result!!
                 )
                 characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
