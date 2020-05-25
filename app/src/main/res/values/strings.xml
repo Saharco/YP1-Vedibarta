@@ -139,6 +139,8 @@
     <!-- MainActivity attributes-->
     <string name="main_title">ודיברת</string>
     <string name="main_fab_title">מוצאים חברים</string>
+    <string name="chat_list_action_title">שיחות</string>
+    <string name="classes_list_action_title">כיתות</string>
     <string name="main_menu_search_title">חיפוש</string>
     <string name="user_profile_action_title">פרופיל</string>
     <string name="app_label">Vedibarta</string>

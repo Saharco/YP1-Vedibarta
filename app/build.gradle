@@ -106,6 +106,8 @@ dependencies {
     kapt 'com.android.databinding:compiler:3.1.4'
 
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

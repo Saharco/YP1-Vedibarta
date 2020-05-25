@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity_graph"
+    app:startDestination="@id/chats">
+
+    <fragment
+        android:id="@+id/chats"
+        android:name="com.technion.vedibarta.fragments.ChatListFragment"
+        android:label="ChatListFragment" >
+        <argument
+            android:name="userID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="null" />
+    </fragment>
+    <fragment
+        android:id="@+id/user_profile"
+        android:name="com.technion.vedibarta.fragments.UserProfileFragment"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" >
+        <action
+            android:id="@+id/action_user_profile_to_loginActivity"
+            app:destination="@id/loginActivity" />
+        <action
+            android:id="@+id/action_user_profile_to_profileEditActivity"
+            app:destination="@id/profileEditActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/find_friends"
+        android:name="com.technion.vedibarta.fragments.ChatSearchFragment"
+        android:label="fragment_chat_search"
+        tools:layout="@layout/fragment_chat_search" />
+    <fragment
+        android:id="@+id/classes"
+        android:name="com.technion.vedibarta.fragments.ClassesListFragment"
+        android:label="fragment_classes_list"
+        tools:layout="@layout/fragment_classes_list" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.technion.vedibarta.login.LoginActivity"
+        android:label="LoginActivity" />
+    <activity
+        android:id="@+id/profileEditActivity"
+        android:name="com.technion.vedibarta.userProfile.ProfileEditActivity"
+        android:label="activity_profile_edit"
+        tools:layout="@layout/activity_profile_edit" />
+</navigation>
