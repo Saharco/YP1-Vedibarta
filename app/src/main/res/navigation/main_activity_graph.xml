@@ -31,7 +31,12 @@
         android:id="@+id/find_friends"
         android:name="com.technion.vedibarta.fragments.ChatSearchFragment"
         android:label="fragment_chat_search"
-        tools:layout="@layout/fragment_chat_search" />
+        tools:layout="@layout/fragment_chat_search" >
+        <action
+            android:id="@+id/action_find_friends_to_chatCandidatesActivity"
+            app:destination="@id/chatCandidatesActivity"
+            app:exitAnim="@anim/fragment_fade_exit" />
+    </fragment>
     <fragment
         android:id="@+id/classes"
         android:name="com.technion.vedibarta.fragments.ClassesListFragment"
@@ -46,4 +51,13 @@
         android:name="com.technion.vedibarta.userProfile.ProfileEditActivity"
         android:label="activity_profile_edit"
         tools:layout="@layout/activity_profile_edit" />
+    <activity
+        android:id="@+id/chatCandidatesActivity"
+        android:name="com.technion.vedibarta.chatCandidates.ChatCandidatesActivity"
+        android:label="activity_chat_candidates"
+        tools:layout="@layout/activity_chat_candidates" >
+        <argument
+            android:name="filteredStudents"
+            app:argType="com.technion.vedibarta.POJOs.Student[]" />
+    </activity>
 </navigation>
