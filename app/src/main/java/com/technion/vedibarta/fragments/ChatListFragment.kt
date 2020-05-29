@@ -33,13 +33,12 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
 
 
     private val chatPartnersMap = HashMap<String, ChatMetadata>()
-    private lateinit var mainAdapter: MainAdapter
+    private var mainAdapter: MainAdapter? = null
     private lateinit var searchAdapter: MainsSearchAdapter<String>
 
     companion object {
         const val TAG = "Vedibarta/chat-lobby"
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,34 +46,33 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
     ): View? {
         // Inflate the layout for this fragment
         val v =  inflater.inflate(R.layout.fragment_chat_list, container, false)
+        userId = (activity as MainActivity).userId!!
+        val chatList = v.findViewById<RecyclerView>(R.id.chat_history)
+        chatList.layoutManager = LinearLayoutManager(requireContext())
 
+        searchAdapter = MainSearchByNameAdapter(
+            requireActivity().applicationContext,
+            chatPartnersMap,
+            activity as MainActivity,
+            chatList
+        )
+        mainAdapter = getMainAdapter(chatList)
         return v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        userId = (activity as MainActivity).userId!!
-        if (savedInstanceState == null){
-            chat_history.layoutManager = LinearLayoutManager(requireContext())
-            configureSearchView()
-            toolbar.inflateMenu(R.menu.chat_list_menu)
-            searchView.setMenuItem(toolbar.menu.findItem(R.id.search))
-            updateUserToken()
-            //must be constructed after applicationContext is initialized
-            searchAdapter = MainSearchByNameAdapter(
-                requireActivity().applicationContext,
-                chatPartnersMap,
-                activity as MainActivity,
-                chat_history
-            )
-            mainAdapter = getMainAdapter()
-        }
+        configureSearchView()
+        toolbar.inflateMenu(R.menu.chat_list_menu)
+        searchView.setMenuItem(toolbar.menu.findItem(R.id.search))
+        updateUserToken()
+        //must be constructed after applicationContext is initialized
     }
 
     override fun onStart()
     {
         super.onStart()
-        if (mainAdapter.itemCount == 0)
+        if (mainAdapter!!.itemCount == 0)
         {
             if (VedibartaActivity.student!!.gender == Gender.FEMALE)
                 emptyListMessage.text = resources.getString(R.string.empty_chat_list_message_f)
@@ -83,7 +81,7 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
             chat_history.visibility = View.GONE
         }
 
-        mainAdapter.startListening()
+        mainAdapter!!.startListening()
     }
 
     override fun onStop() {
@@ -93,7 +91,7 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
 
     override fun onDestroy() {
         super.onDestroy()
-        mainAdapter.stopListening()
+        mainAdapter?.stopListening()
     }
 
     private fun configureSearchView() {
@@ -116,11 +114,11 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
         val searchListener = object : MaterialSearchView.SearchViewListener {
             override fun onSearchViewClosed() {
                 searchAdapter.stopListening()
-                mainAdapter.startListening()
+                mainAdapter?.startListening()
             }
 
             override fun onSearchViewShown() {
-                mainAdapter.stopListening()
+                mainAdapter?.stopListening()
                 searchAdapter.startListening()
                 searchAdapter.filter("")
                 searchView.setOnQueryTextListener(queryListener)
@@ -154,7 +152,7 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
             })
     }
 
-    private fun getMainAdapter(): MainAdapter {
+    private fun getMainAdapter(recycler: RecyclerView): MainAdapter {
         val adapterQuery = database.chats().build().whereArrayContains("participantsId", userId!!)
 
         val options =
@@ -166,7 +164,7 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
             requireActivity().applicationContext,
             chatPartnersMap,
             activity as MainActivity,
-            chat_history,
+            recycler,
             options
         )
 

@@ -8,15 +8,22 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.viewModels.CharacteristicsViewModel
+import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
 import com.technion.vedibarta.fragments.UserProfileFragment
 import com.technion.vedibarta.userProfile.ProfilePictureUploadDialog
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -34,6 +41,10 @@ class MainActivity : VedibartaActivity(),
     private val navController by lazy { findNavController(R.id.main_content) }
     private val bottomNavigation by lazy { findViewById<BottomNavigationView>(R.id.bottomNavigationView) }
 
+    private val characteristicsViewModel: CharacteristicsViewModel by viewModels {
+        characteristicsViewModelFactory(applicationContext, Gender.NONE)
+    }
+
     private var selectedImageFile: File? = null
     var selectedImage: Uri? = null
 
@@ -46,6 +57,8 @@ class MainActivity : VedibartaActivity(),
 
         setContentView(R.layout.activity_main)
         bottomNavigation.setupWithNavController(navController)
+
+        characteristicsViewModel.startLoading()
     }
 
     override fun onBackPressed() {
@@ -115,4 +128,6 @@ class MainActivity : VedibartaActivity(),
             }
         }
     }
+
+
 }

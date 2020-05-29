@@ -56,7 +56,7 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
 
     override fun onPause() {
         super.onPause()
-        VedibartaActivity.hideKeyboard(activity as ChatSearchActivity)
+        VedibartaActivity.hideKeyboard(requireActivity())
         regionListSpinner.clearFocus()
         schoolListSpinner.clearFocus()
     }
@@ -156,8 +156,18 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
             schoolListSpinner,
             schoolsName.getAll().toTypedArray()
         )
+        gradeTenth.setOnClickListener { onRadioButtonClicked(it) }
+        gradeEleventh.setOnClickListener { onRadioButtonClicked(it) }
+        gradeTwelfth.setOnClickListener { onRadioButtonClicked(it) }
     }
 
+    private fun onRadioButtonClicked(view: View) {
+        when (view.id) {
+            R.id.gradeTenth -> viewModel.grade = Grade.TENTH
+            R.id.gradeEleventh -> viewModel.grade = Grade.ELEVENTH
+            R.id.gradeTwelfth -> viewModel.grade = Grade.TWELFTH
+        }
+    }
     private fun combineResources(
         schoolsNameLiveData: LiveData<LoadableData<TextResource>>,
         regionsNameLiveData: LiveData<LoadableData<TextResource>>

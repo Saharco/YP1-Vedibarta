@@ -47,6 +47,8 @@
 
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
+    <string name="chat_search_characteristics_title">מאפייני זהות</string>
+    <string name="chat_search_extra_options_title">פרטים אישיים</string>
     <string name="filter_by_school_text">סינון לפי בית ספר</string>
     <string name="filter_by_region_text">סינון לפי מקום מגורים</string>
     <string name="filter_by_grade_text">סינון לפי שכבה</string>
@@ -158,6 +160,8 @@
     <string name="hours">שעות</string>
     <string name="days">ימים</string>
     <string name="yesterday">אתמול</string>
+    <string name="empty_class_list_message_m">אתה לא שותף באף כיתה</string>
+    <string name="empty_class_list_message_f">את לא שותפה באף כיתה </string>
     <string name="empty_chat_list_message_m">אתה לא שותף באף שיחה.\nקדימה, חפש חברים</string>
     <string name="empty_chat_list_message_f">את לא שותפה באף שיחה.\nקדימה, חפשי חברים</string>
 

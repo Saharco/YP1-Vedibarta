@@ -203,7 +203,7 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed{
 
     private fun loadUserData() {
         Tasks.whenAll(hobbiesTask, characteristicsTask, hobbiesImagesTask)
-            .addOnSuccessListener(requireActivity()) {
+            .continueWith {
                 val studentCharacteristics = characteristicsTask.result!!.toCurrentLanguage(
                     VedibartaActivity.student!!.characteristics.keys.toTypedArray()
                 )

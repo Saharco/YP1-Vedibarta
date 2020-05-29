@@ -37,7 +37,6 @@ import com.technion.vedibarta.matching.StudentsMatcher
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.extensions.isInForeground
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.activity_chat_search.*
 import kotlinx.android.synthetic.main.activity_chat_search.editTabs
