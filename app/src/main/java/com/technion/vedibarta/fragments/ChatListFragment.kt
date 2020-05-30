@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -66,7 +67,9 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
         toolbar.inflateMenu(R.menu.chat_list_menu)
         searchView.setMenuItem(toolbar.menu.findItem(R.id.search))
         updateUserToken()
-        //must be constructed after applicationContext is initialized
+        chatSearchFab.setOnClickListener {
+            findNavController().navigate(R.id.action_chats_to_chatSearch)
+        }
     }
 
     override fun onStart()

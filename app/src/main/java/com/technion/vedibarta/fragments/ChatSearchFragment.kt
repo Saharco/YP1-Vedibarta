@@ -11,8 +11,9 @@ import android.util.Log
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -22,8 +23,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
+import com.technion.vedibarta.adapters.FragmentListStateAdapter
+import com.technion.vedibarta.chatSearch.SearchExtraOptionsFragment
 import com.technion.vedibarta.data.viewModels.CharacteristicsViewModel
 import com.technion.vedibarta.data.viewModels.ChatSearchViewModel
 import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
@@ -38,7 +43,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.fragment_chat_search.*
 
 
-class ChatSearchFragment : Fragment() {
+class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
     companion object {
         private const val MATCHING_TIMEOUT = 10L
         private const val MINIMUM_TRANSITION_TIME = 900L
@@ -56,10 +61,6 @@ class ChatSearchFragment : Fragment() {
 
     private lateinit var chatSearchResources: LiveData<LoadableData<ChatSearchResources>>
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -99,31 +100,60 @@ class ChatSearchFragment : Fragment() {
                 }
             }
         })
-
-        toolbar.inflateMenu(R.menu.chat_search_menu)
-        toolbar.setOnMenuItemClickListener {
-            onMenuItemClick(it)
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        setToolbar(toolbar)
+        searchButton.setOnClickListener {
+            onButtonClick()
         }
-
+        setupViewPager(searchUserContainer)
+        setHasOptionsMenu(true)
         viewFlipper.setInAnimation(requireContext(), android.R.anim.fade_in)
         viewFlipper.setOutAnimation(requireContext(), android.R.anim.fade_out)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> requireActivity().onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
+    }
     override fun onStop() {
         super.onStop()
         if (!VedibartaActivity.splashScreen.isIdleNow)
             VedibartaActivity.splashScreen.decrement()
     }
 
-    private fun onMenuItemClick(it: MenuItem): Boolean {
-        when (it.itemId) {
-            R.id.actionChatSearch -> {
-                //TODO pass the chosen filters to database/other activity fo rmatching
-                when(val result = validateChosenDetails()){
-                    is Success -> searchMatch()
-                    is Failure -> displayErrorMessage(result.msg)
-                }
-            }
+
+    private fun setToolbar(tb: Toolbar) {
+        (activity as AppCompatActivity).setSupportActionBar(tb)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
+        tb.setOnMenuItemClickListener { onMenuItemClick(it) }
+    }
+
+    private fun setupViewPager(viewPager: ViewPager2) {
+        viewPager.isUserInputEnabled = true
+        viewPager.adapter = FragmentListStateAdapter(
+            requireActivity(),
+            mutableListOf({ CharacteristicsFragment() }, { SearchExtraOptionsFragment() })
+        )
+        TabLayoutMediator(editTabs, searchUserContainer) { tab, position ->
+            tab.text = "${position + 1}"
+        }.attach()
+    }
+
+
+    private fun onButtonClick() {
+        when (val result = validateChosenDetails()) {
+            is Success -> searchMatch()
+            is Failure -> displayErrorMessage(result.msg)
+        }
+    }
+
+    private fun onMenuItemClick(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> requireActivity().onBackPressed()
         }
         return true
     }
@@ -148,15 +178,15 @@ class ChatSearchFragment : Fragment() {
         val resourcesCombo = chatSearchResources.value as? Loaded
             ?: error("tried to validate the user before done loading resources")
 
-        when(val region = chatSearchViewModel.chosenRegion){
+        when (val region = chatSearchViewModel.chosenRegion) {
             is Filled -> {
                 if (!resourcesCombo.data.regionsName.getAll().contains(region.text))
                     return Failure(getString(R.string.chat_search_wrong_region_message))
             }
         }
 
-        when(val school = chatSearchViewModel.chosenSchool){
-            is Filled ->{
+        when (val school = chatSearchViewModel.chosenSchool) {
+            is Filled -> {
                 if (!resourcesCombo.data.schoolsName.getAll().contains(school.text))
                     return Failure(getString(R.string.chat_search_wrong_school_message))
             }
@@ -181,7 +211,9 @@ class ChatSearchFragment : Fragment() {
             val filteredStudents = students.filter { it.uid != VedibartaActivity.student!!.uid }
             if (filteredStudents.isNotEmpty()) {
                 Log.d(TAG, "Matched students successfully")
-                val action = ChatSearchFragmentDirections.actionFindFriendsToChatCandidatesActivity(filteredStudents.toTypedArray())
+                val action = ChatSearchFragmentDirections.actionChatSearchFragmentToChatCandidatesActivity(
+                    filteredStudents.toTypedArray()
+                )
                 Handler().postDelayed({
                     if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                         findNavController().navigate(action)
@@ -191,7 +223,8 @@ class ChatSearchFragment : Fragment() {
 
             } else {
                 Log.d(TAG, "No matching students found")
-                Toast.makeText(requireContext(), R.string.no_matching_students, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), R.string.no_matching_students, Toast.LENGTH_LONG)
+                    .show()
                 if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                     hideSplash(requireActivity())
                     viewFlipper.showPrevious()
@@ -205,7 +238,8 @@ class ChatSearchFragment : Fragment() {
                 }
             }
             viewFlipper.showPrevious()
-            Toast.makeText(requireContext(), R.string.something_went_wrong, Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), R.string.something_went_wrong, Toast.LENGTH_LONG)
+                .show()
         }
 
         viewFlipper.showNext()
@@ -213,16 +247,21 @@ class ChatSearchFragment : Fragment() {
     }
 
     private fun getSearchAttributes(): SearchAttributes {
-        val school = when(val school = chatSearchViewModel.chosenSchool){
+        val school = when (val school = chatSearchViewModel.chosenSchool) {
             is Filled -> school.text
             else -> null
         }
-        val region = when(val region = chatSearchViewModel.chosenRegion){
+        val region = when (val region = chatSearchViewModel.chosenRegion) {
             is Filled -> region.text
             else -> null
         }
         val grade = chatSearchViewModel.grade.takeIf { it != Grade.NONE }
-        return SearchAttributes(characteristicsViewModel.chosenCharacteristics, region, school, grade)
+        return SearchAttributes(
+            characteristicsViewModel.chosenCharacteristics,
+            region,
+            school,
+            grade
+        )
     }
 
     @Suppress("DEPRECATION")
@@ -335,7 +374,12 @@ class ChatSearchFragment : Fragment() {
         val school: String?,
         val grade: Grade?
     )
+
+    override fun onBackPressed(): Boolean {
+        return false
+    }
 }
+
 sealed class SearchResult
 
 object Success : SearchResult()
