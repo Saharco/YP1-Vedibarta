@@ -9,11 +9,9 @@
         android:id="@+id/chats"
         android:name="com.technion.vedibarta.fragments.ChatListFragment"
         android:label="ChatListFragment" >
-        <argument
-            android:name="userID"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="null" />
+        <action
+            android:id="@+id/action_chats_to_chatSearch"
+            app:destination="@id/chatSearch" />
     </fragment>
     <fragment
         android:id="@+id/user_profile"
@@ -26,16 +24,6 @@
         <action
             android:id="@+id/action_user_profile_to_profileEditActivity"
             app:destination="@id/profileEditActivity" />
-    </fragment>
-    <fragment
-        android:id="@+id/find_friends"
-        android:name="com.technion.vedibarta.fragments.ChatSearchFragment"
-        android:label="fragment_chat_search"
-        tools:layout="@layout/fragment_chat_search" >
-        <action
-            android:id="@+id/action_find_friends_to_chatCandidatesActivity"
-            app:destination="@id/chatCandidatesActivity"
-            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
     <fragment
         android:id="@+id/classes"
@@ -51,13 +39,25 @@
         android:name="com.technion.vedibarta.userProfile.ProfileEditActivity"
         android:label="activity_profile_edit"
         tools:layout="@layout/activity_profile_edit" />
-    <activity
-        android:id="@+id/chatCandidatesActivity"
-        android:name="com.technion.vedibarta.chatCandidates.ChatCandidatesActivity"
-        android:label="activity_chat_candidates"
-        tools:layout="@layout/activity_chat_candidates" >
-        <argument
-            android:name="filteredStudents"
-            app:argType="com.technion.vedibarta.POJOs.Student[]" />
-    </activity>
+    <navigation
+        android:id="@+id/chatSearch"
+        app:startDestination="@id/chatSearchFragment" >
+        <fragment
+            android:id="@+id/chatSearchFragment"
+            android:name="com.technion.vedibarta.fragments.ChatSearchFragment"
+            android:label="ChatSearchFragment" >
+            <action
+                android:id="@+id/action_chatSearchFragment_to_chatCandidatesActivity"
+                app:destination="@id/chatCandidatesActivity" />
+        </fragment>
+        <activity
+            android:id="@+id/chatCandidatesActivity"
+            android:name="com.technion.vedibarta.chatCandidates.ChatCandidatesActivity"
+            android:label="activity_chat_candidates"
+            tools:layout="@layout/activity_chat_candidates">
+            <argument
+                android:name="filteredStudents"
+                app:argType="com.technion.vedibarta.POJOs.Student[]" />
+        </activity>
+    </navigation>
 </navigation>

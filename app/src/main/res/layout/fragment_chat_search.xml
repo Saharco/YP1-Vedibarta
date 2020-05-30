@@ -21,18 +21,17 @@
             android:indeterminate="true"
             android:visibility="visible" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/mainLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:visibility="visible">
 
-            <FrameLayout
+            <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/toolBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -54,74 +53,55 @@
                         style="@style/ToolbarTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/main_title" />
+                        android:text="@string/chat_search_title" />
 
                 </androidx.appcompat.widget.Toolbar>
 
-            </FrameLayout>
+            </com.google.android.material.appbar.AppBarLayout>
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/fragmentsLayout"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/editTabs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolBarLayout"
+                app:tabBackground="@drawable/tab_layout_selector"
+                app:tabIndicatorHeight="0dp"
+                app:tabRippleColor="@null"
+                app:tabSelectedTextColor="@android:color/white"
+                app:tabTextColor="@color/textPrimary" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/searchUserContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:animateLayoutChanges="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toTopOf="@id/searchButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editTabs" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/searchButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
                 android:layout_marginTop="8dp"
-                android:animateLayoutChanges="true">
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/chat_search_button"
+                app:backgroundTint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/searchUserContainer" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/chat_search_characteristics_title"
-                        android:textColor="@color/textPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/characteristicsSearch"
-                        android:name="com.technion.vedibarta.fragments.CharacteristicsFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="16dp"
-                        android:alpha="0.6"
-                        android:background="@color/textSecondary"
-                        app:elevation="8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/userDescription" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="@string/chat_search_extra_options_title"
-                        android:textColor="@color/textPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/extraOptionsSearch"
-                        android:name="com.technion.vedibarta.chatSearch.SearchExtraOptionsFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="40dp" />
-                </LinearLayout>
-
-            </androidx.core.widget.NestedScrollView>
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

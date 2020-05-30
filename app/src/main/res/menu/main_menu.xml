@@ -16,9 +16,4 @@
         android:icon="@drawable/ic_account_circle_white_24dp"
         android:title="@string/user_profile_action_title" />
 
-    <item
-        android:id="@+id/find_friends"
-        android:icon="@drawable/ic_find_friends"
-        android:title="@string/main_fab_title" />
-
 </menu>
