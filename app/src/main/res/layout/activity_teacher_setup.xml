@@ -67,7 +67,7 @@
 
 
 
-        <com.technion.vedibarta.utilities.CustomViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/userSetupContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -78,18 +78,18 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/nextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/nextButton"
-            android:layout_marginEnd="32dp"
             android:layout_marginStart="32dp"
-            android:textSize="18sp"
-            app:backgroundTint="@color/colorAccentDark"
+            android:layout_marginEnd="32dp"
             android:text="@string/next"
-            app:layout_constraintTop_toBottomOf="@id/userSetupContainer"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="18sp"
+            app:backgroundTint="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userSetupContainer" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

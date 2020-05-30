@@ -1,26 +1,27 @@
 package com.technion.vedibarta.teacher
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.inflate
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
+import android.widget.AutoCompleteTextView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.view.isInvisible
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.checkbox.MaterialCheckBox
+import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
-import kotlinx.android.synthetic.main.teacher_setup_school_card.*
 
 class TeacherPersonalInfoFragment : Fragment() {
+
+    //TODO: move into ViewModel
+    val schoolsInfoList: MutableList<SchoolInfo> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,26 +29,18 @@ class TeacherPersonalInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_teacher_personal_info, container, false)
 
-        view.findViewById<NestedScrollView>(R.id.teacherPersonalInfoScrollView).isNestedScrollingEnabled = false
+        view.findViewById<NestedScrollView>(R.id.teacherPersonalInfoScrollView).isNestedScrollingEnabled =
+            false
         val schoolList = view.findViewById<RecyclerView>(R.id.schoolList)
         schoolList.isNestedScrollingEnabled = false
         schoolList.layoutManager = LinearLayoutManager(activity)
-        val adapter = SchoolsAdapter(schoolList)
+        val adapter = SchoolsAdapter({ onAddSchoolButtonClick() }, schoolsInfoList)
         schoolList.adapter = adapter
 
         return view
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TeacherPersonalInfoFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             TeacherPersonalInfoFragment().apply {
@@ -55,70 +48,119 @@ class TeacherPersonalInfoFragment : Fragment() {
                 }
             }
     }
-}
 
-class SchoolsAdapter(private val recyclerView: RecyclerView): RecyclerView.Adapter<SchoolsAdapter.SchoolsViewHolder>() {
-    private val TAG = "SchoolsAdapter"
-    private var numOfSchools = 1
+    fun onAddSchoolButtonClick() {
+        val dialog = MaterialDialog(requireContext())
+        dialog.cornerRadius(20f)
+            .noAutoDismiss()
+            .customView(R.layout.fragment_add_school_dialog)
+            .show {
+                initMaterialDialog(this)
 
-    private val schoolCardsList = mutableListOf<Int>()
-
-    class SchoolsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val addSchool = v.findViewById<FloatingActionButton>(R.id.addSchoolButton)
-        val addSchoolText = v.findViewById<TextView>(R.id.addSchoolText)
-        val removeSchool = v.findViewById<ImageButton>(R.id.removeSchoolButton)
-        var dummy: Int = 0
-
-        fun makeAddSchoolInvisible() {
-            addSchool.isInvisible = true
-            addSchoolText.isInvisible = true
-        }
-
-        fun makeAddSchoolVisible() {
-            addSchool.isInvisible = false
-            addSchoolText.isInvisible = false
-        }
+            }
     }
 
+    private fun initMaterialDialog(materialDialog: MaterialDialog) {
+        val grades = mutableListOf<Grade>()
+        materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTenth)
+            .setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked)
+                    grades.add(Grade.TENTH)
+                else
+                    grades.remove(Grade.TENTH)
+            }
+        materialDialog.findViewById<MaterialCheckBox>(R.id.gradeEleventh)
+            .setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked)
+                    grades.add(Grade.ELEVENTH)
+                else
+                    grades.remove(Grade.ELEVENTH)
+            }
+        materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTwelfth)
+            .setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked)
+                    grades.add(Grade.TWELFTH)
+                else
+                    grades.remove(Grade.TWELFTH)
+            }
+        val name = materialDialog.findViewById<AutoCompleteTextView>(R.id.schoolListSpinner)
+        val region = materialDialog.findViewById<AutoCompleteTextView>(R.id.regionListSpinner)
+        materialDialog.findViewById<MaterialButton>(R.id.addButton)
+            .setOnClickListener {
+                schoolsInfoList.add(
+                    SchoolInfo(
+                        name.text.toString(),
+                        region.text.toString(),
+                        grades
+                    )
+                )
+                schoolList.adapter!!.notifyItemInserted(schoolsInfoList.size)
+                materialDialog.dismiss()
+            }
+
+        materialDialog.findViewById<MaterialButton>(R.id.cancelButton)
+            .setOnClickListener { materialDialog.dismiss() }
+    }
+}
+
+class SchoolsAdapter(
+    private val addButtonLambda: () -> Unit,
+    private val schoolsInfoList: MutableList<SchoolInfo>
+) :
+    RecyclerView.Adapter<SchoolsAdapter.SchoolsViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SchoolsViewHolder {
-        schoolCardsList.add(1)
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.teacher_setup_school_card, parent, false)
-        val holder = SchoolsViewHolder(v)
-        if (numOfSchools == 1) {
-            holder.removeSchool.isInvisible = true
+        return if (viewType == 0) {
+            val schoolAddButtonView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.add_school_card, parent, false)
+            SchoolsViewHolder.AddSchoolsViewHolder(schoolAddButtonView, addButtonLambda)
+
+        } else {
+            val schoolCardView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.teacher_setup_school_card, parent, false)
+            SchoolsViewHolder.SchoolsCardViewHolder(schoolCardView)
         }
-        return holder
+
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position > 0) position else 0
     }
 
     override fun onBindViewHolder(holder: SchoolsViewHolder, position: Int) {
-        holder.addSchool.setOnClickListener {
-            numOfSchools++
-            Log.d(TAG, "numOfSchools: $numOfSchools")
-            Log.d(TAG, "position: $position")
-            schoolCardsList.add(1)
-            holder.dummy = schoolCardsList[position]
-            holder.makeAddSchoolInvisible()
-            holder.removeSchool.isInvisible = false
-            notifyItemInserted(position+1)
-        }
-        holder.removeSchool.setOnClickListener {
-            numOfSchools--
-            Log.d(TAG, "numOfSchools: $numOfSchools")
-            Log.d(TAG, "position: $position")
-
-            if (position == numOfSchools) {
-                val prevHolder = recyclerView.findViewHolderForAdapterPosition(position - 1)
-                (prevHolder as SchoolsViewHolder).makeAddSchoolVisible()
-            }
-            if (numOfSchools == 1) {
-                val prevHolder = recyclerView.findViewHolderForAdapterPosition(0)
-                (prevHolder as SchoolsViewHolder).removeSchool.isInvisible = true
-            }
-
-            schoolCardsList.removeAt(position)
-            notifyItemRemoved(position)
+        when (holder) {
+            is SchoolsViewHolder.AddSchoolsViewHolder -> holder.bind()
+            is SchoolsViewHolder.SchoolsCardViewHolder -> holder.bind(schoolsInfoList[position-1])
         }
     }
 
-    override fun getItemCount() = numOfSchools
+    override fun getItemCount() = schoolsInfoList.size + 1
+
+    sealed class SchoolsViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+
+        class AddSchoolsViewHolder(itemView: View, private val addButtonLambda: () -> Unit) :
+            SchoolsViewHolder(itemView) {
+
+            fun bind() {
+                val addSchoolButton = itemView.findViewById<TextView>(R.id.addSchoolButton)
+                addSchoolButton.setOnClickListener {
+                    addButtonLambda()
+                }
+            }
+        }
+
+        class SchoolsCardViewHolder(itemView: View) : SchoolsViewHolder(itemView) {
+            fun bind(schoolInfo: SchoolInfo) {
+
+            }
+
+        }
+    }
+
 }
+
+data class SchoolInfo(
+    val schoolName: String,
+    val schoolRegion: String,
+    val grades: List<Grade>
+)
