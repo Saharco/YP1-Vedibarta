@@ -1,13 +1,11 @@
 package com.technion.vedibarta.activity
 
-import android.view.View
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
-import com.facebook.appevents.internal.ActivityLifecycleTracker.getCurrentActivity
 import com.technion.vedibarta.activity.Utillities.Companion.sleep
 import com.technion.vedibarta.activity.Utillities.Companion.waitForActivity
 import com.technion.vedibarta.R
@@ -16,15 +14,7 @@ import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.activity.Utillities.Companion.TableLayoutHandler
-import com.technion.vedibarta.activity.Utillities.Companion.firstWithText
-import com.technion.vedibarta.activity.Utillities.Companion.partialyHiddenViewClick
 import com.technion.vedibarta.activity.Utillities.Companion.setChecked
-import com.technion.vedibarta.chatCandidates.ChatCandidatesActivity
-import com.technion.vedibarta.chatRoom.ChatRoomActivity
-import org.hamcrest.BaseMatcher
-import org.hamcrest.Description
-import org.hamcrest.Matcher
-import org.hamcrest.TypeSafeMatcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -66,7 +56,7 @@ class TestChatCandidates
         sleep(0.5)
         onView(withId(R.id.schoolFilterSwitch)).perform(setChecked(true))
         sleep(1)
-        onView(withId(R.id.schoolListSpinner)).perform(replaceText("מקיף ליאו בק"))
+        onView(withId(R.id.schoolListSpinnerLayout)).perform(replaceText("מקיף ליאו בק"))
         onView(withId(R.id.actionChatSearch)).perform(click())
         sleep(0.5)
         onView(withText("OK")).perform(click())
@@ -98,7 +88,7 @@ class TestChatCandidates
         onView(withId(R.id.searchUserContainer)).perform(swipeLeft())
         onView(withId(R.id.schoolFilterSwitch)).perform(setChecked(true))
         sleep(1)
-        onView(withId(R.id.schoolListSpinner)).perform(replaceText("מקיף עש יגאל אלון"))
+        onView(withId(R.id.schoolListSpinnerLayout)).perform(replaceText("מקיף עש יגאל אלון"))
 
         //search
         onView(withId(R.id.actionChatSearch)).perform(click())

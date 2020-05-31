@@ -58,11 +58,11 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
         super.onPause()
         VedibartaActivity.hideKeyboard(activity as ChatSearchActivity)
         regionListSpinner.clearFocus()
-        schoolListSpinner.clearFocus()
+        schoolListSpinnerLayout.clearFocus()
     }
 
     private fun onSchoolSelectedListener(position: Int) {
-        val schoolName = schoolListSpinner.adapter.getItem(position).toString()
+        val schoolName = schoolListSpinnerLayout.adapter.getItem(position).toString()
         val region = schoolAndRegionMap[schoolName].toString()
 
         regionListSpinner.text = SpannableStringBuilder(region)
@@ -73,26 +73,26 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
     }
 
     private fun onRegionSelectedListener(position: Int) {
-        schoolListSpinner.text = SpannableStringBuilder("")
+        schoolListSpinnerLayout.text = SpannableStringBuilder("")
         val region = regionListSpinner.adapter.getItem(position).toString()
         viewModel.chosenRegion = Filled(region)
         viewModel.chosenSchool = Filled("")
 
         val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
 
-        populateAutoTextView(requireContext(), schoolListSpinner, schoolList)
+        populateAutoTextView(requireContext(), schoolListSpinnerLayout, schoolList)
 
         VedibartaActivity.hideKeyboard(requireActivity())
     }
 
     private fun schoolOnCheckedChanged(isChecked: Boolean) {
-        schoolListSpinner.text.clear()
+        schoolListSpinnerLayout.text.clear()
         viewModel.chosenSchool = Unfilled
         VedibartaActivity.hideKeyboard(requireActivity())
         if (isChecked) {
-            schoolListSpinner.visibility = View.VISIBLE
+            schoolListSpinnerLayout.visibility = View.VISIBLE
         } else {
-            schoolListSpinner.visibility = View.GONE
+            schoolListSpinnerLayout.visibility = View.GONE
         }
     }
 
@@ -128,19 +128,19 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
         regionFilterSwitch.setOnCheckedChangeListener { _, isChecked -> regionOnCheckedChanged(isChecked) }
 
         //---DropDownList Views---
-        schoolListSpinner.setOnItemClickListener { _, _, pos, _ -> onSchoolSelectedListener(pos) }
+        schoolListSpinnerLayout.setOnItemClickListener { _, _, pos, _ -> onSchoolSelectedListener(pos) }
         regionListSpinner.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
 
         regionListSpinner.doOnTextChanged { text, _, _, _ ->
             populateAutoTextView(
                 requireContext(),
-                schoolListSpinner,
+                schoolListSpinnerLayout,
                 schoolsName.getAll().toTypedArray()
             )
             viewModel.chosenRegion = if (text.isNullOrEmpty()) Unfilled else Filled(text.toString())
         }
 
-        schoolListSpinner.doOnTextChanged { text, _, _, _ ->
+        schoolListSpinnerLayout.doOnTextChanged { text, _, _, _ ->
             viewModel.chosenSchool = if (text.isNullOrEmpty()) Unfilled else Filled(text.toString())
         }
 
@@ -153,7 +153,7 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
         )
         populateAutoTextView(
             requireContext(),
-            schoolListSpinner,
+            schoolListSpinnerLayout,
             schoolsName.getAll().toTypedArray()
         )
     }

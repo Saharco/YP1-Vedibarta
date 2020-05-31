@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/teacherCardViewSchool"
+    style="@style/CustomCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="16dp"
     android:animateLayoutChanges="true"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:layoutDirection="rtl"
     app:cardCornerRadius="10dp"
-    app:cardElevation="5dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    app:cardElevation="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,31 +67,39 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/gradeTwelfth"
+                android:id="@+id/gradeTenth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:background="@android:color/transparent"
                 android:clickable="false"
-                android:text="@string/user_setup_grade_twelfth" />
+                android:focusable="false"
+                android:text="@string/teacher_setup_grade_tenth" />
+
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/gradeEleventh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:background="@android:color/transparent"
                 android:clickable="false"
-                android:text="@string/user_setup_grade_eleventh" />
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="@string/teacher_setup_grade_eleventh" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
-                android:id="@+id/gradeTenth"
+                android:id="@+id/gradeTwelfth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:background="@android:color/transparent"
                 android:clickable="false"
-                android:text="@string/user_setup_grade_tenth" />
+                android:focusable="false"
+                android:text="@string/teacher_setup_grade_twelfth" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

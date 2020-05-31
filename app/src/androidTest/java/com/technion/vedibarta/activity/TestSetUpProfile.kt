@@ -1,12 +1,10 @@
 package com.technion.vedibarta.activity
 
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -15,14 +13,11 @@ import com.facebook.appevents.internal.ActivityLifecycleTracker.getCurrentActivi
 import com.technion.vedibarta.activity.Utillities.Companion.sleep
 import com.technion.vedibarta.activity.Utillities.Companion.waitForActivity
 import com.technion.vedibarta.R
-import com.technion.vedibarta.activity.Utillities.Companion.logout
 import com.technion.vedibarta.activity.Utillities.Companion.partialyHiddenViewClick
 import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.login.UserSetupActivity
-import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -83,7 +78,7 @@ class TestSetUpProfile
         sleep(0.3)
         failedFinishClick()
 
-        onView(withId(R.id.schoolListSpinner)).perform(scrollTo()).perform(replaceText("מקיף ליאו בק"))
+        onView(withId(R.id.schoolListSpinnerLayout)).perform(scrollTo()).perform(replaceText("מקיף ליאו בק"))
         onView(withId(R.id.regionListSpinner)).perform(scrollTo()).perform(replaceText("חיפה"))
         sleep(0.3)
         failedFinishClick()

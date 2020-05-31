@@ -16,6 +16,25 @@
         <item name="android:colorBackground">@color/background</item>
         <item name="colorOnBackground">@color/lightPrimary</item>
     </style>
+
+    <style name="CustomAutoCompleteTextView" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/textSecondary</item>
+        <item name="hintTextColor">@color/colorAccent</item>
+        <item name="endIconTint">@color/colorAccent</item>
+
+    </style>
+
+    <style name="CustomCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="android:colorLongPressedHighlight">@color/colorAccentLight</item>
+    </style>
+
+    <style name="CustomInputTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/colorAccent</item>
+        <item name="android:textColorHint">@color/textSecondary</item>
+        <item name="hintTextColor">@color/colorAccent</item>
+        <item name="helperTextTextColor">@color/textSecondary</item>
+    </style>
     <style name="AppTheme.ProgressBar">
         <item name="colorAccent">@android:color/white</item>
     </style>
@@ -25,7 +44,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
-
+    
     <style name="ToolbarTitle" parent="TextAppearance.AppCompat.Title">
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>

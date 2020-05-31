@@ -52,7 +52,7 @@
                     app:showText="false" />
 
                 <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/schoolListSpinner"
+                    android:id="@+id/schoolListSpinnerLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"

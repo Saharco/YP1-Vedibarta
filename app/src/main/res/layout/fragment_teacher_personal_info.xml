@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
-        tools:context=".teacher.TeacherPersonalInfoFragment">
+        tools:context=".fragments.TeacherPersonalInfoFragment">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/genderText"
@@ -98,9 +98,9 @@
             android:id="@+id/cardViewName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="60dp"
-            android:layout_marginEnd="56dp"
+            android:layout_marginEnd="16dp"
             android:animateLayoutChanges="true"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp"
@@ -119,14 +119,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <com.github.zagum.expandicon.ExpandIconView
-                        android:id="@+id/nameArrowButton"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="8dp"
-                        app:eiv_color="@color/colorAccentDark" />
 
                     <TextView
                         android:id="@+id/personalInfoButton"
@@ -155,60 +147,54 @@
                     android:padding="24dp"
                     android:visibility="visible">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textViewFirstNameTitle"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textFieldFirstNameLayout"
+                        style="@style/CustomInputTextField"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/user_setup_first_name_title"
-                        android:textColor="@color/textPrimary"
-                        android:textStyle="bold"
+                        android:hint="@string/user_setup_first_name_title"
+                        android:layoutDirection="rtl"
+                        app:errorEnabled="true"
+                        app:helperText="@string/text_field_hint"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
-                    </androidx.appcompat.widget.AppCompatTextView>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textFieldFirstName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="15sp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textFieldFirstName"
+                        </com.google.android.material.textfield.TextInputEditText>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textFieldLastNameLayout"
+                        style="@style/CustomInputTextField"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:digits="@string/allowed_letters"
-                        android:hint="@string/text_field_hint"
-                        android:imeOptions="flagNoExtractUi"
-                        android:textSize="15sp"
+                        android:layout_marginTop="8dp"
+                        android:hint="@string/user_setup_last_name_title"
+                        android:layoutDirection="rtl"
+                        app:errorEnabled="true"
+                        app:helperText="@string/text_field_hint"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textViewFirstNameTitle">
+                        app:layout_constraintTop_toBottomOf="@id/textFieldFirstNameLayout">
 
-                    </com.google.android.material.textfield.TextInputEditText>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/textFieldLastName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="15sp">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textViewLastNameTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/user_setup_last_name_title"
-                        android:textColor="@color/textPrimary"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textFieldFirstName">
+                        </com.google.android.material.textfield.TextInputEditText>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    </androidx.appcompat.widget.AppCompatTextView>
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textFieldLastName"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:digits="@string/allowed_letters"
-                        android:hint="@string/text_field_hint"
-                        android:imeOptions="flagNoExtractUi"
-                        android:textSize="15sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textViewLastNameTitle">
-
-                    </com.google.android.material.textfield.TextInputEditText>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
@@ -220,9 +206,9 @@
             android:id="@+id/schoolListLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="40dp"
             android:background="@android:color/white"
             app:cardCornerRadius="10dp"
@@ -253,14 +239,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="8dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/schoolList"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent" />
                 </LinearLayout>
 
             </LinearLayout>
