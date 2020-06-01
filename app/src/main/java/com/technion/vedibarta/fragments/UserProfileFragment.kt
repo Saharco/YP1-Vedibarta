@@ -164,6 +164,7 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed{
             FirebaseAuth.getInstance().signOut()
             LoginManager.getInstance().logOut()
             findNavController().navigate(R.id.action_user_profile_to_loginActivity)
+            requireActivity().finish()
         }
     }
 
