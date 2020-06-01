@@ -25,7 +25,8 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/doneButton"
@@ -37,7 +38,8 @@
             app:layout_constraintBottom_toBottomOf="@id/editTabs"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/editTabs"
-            app:srcCompat="@drawable/ic_done_accent" />
+            app:srcCompat="@drawable/ic_done_accent"
+            tools:visibility="visible"/>
 
         <ImageView
             android:id="@+id/backButton"
@@ -48,7 +50,8 @@
             app:layout_constraintBottom_toBottomOf="@id/editTabs"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/editTabs"
-            app:srcCompat="@drawable/ic_arrow_back_accent" />
+            app:srcCompat="@drawable/ic_arrow_back_accent"
+            tools:visibility="visible"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/editTabs"

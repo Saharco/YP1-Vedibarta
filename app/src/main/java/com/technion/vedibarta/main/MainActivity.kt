@@ -17,11 +17,9 @@ import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
-import com.technion.vedibarta.data.loadHobbies
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -65,7 +63,7 @@ class MainActivity : VedibartaActivity()
         RemoteTextResourcesManager(this)
             .findMultilingualResource("hobbies/all")
 
-        loadHobbies(this)
+//        loadHobbiesCards(this)
     }
 
     override fun onStart()

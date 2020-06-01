@@ -105,7 +105,7 @@ class UserProfileActivity : VedibartaActivity(),
     }
 
     private fun resetTables() {
-        characteristicsTable.removeAllViews()
+        bubblesRecycleView.removeAllViews()
         hobbiesTable.removeAllViews()
 
     }
@@ -224,12 +224,12 @@ class UserProfileActivity : VedibartaActivity(),
 
                 VedibartaFragment.populateCharacteristicsTable(
                     this,
-                    characteristicsTable,
+                    bubblesRecycleView,
                     studentCharacteristics,
                     student!!.characteristics.keys.toMutableList(),
                     characteristicsTask.result!!
                 )
-                characteristicsTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+                bubblesRecycleView.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
 
                 val hobbies = hobbiesTask.result!!.toCurrentLanguage(student!!.hobbies.toTypedArray())
 

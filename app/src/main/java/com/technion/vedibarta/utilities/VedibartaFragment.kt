@@ -78,11 +78,11 @@ open class VedibartaFragment : Fragment() {
                 for (j in 0 until steps) {
                     if (i + j >= characteristics.size)
                         break
-                    val bubbleFrame = LayoutInflater.from(context).inflate(R.layout.characteristic_bubble,
+                    val bubbleFrame = LayoutInflater.from(context).inflate(R.layout.bubble_without_background,
                         null
                     ) as ConstraintLayout
                     val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
-                    val text = bubbleFrame.findViewById(R.id.characteristicText) as TextView
+                    val text = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
 
                     if (isContained(
                             studentCharacteristics,
@@ -141,7 +141,7 @@ open class VedibartaFragment : Fragment() {
             val bubbleFrame = view as ConstraintLayout
             val viewPos = view.id % steps
             val bubble = (bubbleFrame.findViewById(R.id.invisibleBubble) as TextView)
-            val text = bubbleFrame.findViewById(R.id.characteristicText) as TextView
+            val text = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
             val char = characteristicsResource.toBaseLanguage(characteristics[view.id])
 
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
@@ -194,17 +194,17 @@ open class VedibartaFragment : Fragment() {
                         break
 
                     val bubbleFrame = LayoutInflater.from(context).inflate(
-                        R.layout.user_profile_bubble_hobby,
+                        R.layout.bubble_with_background,
                         null
                     ) as ConstraintLayout
-                    val bubblePhoto = bubbleFrame.findViewById(R.id.hobbyPhoto) as CircleImageView
+                    val bubblePhoto = bubbleFrame.findViewById(R.id.photo) as CircleImageView
                     val myOptions = RequestOptions().override(100, 100)
                     Glide.with(context)
                         .asBitmap()
                         .apply(myOptions)
                         .load(hobbiesPhotos["${hobbiesResource.toBaseLanguage(hobbies[i + j])}.jpg"])
                         .into(bubblePhoto)
-                    val bubbleText = bubbleFrame.findViewById(R.id.hobbyText) as TextView
+                    val bubbleText = bubbleFrame.findViewById(R.id.text) as TextView
 
                     bubbleText.text = hobbies[i + j]
                     val hobby = hobbiesResource.toBaseLanguage(hobbies[i + j])
@@ -246,7 +246,7 @@ open class VedibartaFragment : Fragment() {
             val row = view.id / steps
             val tableRow = table[row] as TableRow
             val bubbleFrame: ConstraintLayout = view as ConstraintLayout
-            val bubblePhoto = bubbleFrame.findViewById(R.id.hobbyPhoto) as CircleImageView
+            val bubblePhoto = bubbleFrame.findViewById(R.id.photo) as CircleImageView
 
             val hobby = hobbiesResource.toBaseLanguage(hobbies[view.id])
             if (tableRow[view.id % steps].tag == NON_SELECTED_BUBBLE) {
