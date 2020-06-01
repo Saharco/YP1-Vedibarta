@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            style="@style/ToolbarTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:drawableEnd="@drawable/ic_class"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="@string/create_class_title"
+            android:textColor="@color/textPrimary"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/formWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleLayout">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/classNameWrapper"
+            style="@style/CustomInputTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/class_name_hint"
+            android:layoutDirection="rtl"
+            app:helperText="@string/text_field_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/className"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/subjectWrapper"
+            style="@style/CustomInputTextField"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/subject_hint"
+            android:layoutDirection="rtl"
+            app:errorEnabled="true"
+            app:helperText="@string/text_field_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/classDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:textDirection="rtl" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/classPhoto"
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/formWrapper"
+        app:srcCompat="@drawable/ic_photo_default_profile_man" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addPhotoFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layoutDirection="ltr"
+        app:layout_constraintBottom_toBottomOf="@id/classPhoto"
+        app:layout_constraintEnd_toEndOf="@id/classPhoto"
+        app:srcCompat="@drawable/ic_camera_white" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

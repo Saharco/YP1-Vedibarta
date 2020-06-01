@@ -7,9 +7,11 @@ import java.io.Serializable
 
 @Parcelize
 data class Class(
-    val name: String = "",
+    var name: String = "",
     @DocumentId
     val id: String = "",
-    val studentsIDs: List<String> = emptyList(),
-    val teacherID: String = ""
+    var studentsIDs: List<String> = emptyList(),
+    val teacherID: String = "",
+    var description: String = "",
+    var photo: String? = null
 ): Parcelable, Serializable

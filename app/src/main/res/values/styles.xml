@@ -25,10 +25,6 @@
 
     </style>
 
-    <style name="CustomCardView" parent="Widget.MaterialComponents.CardView">
-        <item name="android:colorLongPressedHighlight">@color/colorAccentLight</item>
-    </style>
-
     <style name="CustomInputTextField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/colorAccent</item>
         <item name="android:textColorHint">@color/textSecondary</item>
