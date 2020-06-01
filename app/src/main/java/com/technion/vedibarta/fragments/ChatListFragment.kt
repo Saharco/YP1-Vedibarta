@@ -176,7 +176,7 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
     }
 
     override fun onBackPressed(): Boolean {
-        if (searchView.isShown) {
+        if (searchView.isSearchOpen) {
             searchView.closeSearch()
             return true
         }
