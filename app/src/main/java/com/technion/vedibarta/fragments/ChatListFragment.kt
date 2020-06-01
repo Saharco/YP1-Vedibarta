@@ -68,7 +68,7 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
         searchView.setMenuItem(toolbar.menu.findItem(R.id.search))
         updateUserToken()
         chatSearchFab.setOnClickListener {
-            findNavController().navigate(R.id.action_chats_to_chatSearch)
+            findNavController().navigate(R.id.action_chats_to_chatSearchActivity)
         }
     }
 

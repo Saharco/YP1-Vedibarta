@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_search_activity_graph"
+    app:startDestination="@id/chatSearchFragment">
+
+    <fragment
+        android:id="@+id/chatSearchFragment"
+        android:name="com.technion.vedibarta.fragments.ChatSearchFragment"
+        android:label="ChatSearchFragment" >
+        <action
+            android:id="@+id/action_chatSearchFragment_to_chatCandidatesActivity"
+            app:destination="@id/chatCandidatesActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/chatCandidatesActivity"
+        android:name="com.technion.vedibarta.chatCandidates.ChatCandidatesActivity"
+        android:label="activity_chat_candidates"
+        tools:layout="@layout/activity_chat_candidates" >
+        <argument
+            android:name="filteredStudents"
+            app:argType="com.technion.vedibarta.POJOs.Student[]" />
+    </activity>
+</navigation>

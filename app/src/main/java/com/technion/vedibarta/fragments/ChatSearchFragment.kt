@@ -18,21 +18,16 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
+import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.chatSearch.SearchExtraOptionsFragment
-import com.technion.vedibarta.data.viewModels.CharacteristicsViewModel
 import com.technion.vedibarta.data.viewModels.ChatSearchViewModel
-import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
-import com.technion.vedibarta.data.viewModels.chatSearchViewModelFactory
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.matching.StudentsMatcher
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -43,7 +38,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.fragment_chat_search.*
 
 
-class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
+class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
     companion object {
         private const val MATCHING_TIMEOUT = 10L
         private const val MINIMUM_TRANSITION_TIME = 900L
@@ -51,27 +46,8 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
     }
 
 
-    private val chatSearchViewModel: ChatSearchViewModel by viewModels {
-        chatSearchViewModelFactory(requireActivity().applicationContext)
-    }
+    private val viewModel: ChatSearchViewModel by activityViewModels()
 
-    private val characteristicsViewModel: CharacteristicsViewModel by activityViewModels {
-        characteristicsViewModelFactory(requireActivity().applicationContext, Gender.NONE)
-    }
-
-    private lateinit var chatSearchResources: LiveData<LoadableData<ChatSearchResources>>
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        chatSearchResources = combineResources(
-            chatSearchViewModel.schoolsName,
-            chatSearchViewModel.regionsName,
-            characteristicsViewModel.characteristicsResources
-        )
-
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,9 +59,15 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        chatSearchResources.observe(viewLifecycleOwner, Observer {
+        setHasOptionsMenu(true)
+        setToolbar(toolbar)
+        searchButton.setOnClickListener {
+            viewModel.searchPressed()
+        }
+        viewModel.resources.observe(viewLifecycleOwner) {
             when (it) {
                 is Loaded -> {
+                    setupViewPager()
                     loading.visibility = View.GONE
                     mainLayout.visibility = View.VISIBLE
                 }
@@ -99,30 +81,28 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
                         ).show()
                 }
             }
-        })
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        setToolbar(toolbar)
-        searchButton.setOnClickListener {
-            onButtonClick()
         }
-        setupViewPager(searchUserContainer)
-        setHasOptionsMenu(true)
+        viewModel.event.observe(viewLifecycleOwner) {
+            if (it.handled)
+                return@observe
+
+            when (it) {
+                is ChatSearchViewModel.Event.Search -> searchMatch()
+                is ChatSearchViewModel.Event.DisplayFailure -> displayErrorMessage(getString(it.msgResId))
+            }
+
+            it.handled = true
+        }
+
         viewFlipper.setInAnimation(requireContext(), android.R.anim.fade_in)
         viewFlipper.setOutAnimation(requireContext(), android.R.anim.fade_out)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            android.R.id.home -> requireActivity().onBackPressed()
-        }
-        return super.onOptionsItemSelected(item)
-    }
     override fun onStop() {
         super.onStop()
         if (!VedibartaActivity.splashScreen.isIdleNow)
             VedibartaActivity.splashScreen.decrement()
     }
-
 
     private fun setToolbar(tb: Toolbar) {
         (activity as AppCompatActivity).setSupportActionBar(tb)
@@ -132,27 +112,22 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
         tb.setOnMenuItemClickListener { onMenuItemClick(it) }
     }
 
-    private fun setupViewPager(viewPager: ViewPager2) {
-        viewPager.isUserInputEnabled = true
-        viewPager.adapter = FragmentListStateAdapter(
-            requireActivity(),
-            mutableListOf({ CharacteristicsFragment() }, { SearchExtraOptionsFragment() })
-        )
+    private fun setupViewPager() {
+        searchUserContainer.isUserInputEnabled = true
+
+        val fragments = listOf({
+            CategorizedBubblesSelectionFragment.newInstance("characteristics")
+        }, {
+            SearchExtraOptionsFragment()
+        })
+        searchUserContainer.adapter = FragmentListStateAdapter(requireActivity(), fragments)
         TabLayoutMediator(editTabs, searchUserContainer) { tab, position ->
             tab.text = "${position + 1}"
         }.attach()
     }
 
-
-    private fun onButtonClick() {
-        when (val result = validateChosenDetails()) {
-            is Success -> searchMatch()
-            is Failure -> displayErrorMessage(result.msg)
-        }
-    }
-
     private fun onMenuItemClick(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             android.R.id.home -> requireActivity().onBackPressed()
         }
         return true
@@ -174,30 +149,6 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
         builder.create()
     }
 
-    private fun validateChosenDetails(): SearchResult {
-        val resourcesCombo = chatSearchResources.value as? Loaded
-            ?: error("tried to validate the user before done loading resources")
-
-        when (val region = chatSearchViewModel.chosenRegion) {
-            is Filled -> {
-                if (!resourcesCombo.data.regionsName.getAll().contains(region.text))
-                    return Failure(getString(R.string.chat_search_wrong_region_message))
-            }
-        }
-
-        when (val school = chatSearchViewModel.chosenSchool) {
-            is Filled -> {
-                if (!resourcesCombo.data.schoolsName.getAll().contains(school.text))
-                    return Failure(getString(R.string.chat_search_wrong_school_message))
-            }
-        }
-
-        if (characteristicsViewModel.chosenCharacteristics.isEmpty())
-            return Failure(getString(R.string.chat_search_no_characteristics_chosen_message))
-
-        return Success
-    }
-
     private fun searchMatch() {
         Log.d(TAG, "Searching a match")
         val attributes: SearchAttributes = getSearchAttributes()
@@ -211,9 +162,10 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
             val filteredStudents = students.filter { it.uid != VedibartaActivity.student!!.uid }
             if (filteredStudents.isNotEmpty()) {
                 Log.d(TAG, "Matched students successfully")
-                val action = ChatSearchFragmentDirections.actionChatSearchFragmentToChatCandidatesActivity(
-                    filteredStudents.toTypedArray()
-                )
+                val action =
+                    ChatSearchFragmentDirections.actionChatSearchFragmentToChatCandidatesActivity(
+                        filteredStudents.toTypedArray()
+                    )
                 Handler().postDelayed({
                     if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
                         findNavController().navigate(action)
@@ -247,21 +199,22 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
     }
 
     private fun getSearchAttributes(): SearchAttributes {
-        val school = when (val school = chatSearchViewModel.chosenSchool) {
+        val school = when (val school = viewModel.chosenSchool) {
             is Filled -> school.text
             else -> null
         }
-        val region = when (val region = chatSearchViewModel.chosenRegion) {
+
+        val region = when (val region = viewModel.chosenRegion) {
             is Filled -> region.text
             else -> null
         }
-        val grade = chatSearchViewModel.grade.takeIf { it != Grade.NONE }
-        return SearchAttributes(
-            characteristicsViewModel.chosenCharacteristics,
-            region,
-            school,
-            grade
-        )
+
+        val grade = when (val grade = viewModel.grade) {
+            Grade.NONE -> null
+            else -> grade
+        }
+
+        return SearchAttributes(viewModel.selectedCharacteristics, region, school, grade)
     }
 
     @Suppress("DEPRECATION")
@@ -293,80 +246,6 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
         return result
     }
 
-    private fun combineResources(
-        schoolsNameLiveData: LiveData<LoadableData<TextResource>>,
-        regionsNameLiveData: LiveData<LoadableData<TextResource>>,
-        characteristicsResourcesLiveData: LiveData<LoadableData<CharacteristicsViewModel.CharacteristicsResources>>
-    ): LiveData<LoadableData<ChatSearchResources>> {
-        val mediator = MediatorLiveData<LoadableData<ChatSearchResources>>()
-            .apply { value = NormalLoading() }
-
-        fun refreshCombination() {
-            // cannot go back after reaching an end-state
-            if (mediator.value is Error) return
-
-            val schoolsName = schoolsNameLiveData.value
-            val regionsName = regionsNameLiveData.value
-            val characteristicsResources = characteristicsResourcesLiveData.value
-
-            // become Loaded when all resources have been loaded
-            if (schoolsName is Loaded
-                && regionsName is Loaded
-                && characteristicsResources is Loaded
-            ) {
-                mediator.value = Loaded(
-                    ChatSearchResources(
-                        schoolsName = schoolsName.data,
-                        regionsName = regionsName.data,
-                        allCharacteristics = characteristicsResources.data.allCharacteristics,
-                        characteristicsCardList = characteristicsResources.data.characteristicsCardList
-                    )
-                )
-                return
-            }
-
-            // become Error when the first error occurs
-            schoolsName?.let {
-                if (it is Error) {
-                    mediator.value = Error(it.reason); return
-                }
-            }
-            regionsName?.let {
-                if (it is Error) {
-                    mediator.value = Error(it.reason); return
-                }
-            }
-            characteristicsResources?.let {
-                if (it is Error) {
-                    mediator.value = Error(it.reason); return
-                }
-            }
-
-            // trigger SlowLoadingEvent when the first SlowLoadingEvent occurs
-            if (mediator.value !is SlowLoadingEvent
-                && (schoolsName is SlowLoadingEvent
-                        || regionsName is SlowLoadingEvent
-                        || characteristicsResources is SlowLoadingEvent)
-            ) {
-                mediator.value = SlowLoadingEvent()
-                return
-            }
-        }
-
-        mediator.addSource(schoolsNameLiveData) { refreshCombination() }
-        mediator.addSource(regionsNameLiveData) { refreshCombination() }
-        mediator.addSource(characteristicsResourcesLiveData) { refreshCombination() }
-
-        return mediator
-    }
-
-
-    data class ChatSearchResources(
-        val allCharacteristics: MultilingualTextResource,
-        val characteristicsCardList: List<CategoryCard>,
-        val schoolsName: TextResource,
-        val regionsName: TextResource
-    )
 
     data class SearchAttributes(
         val characteristics: Collection<String>,
@@ -379,9 +258,3 @@ class ChatSearchFragment : Fragment(), MainActivity.OnBackPressed {
         return false
     }
 }
-
-sealed class SearchResult
-
-object Success : SearchResult()
-
-data class Failure(val msg: String) : SearchResult()
