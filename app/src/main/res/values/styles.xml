@@ -138,7 +138,7 @@
     </style>
 
     <style name="ToggleButton.CustomTheme" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/browser_actions_bg_grey</item>
+        <item name="colorControlNormal">@color/material_on_primary_disabled</item>
         <item name="colorControlActivated">@color/colorAccentLight</item>
     </style>
 

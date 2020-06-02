@@ -1,11 +1,14 @@
 package com.technion.vedibarta.teacher
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ToggleButton
 import com.technion.vedibarta.R
+import kotlinx.android.synthetic.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,8 +37,10 @@ class TeacherScheduleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val btn = clearFindViewByIdCache()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_teacher_schedule, container, false)
+
     }
 
     companion object {
@@ -57,4 +62,6 @@ class TeacherScheduleFragment : Fragment() {
                 }
             }
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.technion.vedibarta.teacher
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -37,8 +38,5 @@ class TeacherMainActivity : FragmentActivity() {
         }
     }
 
-     fun onToggleButtonClicked(view: View):Unit {
-         print("hello")
-     }
 }
 

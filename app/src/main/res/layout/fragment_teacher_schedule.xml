@@ -8,40 +8,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".teacher.TeacherScheduleFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/toolBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/AppToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-            <TextView
-                android:id="@+id/toolbarTitle"
-                style="@style/ToolbarTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/teacher_profile_title" />
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
         android:id="@+id/scheduleTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="60dp"
         android:textSize="36sp"
         android:textColor="@color/textPrimary"
         android:text="@string/teacher_my_schedule_is"
@@ -53,56 +25,36 @@
         android:id="@+id/scheduleSubTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="10dp"
         android:textSize="12sp"
         android:textColor="@color/textSecondary"
         android:text="@string/teacher_set_hours"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/scheduleTitle"/>
 
-
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/nextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/next"
-        android:textSize="18sp"
-        app:backgroundTint="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TableLayout
         android:id="@+id/simpleTableLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp">
+        app:layout_constraintTop_toBottomOf="@id/scheduleSubTitle">
 
 
         <TableRow
             android:id="@+id/TitleRow"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginBottom="3dp">
+            android:layout_marginBottom="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <Button
-                android:id="@+id/shin"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:text="@string/shin"
-                app:backgroundTint="#000C4C" />
 
             <Button
                 android:id="@+id/vav"
@@ -160,96 +112,92 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="3dp">
 
-            <ToggleButton
-                android:id="@+id/sat1st"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
 
             <ToggleButton
                 android:id="@+id/fri1st"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu1st"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed1st"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue1st"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon1st"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun1st"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"
+                 />
 
             <TextView
                 android:id="@+id/firstPeriodText"
-                android:layout_width="wrap_content"
+                android:layout_width="38dp"
                 android:layout_height="wrap_content"
-                android:text="@string/firstPeriod"/>
-
+                android:text="@string/firstPeriod"
+                android:textSize="13sp" />
 
         </TableRow>
 
@@ -259,95 +207,91 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="3dp">
 
-            <ToggleButton
-                android:id="@+id/sat2nd"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
 
             <ToggleButton
                 android:id="@+id/fri2nd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu2nd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed2nd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue2nd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon2nd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun2nd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <TextView
                 android:id="@+id/secondPeriodText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/secondPeriod"/>
+                android:text="@string/secondPeriod"
+                android:textSize="13sp"/>
 
         </TableRow>
 
@@ -357,95 +301,91 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="3dp">
 
-            <ToggleButton
-                android:id="@+id/sat3rd"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
 
             <ToggleButton
                 android:id="@+id/fri3rd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu3rd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed3rd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue3rd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon3rd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun3rd"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <TextView
                 android:id="@+id/thirdPeriodText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/thirdPeriod"/>
+                android:text="@string/thirdPeriod"
+                android:textSize="13sp"/>
 
         </TableRow>
 
@@ -455,95 +395,91 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="3dp">
 
-            <ToggleButton
-                android:id="@+id/sat4th"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
 
             <ToggleButton
                 android:id="@+id/fri4th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu4th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed4th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue4th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon4th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun4th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <TextView
                 android:id="@+id/fourthPeriodText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/fourthPeriod"/>
+                android:text="@string/fourthPeriod"
+                android:textSize="13sp"/>
 
         </TableRow>
 
@@ -554,93 +490,89 @@
             android:layout_marginBottom="3dp">
 
             <ToggleButton
-                android:id="@+id/sat5th"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
-
-            <ToggleButton
                 android:id="@+id/fri5th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu5th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed5th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue5th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon5th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun5th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
+
             <TextView
                 android:id="@+id/fifthPeriodText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/fifthPeriod"/>
+                android:text="@string/fifthPeriod"
+                android:textSize="13sp"/>
 
         </TableRow>
 
@@ -651,93 +583,89 @@
             android:layout_marginBottom="3dp">
 
             <ToggleButton
-                android:id="@+id/sat6th"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
-
-            <ToggleButton
                 android:id="@+id/fri6th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu6th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed6th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue6th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon6th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun6th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
+
             <TextView
                 android:id="@+id/sixthPeriodText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sixthPeriod"/>
+                android:text="@string/sixthPeriod"
+                android:textSize="13sp"/>
 
         </TableRow>
 
@@ -745,97 +673,92 @@
             android:id="@+id/seventhPeriod"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="3dp"
-            >
-
-            <ToggleButton
-                android:id="@+id/sat7th"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+            android:layout_marginBottom="3dp">
 
             <ToggleButton
                 android:id="@+id/fri7th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu7th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed7th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue7th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon7th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun7th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
+
             <TextView
                 android:id="@+id/seventhPeriodText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/seventhPeriod"/>
+                android:text="@string/seventhPeriod"
+                android:textSize="13sp"/>
 
 
         </TableRow>
@@ -846,94 +769,91 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="3dp">
 
-            <ToggleButton
-                android:id="@+id/sat8th"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
-                android:checked="false"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
 
             <ToggleButton
                 android:id="@+id/fri8th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/thu8th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/wed8th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/tue8th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/mon8th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
 
             <ToggleButton
                 android:id="@+id/sun8th"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
-                android:background="@color/browser_actions_bg_grey"
+                android:background="@color/browser_actions_title_color"
                 android:checked="false"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
-                android:theme="@style/ToggleButton.CustomTheme" />
+                android:theme="@style/ToggleButton.CustomTheme"
+                android:onClick="onToggleButtonClicked"/>
+
             <TextView
                 android:id="@+id/eighthPeriodText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/eighthPeriod"/>
+                android:text="@string/eighthPeriod"
+                android:textSize="13sp"/>
 
         </TableRow>
     </TableLayout>

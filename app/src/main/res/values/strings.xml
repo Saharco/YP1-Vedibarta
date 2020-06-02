@@ -238,7 +238,7 @@
     <string name="teacher_setup_grade_twelfth">כיתה יב</string>
 
     <!-- TeacherSchedule Attributes -->
-    <string name="teacher_my_schedule_is">…המערכת שלי היא</string>
+    <string name="teacher_my_schedule_is">המערכת שלי היא…</string>
     <string name="teacher_set_hours">סמני את השעות המועדפות עליך לשיח כיתות</string>
     <string name="alef">א</string>
     <string name="bet">ב</string>
