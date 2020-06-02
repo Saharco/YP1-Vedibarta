@@ -47,7 +47,7 @@ class ChatListFragment : Fragment(), MainActivity.OnBackPressed {
     ): View? {
         // Inflate the layout for this fragment
         val v =  inflater.inflate(R.layout.fragment_chat_list, container, false)
-        userId = (activity as MainActivity).userId!!
+        userId = VedibartaActivity.userId!!
         val chatList = v.findViewById<RecyclerView>(R.id.chat_history)
         chatList.layoutManager = LinearLayoutManager(requireContext())
 

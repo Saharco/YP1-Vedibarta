@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/teacher_main_activity_graph"
+    app:startDestination="@id/chat">
+
+    <fragment
+        android:id="@+id/chat"
+        android:name="com.technion.vedibarta.teacher.TeacherHomeFragment"
+        android:label="TeacherHomeFragment" />
+    <fragment
+        android:id="@+id/classes"
+        android:name="com.technion.vedibarta.fragments.TeacherClassesListFragment"
+        android:label="TeacherClassesListFragment" />
+    <fragment
+        android:id="@+id/search"
+        android:name="com.technion.vedibarta.teacher.TeacherSearchExtraOptionsFragment"
+        android:label="TeacherSearchExtraOptionsFragment" />
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.technion.vedibarta.teacher.TeacherProfileFragment"
+        android:label="TeacherProfileFragment" />
+    <fragment
+        android:id="@+id/reports"
+        android:name="com.technion.vedibarta.fragments.TeacherReportsListFragment"
+        android:label="fragment_teacher_reports_list"
+        tools:layout="@layout/fragment_teacher_reports_list" />
+</navigation>

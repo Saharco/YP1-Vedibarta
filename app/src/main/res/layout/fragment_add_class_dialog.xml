@@ -46,6 +46,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/class_name_hint"
             android:layoutDirection="rtl"
+            app:errorEnabled="true"
             app:helperText="@string/text_field_hint">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -60,8 +61,8 @@
             android:id="@+id/subjectWrapper"
             style="@style/CustomInputTextField"
             android:layout_width="match_parent"
-            android:layout_marginTop="16dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:hint="@string/subject_hint"
             android:layoutDirection="rtl"
             app:errorEnabled="true"
@@ -83,8 +84,10 @@
         android:layout_width="144dp"
         android:layout_height="144dp"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/formWrapper"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/ic_photo_default_profile_man" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -3,10 +3,12 @@ package com.technion.vedibarta.fragments
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,18 +24,22 @@ import com.technion.vedibarta.POJOs.Unfilled
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.ClassesListAdapter
 import com.technion.vedibarta.data.viewModels.TeacherClassListViewModel
+import com.technion.vedibarta.teacher.TeacherMainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.changeStatusBarColor
 import com.technion.vedibarta.utilities.missingDetailsDialog
+import kotlinx.android.synthetic.main.activity_teacher_setup.*
 import kotlinx.android.synthetic.main.fragment_teacher_classes_list.*
+import kotlinx.android.synthetic.main.fragment_teacher_classes_list.toolbar
+import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class TeacherClassesListFragment : Fragment() {
+class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed {
 
     private val viewModel: TeacherClassListViewModel by viewModels()
 
-    companion object{
+    companion object {
         @JvmStatic
         fun newInstance() = TeacherClassesListFragment()
     }
@@ -44,6 +50,7 @@ class TeacherClassesListFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_teacher_classes_list, container, false)
+        setHasOptionsMenu(true)
         val classList = v.findViewById<RecyclerView>(R.id.classList)
         classList.isNestedScrollingEnabled = false
         classList.layoutManager = LinearLayoutManager(activity)
@@ -64,6 +71,15 @@ class TeacherClassesListFragment : Fragment() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun toggleCustomToolbar() {
         val appCompat = requireActivity() as AppCompatActivity
         if (viewModel.itemActionBarEnabled) {
@@ -72,7 +88,12 @@ class TeacherClassesListFragment : Fragment() {
             appCompat.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_clear_white)
             appCompat.supportActionBar?.setDisplayShowHomeEnabled(true)
             appCompat.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            toolbar.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+            toolbar.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    android.R.color.black
+                )
+            )
             changeStatusBarColor(
                 requireActivity(),
                 ContextCompat.getColor(requireContext(), android.R.color.black)
@@ -83,7 +104,12 @@ class TeacherClassesListFragment : Fragment() {
             appCompat.supportActionBar?.setDisplayShowHomeEnabled(false)
             appCompat.supportActionBar?.setDisplayHomeAsUpEnabled(false)
             appCompat.supportActionBar?.setTitle(R.string.app_name)
-            toolbar.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+            toolbar.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.colorPrimary
+                )
+            )
             changeStatusBarColor(
                 requireActivity(),
                 ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
@@ -116,51 +142,122 @@ class TeacherClassesListFragment : Fragment() {
             .negativeButton(R.string.cancel) { it.dismiss() }
             .customView(R.layout.fragment_add_class_dialog)
             .show {
-                this.findViewById<TextInputEditText>(R.id.className)
-                    .doOnTextChanged { text, _, _, _ ->
-                        if (text.isNullOrEmpty())
-                            viewModel.chosenClassName = Unfilled
-                        else {
+                val allowedLetters = getString(R.string.allowed_letters_regex)
+                val className = this.findViewById<TextInputEditText>(R.id.className)
+                className.doOnTextChanged { text, _, _, _ ->
+                    if (text.isNullOrEmpty()) {
+                        viewModel.chosenClassName = Unfilled
+                    } else {
+                        if (allowedLetters.toRegex().matches(text.toString())) {
                             viewModel.chosenClassName = Filled(text.toString())
+                            className.error = null
+                        } else {
+                            className.error = getString(R.string.text_field_error)
                         }
                     }
+                }
 
-                this.findViewById<TextInputEditText>(R.id.classDescription)
-                    .doOnTextChanged { text, _, _, _ ->
-                        if (text.isNullOrEmpty())
-                            viewModel.chosenClassDescription = Unfilled
-                        else {
+                val classDesc = this.findViewById<TextInputEditText>(R.id.classDescription)
+                classDesc.doOnTextChanged { text, _, _, _ ->
+                    if (text.isNullOrEmpty()) {
+                        viewModel.chosenClassDescription = Unfilled
+                    } else {
+                        if (allowedLetters.toRegex().matches(text.toString())) {
                             viewModel.chosenClassDescription = Filled(text.toString())
+                            classDesc.error = null
+                        } else {
+                            classDesc.error = getString(R.string.text_field_error)
                         }
                     }
+                }
                 //TODO Add camera Button click listener and load default photo for class
             }
     }
 
     private fun validateClassDetails(): ClassesResult {
         val name = when (val name = viewModel.chosenClassName) {
-            is Unfilled -> return Failure("")
+            is Unfilled -> return Failure(resources.getString(R.string.teacher_class_list_missing_class_name))
             is Filled -> name.text
         }
         val description = when (val desc = viewModel.chosenClassDescription) {
-            is Unfilled -> return Failure("")
+            is Unfilled -> return Failure(resources.getString(R.string.teacher_class_list_missing_class_description))
             is Filled -> desc.text
         }
 
         val photo = viewModel.chosenClassPicture
         //TODO Add Teacher ID to the class
-        return Success(Class(name=name, description = description, photo = photo))
+        return Success(Class(name = name, description = description, photo = photo))
     }
 
     private fun onClassLongPress(v: View): Boolean {
+        val appCompat = requireActivity() as AppCompatActivity
         viewModel.itemActionBarEnabled = true
+        viewModel.selectedItems++
+        viewModel.selectedItemsList.add(v as MaterialCardView)
+        if (viewModel.selectedItems > 1) {
+            toolbar.menu.removeItem(R.id.edit)
+            appCompat.supportActionBar?.title =
+                "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
+
+        } else {
+            appCompat.supportActionBar?.title =
+                "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
+        }
+        v.isLongClickable = false
         toggleCustomToolbar()
-        (v as MaterialCardView).isChecked = true
+        v.isChecked = true
+
         return true
     }
 
     private fun onClassClick(v: View): Boolean {
+        val appCompat = requireActivity() as AppCompatActivity
+        if (viewModel.itemActionBarEnabled) {
+            if ((v as MaterialCardView).isChecked) {
+                viewModel.selectedItems--
+                viewModel.selectedItemsList.remove(v)
+                v.isLongClickable = true
+                v.isChecked = false
+                if (viewModel.selectedItems == 0) {
+                    viewModel.itemActionBarEnabled = false
+                    toggleCustomToolbar()
+                    return true
+                }
+            } else {
+                viewModel.selectedItems++
+                viewModel.selectedItemsList.add(v)
+                v.isChecked = true
+                v.isLongClickable = false
+
+            }
+            if (viewModel.selectedItems == 1) {
+                toolbar.menu.clear()
+                appCompat.menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
+                appCompat.supportActionBar?.title =
+                    "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
+            } else {
+                toolbar.menu.removeItem(R.id.edit)
+                appCompat.supportActionBar?.title =
+                    "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
+            }
+        }
+
         return true
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (viewModel.itemActionBarEnabled) {
+            viewModel.itemActionBarEnabled = false
+            toggleCustomToolbar()
+            viewModel.selectedItems = 0
+            viewModel.selectedItemsList.forEach {
+                it.isLongClickable = true
+                it.isChecked = false
+            }
+            viewModel.selectedItemsList.clear()
+            return true
+        }
+        return false
     }
 
 }

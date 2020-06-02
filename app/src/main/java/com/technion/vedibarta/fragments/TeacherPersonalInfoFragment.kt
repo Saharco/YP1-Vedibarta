@@ -106,19 +106,28 @@ class TeacherPersonalInfoFragment(
         super.onViewCreated(view, savedInstanceState)
         val allowedLetters = getString(R.string.allowed_letters_regex)
         textFieldFirstName.doOnTextChanged { text, _, _, _ ->
-            if (allowedLetters.toRegex().matches(text.toString())) {
-                viewModel.chosenFirstName = Filled(text.toString())
-                textFieldFirstName.error = null
+            if (text.isNullOrEmpty()) {
+                viewModel.chosenFirstName = Unfilled
             } else {
-                textFieldFirstName.error = getString(R.string.text_field_error)
+                if (allowedLetters.toRegex().matches(text.toString())) {
+                    viewModel.chosenFirstName = Filled(text.toString())
+                    textFieldFirstName.error = null
+                } else {
+                    textFieldFirstName.error = getString(R.string.text_field_error)
+                }
             }
+
         }
         textFieldLastName.doOnTextChanged { text, _, _, _ ->
-            if (allowedLetters.toRegex().matches(text.toString())) {
-                viewModel.chosenLastName = Filled(text.toString())
-                textFieldFirstName.error = null
+            if (text.isNullOrEmpty()) {
+                viewModel.chosenFirstName = Unfilled
             } else {
-                textFieldFirstName.error = getString(R.string.text_field_error)
+                if (allowedLetters.toRegex().matches(text.toString())) {
+                    viewModel.chosenLastName = Filled(text.toString())
+                    textFieldFirstName.error = null
+                } else {
+                    textFieldFirstName.error = getString(R.string.text_field_error)
+                }
             }
         }
         genderInit()
@@ -188,7 +197,6 @@ class TeacherPersonalInfoFragment(
 
         return Success(schoolInfo)
     }
-
 
 
     private fun initMaterialDialog(materialDialog: MaterialDialog) {

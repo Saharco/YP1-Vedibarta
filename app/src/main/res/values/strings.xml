@@ -4,7 +4,7 @@
     <!--    General shared attributes   -->
     <string name="back">חזור</string>
     <string name="or">או</string>
-    <string name="allowed_letters_regex">[אבגדהוזחטיכלמנסעפצקרשתץףןםך]*</string>
+    <string name="allowed_letters_regex">[אבגדהוזחטיכלמנסעפצקרשתץףןםך]+</string>
     <string name="allowed_letters">אבגדהוזחטיכלמנסעפצקרשתץףןםך</string>
     <string name="yes">כן</string>
     <string name="no">לא</string>
@@ -144,11 +144,7 @@
     <string name="email_format_error">הכנס כתובת מהצורה mail@client.com</string>
     <string name="short_password_error">על הסיסמה להכיל לפחות 8 תווים</string>
     <string name="wrong_password_repeat">הסיסמאות לא זהות</string>
-    <string name="home">בית</string>
-    <string name="profile">פרופיל</string>
-    <string name="chat">צ\'אט</string>
-    <string name="search">חיפוש</string>
-    <string name="reports">דיווחים</string>
+
     <string name="class_creation_fab_text">יצירת כיתה</string>
     <string name="finding_connections_text">מוצאים חיבורים</string>
     <string name="teacher_main_title">ודיברת</string>
@@ -162,6 +158,7 @@
     <string name="classes_list_action_title">כיתות</string>
     <string name="main_menu_search_title">חיפוש</string>
     <string name="user_profile_action_title">פרופיל</string>
+    <string name="reports_action_title">דיווחים</string>
     <string name="app_label">Vedibarta</string>
 
     <string-array name="menuitems">
@@ -212,6 +209,10 @@
     <!--  Splash  -->
     <string name="chat_search_loading_message">מחפשים חברים!</string>
     <string name="default_loading_message">מכניסים את האחר לכיתה</string>
+
+    <!-- TeacherClassList Attributes -->
+    <string name="teacher_class_list_missing_class_name">יש למלא את השדה שם כיתה</string>
+    <string name="teacher_class_list_missing_class_description">יש למלא את השדה תיאור</string>
 
     <!-- TeacherSetup Attributes -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/home"
-        android:title="@string/home"
-        android:icon="@drawable/ic_home_black"/>
-    <item
-        android:id="@+id/profile"
-        android:title="@string/profile"
-        android:icon="@drawable/ic_person_black"
-        />
-    <item
         android:id="@+id/chat"
-        android:title="@string/chat"
+        android:title="@string/chat_list_action_title"
         android:icon="@drawable/ic_chat_bubble_black"/>
     <item
+        android:id="@+id/profile"
+        android:title="@string/user_profile_action_title"
+        android:icon="@drawable/ic_person_black"
+        />
+    <item android:id="@+id/classes"
+        android:title="@string/classes_list_action_title"
+        android:icon="@drawable/ic_class"/>
+    <item
         android:id="@+id/search"
-        android:title="@string/search"
+        android:title="@string/main_menu_search_title"
         android:icon="@drawable/ic_search_black"/>
     <item
         android:id="@+id/reports"
-        android:title="@string/reports"
+        android:title="@string/reports_action_title"
         android:icon="@drawable/ic_report_problem_black"/>
 
 </menu>
