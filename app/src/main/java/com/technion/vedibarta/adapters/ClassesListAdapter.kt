@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.technion.vedibarta.POJOs.Class
 import com.technion.vedibarta.R
 
@@ -68,6 +69,7 @@ class ClassesListAdapter(
             private val longPressLambda: (v: View) -> Boolean
         ) : ClassesViewHolder(itemView) {
             fun bind(cls: Class) {
+                itemView.findViewById<MaterialCardView>(R.id.classRoot).isChecked = false
                 itemView.findViewById<TextView>(R.id.className).text = cls.name
                 itemView.findViewById<TextView>(R.id.classDescription).text = cls.description
                 itemView.setOnLongClickListener {
