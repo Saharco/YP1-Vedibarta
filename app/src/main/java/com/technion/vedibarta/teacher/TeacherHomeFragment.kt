@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.databinding.FragmentTeacherHomeBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TITLE = "ודיברת"
 
 /**
  * A simple [Fragment] subclass.
@@ -20,14 +20,12 @@ private const val ARG_PARAM2 = "param2"
  */
 class TeacherHomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var title: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            title = it.getString(TITLE)
         }
     }
 
@@ -36,7 +34,10 @@ class TeacherHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_home, container, false)
+        val binding = FragmentTeacherHomeBinding.inflate(inflater, container, false)
+        binding.toolbarTitle.text = title
+
+        return binding.root
     }
 
     companion object {
@@ -50,11 +51,10 @@ class TeacherHomeFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(title: String) =
             TeacherHomeFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putString(TITLE, title)
                 }
             }
     }

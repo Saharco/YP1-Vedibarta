@@ -5,8 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.viewModels.UserSetupViewModel
+import com.technion.vedibarta.databinding.FragmentTeacherProfileBinding
+import kotlinx.android.synthetic.main.fragment_teacher_profile.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,8 +40,11 @@ class TeacherProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_profile, container, false)
+        val binding = FragmentTeacherProfileBinding.inflate(inflater, container, false)
+        binding.profilePicture.setImageDrawable(getDrawable(requireContext(), R.drawable.ic_photo_default_profile_man))
+        binding.profilePicture.visibility = View.VISIBLE
+        binding.profilePicturePB.visibility = View.INVISIBLE
+        return binding.root
     }
 
     companion object {

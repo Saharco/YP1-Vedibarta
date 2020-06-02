@@ -3,7 +3,6 @@ package com.technion.vedibarta.userProfile
 import android.app.Activity
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -12,87 +11,89 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
-import androidx.viewpager2.widget.ViewPager2
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.observe
 import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
-import com.technion.vedibarta.data.viewModels.CharacteristicsViewModel
-import com.technion.vedibarta.data.viewModels.HobbiesViewModel
-import com.technion.vedibarta.data.viewModels.characteristicsViewModelFactory
-import com.technion.vedibarta.data.viewModels.hobbiesViewModelFactory
-import com.technion.vedibarta.fragments.CharacteristicsFragment
-import com.technion.vedibarta.fragments.HobbiesFragment
+import com.technion.vedibarta.data.viewModels.ProfileEditViewModel
+import com.technion.vedibarta.data.viewModels.ProfileEditViewModel.*
+import com.technion.vedibarta.fragments.CategorizedBubblesSelectionFragment
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
+import com.technion.vedibarta.utilities.extensions.exhaustive
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 
-class ProfileEditActivity : VedibartaActivity(){
-
-    private val TAG = "ProfileEditActivity"
-
-    private val characteristicsViewModel: CharacteristicsViewModel by viewModels {
-        characteristicsViewModelFactory(applicationContext, student!!.gender)
+class ProfileEditActivity :
+    VedibartaActivity(),
+    CategorizedBubblesSelectionFragment.ArgumentsSupplier
+{
+    companion object {
+        private const val TAG = "ProfileEditActivity"
     }
 
-    private val hobbiesViewModel: HobbiesViewModel by viewModels {
-        hobbiesViewModelFactory(applicationContext)
+    val viewModel: ProfileEditViewModel by viewModels()
+
+    private val profileEditResources: ProfileEditResources by lazy {
+        (viewModel.resources.value as Loaded).data
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_edit)
-        Log.d(TAG, "created ProfileEditActivity")
 
-        if (characteristicsViewModel.chosenCharacteristics.isEmpty())
-            characteristicsViewModel.chosenCharacteristics.addAll(student!!.characteristics.keys)
-        if (hobbiesViewModel.chosenHobbies.isEmpty())
-            hobbiesViewModel.chosenHobbies.addAll(student!!.hobbies)
-        characteristicsViewModel.startLoading()
-        hobbiesViewModel.startLoading()
-        combineResources(
-            hobbiesViewModel.hobbiesResources,
-            characteristicsViewModel.characteristicsResources
-        )
-            .observe(this, Observer {
-                when (it) {
-                    is Loaded -> {
-                        loading.visibility = View.GONE
-                        toolBarLayout.visibility = View.VISIBLE
-                        editProfileContainer.visibility = View.VISIBLE
-                    }
-                    is Error -> Toast.makeText(this, it.reason, Toast.LENGTH_LONG).show()
-                    is SlowLoadingEvent -> {
-                        if (!it.handled)
-                            Toast.makeText(
-                                this,
-                                resources.getString(R.string.net_error),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                    }
+        viewModel.resources.observe(this) {
+            when (it) {
+                is Loaded -> {
+                    setupViewPager()
+                    setToolbar()
+
+                    loading.visibility = View.GONE
+                    toolBarLayout.visibility = View.VISIBLE
+                    editProfileContainer.visibility = View.VISIBLE
                 }
-            })
-        setupViewPager(editProfileContainer)
-        setToolbar(toolbar)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+                is Error -> Toast.makeText(this, it.reason, Toast.LENGTH_LONG).show()
+                is SlowLoadingEvent -> {
+                    if (!it.handled)
+                        Toast.makeText(this, resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        viewModel.event.observe(this) {
+            if (it.handled)
+                return@observe
+
+            when (it) {
+                is Event.DisplayConfirmationDialog -> displayConfirmationDialog()
+                is Event.DisplayError -> Toast.makeText(this, it.errorMsgId, Toast.LENGTH_LONG).show()
+                is Event.Finish.Cancel -> { setResult(Activity.RESULT_CANCELED); finish() }
+                is Event.Finish.Success -> { setResult(Activity.RESULT_OK); finish() }
+            }.exhaustive
+
+            it.handled = true
+        }
     }
 
-    private fun setToolbar(tb: Toolbar) {
-        setSupportActionBar(tb)
+    private fun setToolbar() {
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
-    private fun setupViewPager(viewPager: ViewPager2) {
-        viewPager.isUserInputEnabled = true
-        viewPager.adapter = FragmentListStateAdapter(this, mutableListOf({CharacteristicsFragment(
-            student!!.gender)}, {HobbiesFragment()}))
+    private fun setupViewPager() {
+        editProfileContainer.isUserInputEnabled = true
+
+        val fragments = listOf({
+            CategorizedBubblesSelectionFragment.newInstance("characteristics")
+        }, {
+            CategorizedBubblesSelectionFragment.newInstance("hobbies")
+        })
+
+        editProfileContainer.adapter = FragmentListStateAdapter(this, fragments)
         val titleList = listOf(getString(R.string.characteristics_tab_title), getString(R.string.hobbies_tab_title))
         TabLayoutMediator(editTabs, editProfileContainer) { tab, position ->
             tab.text = titleList[position]
@@ -102,25 +103,9 @@ class ProfileEditActivity : VedibartaActivity(){
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> onBackPressed()
-            R.id.actionEditProfile -> commitEditChanges()
+            R.id.actionEditProfile -> viewModel.commitChangesPressed()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun commitEditChanges() {
-        val startingCharacteristics =  student!!.characteristics
-        val startingHobbies = student!!.hobbies
-        student!!.characteristics = characteristicsViewModel.chosenCharacteristics.map { it to true }.toMap()
-        student!!.hobbies = hobbiesViewModel.chosenHobbies
-        database.students().userId().build().set(student!!).addOnSuccessListener {
-            Log.d("profileEdit", "saved profile changes")
-            setResult(Activity.RESULT_OK)
-            finish()
-        }.addOnFailureListener {
-            Log.d("profileEdit", "${it.message}, cause: ${it.cause?.message}")
-            student!!.characteristics = startingCharacteristics
-            student!!.hobbies = startingHobbies
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -128,104 +113,45 @@ class ProfileEditActivity : VedibartaActivity(){
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onBackPressed() {
-        setResult(Activity.RESULT_CANCELED)
-        if (changesOccurred()) {
-            Log.d(TAG, "Found changes")
-            val title = TextView(this)
-            title.setText(R.string.edit_discard_changes_title)
-            title.textSize = 20f
-            title.setTypeface(null, Typeface.BOLD)
-            title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
-            title.gravity = Gravity.CENTER
-            title.setPadding(10, 40, 10, 24)
-            val builder = AlertDialog.Builder(this)
-            builder.setCustomTitle(title)
-                .setMessage(R.string.edit_discard_changes_message)
-                .setPositiveButton(R.string.yes) { _, _ ->
-                    student!!.hobbies = hobbiesViewModel.chosenHobbies
-                    student!!.characteristics = characteristicsViewModel.chosenCharacteristics.map { it to true }.toMap()
-                    super.onBackPressed()
-                }
-                .setNegativeButton(R.string.no) { _, _ -> super.onBackPressed()}
-                .show()
-            builder.create()
-            return
+    override fun onBackPressed() = viewModel.backPressed()
+
+    private fun displayConfirmationDialog() {
+        val title = TextView(this).apply {
+            setText(R.string.edit_discard_changes_title)
+            textSize = 20f
+            setTypeface(null, Typeface.BOLD)
+            setTextColor(ContextCompat.getColor(this@ProfileEditActivity, R.color.textPrimary))
+            gravity = Gravity.CENTER
+            setPadding(10, 40, 10, 24)
         }
-        Log.d(TAG, "No changes occurred")
-        super.onBackPressed()
+        val builder = AlertDialog.Builder(this)
+        builder.setCustomTitle(title)
+            .setMessage(R.string.edit_discard_changes_message)
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                viewModel.confirmationCancelPressed()
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.no) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+        builder.create()
     }
 
-    private fun changesOccurred(): Boolean {
-        if (student!!.characteristics.keys != characteristicsViewModel.chosenCharacteristics.toSet())
-            return true
-        if (student!!.hobbies.toSet() != hobbiesViewModel.chosenHobbies.toSet())
-            return true
-        return false
-    }
-
-    private fun combineResources(
-        hobbiesResourcesLiveData: LiveData<LoadableData<HobbiesViewModel.HobbiesResources>>,
-        characteristicsResourcesLiveData: LiveData<LoadableData<CharacteristicsViewModel.CharacteristicsResources>>
-    ): LiveData<LoadableData<ProfileEditResources>> {
-        val mediator = MediatorLiveData<LoadableData<ProfileEditResources>>()
-            .apply { value = NormalLoading() }
-
-        fun refreshCombination() {
-            // cannot go back after reaching an end-state
-            if (mediator.value is Error) return
-
-            val hobbiesResources = hobbiesResourcesLiveData.value
-            val characteristicsResources = characteristicsResourcesLiveData.value
-
-            // become Loaded when all resources have been loaded
-            if (hobbiesResources is Loaded
-                && characteristicsResources is Loaded
-            ) {
-                mediator.value = Loaded(
-                    ProfileEditResources(
-                        allHobbies = hobbiesResources.data.allHobbies,
-                        hobbyCardList = hobbiesResources.data.hobbyCardList,
-                        allCharacteristics = characteristicsResources.data.allCharacteristics,
-                        characteristicsCardList = characteristicsResources.data.characteristicsCardList
-                    )
-                )
-                return
-            }
-
-            // become Error when the first error occurs
-            hobbiesResources?.let {
-                if (it is Error) {
-                    mediator.value = Error(it.reason); return
-                }
-            }
-            characteristicsResources?.let {
-                if (it is Error) {
-                    mediator.value = Error(it.reason); return
-                }
-            }
-
-            // trigger SlowLoadingEvent when the first SlowLoadingEvent occurs
-            if (mediator.value !is SlowLoadingEvent
-                && (hobbiesResources is SlowLoadingEvent
-                        || characteristicsResources is SlowLoadingEvent)
-            ) {
-                mediator.value = SlowLoadingEvent()
-                return
-            }
+    override fun getCategorizedBubblesSelectionArguments(identifier: String): CategorizedBubblesSelectionFragment.Arguments =
+        when (identifier) {
+            "hobbies" -> CategorizedBubblesSelectionFragment.Arguments(
+                MutableLiveData(profileEditResources.hobbiesTranslator),
+                profileEditResources.hobbyCardList,
+                { viewModel.selectedHobbies = it },
+                viewModel.selectedHobbies
+            )
+            "characteristics" -> CategorizedBubblesSelectionFragment.Arguments(
+                MutableLiveData(profileEditResources.characteristicsTranslator),
+                profileEditResources.characteristicsCardList,
+                { viewModel.selectedCharacteristics = it },
+                viewModel.selectedCharacteristics
+            )
+            else -> error("error")
         }
-
-        mediator.addSource(hobbiesResourcesLiveData) { refreshCombination() }
-        mediator.addSource(characteristicsResourcesLiveData) { refreshCombination() }
-
-        return mediator
-    }
-
-    data class ProfileEditResources(
-        val allCharacteristics: MultilingualTextResource,
-        val characteristicsCardList: List<CategoryCard>,
-        val allHobbies: MultilingualTextResource,
-        val hobbyCardList: List<CategoryCard>
-    )
-
 }

@@ -1,66 +1,131 @@
 package com.technion.vedibarta.data
 
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.technion.vedibarta.POJOs.Bubble
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.CategoryCard
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.findMultilingualResources
-import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
+import com.technion.vedibarta.utilities.resourcesManagement.*
 
-typealias CategoriesMapper = Map<String, MultilingualTextResource>
-
-fun loadCharacteristics(
+fun loadCharacteristicsTranslator(
     context: Context,
     gender: Gender
-): Task<CategoriesMapper> {
+): Task<MultilingualTextResource> {
+    val textManager = RemoteTextResourcesManager(context)
 
-    return RemoteTextResourcesManager(context)
-        .findMultilingualResource("characteristics/categories")
-        .continueWithTask {
-            val categories = it.result!!.getAllBase()
-            val categoryResource = it.result!!
-            val characteristicsMap = mutableMapOf<String, MultilingualTextResource>()
-            val categoryResourceList = categories.map { category -> "characteristics/category-$category" }
-            RemoteTextResourcesManager(context)
-                .findMultilingualResources(*categoryResourceList.toTypedArray(), gender = gender)
-                .continueWith {
-                    categories.forEachIndexed { index, category ->
-                        characteristicsMap[categoryResource.toCurrentLanguage(category)] = it.result!![index]
-                    }
-                }.continueWith {
-                    characteristicsMap.toMap()
-                }
-        }
+    val allTask = textManager.findMultilingualResource("characteristics/all", gender)
+    val categoriesTask = textManager.findMultilingualResource("characteristics/categories")
+
+    return Tasks.whenAllSuccess<MultilingualTextResource>(
+        allTask,
+        categoriesTask
+    ).continueWith {
+        merge(it.result!!)
+    }
 }
 
-fun loadHobbies(
+fun loadCharacteristicsCards(
     context: Context
 ): Task<List<CategoryCard>> {
+    val textManager = RemoteTextResourcesManager(context)
 
-    return RemoteTextResourcesManager(context)
-        .findMultilingualResource("hobbies/categories")
-        .continueWithTask {
-            val categories = it.result!!.getAllBase()
-            val categoryResource = it.result!!
-            val hobbyCards = mutableListOf<CategoryCard>()
-            Log.d("abc", "LoadHobbies")
-            val categoryResourceList = categories.map { category -> "hobbies/category-$category" }
-            RemoteTextResourcesManager(context)
-                .findMultilingualResources(*categoryResourceList.toTypedArray())
-                .continueWith {
-                    Log.d("abc", "${it.result!!.size}")
-                    categories.forEachIndexed { index, category ->
-                        hobbyCards.add(
-                            index,
-                            CategoryCard(categoryResource.toCurrentLanguage(category), it.result!![index].getAll().toTypedArray())
-                        )
-                    }
-                }.continueWith {
-                    hobbyCards.toList()
-                }
-        }
+    val categoriesTask = textManager.findMultilingualResource("characteristics/categories")
+
+    return categoriesTask.continueWithTask {
+        val categoriesResource = categoriesTask.result!!
+        val categories = categoriesResource.getAllBase()
+
+        Tasks.whenAllSuccess<CategoryCard>(categories.map { category ->
+            textManager.findMultilingualResource("characteristics/category-$category").continueWith { categoryResourceTask ->
+                val categoryResource = categoryResourceTask.result!!
+
+                CategoryCard(
+                    category,
+                    categoryResource.getAllBase().map { Bubble(it) },
+                    showBackgrounds = false,
+                    isToggleable = false
+                )
+            }
+        })
+    }
 }
 
+data class CardsWithTranslator(
+    val cards: List<CategoryCard>,
+    val translator: MultilingualTextResource
+)
+
+fun loadCharacteristicsCardsWithTranslator(
+    context: Context,
+    gender: Gender
+): Task<CardsWithTranslator> {
+    val textManager = RemoteTextResourcesManager(context)
+
+    val allTask = textManager.findMultilingualResource("characteristics/all", gender)
+    val categoriesTask = textManager.findMultilingualResource("characteristics/categories")
+
+    val cardsTask = categoriesTask.continueWithTask<List<CategoryCard>> {
+        val categoriesResource = categoriesTask.result!!
+        val categories = categoriesResource.getAllBase()
+
+        Tasks.whenAllSuccess(categories.map { category ->
+            textManager.findMultilingualResource("characteristics/category-$category").continueWith { categoryResourceTask ->
+                val categoryResource = categoryResourceTask.result!!
+
+                CategoryCard(
+                    category,
+                    categoryResource.getAllBase().map { Bubble(it) },
+                    showBackgrounds = false,
+                    isToggleable = true
+                )
+            }
+        })
+    }
+
+    return Tasks.whenAll(allTask, cardsTask).continueWith {
+        CardsWithTranslator(cardsTask.result!!, merge(allTask.result!!, categoriesTask.result!!))
+    }
+}
+
+fun loadHobbiesCardsWithTranslator(
+    context: Context
+): Task<CardsWithTranslator> {
+    val textManager = RemoteTextResourcesManager(context)
+    val fileManager = RemoteFileResourcesManager(context)
+
+    val allTask = textManager.findMultilingualResource("hobbies/all")
+    val categoriesTask = textManager.findMultilingualResource("hobbies/categories")
+    val imagesTask = fileManager.getAllInDirectory("images/hobbies")
+
+    val categoryResourcesTask = categoriesTask.continueWithTask<List<Pair<String, MultilingualTextResource>>> {
+        val categoriesResource = categoriesTask.result!!
+        val categories = categoriesResource.getAllBase()
+
+        Tasks.whenAllSuccess(categories.map { category ->
+            textManager.findMultilingualResource("hobbies/category-$category").continueWith {
+                Pair(category, it.result!!)
+            }
+        })
+    }
+
+    val cardsTask = Tasks.whenAll(categoryResourcesTask, imagesTask).continueWith {
+        val imagesMap = imagesTask.result!!
+        val categoryResources = categoryResourcesTask.result!!
+
+        categoryResources.map { (category, resource) ->
+            CategoryCard(
+                category,
+                resource.getAllBase().map {
+                    Bubble(it, imagesMap["$it.jpg"])
+                },
+                showBackgrounds = true,
+                isToggleable = false
+            )
+        }
+    }
+
+    return Tasks.whenAll(allTask, cardsTask).continueWith {
+        CardsWithTranslator(cardsTask.result!!, merge(allTask.result!!, categoriesTask.result!!))
+    }
+}

@@ -55,6 +55,8 @@
 
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
+    <string name="chat_search_characteristics_title">מאפייני זהות</string>
+    <string name="chat_search_extra_options_title">פרטים אישיים</string>
     <string name="filter_by_school_text">סינון לפי בית ספר</string>
     <string name="filter_by_region_text">סינון לפי מקום מגורים</string>
     <string name="filter_by_grade_text">סינון לפי שכבה</string>
@@ -156,6 +158,8 @@
     <!-- MainActivity attributes-->
     <string name="main_title">ודיברת</string>
     <string name="main_fab_title">מוצאים חברים</string>
+    <string name="chat_list_action_title">שיחות</string>
+    <string name="classes_list_action_title">כיתות</string>
     <string name="main_menu_search_title">חיפוש</string>
     <string name="user_profile_action_title">פרופיל</string>
     <string name="app_label">Vedibarta</string>
@@ -173,6 +177,8 @@
     <string name="hours">שעות</string>
     <string name="days">ימים</string>
     <string name="yesterday">אתמול</string>
+    <string name="empty_class_list_message_m">אתה לא שותף באף כיתה</string>
+    <string name="empty_class_list_message_f">את לא שותפה באף כיתה </string>
     <string name="empty_chat_list_message_m">אתה לא שותף באף שיחה.\nקדימה, חפש חברים</string>
     <string name="empty_chat_list_message_f">את לא שותפה באף שיחה.\nקדימה, חפשי חברים</string>
 
