@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".userProfile.UserProfileActivity">
 
-    <ImageView
+    <View
         android:id="@+id/titleContainer"
         android:layout_width="match_parent"
         android:layout_height="96dp"
@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_exit_white"
+        android:src="@drawable/ic_exit_white_24dp"
         android:padding="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -36,7 +36,7 @@
         android:id="@+id/actionEditProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_edit_white"
+        android:src="@drawable/ic_edit_white"
         app:layout_constraintEnd_toStartOf="@id/actionLogOut"
         app:layout_constraintTop_toTopOf="@id/actionLogOut"
         android:padding="8dp"
@@ -57,7 +57,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleContainer"
-        app:srcCompat="@drawable/ic_photo_default_profile_man" />
+        app:srcCompat="@drawable/ic_photo_default_profile_man"
+        tools:src="@drawable/ic_photo_default_profile_girl"
+        tools:visibility="visible"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/changeProfilePictureButton"
@@ -81,7 +83,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/titleContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleContainer" />
+        app:layout_constraintTop_toBottomOf="@+id/titleContainer"
+        tools:visibility="gone"/>
 
     <TextView
         android:id="@+id/userName"
@@ -94,19 +97,20 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+        app:layout_constraintTop_toBottomOf="@+id/profilePicture"
+        tools:text="ישראל ישראלי"/>
 
     <TextView
         android:id="@+id/userDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingBottom="20dp"
         android:textColor="@color/textSecondary"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userName" />
+        app:layout_constraintTop_toBottomOf="@+id/userName"
+        tools:text="תיכון עירוני ב', תל אביב\nתיכון עירוני ג', תל אביב"/>
 
     <!--    need to add support library-->
 
@@ -118,7 +122,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userName"
+        app:layout_constraintTop_toBottomOf="@id/userDescription"
         android:layout_marginBottom="16dp">
 
         <LinearLayout
@@ -129,10 +133,23 @@
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
 
-            <TableLayout
-                android:id="@+id/characteristicsTable"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="זהות בית הספר" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/characteristicsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center_horizontal"
+                tools:listitem="@layout/bubble_without_background"
+                tools:itemCount="3"
+                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:spanCount="3"/>
 
             <View
                 android:id="@+id/divider2"
@@ -141,10 +158,23 @@
                 android:layout_marginTop="16dp"
                 android:background="@color/colorDivider" />
 
-            <TableLayout
-                android:id="@+id/subjectsTable"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:text="המקצועות שלי" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/subjectsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center_horizontal"
+                tools:listitem="@layout/bubble_without_background"
+                tools:itemCount="3"
+                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:spanCount="3"/>
 
         </LinearLayout>
 
