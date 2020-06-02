@@ -7,16 +7,33 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.adapters.BubblesSelectionAdapter
+import com.technion.vedibarta.data.viewModels.BubbleViewModel
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
 import com.technion.vedibarta.databinding.FragmentTeacherProfileBinding
 import kotlinx.android.synthetic.main.fragment_teacher_profile.*
+import kotlinx.android.synthetic.main.fragment_teacher_search_extra_options.view.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+
+val dummyCharacteristicsList = listOf(
+    "ממלכתי",
+    "אולפנה"
+)
+
+val dummySubjectsList = listOf(
+    "אנגלית",
+    "צרפתית"
+)
 
 /**
  * A simple [Fragment] subclass.
@@ -41,10 +58,29 @@ class TeacherProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentTeacherProfileBinding.inflate(inflater, container, false)
-        binding.profilePicture.setImageDrawable(getDrawable(requireContext(), R.drawable.ic_photo_default_profile_man))
+        binding.profilePicture.setImageDrawable(getDrawable(requireContext(), R.drawable.ic_photo_default_profile_girl))
         binding.profilePicture.visibility = View.VISIBLE
         binding.profilePicturePB.visibility = View.INVISIBLE
+        binding.userName.text = "אורית לוי"
+        binding.userDescription.text = "עירוני ב, תל אביב\nתיכון תלמה ילין"
+
+        populateRecyclerView(binding.characteristicsRecyclerView, dummyCharacteristicsList)
+        populateRecyclerView(binding.subjectsRecyclerView, dummySubjectsList)
+
         return binding.root
+    }
+
+    private fun populateRecyclerView(recyclerView: RecyclerView, dataList: List<String>) {val bubblesViewModels = dataList.map {
+        val marked = MutableLiveData(true)
+
+        BubbleViewModel(
+            MutableLiveData(it),
+            marked
+        )
+    }
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+        recyclerView.adapter = BubblesSelectionAdapter(viewLifecycleOwner, bubblesViewModels, false)
+
     }
 
     companion object {

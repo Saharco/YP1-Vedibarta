@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 
@@ -70,7 +71,6 @@ class TeacherCharacteristicsFragment : Fragment() {
         val recyclerView = binding.bubblesRecycleView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerView.adapter = BubblesSelectionAdapter(viewLifecycleOwner, bubblesViewModels, false)
-        //binding.characteristicCardTitle.text = "זהות בית ספר"
 
         return binding.root
     }
