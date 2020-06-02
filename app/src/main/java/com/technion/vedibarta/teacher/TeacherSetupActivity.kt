@@ -105,9 +105,14 @@ class TeacherSetupActivity : AppCompatActivity(),
                 TeacherPersonalInfoFragment.newInstance(
                     data.schoolsName.getAll().toTypedArray(),
                     data.regionsName.getAll().toTypedArray()
-                )
-            })
-        )
+                ) }, {
+                TeacherCharacteristicsFragment()
+            }, {
+                TeacherSearchExtraOptionsFragment()
+            }))
+        nextButton.setOnClickListener {
+            viewPager.currentItem += 1
+        }
         viewPager.isUserInputEnabled = false
         viewPager.adapter = adapter
         TabLayoutMediator(editTabs, userSetupContainer) { tab, position ->
