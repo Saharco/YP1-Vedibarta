@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.viewModels.UserSetupViewModel
 import com.technion.vedibarta.databinding.FragmentTeacherProfileBinding
 import kotlinx.android.synthetic.main.fragment_teacher_profile.*
 
@@ -39,7 +41,9 @@ class TeacherProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentTeacherProfileBinding.inflate(inflater, container, false)
-
+        binding.profilePicture.setImageDrawable(getDrawable(requireContext(), R.drawable.ic_photo_default_profile_man))
+        binding.profilePicture.visibility = View.VISIBLE
+        binding.profilePicturePB.visibility = View.INVISIBLE
         return binding.root
     }
 
