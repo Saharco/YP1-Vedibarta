@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.navigation.navArgs
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.R
@@ -24,6 +25,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
     private val lambda: (Int, Student) -> Unit = { position: Int, _: Student ->
         carousel.smoothScrollToPosition(position)
     }
+    val args: ChatCandidatesActivityArgs by navArgs()
 
     private val carouselAdapter: CarouselAdapter = object : CarouselAdapter(this, lambda) {
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -72,7 +74,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_candidates)
 
-        val students = intent.getParcelableArrayExtra("STUDENTS")!!.map { it as Student }
+        val students = args.filteredStudents.toList()
 
         carousel.initialize(carouselAdapter)
         carousel.setViewsToChangeColor(listOf()) // TODO: change color of pushed-back cards

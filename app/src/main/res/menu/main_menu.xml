@@ -2,16 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-    <item android:id="@+id/search"
-        android:title="@string/main_menu_search_title"
-        android:icon="@drawable/ic_search_24dp"
-        app:showAsAction="collapseActionView|ifRoom" />
+    <item
+        android:id="@+id/chats"
+        android:icon="@drawable/ic_chat_bubble_white"
+        android:title="@string/chat_list_action_title" />
 
     <item
-        android:id="@+id/action_user_profile"
+        android:id="@+id/classes"
+        android:icon="@drawable/ic_school_white"
+        android:title="@string/classes_list_action_title" />
+    <item
+        android:id="@+id/user_profile"
         android:icon="@drawable/ic_account_circle_white_24dp"
-        android:title="@string/user_profile_action_title"
-        app:showAsAction="ifRoom" />
+        android:title="@string/user_profile_action_title" />
 
 </menu>

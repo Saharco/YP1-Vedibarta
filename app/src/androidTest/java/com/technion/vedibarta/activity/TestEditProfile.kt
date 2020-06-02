@@ -41,7 +41,7 @@ class TestEditProfile
     {
         registry.register(splashScreen)
         waitForActivity<MainActivity>()
-        onView(withId(R.id.action_user_profile)).perform(click())
+        onView(withId(R.id.user_profile)).perform(click())
         waitForActivity<UserProfileActivity>()
     }
 
