@@ -41,7 +41,7 @@ class TestEditProfile
     {
         registry.register(splashScreen)
         waitForActivity<MainActivity>()
-        onView(withId(R.id.action_user_profile)).perform(click())
+        onView(withId(R.id.user_profile)).perform(click())
         waitForActivity<UserProfileActivity>()
     }
 
@@ -57,7 +57,7 @@ class TestEditProfile
         onView(withId(R.id.actionEditProfile)).perform(click())
 
         val table = TableLayoutHandler()
-        table.bindTable(R.id.characteristicsTable)
+        table.bindTable(R.id.bubblesRecycleView)
             .forTable(click())
             .scrollToRowAt(0)
             .forTable(click())
@@ -89,7 +89,7 @@ class TestEditProfile
     {
         onView(withId(R.id.actionEditProfile)).perform(click())
         val table = TableLayoutHandler()
-        table.bindTable(R.id.characteristicsTable)
+        table.bindTable(R.id.bubblesRecycleView)
             .performAtPositionInTable(0,0, click())
             .performAtPositionInTable(0,1, click())
         sleep(1)

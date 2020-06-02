@@ -19,6 +19,7 @@ import com.technion.vedibarta.POJOs.Loaded
 import com.technion.vedibarta.POJOs.SlowLoadingEvent
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
+import com.technion.vedibarta.data.viewModels.SchoolInfo
 import com.technion.vedibarta.data.viewModels.TeacherSetupResources
 import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel
 import com.technion.vedibarta.data.viewModels.teacherSetupViewModelFactory
@@ -50,7 +51,7 @@ class TeacherSetupActivity : AppCompatActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.school_item_menu, menu)
+        inflater.inflate(R.menu.item_actions_menu, menu)
         return true
     }
 
@@ -60,8 +61,8 @@ class TeacherSetupActivity : AppCompatActivity(),
                 toolbarLayout.visibility = View.GONE
                 teacherSetupViewModel.selectedItems = 0
                 teacherSetupViewModel.selectedItemsList.forEach {
-                    it.setOnClickListener {  }
-                    it.isLongClickable= true
+                    it.setOnClickListener { }
+                    it.isLongClickable = true
                     it.isChecked = false
                 }
                 teacherSetupViewModel.selectedItemsList.clear()
@@ -105,9 +106,14 @@ class TeacherSetupActivity : AppCompatActivity(),
                 TeacherPersonalInfoFragment.newInstance(
                     data.schoolsName.getAll().toTypedArray(),
                     data.regionsName.getAll().toTypedArray()
-                )
-            })
-        )
+                ) }, {
+                TeacherCharacteristicsFragment()
+            }, {
+                TeacherSearchExtraOptionsFragment()
+            }))
+        nextButton.setOnClickListener {
+            viewPager.currentItem += 1
+        }
         viewPager.isUserInputEnabled = false
         viewPager.adapter = adapter
         TabLayoutMediator(editTabs, userSetupContainer) { tab, position ->
@@ -119,9 +125,13 @@ class TeacherSetupActivity : AppCompatActivity(),
     override fun onLongClickListener(v: View): Boolean {
         teacherSetupViewModel.selectedItems++
         teacherSetupViewModel.selectedItemsList.add(v as MaterialCardView)
-        supportActionBar?.title = "${teacherSetupViewModel.selectedItems} Selected"
         if (teacherSetupViewModel.selectedItems > 1) {
             toolbar.menu.removeItem(R.id.edit)
+            supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
+
+        }
+        else{
+            supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.single_item_selected)}"
         }
         v.isLongClickable = false
         v.isChecked = true
@@ -131,11 +141,14 @@ class TeacherSetupActivity : AppCompatActivity(),
             if (teacherSetupViewModel.selectedItems == 0) {
                 toolbarLayout.visibility = View.GONE
             }
-            if (teacherSetupViewModel.selectedItems == 1){
+            if (teacherSetupViewModel.selectedItems == 1) {
                 toolbar.menu.clear()
-                menuInflater.inflate(R.menu.school_item_menu, toolbar.menu)
+                menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
+                supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.single_item_selected)}"
             }
-            supportActionBar?.title = "${teacherSetupViewModel.selectedItems} Selected"
+            else{
+                supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
+            }
             v.isChecked = false
             v.isLongClickable = true
             v.setOnClickListener { }
@@ -146,3 +159,7 @@ class TeacherSetupActivity : AppCompatActivity(),
 
 
 }
+
+sealed class TeacherResult
+data class Success(val data: SchoolInfo) : TeacherResult()
+data class Failure(val msg: String) : TeacherResult()

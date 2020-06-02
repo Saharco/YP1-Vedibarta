@@ -5,8 +5,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.GridLayoutManager
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.adapters.BubblesSelectionAdapter
+import com.technion.vedibarta.data.viewModels.BubbleViewModel
+import com.technion.vedibarta.databinding.FragmentBubblesSelectionBinding
+import kotlinx.android.synthetic.main.fragment_bubbles_selection.view.*
+
+val characteristicsList = listOf(
+    "ממלכתי",
+    "ממלכתי-דתי",
+    "ממלכתי-דרוזי",
+    "ממלכתי-דתי-בדואי",
+    "אנתרופוסופי",
+    "אולפנה",
+    "דמוקרטי",
+    "חינוך מיוחד",
+    "כנסייתי",
+    "דו לשוני"
+)
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,7 +55,24 @@ class TeacherCharacteristicsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_teacher_characteristics, container, false)
+        val binding = FragmentBubblesSelectionBinding.inflate(inflater, container, false)
+        val bubblesViewModels = characteristicsList.map {
+            val marked = MutableLiveData(false)
+
+            BubbleViewModel(
+                MutableLiveData(it),
+                marked
+            ) {
+                marked.value = !marked.value!!
+            }
+        }
+
+        val recyclerView = binding.bubblesRecycleView
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+        recyclerView.adapter = BubblesSelectionAdapter(viewLifecycleOwner, bubblesViewModels, false)
+        //binding.characteristicCardTitle.text = "זהות בית ספר"
+
+        return binding.root
     }
 
     companion object {

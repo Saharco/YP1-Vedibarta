@@ -51,7 +51,7 @@ class StudentsMatcher(studentsCollection: CollectionReference = DEFAULT_STUDENTS
         if (grade != null) matcher = matcher.whereFieldsMatch("grade" to grade.toString())
 
         matcher = if (characteristics.size > 1) {
-            matcher.whereAtLeastOneFieldMatch(characteristics.map { "characteristics.$it" to true }.toMap())
+            matcher.whereAtMostOneFieldNotMatch(characteristics.map { "characteristics.$it" to true }.toMap())
         } else {
             matcher.whereFieldsMatch(characteristics.map { "characteristics.$it" to true }.toMap())
         }

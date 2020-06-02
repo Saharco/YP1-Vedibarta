@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    tools:context=".fragments.CharacteristicsFragment">
+    android:background="@android:color/transparent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/characteristicsTitlesList"
+        android:id="@+id/categoryCardsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp" />
+        android:layout_margin="8dp"
+        tools:listitem="@layout/card_toggleable_categorized_elements_selection"
+        tools:itemCount="5"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

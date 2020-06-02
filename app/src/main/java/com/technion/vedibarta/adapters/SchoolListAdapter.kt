@@ -82,6 +82,7 @@ class SchoolsAdapter(
                     .setOnLongClickListener {
                         longPressLambda(it)
                     }
+                //TODO add on click listener that will make the card selected if there is another card selected already
             }
         }
     }

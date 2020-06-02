@@ -25,8 +25,9 @@ class MainFireBaseAdapter(val userId: String?,
                           private val applicationContext: Context,
                           private val chatPartnersMap: HashMap<String, ChatMetadata>,
                           private val mainActivity: MainActivity,
+                          recyclerView: RecyclerView,
                           options: FirestoreRecyclerOptions<Chat>) :
-    MainAdapter(mainActivity.chat_history)
+    MainAdapter(recyclerView)
 {
     companion object
     {

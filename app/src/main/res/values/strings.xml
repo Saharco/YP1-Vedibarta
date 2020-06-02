@@ -12,11 +12,14 @@
     <string name="next">הבא</string>
     <string name="skip">דלג</string>
     <string name="add">הווספה</string>
+    <string name="create">יצירה</string>
     <string name="cancel">ביטול</string>
     <string name="error">שגיאה</string>
     <string name="edit">עריכה</string>
     <string name="delete">הסרה</string>
     <string name="net_error">קיימת בעיה בחיבור לאינטרנט</string>
+    <string name="single_item_selected">נבחר</string>
+    <string name="multi_item_selected">נבחרו</string>
 
     <!--    UserProfile attribute   -->
     <string name="user_profile_title">הפרופיל שלי</string>
@@ -52,6 +55,8 @@
 
     <!--   ChatSearch attribute   -->
     <string name="chat_search_title">חיפוש</string>
+    <string name="chat_search_characteristics_title">מאפייני זהות</string>
+    <string name="chat_search_extra_options_title">פרטים אישיים</string>
     <string name="filter_by_school_text">סינון לפי בית ספר</string>
     <string name="filter_by_region_text">סינון לפי מקום מגורים</string>
     <string name="filter_by_grade_text">סינון לפי שכבה</string>
@@ -153,6 +158,8 @@
     <!-- MainActivity attributes-->
     <string name="main_title">ודיברת</string>
     <string name="main_fab_title">מוצאים חברים</string>
+    <string name="chat_list_action_title">שיחות</string>
+    <string name="classes_list_action_title">כיתות</string>
     <string name="main_menu_search_title">חיפוש</string>
     <string name="user_profile_action_title">פרופיל</string>
     <string name="app_label">Vedibarta</string>
@@ -170,6 +177,8 @@
     <string name="hours">שעות</string>
     <string name="days">ימים</string>
     <string name="yesterday">אתמול</string>
+    <string name="empty_class_list_message_m">אתה לא שותף באף כיתה</string>
+    <string name="empty_class_list_message_f">את לא שותפה באף כיתה </string>
     <string name="empty_chat_list_message_m">אתה לא שותף באף שיחה.\nקדימה, חפש חברים</string>
     <string name="empty_chat_list_message_f">את לא שותפה באף שיחה.\nקדימה, חפשי חברים</string>
 
@@ -208,7 +217,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="create_class_title">יצירת כיתה חדשה</string>
     <string name="class_name_hint">שם הכיתה</string>
-    <string name="subject_hint">מקצוע</string>
+    <string name="subject_hint">תיאור</string>
     <string name="accept_text">אישור</string>
     <string name="teacher_profile_title">פרופיל מורה</string>
     <string name="enter_family_name_hint">שם משפחה</string>
@@ -220,6 +229,7 @@
     <string name="teacher">מורה</string>
     <string name="teacher_add_school_grades_title">כיתות</string>
     <string name="teacher_add_school">הוסף בית ספר</string>
+    <string name="teacher_add_class">הוסף כיתה</string>
     <string name="teacher_school_list_title">רשימת בתי ספר</string>
     <string name="teacher_setup_grade_missing">יש לבחור לפחות שכבה אחת</string>
     <string name="teacher_setup_school_already_exist">הבית ספר כבר נמצא ברשימה</string>

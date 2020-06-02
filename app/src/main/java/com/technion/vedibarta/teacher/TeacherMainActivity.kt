@@ -14,12 +14,15 @@ class TeacherMainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_main)
-        openFragment(TeacherHomeFragment.newInstance("", ""))
+        openFragment(TeacherHomeFragment.newInstance(""))
         bottomNavigation = findViewById(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.home -> openFragment(TeacherHomeFragment.newInstance("", ""))
+                R.id.home -> openFragment(TeacherHomeFragment.newInstance("ודיברת"))
                 R.id.profile -> openFragment(TeacherProfileFragment.newInstance("",""))
+                R.id.search -> openFragment(TeacherCharacteristicsFragment.newInstance("", "")) //openFragment(TeacherSearchExtraOptionsFragment.newInstance("", ""))
+                R.id.chat -> openFragment(TeacherHomeFragment.newInstance("השיחות שלי")) // Should open teacher chats
+                R.id.reports -> openFragment(TeacherHomeFragment.newInstance("דיווחים")) //Should open teacher reports
             }
             true
         }

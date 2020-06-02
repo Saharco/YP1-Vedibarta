@@ -2,20 +2,15 @@ package com.technion.vedibarta.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Layout
 import android.text.SpannableStringBuilder
-import android.text.style.AlignmentSpan
-import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.text.bold
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -36,7 +31,11 @@ import com.technion.vedibarta.adapters.SchoolsAdapter
 import com.technion.vedibarta.data.viewModels.SchoolInfo
 import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel
 import com.technion.vedibarta.data.viewModels.teacherSetupViewModelFactory
+import com.technion.vedibarta.teacher.Failure
+import com.technion.vedibarta.teacher.Success
+import com.technion.vedibarta.teacher.TeacherResult
 import com.technion.vedibarta.utilities.extensions.putGender
+import com.technion.vedibarta.utilities.missingDetailsDialog
 import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
 
 private const val SCHOOL_NAME = "schoolsName"
@@ -142,7 +141,7 @@ class TeacherPersonalInfoFragment(
                             it.dismiss()
                         }
                         is Failure -> {
-                            missingDetailsDialog(result.msg)
+                            missingDetailsDialog(requireContext(), result.msg)
                         }
                     }
                 }
@@ -190,35 +189,7 @@ class TeacherPersonalInfoFragment(
         return Success(schoolInfo)
     }
 
-    private fun missingDetailsDialog(msg: String) {
-        val message = SpannableStringBuilder()
-            .bold {
-                append(msg).setSpan(
-                    RelativeSizeSpan(1f),
-                    0,
-                    msg.length,
-                    0
-                )
-            }
 
-        val text = resources.getString(R.string.error)
-
-        val titleText = SpannableStringBuilder()
-            .bold { append(text).setSpan(RelativeSizeSpan(1.2f), 0, text.length, 0) }
-        titleText.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER), 0, text.length, 0)
-
-        val positiveButtonText = SpannableStringBuilder()
-            .bold { append(resources.getString(R.string.ok)) }
-
-        val builder = AlertDialog.Builder(requireContext())
-        builder
-            .setTitle(titleText)
-            .setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_error))
-            .setMessage(message)
-            .setPositiveButton(positiveButtonText) { _, _ -> }
-
-        builder.create().show()
-    }
 
     private fun initMaterialDialog(materialDialog: MaterialDialog) {
         materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTenth)
@@ -407,12 +378,11 @@ class TeacherPersonalInfoFragment(
             }
         }
     }
+
 }
 
 interface SchoolListItemLongCLick {
     fun onLongClickListener(v: View): Boolean
 }
 
-sealed class TeacherResult
-class Success(val data: SchoolInfo) : TeacherResult()
-class Failure(val msg: String) : TeacherResult()
+

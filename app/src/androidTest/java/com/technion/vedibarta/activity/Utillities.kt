@@ -8,7 +8,6 @@ import android.content.res.Resources
 import android.graphics.Rect
 import android.util.Log
 import android.view.View
-import android.view.ViewConfiguration
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
@@ -23,24 +22,13 @@ import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import kotlin.math.min
 import android.view.ViewGroup
-import android.webkit.WebView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.matcher.ViewMatchers.*
 import org.hamcrest.CoreMatchers.allOf
 import android.widget.Checkable
-import androidx.test.espresso.action.CoordinatesProvider
-import androidx.test.espresso.action.PrecisionDescriber
-import androidx.test.espresso.action.Tap
-import androidx.test.espresso.action.Tapper
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.core.internal.deps.guava.base.Optional
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.util.HumanReadables
-import androidx.test.orchestrator.junit.BundleJUnitUtils.getDescription
-import com.technion.vedibarta.R
 import org.hamcrest.BaseMatcher
 import org.hamcrest.CoreMatchers.isA
-import java.lang.Exception
 
 
 class Utillities
@@ -65,7 +53,7 @@ class Utillities
 
         fun logout()
         {
-            onView(withId(com.technion.vedibarta.R.id.action_user_profile)).perform(click())
+            onView(withId(com.technion.vedibarta.R.id.user_profile)).perform(click())
             onView(withId(com.technion.vedibarta.R.id.actionLogOut)).perform(click())
             onView(withText("כן")).perform(click()) //TODO replace the hardcoded string
             sleep(0.5)

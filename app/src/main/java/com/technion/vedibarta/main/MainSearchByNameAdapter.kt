@@ -17,7 +17,10 @@ import java.util.HashMap
  */
 class MainSearchByNameAdapter(private val applicationContext: Context,
                               private val chatPartnersMap: HashMap<String, ChatMetadata>,
-                              private val mainActivity: MainActivity): MainsSearchAdapter<String>(mainActivity.chat_history)
+                              private val mainActivity: MainActivity,
+                              recyclerView: RecyclerView
+)
+    : MainsSearchAdapter<String>(recyclerView)
 {
     private var filteredList = listOf<ChatMetadata>()
 
