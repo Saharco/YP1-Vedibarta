@@ -109,7 +109,13 @@ class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-        tb.setOnMenuItemClickListener { onMenuItemClick(it) }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> requireActivity().onBackPressed()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setupViewPager() {
@@ -124,13 +130,6 @@ class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
         TabLayoutMediator(editTabs, searchUserContainer) { tab, position ->
             tab.text = "${position + 1}"
         }.attach()
-    }
-
-    private fun onMenuItemClick(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> requireActivity().onBackPressed()
-        }
-        return true
     }
 
     private fun displayErrorMessage(message: String) {
