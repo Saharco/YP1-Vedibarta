@@ -1,5 +1,7 @@
 package com.technion.vedibarta.teacher
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -107,9 +109,7 @@ class TeacherSetupActivity : AppCompatActivity(),
                     data.schoolsName.getAll().toTypedArray(),
                     data.regionsName.getAll().toTypedArray()
                 ) }, {
-                TeacherCharacteristicsFragment()
-            }, {
-                TeacherSearchExtraOptionsFragment()
+                TeacherScheduleFragment()
             }))
         nextButton.setOnClickListener {
             viewPager.currentItem += 1
@@ -156,6 +156,18 @@ class TeacherSetupActivity : AppCompatActivity(),
         toolbarLayout.visibility = View.VISIBLE
         return true
     }
+    fun onToggleButtonClicked(view: View) {
+        val cur_color = (view.background as ColorDrawable).color
+        if (cur_color == resources.getColor(R.color.browser_actions_title_color)){
+            view.setBackgroundColor(resources.getColor(R.color.design_default_color_secondary))
+        }
+        else if (cur_color == resources.getColor(R.color.design_default_color_secondary)){
+            view.setBackgroundColor(resources.getColor(R.color.browser_actions_title_color))
+        }
+    }
+
+
+
 }
 
 sealed class TeacherResult

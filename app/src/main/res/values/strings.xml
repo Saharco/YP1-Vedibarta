@@ -238,4 +238,24 @@
     <string name="teacher_setup_grade_eleventh">כיתה יא</string>
     <string name="teacher_setup_grade_twelfth">כיתה יב</string>
 
+    <!-- TeacherSchedule Attributes -->
+    <string name="teacher_my_schedule_is">המערכת שלי היא…</string>
+    <string name="teacher_set_hours">סמני את השעות המועדפות עליך לשיח כיתות</string>
+    <string name="alef">א</string>
+    <string name="bet">ב</string>
+    <string name="ghimel">ג</string>
+    <string name="daled">ד</string>
+    <string name="hei">ה</string>
+    <string name="vav">ו</string>
+    <string name="shin">ש</string>
+    <string name="firstPeriod">08:00 – 09:00</string>
+    <string name="secondPeriod">09:00 – 10:00</string>
+    <string name="thirdPeriod">10:00 – 11:00</string>
+    <string name="fourthPeriod">11:00 – 12:00</string>
+    <string name="fifthPeriod">12:00 – 13:00</string>
+    <string name="sixthPeriod">13:00 – 14:00</string>
+    <string name="seventhPeriod">14:00 – 15:00</string>
+    <string name="eighthPeriod">15:00 – 16:00</string>
+
+
 </resources>
