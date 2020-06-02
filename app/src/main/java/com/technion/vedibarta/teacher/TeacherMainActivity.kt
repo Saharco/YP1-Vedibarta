@@ -1,6 +1,7 @@
 package com.technion.vedibarta.teacher
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -32,5 +33,9 @@ class TeacherMainActivity : FragmentActivity() {
             transaction.commit()
         }
     }
+
+     fun onToggleButtonClicked(view: View):Unit {
+         print("hello")
+     }
 }
 
