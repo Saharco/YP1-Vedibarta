@@ -77,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/user_setup_characteristics_hint_text"
-                android:textColor="@color/textSecondary" />
+                android:textColor="@color/textPrimary" />
         </LinearLayout>
 
     </ScrollView>

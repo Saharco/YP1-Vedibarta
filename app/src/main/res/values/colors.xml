@@ -21,7 +21,7 @@
     <color name="textPrimaryOnDarkSurface">#FFFFFF</color>
     <color name="colorDivider">#e0e0e0</color>
     <color name="lightPrimary">#C5CAE9</color>
-    <color name="background">#e0e0e0</color>
+    <color name="background">#f5f5f5</color>
     <color name="backgroundSplash">#B6121212</color>
     <color name="colorBoarding">#429B87</color>
 </resources>
