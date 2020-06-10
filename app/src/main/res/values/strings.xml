@@ -82,7 +82,7 @@
     <string name="user_setup_school_title">בית ספר</string>
     <string name="user_setup_first_name_title">שם פרטי</string>
     <string name="user_setup_last_name_title">שם משפחה</string>
-    <string name="user_setup_characteristics_hint_text">אפשר לבחור יותר מאחד</string>
+    <string name="user_setup_characteristics_hint_text">ניתן לבחור יותר מאפשרות אחת</string>
     <string name="user_setup_done_title">סיים</string>
     <string name="text_field_hint">עברית/ערבית בלבד</string>
     <string name="text_field_error">- יש לכתוב בעברית/עברית\n- בלי רווחים\n- בלי תווים מיוחדים </string>
@@ -256,6 +256,7 @@
     <string name="sixthPeriod">13:00 – 14:00</string>
     <string name="seventhPeriod">14:00 – 15:00</string>
     <string name="eighthPeriod">15:00 – 16:00</string>
+    <string name="search_teacher_fab">חיפוש מורה</string>
 
 
 </resources>

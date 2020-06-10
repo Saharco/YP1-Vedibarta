@@ -1,5 +1,6 @@
 package com.technion.vedibarta.teacher
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -36,6 +37,9 @@ class TeacherHomeFragment : Fragment() {
         // Inflate the layout for this fragment
         val binding = FragmentTeacherHomeBinding.inflate(inflater, container, false)
         binding.toolbarTitle.text = title
+        binding.extendedFloatingActionButton.setOnClickListener {
+            startActivity(Intent(context, TeacherSearchActivity::class.java))
+        }
 
         return binding.root
     }

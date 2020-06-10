@@ -148,12 +148,8 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                     if (text.isNullOrEmpty()) {
                         viewModel.chosenClassName = Unfilled
                     } else {
-                        if (allowedLetters.toRegex().matches(text.toString())) {
-                            viewModel.chosenClassName = Filled(text.toString())
-                            className.error = null
-                        } else {
-                            className.error = getString(R.string.text_field_error)
-                        }
+                        viewModel.chosenClassName = Filled(text.toString())
+                        className.error = null
                     }
                 }
 
@@ -162,12 +158,8 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                     if (text.isNullOrEmpty()) {
                         viewModel.chosenClassDescription = Unfilled
                     } else {
-                        if (allowedLetters.toRegex().matches(text.toString())) {
-                            viewModel.chosenClassDescription = Filled(text.toString())
-                            classDesc.error = null
-                        } else {
-                            classDesc.error = getString(R.string.text_field_error)
-                        }
+                        viewModel.chosenClassDescription = Filled(text.toString())
+                        classDesc.error = null
                     }
                 }
                 //TODO Add camera Button click listener and load default photo for class

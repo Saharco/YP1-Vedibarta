@@ -1,22 +1,34 @@
 package com.technion.vedibarta.teacher
 
+import android.content.Intent
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.renderscript.ScriptGroup
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.technion.vedibarta.POJOs.Gender
 
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.BubblesSelectionAdapter
 import com.technion.vedibarta.data.viewModels.BubbleViewModel
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
 import com.technion.vedibarta.databinding.FragmentTeacherProfileBinding
+import com.technion.vedibarta.userProfile.ProfileEditActivity
+import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.fragment_teacher_profile.*
 import kotlinx.android.synthetic.main.fragment_teacher_search_extra_options.view.*
 
@@ -27,7 +39,7 @@ private const val ARG_PARAM2 = "param2"
 
 val dummyCharacteristicsList = listOf(
     "ממלכתי",
-    "אולפנה"
+    "דמוקרטי"
 )
 
 val dummySubjectsList = listOf(
@@ -58,16 +70,40 @@ class TeacherProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentTeacherProfileBinding.inflate(inflater, container, false)
-        binding.profilePicture.setImageDrawable(getDrawable(requireContext(), R.drawable.ic_photo_default_profile_girl))
-        binding.profilePicture.visibility = View.VISIBLE
-        binding.profilePicturePB.visibility = View.INVISIBLE
-        binding.userName.text = "אורית לוי"
-        binding.userDescription.text = "עירוני ב, תל אביב\nתיכון תלמה ילין"
-
-        populateRecyclerView(binding.characteristicsRecyclerView, dummyCharacteristicsList)
-        populateRecyclerView(binding.subjectsRecyclerView, dummySubjectsList)
+        populateWithDummyData(binding)
+        binding.actionLogOut.setOnClickListener {
+            onLogoutClick()
+        }
+        binding.actionEditProfile.setOnClickListener {
+            startActivity(Intent(context, TeacherEditProfileActivity::class.java))
+        }
 
         return binding.root
+    }
+
+    private fun onLogoutClick() {
+        val title = TextView(requireContext())
+        title.setText(R.string.dialog_logout_title)
+        title.textSize = 20f
+        title.setTypeface(null, Typeface.BOLD)
+        title.setTextColor(ContextCompat.getColor(requireContext(), R.color.textPrimary))
+        title.gravity = Gravity.CENTER
+        title.setPadding(10, 40, 10, 24)
+
+        var msg = R.string.dialog_logout_message_m
+        //if (VedibartaActivity.student!!.gender == Gender.FEMALE)
+            msg = R.string.dialog_logout_message_f
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setCustomTitle(title)
+            .setMessage(msg)
+            .setPositiveButton(R.string.yes) { _, _ ->
+                //TODO: Add logout logic
+                //performLogout()
+            }
+            .setNegativeButton(R.string.no) { _, _ -> }
+            .show()
+        builder.create()
     }
 
     private fun populateRecyclerView(recyclerView: RecyclerView, dataList: List<String>) {val bubblesViewModels = dataList.map {
@@ -81,6 +117,16 @@ class TeacherProfileFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerView.adapter = BubblesSelectionAdapter(viewLifecycleOwner, bubblesViewModels, false)
 
+    }
+
+    private fun populateWithDummyData(binding: FragmentTeacherProfileBinding) {
+        binding.profilePicture.setImageDrawable(getDrawable(requireContext(), R.drawable.ic_photo_default_profile_girl))
+        binding.profilePicture.visibility = View.VISIBLE
+        binding.profilePicturePB.visibility = View.INVISIBLE
+        binding.userName.text = "אורית לוי"
+        binding.userDescription.text = "תיכון חדרה\nדמוקרטי חדרה"
+        populateRecyclerView(binding.characteristicsRecyclerView, dummyCharacteristicsList)
+        populateRecyclerView(binding.subjectsRecyclerView, dummySubjectsList)
     }
 
     companion object {

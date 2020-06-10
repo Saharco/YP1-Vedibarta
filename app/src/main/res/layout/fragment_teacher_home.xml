@@ -55,10 +55,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:contentDescription="@string/class_creation_fab_text"
-        android:text="@string/class_creation_fab_text"
+        android:contentDescription="@string/search_teacher_fab"
+        android:text="@string/search_teacher_fab"
 
-        app:icon="@drawable/ic_add_black"
+        app:icon="@drawable/ic_search_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

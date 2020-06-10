@@ -48,7 +48,7 @@
                             android:id="@+id/characteristicCardTitle"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="@{viewModel.title}"
+                            android:text="מחפשת מורה שמלמד"
                             android:textSize="24sp"
                             android:layout_marginStart="32dp"
                             android:layout_marginEnd="32dp"
@@ -72,12 +72,6 @@
 
             </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/user_setup_characteristics_hint_text"
-                android:textColor="@color/textSecondary" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/extraOptionsCard"
@@ -111,7 +105,7 @@
                         card_view:layout_constraintTop_toTopOf="@id/similarScheduleSwitch"
                         card_view:layout_constraintBottom_toBottomOf="@id/similarScheduleSwitch"
                         android:layout_marginEnd="16dp"
-                        android:text="מחפש שעות הוראה דומות לשלי"
+                        android:text="מחפשת שעות הוראה דומות לשלי"
                         android:textSize="16sp"
                         android:textColor="@color/textSecondary"/>
 
@@ -128,6 +122,13 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/user_setup_characteristics_hint_text"
+                android:textColor="@color/textSecondary" />
 
         </LinearLayout>
     </ScrollView>

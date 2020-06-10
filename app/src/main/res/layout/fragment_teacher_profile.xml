@@ -5,7 +5,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".userProfile.UserProfileActivity">
+    tools:context=".teacher.TeacherProfileFragment">
 
     <View
         android:id="@+id/titleContainer"
@@ -129,9 +129,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="24dp"
+            android:paddingStart="12dp"
             android:paddingEnd="24dp"
-            android:paddingBottom="24dp">
+            android:paddingBottom="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -144,12 +144,12 @@
                 android:id="@+id/characteristicsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_gravity="center_horizontal"
-                tools:listitem="@layout/bubble_without_background"
+                android:layout_marginTop="8dp"
                 tools:itemCount="3"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:spanCount="3"/>
+                tools:listitem="@layout/bubble_without_background"
+                tools:spanCount="3" />
 
             <View
                 android:id="@+id/divider2"
@@ -175,6 +175,844 @@
                 tools:itemCount="3"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:spanCount="3"/>
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorDivider" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:text="מערכת השעות שלי" />
+
+            <TableLayout
+                android:id="@+id/simpleTableLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/scheduleSubTitle">
+
+
+                <TableRow
+                    android:id="@+id/TitleRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+
+                    <Button
+                        android:id="@+id/vav"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/vav"
+                        app:backgroundTint="#000C4C" />
+
+                    <Button
+                        android:id="@+id/hei"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/hei"
+                        app:backgroundTint="#000C4C" />
+
+                    <Button
+                        android:id="@+id/daled"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/daled"
+                        app:backgroundTint="#000C4C" />
+
+                    <Button
+                        android:id="@+id/gimel"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/ghimel"
+                        app:backgroundTint="#000C4C" />
+
+                    <Button
+                        android:id="@+id/bet"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/bet"
+                        app:backgroundTint="#000C4C" />
+
+                    <Button
+                        android:id="@+id/alef"
+                        android:layout_width="34dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:text="@string/alef"
+                        app:backgroundTint="#000C4C" />
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/firstPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+
+                    <ToggleButton
+                        android:id="@+id/fri1st"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu1st"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed1st"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue1st"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon1st"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun1st"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false"
+                        />
+
+                    <TextView
+                        android:id="@+id/firstPeriodText"
+                        android:layout_width="38dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/firstPeriod"
+                        android:textSize="13sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/secondPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+
+                    <ToggleButton
+                        android:id="@+id/fri2nd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu2nd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed2nd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue2nd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon2nd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun2nd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/secondPeriodText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/secondPeriod"
+                        android:textSize="13sp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/thirdPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+
+                    <ToggleButton
+                        android:id="@+id/fri3rd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu3rd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed3rd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue3rd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon3rd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun3rd"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/thirdPeriodText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/thirdPeriod"
+                        android:textSize="13sp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/fourthPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+
+                    <ToggleButton
+                        android:id="@+id/fri4th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu4th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed4th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue4th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon4th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun4th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/fourthPeriodText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fourthPeriod"
+                        android:textSize="13sp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/fifthPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+                    <ToggleButton
+                        android:id="@+id/fri5th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu5th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed5th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue5th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon5th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun5th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/fifthPeriodText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fifthPeriod"
+                        android:textSize="13sp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/sixthPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+                    <ToggleButton
+                        android:id="@+id/fri6th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu6th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed6th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue6th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/design_default_color_secondary"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon6th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun6th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/sixthPeriodText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sixthPeriod"
+                        android:textSize="13sp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/seventhPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+                    <ToggleButton
+                        android:id="@+id/fri7th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu7th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed7th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue7th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon7th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun7th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/seventhPeriodText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/seventhPeriod"
+                        android:textSize="13sp"/>
+
+
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/eightPeriod"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="3dp">
+
+
+                    <ToggleButton
+                        android:id="@+id/fri8th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/thu8th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/wed8th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/tue8th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/mon8th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <ToggleButton
+                        android:id="@+id/sun8th"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/browser_actions_title_color"
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:theme="@style/ToggleButton.CustomTheme"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/eighthPeriodText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/eighthPeriod"
+                        android:textSize="13sp"/>
+
+                </TableRow>
+            </TableLayout>
 
         </LinearLayout>
 

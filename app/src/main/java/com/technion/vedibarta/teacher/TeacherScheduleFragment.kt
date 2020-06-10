@@ -1,6 +1,7 @@
 package com.technion.vedibarta.teacher
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -41,6 +42,16 @@ class TeacherScheduleFragment : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_teacher_schedule, container, false)
 
+    }
+
+    fun onToggleButtonClicked(view: View) {
+        val cur_color = (view.background as ColorDrawable).color
+        if (cur_color == resources.getColor(R.color.browser_actions_title_color)){
+            view.setBackgroundColor(resources.getColor(R.color.design_default_color_secondary))
+        }
+        else if (cur_color == resources.getColor(R.color.design_default_color_secondary)){
+            view.setBackgroundColor(resources.getColor(R.color.browser_actions_title_color))
+        }
     }
 
     companion object {
