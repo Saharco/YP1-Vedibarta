@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
@@ -22,6 +23,7 @@ import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Unfilled
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.adapters.ClassMembersListAdapter
 import com.technion.vedibarta.adapters.ClassesListAdapter
 import com.technion.vedibarta.data.viewModels.TeacherClassListViewModel
 import com.technion.vedibarta.teacher.TeacherMainActivity
@@ -38,7 +40,7 @@ import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
 class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed {
 
     private val viewModel: TeacherClassListViewModel by viewModels()
-
+    //TODO remove code duplication by moving stuff into functions
     companion object {
         @JvmStatic
         fun newInstance() = TeacherClassesListFragment()
@@ -75,6 +77,22 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
         when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
+            }
+            R.id.delete -> {
+                viewModel.selectedItemsList.forEach {
+                    val className = it.findViewById<TextView>(R.id.className).text
+                    val classDescription = it.findViewById<TextView>(R.id.classDescription).text
+                    val classToRemove: Class =
+                        viewModel.classesList.first { it.name == className && it.description == classDescription }
+                    val removeIndex = viewModel.classesList.indexOf(classToRemove)
+                    viewModel.classesList.remove(classToRemove)
+                    classList.adapter?.notifyItemRemoved(removeIndex+1)
+                }
+                viewModel.selectedItemsList.clear()
+                viewModel.selectedItems = 0
+                viewModel.itemActionBarEnabled = false
+                toggleCustomToolbar()
+                //TODO delete the class from firebase
             }
         }
         return super.onOptionsItemSelected(item)
@@ -131,6 +149,7 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                             viewModel.chosenClassDescription = Unfilled
                             //TODO change to default photo
                             viewModel.chosenClassPicture = null
+                            classList.adapter?.notifyItemInserted(viewModel.classesList.size)
                             it.dismiss()
                         }
                         is Failure -> {
@@ -232,6 +251,18 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                 appCompat.supportActionBar?.title =
                     "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
             }
+        }
+        else{
+            val dialog = MaterialDialog(requireContext())
+            dialog.cornerRadius(20f)
+                .noAutoDismiss()
+                .customView(R.layout.class_member_list_dialog)
+                .show {
+                    val recyclerView = this.findViewById<RecyclerView>(R.id.membersList)
+                    recyclerView.isNestedScrollingEnabled = false
+                    recyclerView.layoutManager = LinearLayoutManager(activity)
+                    recyclerView.adapter = ClassMembersListAdapter()
+                }
         }
 
         return true

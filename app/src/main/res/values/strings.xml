@@ -228,6 +228,7 @@
     <string name="choose_role_text">ספרו לנו מי אתם</string>
     <string name="student">תלמיד</string>
     <string name="teacher">מורה</string>
+    <string name="teacher_class_members">רשימת משתמשים</string>
     <string name="teacher_add_school_grades_title">כיתות</string>
     <string name="teacher_add_school">הוסף בית ספר</string>
     <string name="teacher_add_class">הוסף כיתה</string>
