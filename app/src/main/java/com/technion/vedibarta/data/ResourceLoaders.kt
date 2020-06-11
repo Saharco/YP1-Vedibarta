@@ -44,7 +44,7 @@ fun loadCharacteristicsCards(
                     category,
                     categoryResource.getAllBase().map { Bubble(it) },
                     showBackgrounds = false,
-                    isToggleable = false
+                    isToggleable = true
                 )
             }
         })
