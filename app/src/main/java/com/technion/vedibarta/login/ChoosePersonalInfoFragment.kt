@@ -6,24 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
-import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Loaded
 import com.technion.vedibarta.POJOs.Unfilled
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.extensions.putGender
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
-import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
 /**
@@ -87,10 +83,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
         genderInit()
-        viewModel.resources.observe(viewLifecycleOwner) {
-            if (it is Loaded)
-                extraOptionsInit(v, it.data.schoolNames, it.data.regionNames)
-        }
+        extraOptionsInit(v)
     }
 
     private fun genderInit() {
@@ -142,12 +135,10 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         }
     }
 
-    private fun extraOptionsInit(
-        v: View,
-        schoolsName: TextResource,
-        regionsName: TextResource
-    ) {
-        schoolAndRegionMap = schoolsName.getAll().zip(regionsName.getAll()).toMap()
+    private fun extraOptionsInit(v: View) {
+        val schools = StudentResources.schools
+        val regions = StudentResources.regions
+        schoolAndRegionMap = schools.getAll().zip(regions.getAll()).toMap()
 
         // ---Student Name Views---
         val firstName: TextInputEditText = v.findViewById(R.id.textFieldFirstName)
@@ -189,7 +180,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
             populateAutoTextView(
                 requireContext(),
                 schoolListSpinner,
-                schoolsName.getAll().toTypedArray()
+                schools.getAll().toTypedArray()
             )
             viewModel.chosenRegion = Filled(text.toString())
         }
@@ -198,12 +189,12 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         populateAutoTextView(
             requireContext(),
             schoolListSpinner,
-            schoolsName.getAll().toTypedArray()
+            schools.getAll().toTypedArray()
         )
         populateAutoTextView(
             requireContext(),
             regionListSpinner,
-            regionsName.getAll().distinct().toTypedArray()
+            regions.getAll().distinct().toTypedArray()
         )
 
         textViewFirstNameTitle.markRequired()

@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
@@ -284,22 +285,24 @@ class LoginActivity : AppCompatActivity(),
                 showSplash(this, getString(R.string.default_loading_message))
             }
             database.userId = user.uid
-            database.students().userId().build().get().continueWith { task ->
+            database.students().userId().build().get().continueWithTask { task ->
                 val document = task.result
-                if (document != null && document.exists()) {
-                    Log.d(TAG, "document exists. redirecting to main activity")
-                    student = document.toObject(Student::class.java)
-                    PreferenceManager.getDefaultSharedPreferences(this).edit()
-                        .putGender(student!!.gender)
-                        .putLanguage(Locale.getDefault().language).apply()
-                    startActivity(Intent(this, MainActivity::class.java)) // change to Main later
-                    finish()
-                } else {
-                    Log.d(TAG, "document doesn't exist. redirecting to user setup")
-                    startActivity(Intent(this, UserSetupActivity::class.java))
-                    finish()
+                StudentResources.load(application).continueWith {
+                    if (document != null && document.exists()) {
+                        Log.d(TAG, "document exists. redirecting to main activity")
+                        student = document.toObject(Student::class.java)
+                        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                            .putGender(student!!.gender)
+                            .putLanguage(Locale.getDefault().language).apply()
+                        startActivity(Intent(this, MainActivity::class.java)) // change to Main later
+                        finish()
+                    } else {
+                        Log.d(TAG, "document doesn't exist. redirecting to user setup")
+                        startActivity(Intent(this, UserSetupActivity::class.java))
+                        finish()
+                    }
+                    true
                 }
-                true
             }
         } else
             Tasks.call { false }

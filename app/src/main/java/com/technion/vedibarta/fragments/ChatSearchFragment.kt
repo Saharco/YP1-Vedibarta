@@ -17,10 +17,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
@@ -28,26 +26,21 @@ import com.technion.vedibarta.adapters.FragmentListStateAdapter
 import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.chatSearch.SearchExtraOptionsFragment
 import com.technion.vedibarta.data.viewModels.ChatSearchViewModel
-import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.matching.StudentsMatcher
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.showSplash
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
-import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.fragment_chat_search.*
 
-
 class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
+
     companion object {
         private const val MATCHING_TIMEOUT = 10L
         private const val MINIMUM_TRANSITION_TIME = 900L
         private const val TAG = "ChatSearchActivity"
     }
 
-
     private val viewModel: ChatSearchViewModel by activityViewModels()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,27 +54,13 @@ class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setToolbar(toolbar)
+
         searchButton.setOnClickListener {
             viewModel.searchPressed()
         }
-        viewModel.resources.observe(viewLifecycleOwner) {
-            when (it) {
-                is Loaded -> {
-                    setupViewPager()
-                    loading.visibility = View.GONE
-                    mainLayout.visibility = View.VISIBLE
-                }
-                is Error -> Toast.makeText(requireContext(), it.reason, Toast.LENGTH_LONG).show()
-                is SlowLoadingEvent -> {
-                    if (!it.handled)
-                        Toast.makeText(
-                            requireContext(),
-                            resources.getString(R.string.net_error),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                }
-            }
-        }
+
+        setupViewPager()
+
         viewModel.event.observe(viewLifecycleOwner) {
             if (it.handled)
                 return@observe
@@ -122,7 +101,7 @@ class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
         searchUserContainer.isUserInputEnabled = true
 
         val fragments = listOf({
-            CategorizedBubblesSelectionFragment.newInstance("characteristics")
+            ChatSearchCharacteristicsSelectionFragment()
         }, {
             SearchExtraOptionsFragment()
         })
@@ -244,7 +223,6 @@ class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
         }
         return result
     }
-
 
     data class SearchAttributes(
         val characteristics: Collection<String>,

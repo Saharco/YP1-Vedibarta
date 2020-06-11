@@ -6,60 +6,38 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.observe
 import com.google.android.material.tabs.TabLayoutMediator
-import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
 import com.technion.vedibarta.data.viewModels.ProfileEditViewModel
 import com.technion.vedibarta.data.viewModels.ProfileEditViewModel.*
 import com.technion.vedibarta.fragments.CategorizedBubblesSelectionFragment
+import com.technion.vedibarta.fragments.ProfileEditCharacteristicsSelectionFragment
+import com.technion.vedibarta.fragments.ProfileEditHobbiesSelectionFragment
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.extensions.exhaustive
 import kotlinx.android.synthetic.main.activity_profile_edit.*
 
-class ProfileEditActivity :
-    VedibartaActivity(),
-    CategorizedBubblesSelectionFragment.ArgumentsSupplier
-{
+class ProfileEditActivity : VedibartaActivity() {
     companion object {
         private const val TAG = "ProfileEditActivity"
     }
 
     val viewModel: ProfileEditViewModel by viewModels()
 
-    private val profileEditResources: ProfileEditResources by lazy {
-        (viewModel.resources.value as Loaded).data
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_edit)
 
-        viewModel.resources.observe(this) {
-            when (it) {
-                is Loaded -> {
-                    setupViewPager()
-                    setToolbar()
-
-                    loading.visibility = View.GONE
-                    toolBarLayout.visibility = View.VISIBLE
-                    editProfileContainer.visibility = View.VISIBLE
-                }
-                is Error -> Toast.makeText(this, it.reason, Toast.LENGTH_LONG).show()
-                is SlowLoadingEvent -> {
-                    if (!it.handled)
-                        Toast.makeText(this, resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+        setupViewPager()
+        setToolbar()
 
         viewModel.event.observe(this) {
             if (it.handled)
@@ -88,9 +66,9 @@ class ProfileEditActivity :
         editProfileContainer.isUserInputEnabled = true
 
         val fragments = listOf({
-            CategorizedBubblesSelectionFragment.newInstance("characteristics")
+            ProfileEditCharacteristicsSelectionFragment()
         }, {
-            CategorizedBubblesSelectionFragment.newInstance("hobbies")
+            ProfileEditHobbiesSelectionFragment()
         })
 
         editProfileContainer.adapter = FragmentListStateAdapter(this, fragments)
@@ -137,21 +115,4 @@ class ProfileEditActivity :
             .show()
         builder.create()
     }
-
-    override fun getCategorizedBubblesSelectionArguments(identifier: String): CategorizedBubblesSelectionFragment.Arguments =
-        when (identifier) {
-            "hobbies" -> CategorizedBubblesSelectionFragment.Arguments(
-                MutableLiveData(profileEditResources.hobbiesTranslator),
-                profileEditResources.hobbyCardList,
-                { viewModel.selectedHobbies = it },
-                viewModel.selectedHobbies
-            )
-            "characteristics" -> CategorizedBubblesSelectionFragment.Arguments(
-                MutableLiveData(profileEditResources.characteristicsTranslator),
-                profileEditResources.characteristicsCardList,
-                { viewModel.selectedCharacteristics = it },
-                viewModel.selectedCharacteristics
-            )
-            else -> error("error")
-        }
 }

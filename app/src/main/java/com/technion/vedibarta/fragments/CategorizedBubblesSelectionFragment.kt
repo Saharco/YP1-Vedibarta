@@ -16,24 +16,19 @@ import com.technion.vedibarta.data.viewModels.CategorizedBubblesSelectionViewMod
 import com.technion.vedibarta.databinding.FragmentCategorizedElementsSelectionBinding
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 
-class CategorizedBubblesSelectionFragment : Fragment() {
+abstract class CategorizedBubblesSelectionFragment : Fragment() {
 
-    companion object {
-        fun newInstance(identifier: String) = CategorizedBubblesSelectionFragment().apply {
-            arguments = Bundle().apply {
-                putString("IDENTIFIER", identifier)
-            }
-        }
-    }
+    protected abstract val translator: LiveData<MultilingualTextResource>
+    protected abstract val cards: List<CategoryCard>
+    protected open val chosenInitially: Set<String> = emptySet()
 
-    private val identifier by lazy { arguments?.getString("IDENTIFIER")!! }
-    private val args by lazy { (requireContext() as ArgumentsSupplier).getCategorizedBubblesSelectionArguments(identifier) }
+    protected abstract fun onSelectedBubblesChanged(selected: Set<String>)
 
     private val viewModel: CategorizedBubblesSelectionViewModel by viewModels {
         CategorizedBubblesSelectionViewModelFactory(
-            args.translator,
-            args.cards,
-            args.chosenInitially
+            translator,
+            cards,
+            chosenInitially
         )
     }
 
@@ -52,7 +47,7 @@ class CategorizedBubblesSelectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.selectedBubbles.observe(viewLifecycleOwner) {
-            args.onSelectedBubblesChangedListener(it)
+            onSelectedBubblesChanged(it)
         }
 
         val recycler = binding.categoryCardsList
@@ -65,16 +60,5 @@ class CategorizedBubblesSelectionFragment : Fragment() {
         super.onDestroyView()
 
         _binding = null
-    }
-
-    data class Arguments(
-        val translator: LiveData<MultilingualTextResource>,
-        val cards: List<CategoryCard>,
-        val onSelectedBubblesChangedListener: (Set<String>) -> Unit,
-        val chosenInitially: Set<String> = emptySet()
-    )
-
-    interface ArgumentsSupplier {
-        fun getCategorizedBubblesSelectionArguments(identifier: String): Arguments
     }
 }

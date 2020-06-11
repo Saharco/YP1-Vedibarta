@@ -10,12 +10,11 @@ import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_search_extra_options.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.technion.vedibarta.POJOs.*
+import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.viewModels.ChatSearchViewModel
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 
 /**
  * A simple [Fragment] subclass.
@@ -39,10 +38,7 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.resources.observe(viewLifecycleOwner) {
-            if (it is Loaded)
-                setupAndInitViews(it.data.schoolsName, it.data.regionsName)
-        }
+        setupAndInitViews()
     }
 
     override fun onPause() {
@@ -107,11 +103,11 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
             gradeRadioGroup.visibility = View.GONE
     }
 
-    private fun setupAndInitViews(
-        schoolsName: TextResource,
-        regionsName: TextResource
-    ) {
-        schoolAndRegionMap = schoolsName.getAll().zip(regionsName.getAll()).toMap()
+    private fun setupAndInitViews() {
+        val schools = StudentResources.schools
+        val regions = StudentResources.regions
+
+        schoolAndRegionMap = schools.getAll().zip(regions.getAll()).toMap()
 
         //---Switch Views---
         schoolFilterSwitch.setOnCheckedChangeListener { _, isChecked -> schoolOnCheckedChanged(isChecked) }
@@ -125,7 +121,7 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
             populateAutoTextView(
                 requireContext(),
                 schoolListSpinner,
-                schoolsName.getAll().toTypedArray()
+                schools.getAll().toTypedArray()
             )
             viewModel.chosenRegion = if (text.isNullOrEmpty()) Unfilled else Filled(text.toString())
         }
@@ -139,12 +135,12 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
         populateAutoTextView(
             requireContext(),
             regionListSpinner,
-            regionsName.getAll().distinct().toTypedArray()
+            regions.getAll().distinct().toTypedArray()
         )
         populateAutoTextView(
             requireContext(),
             schoolListSpinner,
-            schoolsName.getAll().toTypedArray()
+            schools.getAll().toTypedArray()
         )
 
         gradeTenth.setOnClickListener { onRadioButtonClicked(it) }

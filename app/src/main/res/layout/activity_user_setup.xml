@@ -9,23 +9,10 @@
     android:fitsSystemWindows="true"
     tools:context=".login.UserSetupActivity">
 
-    <ProgressBar
-        android:id="@+id/loading"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/editTabs"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         tools:visibility="visible">
 
         <ImageView
@@ -34,7 +21,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:contentDescription="@string/user_setup_done_title"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/editTabs"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/editTabs"
@@ -46,7 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/editTabs"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/editTabs"

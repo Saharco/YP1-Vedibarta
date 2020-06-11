@@ -293,8 +293,4 @@ open class VedibartaFragment : Fragment() {
     }
 
     protected open fun setupAndInitViews(v: View) = Unit
-
-    interface ArgumentTransfer {
-        fun getArgs(): Map<String, Any>
-    }
 }
