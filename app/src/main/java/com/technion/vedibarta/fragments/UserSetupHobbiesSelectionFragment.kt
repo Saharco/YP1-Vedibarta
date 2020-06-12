@@ -1,11 +1,15 @@
 package com.technion.vedibarta.fragments
 
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Transformations
-import com.technion.vedibarta.POJOs.CategoryCard
 import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
+import com.technion.vedibarta.login.UserSetupActivity
 
+/**
+ * A simple extension of [CategorizedBubblesSelectionFragment].
+ *
+ * To be used in [UserSetupActivity] to allow categorized hobbies selection.
+ */
 class UserSetupHobbiesSelectionFragment : CategorizedBubblesSelectionFragment() {
 
     private val viewModel: UserSetupViewModel by activityViewModels()

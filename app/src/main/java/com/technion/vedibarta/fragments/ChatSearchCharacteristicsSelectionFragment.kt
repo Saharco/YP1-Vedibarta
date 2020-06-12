@@ -4,6 +4,11 @@ import androidx.fragment.app.activityViewModels
 import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.viewModels.ChatSearchViewModel
 
+/**
+ * A simple extension of [CategorizedBubblesSelectionFragment].
+ *
+ * To be used in [ChatSearchFragment] to allow categorized characteristics selection.
+ */
 class ChatSearchCharacteristicsSelectionFragment : CategorizedBubblesSelectionFragment() {
 
     private val viewModel: ChatSearchViewModel by activityViewModels()

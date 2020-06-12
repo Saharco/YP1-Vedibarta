@@ -15,12 +15,34 @@ import com.technion.vedibarta.databinding.FragmentBubblesSelectionBinding
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 
+/**
+ * The base class to all fragments that display bubbles and allow them to be selected.
+ *
+ * This class is implemented using the Inversion of Control design pattern. Extending fragment
+ * classes have to implement the following properties:
+ *  @property translator a [LiveData] which will be used to translate the [categoryCard] info
+ *   (title and bubbles' content) to the current language
+ *  @property categoryCard the [CategoryCard] which content will be displayed. Its info (title and
+ *   bubble's content) shall be saved in the base language of the [translator]
+ *  @see onSelectedBubblesChanged
+ * And optionally, override the following property:
+ *  @property chosenInitially the set of bubbles that should be displayed as chosen when the
+ *   fragment is created (identified by their content).
+ *
+ * [translator], [categoryCard] and [chosenInitially] are guaranteed to only be observed after
+ * [onAttach] is called.
+ */
 abstract class BubblesSelectionFragment : VedibartaFragment() {
 
     protected abstract val translator: LiveData<MultilingualTextResource>
     protected abstract val categoryCard: CategoryCard
     protected abstract val chosenInitially: Set<String>
 
+    /**
+     * A callback to be called whenever the set of selected bubbles is changed.
+     *
+     * @param selected a set containing the new selected bubbles (identified by their content)
+     */
     protected abstract fun onSelectedBubblesChanged(selected: Set<String>)
 
     private val viewModel: BubblesSelectionViewModel by viewModels {
