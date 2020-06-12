@@ -20,7 +20,8 @@ class UserSetupViewModel(context: Application) : AndroidViewModel(context) {
     var chosenSchool: TextContainer = Unfilled
     var chosenRegion: TextContainer = Unfilled
 
-    var selectedCharacteristics = List(StudentResources.characteristicsCardList.size) {
+    val characteristicsCardList = StudentResources.characteristicsCardList
+    var selectedCharacteristics = List(characteristicsCardList.size) {
         MutableLiveData(emptySet<String>())
     }
 

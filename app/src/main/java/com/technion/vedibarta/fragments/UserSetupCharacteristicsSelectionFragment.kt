@@ -40,7 +40,7 @@ class UserSetupCharacteristicsSelectionFragment : BubblesSelectionFragment() {
     override val translator = StudentResources.characteristicsTranslator
 
     override val categoryCard by lazy {
-        StudentResources.characteristicsCardList[requireArguments().getInt(CARD_INDEX_KEY)]
+        viewModel.characteristicsCardList[requireArguments().getInt(CARD_INDEX_KEY)]
     }
 
     override val chosenInitially by lazy {
