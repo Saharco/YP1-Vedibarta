@@ -72,6 +72,7 @@ class ClassesListAdapter(
                 itemView.findViewById<MaterialCardView>(R.id.classRoot).isChecked = false
                 itemView.findViewById<TextView>(R.id.className).text = cls.name
                 itemView.findViewById<TextView>(R.id.classDescription).text = cls.description
+                itemView.tag = cls.id
                 itemView.setOnLongClickListener {
                     longPressLambda(it)
                 }
