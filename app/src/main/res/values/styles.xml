@@ -27,6 +27,7 @@
     </style>
     <style name="BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView.PrimarySurface">
         <item name="itemBackground">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
         <item name="itemIconTint">@color/bottom_navigation_selector</item>
         <item name="itemRippleColor">@color/colorAccent</item>
         <item name="itemTextAppearanceInactive">?attr/textAppearanceCaption</item>
