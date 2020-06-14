@@ -37,13 +37,29 @@ class TeacherClassListViewModel : ViewModel() {
     val classesList = mutableListOf<Class>()
     val event: LiveData<Event> = _event
 
-    fun handleOnBackPress(): Boolean{
+    init {
+        DatabaseVersioning.currentVersion.instance.collection("classes")
+            .whereEqualTo("teacherID", VedibartaActivity.userId).get()
+            .addOnSuccessListener {
+                if (it.documents.isNotEmpty()) {
+                    classesList.addAll(it.documents.map { it.toObject(Class::class.java)!! }
+                        .toList())
+                    _event.value = Event.ClassAdded()
+                }
+            }
+            .addOnFailureListener {
+                _event.value = Event.DisplayError(R.string.something_went_wrong)
+            }
+    }
+
+    fun handleOnBackPress(): Boolean {
         if (itemActionBarEnabled) {
             clearSelectedClasses()
             return true
         }
         return false
     }
+
     private fun clearSelectedClasses() {
         itemActionBarEnabled = false
         selectedItems = 0
@@ -52,9 +68,7 @@ class TeacherClassListViewModel : ViewModel() {
             it.isChecked = false
         }
         selectedItemsList.clear()
-        _event.value = Event.ToggleActionBar.also {
-            it.handled = false
-        }
+        _event.value = Event.ToggleActionBar()
     }
 
     fun unSelectClass(v: MaterialCardView) {
@@ -64,21 +78,16 @@ class TeacherClassListViewModel : ViewModel() {
         v.isChecked = false
         if (selectedItems == 0) {
             itemActionBarEnabled = false
-            _event.value = Event.ToggleActionBar.also {
-                it.handled = false
-            }
+            _event.value = Event.ToggleActionBar()
         } else {
-            _event.value = Event.UpdateTitle.also {
-                it.handled = false
-            }
+            _event.value = Event.UpdateTitle()
         }
     }
 
-    fun beginClassEdit(v: MaterialCardView) {
+
+    fun beginClassExtraActions(v: MaterialCardView) {
         itemActionBarEnabled = true
-        _event.value = Event.ToggleActionBar.also {
-            it.handled = false
-        }
+        _event.value = Event.ToggleActionBar()
         selectClass(v)
     }
 
@@ -87,9 +96,7 @@ class TeacherClassListViewModel : ViewModel() {
         selectedItemsList.add(v)
         v.isLongClickable = false
         v.isChecked = true
-        _event.value = Event.UpdateTitle.also {
-            it.handled = false
-        }
+        _event.value = Event.UpdateTitle()
     }
 
     fun removeSelectedClasses() {
@@ -110,23 +117,38 @@ class TeacherClassListViewModel : ViewModel() {
         selectedItemsList.clear()
         selectedItems = 0
         itemActionBarEnabled = false
-        _event.value = Event.ToggleActionBar.also {
-            it.handled = false
-        }
+        _event.value = Event.ToggleActionBar()
     }
 
     fun addClass(clazz: Class) {
         classesList.add(clazz)
-        _event.value = Event.ClassAdded
+        _event.value = Event.ClassAdded()
+    }
+
+    fun editClass(clazzMap: Map<String, String?>) {
+        val classToEdit: Class = classesList.first { it.id == selectedItemsList.first().tag }
+        val editIndex = classesList.indexOf(classToEdit)
+        classesList[editIndex].name = clazzMap["name"]!!
+        classesList[editIndex].description = clazzMap["description"]!!
+        classesList[editIndex].photo = clazzMap["photo"]
+        DatabaseVersioning.currentVersion.instance.collection("classes").document(classToEdit.id)
+            .update(clazzMap).addOnSuccessListener {
+                _event.value = Event.ClassEdited(editIndex+1)
+                unSelectClass(selectedItemsList.first())
+            }
+            .addOnFailureListener {
+                _event.value = Event.DisplayError(R.string.something_went_wrong)
+            }
     }
 
     sealed class Event {
         var handled = false
 
-        object ToggleActionBar : Event()
-        object UpdateTitle : Event()
+        class ToggleActionBar : Event()
+        class UpdateTitle : Event()
         data class ClassRemoved(val index: Int) : Event()
-        object ClassAdded : Event()
+        data class ClassEdited(val index: Int) : Event()
+        class ClassAdded : Event()
         data class DisplayError(val msgResId: Int) : Event()
     }
 

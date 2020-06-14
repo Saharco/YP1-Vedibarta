@@ -16,6 +16,7 @@
     <string name="cancel">ביטול</string>
     <string name="error">שגיאה</string>
     <string name="edit">עריכה</string>
+    <string name="save">שמירה</string>
     <string name="delete">הסרה</string>
     <string name="net_error">קיימת בעיה בחיבור לאינטרנט</string>
     <string name="single_item_selected">נבחר</string>

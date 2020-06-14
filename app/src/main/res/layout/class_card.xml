@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/user_picture"
+            android:id="@+id/classPhoto"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_margin="8dp"
@@ -32,8 +32,8 @@
             android:layout_marginEnd="10dp"
             android:textColor="@android:color/darker_gray"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/user_picture"
-            app:layout_constraintStart_toEndOf="@id/user_picture"
+            app:layout_constraintBottom_toBottomOf="@id/classPhoto"
+            app:layout_constraintStart_toEndOf="@id/classPhoto"
             app:layout_constraintTop_toBottomOf="@id/className" />
 
         <TextView
@@ -44,8 +44,19 @@
             android:layout_marginEnd="10dp"
             android:textColor="@android:color/black"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@id/user_picture"
-            app:layout_constraintTop_toTopOf="@id/user_picture" />
+            app:layout_constraintStart_toEndOf="@id/classPhoto"
+            app:layout_constraintTop_toTopOf="@id/classPhoto" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:adjustViewBounds="true"
+            android:id="@+id/shareGroupButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="24dp"
+            app:srcCompat="@drawable/ic_share"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <View
             android:id="@+id/divider"

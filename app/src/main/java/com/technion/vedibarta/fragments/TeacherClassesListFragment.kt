@@ -1,7 +1,9 @@
 package com.technion.vedibarta.fragments
 
-import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -14,15 +16,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
-import com.technion.vedibarta.POJOs.Class
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Unfilled
 import androidx.lifecycle.observe
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.ClassMembersListAdapter
 import com.technion.vedibarta.adapters.ClassesListAdapter
@@ -31,7 +40,8 @@ import com.technion.vedibarta.data.viewModels.TeacherClassListViewModel
 import com.technion.vedibarta.teacher.TeacherMainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.changeStatusBarColor
 import com.technion.vedibarta.utilities.missingDetailsDialog
-import kotlinx.android.synthetic.main.fragment_teacher_classes_list.*
+import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_user_profile.*
 import kotlinx.android.synthetic.main.fragment_teacher_classes_list.toolbar
 
 /**
@@ -77,6 +87,7 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                 when (event) {
                     is TeacherClassListViewModel.Event.ClassAdded -> classList.adapter?.notifyItemInserted(viewModel.classesList.size)
                     is TeacherClassListViewModel.Event.ClassRemoved -> classList.adapter?.notifyItemRemoved(event.index)
+                    is TeacherClassListViewModel.Event.ClassEdited -> classList.adapter?.notifyItemChanged(event.index)
                     is TeacherClassListViewModel.Event.ToggleActionBar -> toggleCustomToolbar()
                     is TeacherClassListViewModel.Event.UpdateTitle -> updateSelectedTitle()
                     is TeacherClassListViewModel.Event.DisplayError -> Toast.makeText(requireContext(), event.msgResId, Toast.LENGTH_LONG).show()
@@ -95,6 +106,7 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
             R.id.delete -> {
                 viewModel.removeSelectedClasses()
             }
+            R.id.edit -> onClassEditClick()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -136,6 +148,57 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
         }
     }
 
+    private fun onClassEditClick(){
+        val dialog = MaterialDialog(requireContext())
+        dialog.cornerRadius(20f)
+            .noAutoDismiss()
+            .positiveButton(R.string.save) {
+                val classAddViewModel: ClassAddViewModel by viewModels()
+                classAddViewModel.saveEditedClass()
+
+            }
+            .negativeButton(R.string.cancel) { it.dismiss() }
+            .customView(R.layout.fragment_add_class_dialog)
+            .show {
+                val classAddViewModel: ClassAddViewModel by viewModels()
+                classAddViewModel.event.removeObservers(viewLifecycleOwner)
+                classAddViewModel.event.observe(viewLifecycleOwner) { event ->
+                    if (!event.handled) {
+                        when (event) {
+                            is ClassAddViewModel.ClassAddEvent.ClassEdited -> {
+                                viewModel.editClass(event.clazzMap)
+                                this.dismiss()
+                            }
+                        }
+                        event.handled = true
+                    }
+                }
+                val className = this.findViewById<TextInputEditText>(R.id.className)
+                className.text = SpannableStringBuilder(viewModel.selectedItemsList.first().findViewById<TextView>(R.id.className).text)
+                classAddViewModel.chosenClassName = Filled(className.text.toString())
+                className.doOnTextChanged { text, _, _, _ ->
+                    if (text.isNullOrEmpty()) {
+                        classAddViewModel.chosenClassName = Unfilled
+                    } else {
+                        classAddViewModel.chosenClassName = Filled(text.toString())
+                    }
+                }
+
+                val classDesc = this.findViewById<TextInputEditText>(R.id.classDescription)
+                classDesc.text = SpannableStringBuilder(viewModel.selectedItemsList.first().findViewById<TextView>(R.id.classDescription).text)
+                classAddViewModel.chosenClassDescription = Filled(classDesc.text.toString())
+                classDesc.doOnTextChanged { text, _, _, _ ->
+                    if (text.isNullOrEmpty()) {
+                        classAddViewModel.chosenClassDescription = Unfilled
+                    } else {
+                        classAddViewModel.chosenClassDescription = Filled(text.toString())
+                    }
+                }
+                val classPhoto = this.findViewById<CircleImageView>(R.id.classPhoto)
+                classPhoto.setImageDrawable(viewModel.selectedItemsList.first().findViewById<AppCompatImageView>(R.id.classPhoto).drawable)
+                //TODO Add camera Button click listener and load default photo for class
+            }
+    }
 
     private fun onAddClassButtonClick() {
         val dialog = MaterialDialog(requireContext())
@@ -193,7 +256,7 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
     }
 
     private fun onClassLongPress(v: View): Boolean {
-        viewModel.beginClassEdit(v as MaterialCardView)
+        viewModel.beginClassExtraActions(v as MaterialCardView)
         return true
     }
 

@@ -60,10 +60,39 @@ class ClassAddViewModel : ViewModel(){
             }
     }
 
+    fun saveEditedClass() {
+        val name = when (val name = chosenClassName) {
+            is Unfilled -> {
+                _event.value =
+                    ClassAddEvent.DisplayMissingInfoDialog(R.string.teacher_class_list_missing_class_name); return
+            }
+            is Filled -> name.text
+        }
+        val description = when (val desc = chosenClassDescription) {
+            is Unfilled -> {
+                _event.value =
+                    ClassAddEvent.DisplayMissingInfoDialog(R.string.teacher_class_list_missing_class_description); return
+            }
+            is Filled -> desc.text
+        }
+
+        val photo = chosenClassPicture
+
+        val clazzMap = mutableMapOf<String, String?>(
+            "name" to name,
+            "description" to description,
+            "photo" to photo
+        )
+        _event.value = ClassAddEvent.ClassEdited(clazzMap)
+
+
+    }
+
     sealed class ClassAddEvent {
         var handled = false
 
         data class ClassAdded(val clazz: Class) : ClassAddEvent()
+        data class ClassEdited(val clazzMap: Map<String, String?>): ClassAddEvent()
         data class DisplayMissingInfoDialog(val msgResId: Int) : ClassAddEvent()
         data class DisplayError(val msgResId: Int): ClassAddEvent()
     }
