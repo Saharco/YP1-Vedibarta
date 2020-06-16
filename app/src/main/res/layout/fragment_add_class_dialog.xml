@@ -45,9 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/class_name_hint"
-            android:layoutDirection="rtl"
-            app:errorEnabled="true"
-            app:helperText="@string/text_field_hint">
+            android:layoutDirection="rtl">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/className"
@@ -64,9 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="@string/subject_hint"
-            android:layoutDirection="rtl"
-            app:errorEnabled="true"
-            app:helperText="@string/text_field_hint">
+            android:layoutDirection="rtl">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/classDescription"

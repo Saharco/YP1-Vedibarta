@@ -1,38 +1,48 @@
 package com.technion.vedibarta.fragments
 
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.forEach
-import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.viewModels
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
+import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.viewModels
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
-import com.technion.vedibarta.POJOs.Class
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Unfilled
-
+import androidx.lifecycle.observe
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.ClassMembersListAdapter
 import com.technion.vedibarta.adapters.ClassesListAdapter
+import com.technion.vedibarta.data.viewModels.ClassAddViewModel
 import com.technion.vedibarta.data.viewModels.TeacherClassListViewModel
 import com.technion.vedibarta.teacher.TeacherMainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.changeStatusBarColor
 import com.technion.vedibarta.utilities.missingDetailsDialog
-import kotlinx.android.synthetic.main.activity_teacher_setup.*
-import kotlinx.android.synthetic.main.fragment_teacher_classes_list.*
+import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_user_profile.*
 import kotlinx.android.synthetic.main.fragment_teacher_classes_list.toolbar
-import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
 
 /**
  * A simple [Fragment] subclass.
@@ -40,6 +50,7 @@ import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
 class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed {
 
     private val viewModel: TeacherClassListViewModel by viewModels()
+
     //TODO remove code duplication by moving stuff into functions
     companion object {
         @JvmStatic
@@ -70,7 +81,21 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
         val appCompat = requireActivity() as AppCompatActivity
         appCompat.setSupportActionBar(toolbar)
         toggleCustomToolbar()
+        val classList = view.findViewById<RecyclerView>(R.id.classList)
+        viewModel.event.observe(viewLifecycleOwner) { event ->
+            if (!event.handled) {
+                when (event) {
+                    is TeacherClassListViewModel.Event.ClassAdded -> classList.adapter?.notifyItemInserted(viewModel.classesList.size)
+                    is TeacherClassListViewModel.Event.ClassRemoved -> classList.adapter?.notifyItemRemoved(event.index)
+                    is TeacherClassListViewModel.Event.ClassEdited -> classList.adapter?.notifyItemChanged(event.index)
+                    is TeacherClassListViewModel.Event.ToggleActionBar -> toggleCustomToolbar()
+                    is TeacherClassListViewModel.Event.UpdateTitle -> updateSelectedTitle()
+                    is TeacherClassListViewModel.Event.DisplayError -> Toast.makeText(requireContext(), event.msgResId, Toast.LENGTH_LONG).show()
+                }
+                event.handled = true
+            }
 
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -79,21 +104,9 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                 onBackPressed()
             }
             R.id.delete -> {
-                viewModel.selectedItemsList.forEach {
-                    val className = it.findViewById<TextView>(R.id.className).text
-                    val classDescription = it.findViewById<TextView>(R.id.classDescription).text
-                    val classToRemove: Class =
-                        viewModel.classesList.first { it.name == className && it.description == classDescription }
-                    val removeIndex = viewModel.classesList.indexOf(classToRemove)
-                    viewModel.classesList.remove(classToRemove)
-                    classList.adapter?.notifyItemRemoved(removeIndex+1)
-                }
-                viewModel.selectedItemsList.clear()
-                viewModel.selectedItems = 0
-                viewModel.itemActionBarEnabled = false
-                toggleCustomToolbar()
-                //TODO delete the class from firebase
+                viewModel.removeSelectedClasses()
             }
+            R.id.edit -> onClassEditClick()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -135,156 +148,165 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
         }
     }
 
+    private fun onClassEditClick(){
+        val dialog = MaterialDialog(requireContext())
+        dialog.cornerRadius(20f)
+            .noAutoDismiss()
+            .positiveButton(R.string.save) {
+                val classAddViewModel: ClassAddViewModel by viewModels()
+                classAddViewModel.saveEditedClass()
+
+            }
+            .negativeButton(R.string.cancel) { it.dismiss() }
+            .customView(R.layout.fragment_add_class_dialog)
+            .show {
+                val classAddViewModel: ClassAddViewModel by viewModels()
+                classAddViewModel.event.removeObservers(viewLifecycleOwner)
+                classAddViewModel.event.observe(viewLifecycleOwner) { event ->
+                    if (!event.handled) {
+                        when (event) {
+                            is ClassAddViewModel.ClassAddEvent.ClassEdited -> {
+                                viewModel.editClass(event.clazzMap)
+                                this.dismiss()
+                            }
+                        }
+                        event.handled = true
+                    }
+                }
+                val className = this.findViewById<TextInputEditText>(R.id.className)
+                className.text = SpannableStringBuilder(viewModel.selectedItemsList.first().findViewById<TextView>(R.id.className).text)
+                classAddViewModel.chosenClassName = Filled(className.text.toString())
+                className.doOnTextChanged { text, _, _, _ ->
+                    if (text.isNullOrEmpty()) {
+                        classAddViewModel.chosenClassName = Unfilled
+                    } else {
+                        classAddViewModel.chosenClassName = Filled(text.toString())
+                    }
+                }
+
+                val classDesc = this.findViewById<TextInputEditText>(R.id.classDescription)
+                classDesc.text = SpannableStringBuilder(viewModel.selectedItemsList.first().findViewById<TextView>(R.id.classDescription).text)
+                classAddViewModel.chosenClassDescription = Filled(classDesc.text.toString())
+                classDesc.doOnTextChanged { text, _, _, _ ->
+                    if (text.isNullOrEmpty()) {
+                        classAddViewModel.chosenClassDescription = Unfilled
+                    } else {
+                        classAddViewModel.chosenClassDescription = Filled(text.toString())
+                    }
+                }
+                val classPhoto = this.findViewById<CircleImageView>(R.id.classPhoto)
+                classPhoto.setImageDrawable(viewModel.selectedItemsList.first().findViewById<AppCompatImageView>(R.id.classPhoto).drawable)
+                //TODO Add camera Button click listener and load default photo for class
+            }
+    }
+
     private fun onAddClassButtonClick() {
         val dialog = MaterialDialog(requireContext())
         dialog.cornerRadius(20f)
             .noAutoDismiss()
             .positiveButton(R.string.create) {
-                validateClassDetails().let { result ->
-                    when (result) {
-                        is Success -> {
-                            viewModel.classesList.add(result.cls)
-                            //TODO save the new class in database
-                            viewModel.chosenClassName = Unfilled
-                            viewModel.chosenClassDescription = Unfilled
-                            //TODO change to default photo
-                            viewModel.chosenClassPicture = null
-                            classList.adapter?.notifyItemInserted(viewModel.classesList.size)
-                            it.dismiss()
-                        }
-                        is Failure -> {
-                            missingDetailsDialog(requireContext(), result.msg)
-                        }
-                    }
-                }
+                val classAddViewModel: ClassAddViewModel by viewModels()
+                classAddViewModel.createClass()
+
             }
             .negativeButton(R.string.cancel) { it.dismiss() }
             .customView(R.layout.fragment_add_class_dialog)
             .show {
-                val allowedLetters = getString(R.string.allowed_letters_regex)
+                val classAddViewModel: ClassAddViewModel by viewModels()
+                classAddViewModel.event.removeObservers(viewLifecycleOwner)
+                classAddViewModel.event.observe(viewLifecycleOwner) { event ->
+                    if (!event.handled) {
+                        when (event) {
+                            is ClassAddViewModel.ClassAddEvent.ClassAdded -> {
+                                viewModel.addClass(event.clazz)
+                                this.dismiss()
+                            }
+                            is ClassAddViewModel.ClassAddEvent.DisplayMissingInfoDialog -> missingDetailsDialog(
+                                requireContext(),
+                                getString(event.msgResId)
+                            )
+                            is ClassAddViewModel.ClassAddEvent.DisplayError -> Toast.makeText(
+                                requireContext(),
+                                event.msgResId,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        event.handled = true
+                    }
+                }
                 val className = this.findViewById<TextInputEditText>(R.id.className)
                 className.doOnTextChanged { text, _, _, _ ->
                     if (text.isNullOrEmpty()) {
-                        viewModel.chosenClassName = Unfilled
+                        classAddViewModel.chosenClassName = Unfilled
                     } else {
-                        viewModel.chosenClassName = Filled(text.toString())
-                        className.error = null
+                        classAddViewModel.chosenClassName = Filled(text.toString())
                     }
                 }
 
                 val classDesc = this.findViewById<TextInputEditText>(R.id.classDescription)
                 classDesc.doOnTextChanged { text, _, _, _ ->
                     if (text.isNullOrEmpty()) {
-                        viewModel.chosenClassDescription = Unfilled
+                        classAddViewModel.chosenClassDescription = Unfilled
                     } else {
-                        viewModel.chosenClassDescription = Filled(text.toString())
-                        classDesc.error = null
+                        classAddViewModel.chosenClassDescription = Filled(text.toString())
                     }
                 }
                 //TODO Add camera Button click listener and load default photo for class
             }
     }
 
-    private fun validateClassDetails(): ClassesResult {
-        val name = when (val name = viewModel.chosenClassName) {
-            is Unfilled -> return Failure(resources.getString(R.string.teacher_class_list_missing_class_name))
-            is Filled -> name.text
-        }
-        val description = when (val desc = viewModel.chosenClassDescription) {
-            is Unfilled -> return Failure(resources.getString(R.string.teacher_class_list_missing_class_description))
-            is Filled -> desc.text
-        }
-
-        val photo = viewModel.chosenClassPicture
-        //TODO Add Teacher ID to the class
-        return Success(Class(name = name, description = description, photo = photo))
+    private fun onClassLongPress(v: View): Boolean {
+        viewModel.beginClassExtraActions(v as MaterialCardView)
+        return true
     }
 
-    private fun onClassLongPress(v: View): Boolean {
+    private fun updateSelectedTitle() {
         val appCompat = requireActivity() as AppCompatActivity
-        viewModel.itemActionBarEnabled = true
-        viewModel.selectedItems++
-        viewModel.selectedItemsList.add(v as MaterialCardView)
-        if (viewModel.selectedItems > 1) {
+        if (viewModel.selectedItems == 1) {
+            toolbar.menu.clear()
+            appCompat.menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
+            appCompat.supportActionBar?.title =
+                "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
+        } else {
             toolbar.menu.removeItem(R.id.edit)
             appCompat.supportActionBar?.title =
                 "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
-
-        } else {
-            appCompat.supportActionBar?.title =
-                "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
         }
-        v.isLongClickable = false
-        toggleCustomToolbar()
-        v.isChecked = true
+    }
+
+
+    private fun onClassClick(v: View): Boolean {
+        if (viewModel.itemActionBarEnabled) {
+            if ((v as MaterialCardView).isChecked) {
+                viewModel.unSelectClass(v)
+            } else {
+                viewModel.selectClass(v)
+            }
+        } else {
+            loadClassMembers(v)
+        }
 
         return true
     }
 
-    private fun onClassClick(v: View): Boolean {
-        val appCompat = requireActivity() as AppCompatActivity
-        if (viewModel.itemActionBarEnabled) {
-            if ((v as MaterialCardView).isChecked) {
-                viewModel.selectedItems--
-                viewModel.selectedItemsList.remove(v)
-                v.isLongClickable = true
-                v.isChecked = false
-                if (viewModel.selectedItems == 0) {
-                    viewModel.itemActionBarEnabled = false
-                    toggleCustomToolbar()
-                    return true
-                }
-            } else {
-                viewModel.selectedItems++
-                viewModel.selectedItemsList.add(v)
-                v.isChecked = true
-                v.isLongClickable = false
-
+    private fun loadClassMembers(selectedClass: View) {
+        val dialog = MaterialDialog(requireContext())
+        dialog.cornerRadius(20f)
+            .noAutoDismiss()
+            .customView(R.layout.class_member_list_dialog)
+            .show {
+                val recyclerView = this.findViewById<RecyclerView>(R.id.membersList)
+                recyclerView.isNestedScrollingEnabled = false
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                //TODO Change adapter to load members from database
+                recyclerView.adapter = ClassMembersListAdapter()
             }
-            if (viewModel.selectedItems == 1) {
-                toolbar.menu.clear()
-                appCompat.menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
-                appCompat.supportActionBar?.title =
-                    "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
-            } else {
-                toolbar.menu.removeItem(R.id.edit)
-                appCompat.supportActionBar?.title =
-                    "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
-            }
-        }
-        else{
-            val dialog = MaterialDialog(requireContext())
-            dialog.cornerRadius(20f)
-                .noAutoDismiss()
-                .customView(R.layout.class_member_list_dialog)
-                .show {
-                    val recyclerView = this.findViewById<RecyclerView>(R.id.membersList)
-                    recyclerView.isNestedScrollingEnabled = false
-                    recyclerView.layoutManager = LinearLayoutManager(activity)
-                    recyclerView.adapter = ClassMembersListAdapter()
-                }
-        }
-
-        return true
     }
 
     override fun onBackPressed(): Boolean {
-        if (viewModel.itemActionBarEnabled) {
-            viewModel.itemActionBarEnabled = false
-            toggleCustomToolbar()
-            viewModel.selectedItems = 0
-            viewModel.selectedItemsList.forEach {
-                it.isLongClickable = true
-                it.isChecked = false
-            }
-            viewModel.selectedItemsList.clear()
-            return true
-        }
-        return false
+        return viewModel.handleOnBackPress()
     }
 
 }
 
-sealed class ClassesResult
-data class Success(val cls: Class) : ClassesResult()
-data class Failure(val msg: String) : ClassesResult()
+

@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/user_picture"
+            android:id="@+id/classPhoto"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_margin="8dp"
@@ -34,8 +34,8 @@
             android:textColor="@android:color/black"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/user_picture"
-            app:layout_constraintTop_toTopOf="@id/user_picture" />
+            app:layout_constraintStart_toEndOf="@id/classPhoto"
+            app:layout_constraintTop_toTopOf="@id/classPhoto" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/rank"
