@@ -13,58 +13,32 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.observe
 import com.google.android.material.tabs.TabLayoutMediator
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
+import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel.*
-import com.technion.vedibarta.fragments.CategorizedBubblesSelectionFragment
-import com.technion.vedibarta.fragments.BubblesSelectionFragment
+import com.technion.vedibarta.fragments.UserSetupCharacteristicsSelectionFragment
+import com.technion.vedibarta.fragments.UserSetupHobbiesSelectionFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
-class UserSetupActivity :
-    VedibartaActivity(),
-    CategorizedBubblesSelectionFragment.ArgumentsSupplier,
-    BubblesSelectionFragment.ArgumentsSupplier
-{
+class UserSetupActivity : VedibartaActivity() {
     companion object {
         private const val TAG = "UserSetupActivity"
     }
 
     private val viewModel: UserSetupViewModel by viewModels()
 
-    private val userSetupResources: UserSetupResources by lazy {
-        (viewModel.resources.value as Loaded).data
-    }
-
-    private var loadedHandled = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_setup)
 
-        viewModel.resources.observe(this) {
-            when (it) {
-                is Loaded -> {
-                    if (!loadedHandled) {
-                        setupViewPager(it.data)
-
-                        loading.visibility = View.GONE
-                        layout.visibility = View.VISIBLE
-                    }
-                }
-                is Error -> Toast.makeText(this, it.reason, Toast.LENGTH_LONG).show()
-                is SlowLoadingEvent -> {
-                    if (!it.handled)
-                        Toast.makeText(this, resources.getString(R.string.net_error), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+        setupViewPager()
 
         viewModel.doneButtonVisibility.observe(this) {
             doneButton.visibility = it
@@ -116,16 +90,15 @@ class UserSetupActivity :
         backButton.bringToFront()
     }
 
-    private fun setupViewPager(
-        resources: UserSetupResources
-    ) {
-        val characteristicsFragmentList = listOf<() -> Fragment> { ChoosePersonalInfoFragment() } +
-                resources.characteristicsCardList.mapIndexed { idx, _ -> {
-                    BubblesSelectionFragment.newInstance(identifier = idx.toString())
-                }} +
-                {
-                    CategorizedBubblesSelectionFragment.newInstance("hobbies")
-                }
+    private fun setupViewPager() {
+        val characteristicsFragmentList =
+            listOf<() -> Fragment> {
+                ChoosePersonalInfoFragment()
+            } + StudentResources.characteristicsCardList.mapIndexed { idx, _ -> {
+                UserSetupCharacteristicsSelectionFragment.newInstance(idx)
+            }} + {
+                UserSetupHobbiesSelectionFragment()
+            }
 
         userSetupContainer.adapter = FragmentListStateAdapter(this, characteristicsFragmentList)
         userSetupContainer.isUserInputEnabled = false
@@ -135,7 +108,6 @@ class UserSetupActivity :
         }.attach()
 
         editTabs.touchables.forEach { it.isEnabled = false }
-        loadedHandled = true
     }
 
     override fun onBackPressed() {
@@ -179,24 +151,4 @@ class UserSetupActivity :
             R.id.gradeTwelfth -> viewModel.grade = Grade.TWELFTH
         }
     }
-
-    override fun getCategorizedBubblesSelectionArguments(identifier: String): CategorizedBubblesSelectionFragment.Arguments =
-        when (identifier) {
-            "hobbies" -> CategorizedBubblesSelectionFragment.Arguments(
-                MutableLiveData(userSetupResources.hobbiesTranslator),
-                userSetupResources.hobbyCardList,
-                { viewModel.selectedHobbies = it }
-            )
-            else -> error("error")
-        }
-
-    override fun getBubblesSelectionArguments(identifier: String): BubblesSelectionFragment.Arguments =
-        BubblesSelectionFragment.Arguments(
-            userSetupResources.characteristicsTranslator,
-            userSetupResources.characteristicsCardList[identifier.toInt()].title,
-            userSetupResources.characteristicsCardList[identifier.toInt()].bubbles,
-            { viewModel.selectedCharacteristics[identifier.toInt()].value = it },
-            selectedInitially = viewModel.selectedCharacteristics[identifier.toInt()].value!!,
-            showBackground = false
-        )
 }

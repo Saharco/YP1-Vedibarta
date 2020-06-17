@@ -10,12 +10,11 @@ import com.technion.vedibarta.R
 import kotlinx.android.synthetic.main.fragment_search_extra_options.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
 import com.technion.vedibarta.POJOs.*
+import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.viewModels.ChatSearchViewModel
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 
 /**
  * A simple [Fragment] subclass.
@@ -39,21 +38,18 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.resources.observe(viewLifecycleOwner) {
-            if (it is Loaded)
-                setupAndInitViews(it.data.schoolsName, it.data.regionsName)
-        }
+        setupAndInitViews()
     }
 
     override fun onPause() {
         super.onPause()
         VedibartaActivity.hideKeyboard(activity as ChatSearchActivity)
         regionListSpinner.clearFocus()
-        schoolListSpinnerLayout.clearFocus()
+        schoolListSpinner.clearFocus()
     }
 
     private fun onSchoolSelectedListener(position: Int) {
-        val schoolName = schoolListSpinnerLayout.adapter.getItem(position).toString()
+        val schoolName = schoolListSpinner.adapter.getItem(position).toString()
         val region = schoolAndRegionMap[schoolName].toString()
 
         regionListSpinner.text = SpannableStringBuilder(region)
@@ -64,26 +60,26 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
     }
 
     private fun onRegionSelectedListener(position: Int) {
-        schoolListSpinnerLayout.text = SpannableStringBuilder("")
+        schoolListSpinner.text = SpannableStringBuilder("")
         val region = regionListSpinner.adapter.getItem(position).toString()
         viewModel.chosenRegion = Filled(region)
         viewModel.chosenSchool = Filled("")
 
         val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
 
-        populateAutoTextView(requireContext(), schoolListSpinnerLayout, schoolList)
+        populateAutoTextView(requireContext(), schoolListSpinner, schoolList)
 
         VedibartaActivity.hideKeyboard(requireActivity())
     }
 
     private fun schoolOnCheckedChanged(isChecked: Boolean) {
-        schoolListSpinnerLayout.text.clear()
+        schoolListSpinner.text.clear()
         viewModel.chosenSchool = Unfilled
         VedibartaActivity.hideKeyboard(requireActivity())
         if (isChecked) {
-            schoolListSpinnerLayout.visibility = View.VISIBLE
+            schoolListSpinner.visibility = View.VISIBLE
         } else {
-            schoolListSpinnerLayout.visibility = View.GONE
+            schoolListSpinner.visibility = View.GONE
         }
     }
 
@@ -107,30 +103,30 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
             gradeRadioGroup.visibility = View.GONE
     }
 
-    private fun setupAndInitViews(
-        schoolsName: TextResource,
-        regionsName: TextResource
-    ) {
-        schoolAndRegionMap = schoolsName.getAll().zip(regionsName.getAll()).toMap()
+    private fun setupAndInitViews() {
+        val schools = StudentResources.schools
+        val regions = StudentResources.regions
+
+        schoolAndRegionMap = schools.getAll().zip(regions.getAll()).toMap()
 
         //---Switch Views---
         schoolFilterSwitch.setOnCheckedChangeListener { _, isChecked -> schoolOnCheckedChanged(isChecked) }
         regionFilterSwitch.setOnCheckedChangeListener { _, isChecked -> regionOnCheckedChanged(isChecked) }
 
         //---DropDownList Views---
-        schoolListSpinnerLayout.setOnItemClickListener { _, _, pos, _ -> onSchoolSelectedListener(pos) }
+        schoolListSpinner.setOnItemClickListener { _, _, pos, _ -> onSchoolSelectedListener(pos) }
         regionListSpinner.setOnItemClickListener { _, _, pos, _ -> onRegionSelectedListener(pos) }
 
         regionListSpinner.doOnTextChanged { text, _, _, _ ->
             populateAutoTextView(
                 requireContext(),
-                schoolListSpinnerLayout,
-                schoolsName.getAll().toTypedArray()
+                schoolListSpinner,
+                schools.getAll().toTypedArray()
             )
             viewModel.chosenRegion = if (text.isNullOrEmpty()) Unfilled else Filled(text.toString())
         }
 
-        schoolListSpinnerLayout.doOnTextChanged { text, _, _, _ ->
+        schoolListSpinner.doOnTextChanged { text, _, _, _ ->
             viewModel.chosenSchool = if (text.isNullOrEmpty()) Unfilled else Filled(text.toString())
         }
 
@@ -139,12 +135,12 @@ class SearchExtraOptionsFragment : VedibartaFragment() {
         populateAutoTextView(
             requireContext(),
             regionListSpinner,
-            regionsName.getAll().distinct().toTypedArray()
+            regions.getAll().distinct().toTypedArray()
         )
         populateAutoTextView(
             requireContext(),
-            schoolListSpinnerLayout,
-            schoolsName.getAll().toTypedArray()
+            schoolListSpinner,
+            schools.getAll().toTypedArray()
         )
 
         gradeTenth.setOnClickListener { onRadioButtonClicked(it) }

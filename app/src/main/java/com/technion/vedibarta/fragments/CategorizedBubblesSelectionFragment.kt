@@ -16,24 +16,41 @@ import com.technion.vedibarta.data.viewModels.CategorizedBubblesSelectionViewMod
 import com.technion.vedibarta.databinding.FragmentCategorizedElementsSelectionBinding
 import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
 
-class CategorizedBubblesSelectionFragment : Fragment() {
+/**
+ * The base class to all fragments that display categorized bubbles and allow them to be selected.
+ *
+ * This class is implemented using the Inversion of Control design pattern. Extending fragment
+ * classes have to implement the following properties:
+ *  @property translator a [LiveData] which will be used to translate the [cards] info (title and
+ *   bubbles' content) to the current language
+ *  @property cards a list of [CategoryCard] to be displayed. Their info (title and bubble's
+ *   content) shall be saved in the base language of the [translator]
+ *  @see onSelectedBubblesChanged
+ * And optionally, override the following property:
+ *  @property chosenInitially the set of bubbles that should be displayed as chosen when the
+ *   fragment is created (identified by their content).
+ *
+ * [translator], [cards] and [chosenInitially] are guaranteed to only be observed after [onAttach]
+ * is called.
+ */
+abstract class CategorizedBubblesSelectionFragment : Fragment() {
 
-    companion object {
-        fun newInstance(identifier: String) = CategorizedBubblesSelectionFragment().apply {
-            arguments = Bundle().apply {
-                putString("IDENTIFIER", identifier)
-            }
-        }
-    }
+    protected abstract val translator: LiveData<MultilingualTextResource>
+    protected abstract val cards: List<CategoryCard>
+    protected open val chosenInitially: Set<String> = emptySet()
 
-    private val identifier by lazy { arguments?.getString("IDENTIFIER")!! }
-    private val args by lazy { (requireContext() as ArgumentsSupplier).getCategorizedBubblesSelectionArguments(identifier) }
+    /**
+     * A callback to be called whenever the set of selected bubbles is changed.
+     *
+     * @param selected a set containing the new selected bubbles (identified by their content)
+     */
+    protected abstract fun onSelectedBubblesChanged(selected: Set<String>)
 
     private val viewModel: CategorizedBubblesSelectionViewModel by viewModels {
         CategorizedBubblesSelectionViewModelFactory(
-            args.translator,
-            args.cards,
-            args.chosenInitially
+            translator,
+            cards,
+            chosenInitially
         )
     }
 
@@ -52,7 +69,7 @@ class CategorizedBubblesSelectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.selectedBubbles.observe(viewLifecycleOwner) {
-            args.onSelectedBubblesChangedListener(it)
+            onSelectedBubblesChanged(it)
         }
 
         val recycler = binding.categoryCardsList
@@ -65,16 +82,5 @@ class CategorizedBubblesSelectionFragment : Fragment() {
         super.onDestroyView()
 
         _binding = null
-    }
-
-    data class Arguments(
-        val translator: LiveData<MultilingualTextResource>,
-        val cards: List<CategoryCard>,
-        val onSelectedBubblesChangedListener: (Set<String>) -> Unit,
-        val chosenInitially: Set<String> = emptySet()
-    )
-
-    interface ArgumentsSupplier {
-        fun getCategorizedBubblesSelectionArguments(identifier: String): Arguments
     }
 }

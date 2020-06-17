@@ -6,24 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
-import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Loaded
 import com.technion.vedibarta.POJOs.Unfilled
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
-import com.technion.vedibarta.utilities.extensions.putGender
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel
-import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 import kotlinx.android.synthetic.main.fragment_choose_personal_info.*
 
 /**
@@ -51,12 +47,12 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     override fun onPause() {
         super.onPause()
         VedibartaActivity.hideKeyboard(activity as UserSetupActivity)
-        schoolListSpinnerLayout.clearFocus()
+        schoolListSpinner.clearFocus()
         regionListSpinner.clearFocus()
     }
 
     private fun onSchoolSelectedListener(position: Int) {
-        val schoolName = schoolListSpinnerLayout.adapter.getItem(position).toString()
+        val schoolName = schoolListSpinner.adapter.getItem(position).toString()
         val region = schoolAndRegionMap[schoolName].toString()
 
         regionListSpinner.text = SpannableStringBuilder(region)
@@ -67,14 +63,14 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     }
 
     private fun onRegionSelectedListener(position: Int) {
-        schoolListSpinnerLayout.text = SpannableStringBuilder("")
+        schoolListSpinner.text = SpannableStringBuilder("")
         val region = regionListSpinner.adapter.getItem(position).toString()
         viewModel.chosenRegion = Filled(region)
-        viewModel.chosenSchool = Unfilled
+        viewModel.chosenSchool = Filled("")
 
         val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
 
-        populateAutoTextView(requireContext(), schoolListSpinnerLayout, schoolList)
+        populateAutoTextView(requireContext(), schoolListSpinner, schoolList)
 
         VedibartaActivity.hideKeyboard(requireActivity())
     }
@@ -87,10 +83,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
     override fun setupAndInitViews(v: View) {
         super.setupAndInitViews(v)
         genderInit()
-        viewModel.resources.observe(viewLifecycleOwner) {
-            if (it is Loaded)
-                extraOptionsInit(v, it.data.schoolNames, it.data.regionNames)
-        }
+        extraOptionsInit(v)
     }
 
     private fun genderInit() {
@@ -142,12 +135,10 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         }
     }
 
-    private fun extraOptionsInit(
-        v: View,
-        schoolsName: TextResource,
-        regionsName: TextResource
-    ) {
-        schoolAndRegionMap = schoolsName.getAll().zip(regionsName.getAll()).toMap()
+    private fun extraOptionsInit(v: View) {
+        val schools = StudentResources.schools
+        val regions = StudentResources.regions
+        schoolAndRegionMap = schools.getAll().zip(regions.getAll()).toMap()
 
         // ---Student Name Views---
         val firstName: TextInputEditText = v.findViewById(R.id.textFieldFirstName)
@@ -173,7 +164,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
             }
         }
 
-        schoolListSpinnerLayout.setOnItemClickListener { _, _, position, _ ->
+        schoolListSpinner.setOnItemClickListener { _, _, position, _ ->
             onSchoolSelectedListener(position)
         }
 
@@ -181,15 +172,15 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
             onRegionSelectedListener(position)
         }
 
-        schoolListSpinnerLayout.doOnTextChanged { text, _, _, _ ->
+        schoolListSpinner.doOnTextChanged { text, _, _, _ ->
             viewModel.chosenSchool = Filled(text.toString())
         }
 
         regionListSpinner.doOnTextChanged { text, _, _, _ ->
             populateAutoTextView(
                 requireContext(),
-                schoolListSpinnerLayout,
-                schoolsName.getAll().toTypedArray()
+                schoolListSpinner,
+                schools.getAll().toTypedArray()
             )
             viewModel.chosenRegion = Filled(text.toString())
         }
@@ -197,13 +188,13 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         //---Populate DropDownLists---
         populateAutoTextView(
             requireContext(),
-            schoolListSpinnerLayout,
-            schoolsName.getAll().toTypedArray()
+            schoolListSpinner,
+            schools.getAll().toTypedArray()
         )
         populateAutoTextView(
             requireContext(),
             regionListSpinner,
-            regionsName.getAll().distinct().toTypedArray()
+            regions.getAll().distinct().toTypedArray()
         )
 
         textViewFirstNameTitle.markRequired()
@@ -229,7 +220,7 @@ class ChoosePersonalInfoFragment : VedibartaFragment() {
         }
 
         when (val it = viewModel.chosenSchool) {
-            is Filled -> schoolListSpinnerLayout.text = SpannableStringBuilder(it.text)
+            is Filled -> schoolListSpinner.text = SpannableStringBuilder(it.text)
         }
 
         when (val it = viewModel.chosenRegion) {

@@ -2,75 +2,28 @@ package com.technion.vedibarta.data.viewModels
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.google.android.gms.tasks.Tasks
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
-import com.technion.vedibarta.data.loadCharacteristicsCardsWithTranslator
-import com.technion.vedibarta.utilities.VedibartaActivity.Companion.student
-import com.technion.vedibarta.utilities.extensions.handleError
-import com.technion.vedibarta.utilities.extensions.handleSuccess
-import com.technion.vedibarta.utilities.extensions.handleTimeout
-import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextResource
-import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
-import com.technion.vedibarta.utilities.resourcesManagement.TextResource
+import com.technion.vedibarta.data.StudentResources
 
 class ChatSearchViewModel(context: Application) : AndroidViewModel(context) {
 
-    data class ChatSearchResources(
-        val characteristicsTranslator: MultilingualTextResource,
-        val characteristicsCardList: List<CategoryCard>,
-        val schoolsName: TextResource,
-        val regionsName: TextResource
-    )
-
-    private val _resources = MutableLiveData<LoadableData<ChatSearchResources>>(NormalLoading())
     private val _event = MutableLiveData<Event>()
-
-    private fun loadResources() {
-        val gender = student?.gender ?: Gender.NONE
-        val resourcesManager = RemoteTextResourcesManager(getApplication())
-
-        val characteristicsTask = loadCharacteristicsCardsWithTranslator(getApplication(), gender)
-        val schoolsTask = resourcesManager.findResource("schools")
-        val regionsTask = resourcesManager.findResource("regions")
-
-        Tasks.whenAll(schoolsTask, regionsTask, characteristicsTask).continueWith {
-            val characteristicsResult = characteristicsTask.result!!
-            val schools = schoolsTask.result!!
-            val regions = regionsTask.result!!
-
-            ChatSearchResources(
-                characteristicsResult.translator,
-                characteristicsResult.cards,
-                schools,
-                regions
-            )
-        }.apply {
-            handleError(_resources)
-            handleSuccess(_resources)
-            handleTimeout(_resources)
-        }
-    }
-
-    init {
-        loadResources()
-    }
 
     var grade: Grade = Grade.NONE
     var chosenSchool: TextContainer = Unfilled
     var chosenRegion: TextContainer = Unfilled
     var selectedCharacteristics: Set<String> = emptySet()
 
-    val resources: LiveData<LoadableData<ChatSearchResources>> = _resources
     val event: LiveData<Event> = _event
 
     fun searchPressed() {
-        val resources = (resources.value as? Loaded)?.data
-            ?: error("pressed search before done loading resources")
+        val schools = StudentResources.schools
+        val regions = StudentResources.regions
 
         when (val region = chosenRegion) {
             is Filled -> {
-                if (region.text !in resources.regionsName.getAll()) {
+                if (region.text !in regions.getAll()) {
                     _event.value = Event.DisplayFailure(R.string.chat_search_wrong_region_message)
                     return
                 }
@@ -78,8 +31,8 @@ class ChatSearchViewModel(context: Application) : AndroidViewModel(context) {
         }
 
         when(val school = chosenSchool) {
-            is Filled ->{
-                if (school.text !in resources.schoolsName.getAll()) {
+            is Filled -> {
+                if (school.text !in schools.getAll()) {
                     _event.value = Event.DisplayFailure(R.string.chat_search_wrong_school_message)
                     return
                 }
