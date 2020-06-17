@@ -278,12 +278,12 @@
                         android:text="@string/user_setup_school_title"
                         android:textColor="@color/textPrimary"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toTopOf="@id/schoolListSpinnerLayout"
+                        app:layout_constraintBottom_toTopOf="@id/schoolListSpinner"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                        android:id="@+id/schoolListSpinnerLayout"
+                        android:id="@+id/schoolListSpinner"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
@@ -309,7 +309,7 @@
                         android:textStyle="bold"
                         app:layout_constraintBottom_toTopOf="@id/regionListSpinner"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/schoolListSpinnerLayout">
+                        app:layout_constraintTop_toBottomOf="@id/schoolListSpinner">
 
                     </TextView>
 

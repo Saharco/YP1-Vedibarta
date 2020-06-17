@@ -39,7 +39,7 @@ class TeacherHomeFragment : Fragment() {
         val binding = FragmentTeacherHomeBinding.inflate(inflater, container, false)
         binding.toolbarTitle.text = title
         binding.extendedFloatingActionButton.setOnClickListener {
-            startActivity(Intent(context, ChatSearchActivity::class.java)) //TODO: Change to TeacherSearchActivity
+            startActivity(Intent(context, TeacherSearchActivity::class.java))
         }
 
         return binding.root
