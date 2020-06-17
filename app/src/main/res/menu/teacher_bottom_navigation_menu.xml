@@ -13,10 +13,6 @@
         android:title="@string/classes_list_action_title"
         android:icon="@drawable/ic_class"/>
     <item
-        android:id="@+id/search"
-        android:title="@string/main_menu_search_title"
-        android:icon="@drawable/ic_search_black"/>
-    <item
         android:id="@+id/reports"
         android:title="@string/reports_action_title"
         android:icon="@drawable/ic_report_problem_black"/>

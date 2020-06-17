@@ -34,7 +34,7 @@ class BubblesSelectionViewModel(
 
     val bubbleViewModels: List<BubbleViewModel> = bubbles.map { bubble ->
         BubbleViewModel(
-            Transformations.map(translator) { it.toCurrentLanguage(bubble.content) },
+            Transformations.map(translator) {it.toCurrentLanguage(bubble.content) },
             Transformations.map(selectedBubbles) { bubble.content in it },
             bubble.background
         ) {

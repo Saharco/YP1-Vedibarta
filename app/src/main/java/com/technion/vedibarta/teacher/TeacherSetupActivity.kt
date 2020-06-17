@@ -1,7 +1,5 @@
 package com.technion.vedibarta.teacher
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -28,6 +26,9 @@ import com.technion.vedibarta.data.viewModels.teacherSetupViewModelFactory
 import com.technion.vedibarta.fragments.SchoolListItemLongCLick
 import com.technion.vedibarta.fragments.TeacherPersonalInfoFragment
 import kotlinx.android.synthetic.main.activity_teacher_setup.*
+
+const val SCHOOL_CHARACTERISTICS = "school characteristics"
+const val TEACHER_SUBJECTS = "teacher subjects"
 
 class TeacherSetupActivity : AppCompatActivity(),
     SchoolListItemLongCLick {
@@ -109,6 +110,10 @@ class TeacherSetupActivity : AppCompatActivity(),
                     data.schoolsName.getAll().toTypedArray(),
                     data.regionsName.getAll().toTypedArray()
                 ) }, {
+                TeacherCharacteristicsFragment.newInstance(SCHOOL_CHARACTERISTICS)
+            }, {
+                TeacherCharacteristicsFragment.newInstance(TEACHER_SUBJECTS)
+            }, {
                 TeacherScheduleFragment()
             }))
         nextButton.setOnClickListener {
