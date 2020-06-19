@@ -24,7 +24,13 @@
         android:theme="@style/AppTheme">
         <activity android:name=".teacher.TeacherSearchActivity"></activity>
         <activity android:name=".teacher.TeacherEditProfileActivity" />
-        <activity android:name=".teacher.TeacherSetupActivity" />
+        <activity android:name=".teacher.TeacherSetupActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".login.ChooseRoleActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

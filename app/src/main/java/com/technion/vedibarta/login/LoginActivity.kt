@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.facebook.AccessToken
 import com.facebook.FacebookCallback
@@ -21,9 +22,15 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
+import com.technion.vedibarta.POJOs.Teacher
+import com.technion.vedibarta.POJOs.User
 import com.technion.vedibarta.R
 import com.technion.vedibarta.data.StudentResources
+import com.technion.vedibarta.data.TeacherResources
+import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.main.MainActivity
+import com.technion.vedibarta.teacher.TeacherMainActivity
+import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideKeyboard
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.hideSplash
@@ -266,6 +273,60 @@ class LoginActivity : AppCompatActivity(),
             it.providerId !in listOf(EmailAuthProvider.PROVIDER_ID, FirebaseAuthProvider.PROVIDER_ID)
         } || user.isEmailVerified
 
+    private fun firebaseUserToAppUser(user: FirebaseUser): Task<User?> {
+        val db = DatabaseVersioning.currentVersion.instance
+
+        val studentTask = db.collection("students").document(user.uid).get()
+        val teacherTask = db.collection("teachers").document(user.uid).get()
+
+        return Tasks.whenAll(
+            studentTask,
+            teacherTask
+        ).continueWith {
+            val studentDoc = studentTask.result
+            val teacherDoc = teacherTask.result
+
+            when {
+                studentDoc != null && studentDoc.exists() ->
+                    studentDoc.toObject(Student::class.java)
+                teacherDoc != null && teacherDoc.exists() ->
+                    teacherDoc.toObject(Teacher::class.java)
+                else -> null
+            }
+        }
+    }
+
+    private fun redirectStudent(student: Student) =
+        StudentResources.load(application).continueWith {
+            StudentResources.gender.value = student.gender
+            PreferenceManager.getDefaultSharedPreferences(this).edit {
+                putGender(student.gender)
+                putLanguage(Locale.getDefault().language).apply()
+            }
+            VedibartaActivity.student = student
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+
+    private fun redirectTeacher(teacher: Teacher) =
+        TeacherResources.load(application).continueWith {
+            PreferenceManager.getDefaultSharedPreferences(this).edit {
+                putGender(teacher.gender)
+                putLanguage(Locale.getDefault().language).apply()
+            }
+            startActivity(Intent(this, TeacherMainActivity::class.java))
+            finish()
+        }
+
+    private fun redirectNewUser(): Task<Unit> =
+        Tasks.whenAll(
+            StudentResources.load(application),
+            TeacherResources.load(application)
+        ).continueWith {
+            startActivity(Intent(this, ChooseRoleActivity::class.java))
+            finish()
+        }
+
     /**
      * Redirect the current user to its desired activity.
      *
@@ -285,25 +346,14 @@ class LoginActivity : AppCompatActivity(),
                 showSplash(this, getString(R.string.default_loading_message))
             }
             database.userId = user.uid
-            database.students().userId().build().get().continueWithTask { task ->
-                val document = task.result
-                StudentResources.load(application).continueWith {
-                    if (document != null && document.exists()) {
-                        Log.d(TAG, "document exists. redirecting to main activity")
-                        student = document.toObject(Student::class.java)
-                        PreferenceManager.getDefaultSharedPreferences(this).edit()
-                            .putGender(student!!.gender)
-                            .putLanguage(Locale.getDefault().language).apply()
-                        startActivity(Intent(this, MainActivity::class.java)) // change to Main later
-                        finish()
-                    } else {
-                        Log.d(TAG, "document doesn't exist. redirecting to user setup")
-                        startActivity(Intent(this, UserSetupActivity::class.java))
-                        finish()
-                    }
-                    true
+
+            firebaseUserToAppUser(user).continueWithTask {
+                when (val appUser = it.result) {
+                    is Student -> redirectStudent(appUser)
+                    is Teacher -> redirectTeacher(appUser)
+                    null -> redirectNewUser()
                 }
-            }
+            }.continueWith { true }
         } else
             Tasks.call { false }
 
