@@ -21,7 +21,7 @@ fun teacherSetupViewModelFactory(context: Context) = object : ViewModelProvider.
 
 class TeacherSetupViewModel(private val context: Context) : ViewModel() {
 
-
+    private val _event = MutableLiveData<Event>()
     private val _schoolsName = MutableLiveData<LoadableData<TextResource>>(NormalLoading())
     private val _regionsName = MutableLiveData<LoadableData<TextResource>>(NormalLoading())
 
@@ -29,12 +29,11 @@ class TeacherSetupViewModel(private val context: Context) : ViewModel() {
     val gender = MutableLiveData(Gender.NONE)
     var chosenFirstName: TextContainer = Unfilled
     var chosenLastName: TextContainer = Unfilled
-    var chosenSchoolNamePerSchool: TextContainer = Unfilled
-    var chosenSchoolRegionPerSchool: TextContainer = Unfilled
 
+    var itemActionBarEnabled = false
     var selectedItems = 0
     val selectedItemsList = mutableListOf<MaterialCardView>()
-    val chosenGradesPerSchool = mutableListOf<Grade>()
+
     val schoolsList = mutableListOf<SchoolInfo>()
 
     private val schoolsName: LiveData<LoadableData<TextResource>> = _schoolsName
@@ -44,8 +43,81 @@ class TeacherSetupViewModel(private val context: Context) : ViewModel() {
         schoolsName, regionsName
     )
 
+    val event: LiveData<Event> = _event
+
     init {
         loadResources()
+    }
+
+    private fun clearSelectedSchools() {
+        itemActionBarEnabled = false
+        selectedItems = 0
+        selectedItemsList.forEach {
+            it.isLongClickable = true
+            it.isChecked = false
+        }
+        selectedItemsList.clear()
+        _event.value = Event.ToggleActionBar()
+    }
+
+    fun unSelectSchool(v: MaterialCardView) {
+        selectedItems--
+        selectedItemsList.remove(v)
+        v.isLongClickable = true
+        v.isChecked = false
+        if (selectedItems == 0) {
+            itemActionBarEnabled = false
+            _event.value = Event.ToggleActionBar()
+        } else {
+            _event.value = Event.UpdateTitle()
+        }
+    }
+
+
+    fun beginSchoolExtraActions(v: MaterialCardView) {
+        itemActionBarEnabled = true
+        _event.value = Event.ToggleActionBar()
+        selectSchool(v)
+    }
+
+    fun selectSchool(v: MaterialCardView) {
+        selectedItems++
+        selectedItemsList.add(v)
+        v.isLongClickable = false
+        v.isChecked = true
+        _event.value = Event.UpdateTitle()
+    }
+
+    fun removeSelectedSchool() {
+        selectedItemsList.forEach {
+            val removeIndex = it.tag.toString().toInt()
+            _event.value = Event.SchoolRemoved(removeIndex + 1)
+            schoolsList.removeAt(removeIndex)
+        }
+        clearSelectedSchools()
+    }
+
+    fun addSchool(schoolInfo: SchoolInfo) {
+        schoolsList.add(schoolInfo)
+        _event.value = Event.SchoolAdded()
+    }
+
+    fun openSchoolDialog(isEdit: Boolean) {
+        _event.value = Event.OpenSchoolDialog(isEdit)
+    }
+
+    fun editSchool(schoolInfo: SchoolInfo, editIndex: Int) {
+        schoolsList[editIndex] = schoolInfo
+        _event.value = Event.SchoolEdited(editIndex+1)
+        unSelectSchool(selectedItemsList.first())
+    }
+
+    fun handleOnBackPress(): Boolean {
+        if (itemActionBarEnabled) {
+            clearSelectedSchools()
+            return true
+        }
+        return false
     }
 
     private fun loadResources() {
@@ -60,6 +132,17 @@ class TeacherSetupViewModel(private val context: Context) : ViewModel() {
             .handleSuccess(_regionsName)
             .handleError(_regionsName)
             .handleTimeout(_regionsName)
+    }
+
+    sealed class Event {
+        var handled = false
+        class ToggleActionBar : Event()
+        class UpdateTitle : Event()
+        class SchoolAdded : Event()
+        class OpenSchoolDialog(val isEdit: Boolean) : Event()
+        data class SchoolEdited(val index: Int): Event()
+        data class SchoolRemoved(val index: Int): Event()
+        data class DisplayError(val msgResId: Int): Event()
     }
 }
 

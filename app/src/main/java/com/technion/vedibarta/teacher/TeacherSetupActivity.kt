@@ -8,8 +8,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayoutMediator
@@ -23,17 +25,18 @@ import com.technion.vedibarta.data.viewModels.SchoolInfo
 import com.technion.vedibarta.data.viewModels.TeacherSetupResources
 import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel
 import com.technion.vedibarta.data.viewModels.teacherSetupViewModelFactory
-import com.technion.vedibarta.fragments.SchoolListItemLongCLick
 import com.technion.vedibarta.fragments.TeacherPersonalInfoFragment
+import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_teacher_setup.*
+import kotlinx.android.synthetic.main.activity_teacher_setup.toolbar
+import kotlinx.android.synthetic.main.activity_teacher_setup.toolbarLayout
 
 const val SCHOOL_CHARACTERISTICS = "school characteristics"
 const val TEACHER_SUBJECTS = "teacher subjects"
 
-class TeacherSetupActivity : AppCompatActivity(),
-    SchoolListItemLongCLick {
+class TeacherSetupActivity : AppCompatActivity(), TeacherPersonalInfoFragment.SchoolPressHandlers {
 
-    private val teacherSetupViewModel: TeacherSetupViewModel by viewModels {
+    private val viewModel: TeacherSetupViewModel by viewModels {
         teacherSetupViewModelFactory(applicationContext)
     }
 
@@ -42,9 +45,24 @@ class TeacherSetupActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_setup)
-        teacherSetupViewModel.teacherSetupResources.observe(this, Observer {
-            observerHandler(teacherSetupViewModel.teacherSetupResources)
+        viewModel.teacherSetupResources.observe(this, Observer {
+            observerHandler(viewModel.teacherSetupResources)
         })
+        viewModel.event.observe(this){event ->
+            if (!event.handled) {
+                when (event) {
+                    is TeacherSetupViewModel.Event.ToggleActionBar -> toggleCustomToolbar()
+                    is TeacherSetupViewModel.Event.UpdateTitle -> updateSelectedTitle()
+                    is TeacherSetupViewModel.Event.DisplayError -> Toast.makeText(
+                        this,
+                        event.msgResId,
+                        Toast.LENGTH_LONG
+                    ).show()
+                    else -> return@observe
+                }
+                event.handled = true
+            }
+        }
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_clear_white)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -58,24 +76,65 @@ class TeacherSetupActivity : AppCompatActivity(),
         return true
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                toolbarLayout.visibility = View.GONE
-                teacherSetupViewModel.selectedItems = 0
-                teacherSetupViewModel.selectedItemsList.forEach {
-                    it.setOnClickListener { }
-                    it.isLongClickable = true
-                    it.isChecked = false
-                }
-                teacherSetupViewModel.selectedItemsList.clear()
-            }
-            R.id.edit -> {
+                onBackPressed()
             }
             R.id.delete -> {
+                viewModel.removeSelectedSchool()
             }
+            R.id.edit -> viewModel.openSchoolDialog(true)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (!viewModel.handleOnBackPress())
+            super.onBackPressed()
+    }
+
+    private fun toggleCustomToolbar() {
+        if (viewModel.itemActionBarEnabled) {
+            toolbarLayout.visibility = View.VISIBLE
+            toolbar.menu.clear()
+            menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
+            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_clear_white)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            toolbar.setBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    android.R.color.black
+                )
+            )
+            VedibartaActivity.changeStatusBarColor(
+                this,
+                ContextCompat.getColor(this, android.R.color.black)
+            )
+        } else {
+            toolbarLayout.visibility = View.GONE
+            toolbar.setBackgroundColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.colorPrimary
+                )
+            )
+        }
+    }
+
+    private fun updateSelectedTitle() {
+        if (viewModel.selectedItems == 1) {
+            toolbar.menu.clear()
+            menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
+            supportActionBar?.title =
+                "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
+        } else {
+            toolbar.menu.removeItem(R.id.edit)
+            supportActionBar?.title =
+                "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
+        }
     }
 
     private fun observerHandler(liveData: LiveData<LoadableData<TeacherSetupResources>>) {
@@ -127,40 +186,23 @@ class TeacherSetupActivity : AppCompatActivity(),
         editTabs.touchables.forEach { it.isEnabled = false }
     }
 
-    override fun onLongClickListener(v: View): Boolean {
-        teacherSetupViewModel.selectedItems++
-        teacherSetupViewModel.selectedItemsList.add(v as MaterialCardView)
-        if (teacherSetupViewModel.selectedItems > 1) {
-            toolbar.menu.removeItem(R.id.edit)
-            supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
-
-        }
-        else{
-            supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.single_item_selected)}"
-        }
-        v.isLongClickable = false
-        v.isChecked = true
-        v.setOnClickListener {
-            teacherSetupViewModel.selectedItems--
-            teacherSetupViewModel.selectedItemsList.remove(it)
-            if (teacherSetupViewModel.selectedItems == 0) {
-                toolbarLayout.visibility = View.GONE
-            }
-            if (teacherSetupViewModel.selectedItems == 1) {
-                toolbar.menu.clear()
-                menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
-                supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.single_item_selected)}"
-            }
-            else{
-                supportActionBar?.title = "${teacherSetupViewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
-            }
-            v.isChecked = false
-            v.isLongClickable = true
-            v.setOnClickListener { }
-        }
-        toolbarLayout.visibility = View.VISIBLE
+    override fun onLongPress(v: View): Boolean {
+        viewModel.beginSchoolExtraActions(v as MaterialCardView)
         return true
     }
+
+    override fun onClick(v: View): Boolean {
+        if (viewModel.itemActionBarEnabled) {
+            if ((v as MaterialCardView).isChecked) {
+                viewModel.unSelectSchool(v)
+            } else {
+                viewModel.selectSchool(v)
+            }
+        }
+        return true
+    }
+
+
 }
 
 sealed class TeacherResult

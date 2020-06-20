@@ -114,10 +114,7 @@ class TeacherClassListViewModel : ViewModel() {
                     _event.value = Event.DisplayError(R.string.something_went_wrong)
                 }
         }
-        selectedItemsList.clear()
-        selectedItems = 0
-        itemActionBarEnabled = false
-        _event.value = Event.ToggleActionBar()
+        clearSelectedClasses()
     }
 
     fun addClass(clazz: Class) {

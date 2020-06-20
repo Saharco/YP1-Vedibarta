@@ -16,6 +16,7 @@
         android:background="@android:color/transparent"
         tools:context=".fragments.TeacherPersonalInfoFragment">
 
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/genderText"
             android:layout_width="wrap_content"

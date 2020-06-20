@@ -8,13 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,32 +31,25 @@ import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.POJOs.Unfilled
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.SchoolsAdapter
-import com.technion.vedibarta.data.viewModels.SchoolInfo
-import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel
-import com.technion.vedibarta.data.viewModels.teacherSetupViewModelFactory
-import com.technion.vedibarta.teacher.Failure
-import com.technion.vedibarta.teacher.Success
-import com.technion.vedibarta.teacher.TeacherResult
+import com.technion.vedibarta.data.viewModels.*
 import com.technion.vedibarta.utilities.extensions.putGender
 import com.technion.vedibarta.utilities.missingDetailsDialog
+import kotlinx.android.synthetic.main.fragment_teacher_classes_list.*
 import kotlinx.android.synthetic.main.fragment_teacher_personal_info.*
 
 private const val SCHOOL_NAME = "schoolsName"
 private const val REGION_NAME = "regionsName"
 private const val BORDER_WIDTH = 10
 
-class TeacherPersonalInfoFragment(
+class TeacherPersonalInfoFragment : Fragment() {
 
-) : Fragment() {
-
-    val viewModel: TeacherSetupViewModel by activityViewModels() {
+    val viewModel: TeacherSetupViewModel by activityViewModels {
         teacherSetupViewModelFactory(requireActivity().applicationContext)
     }
 
-    private lateinit var schoolAndRegionMap: Map<String, String>
+    private lateinit var schoolPressHandlers: SchoolPressHandlers
     private lateinit var schoolsName: Array<String>
     private lateinit var regionsName: Array<String>
-    private lateinit var schoolListItemLongCLick: SchoolListItemLongCLick
 
     companion object {
         @JvmStatic
@@ -68,7 +64,7 @@ class TeacherPersonalInfoFragment(
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        schoolListItemLongCLick = context as SchoolListItemLongCLick
+        schoolPressHandlers = context as SchoolPressHandlers
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +72,6 @@ class TeacherPersonalInfoFragment(
         arguments?.let {
             schoolsName = it.getStringArray(SCHOOL_NAME)!!
             regionsName = it.getStringArray(REGION_NAME)!!
-            schoolAndRegionMap = schoolsName.zip(regionsName).toMap()
         }
 
     }
@@ -86,15 +81,16 @@ class TeacherPersonalInfoFragment(
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_teacher_personal_info, container, false)
-
+        setHasOptionsMenu(true)
         view.findViewById<NestedScrollView>(R.id.teacherPersonalInfoScrollView).isNestedScrollingEnabled =
             false
         val schoolList = view.findViewById<RecyclerView>(R.id.schoolList)
         schoolList.isNestedScrollingEnabled = false
         schoolList.layoutManager = LinearLayoutManager(activity)
         val adapter = SchoolsAdapter(
-            { onAddSchoolButtonClick() },
-            { v: View -> schoolListItemLongCLick.onLongClickListener(v) },
+            { openSchoolDialog() },
+            { v: View -> schoolPressHandlers.onLongPress(v) },
+            { v: View -> schoolPressHandlers.onClick(v) },
             viewModel.schoolsList
         )
         schoolList.adapter = adapter
@@ -105,6 +101,27 @@ class TeacherPersonalInfoFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val allowedLetters = getString(R.string.allowed_letters_regex)
+        val appCompat = requireActivity() as AppCompatActivity
+        appCompat.setSupportActionBar(toolbar)
+        viewModel.event.observe(viewLifecycleOwner) { event ->
+            if (!event.handled) {
+                when (event) {
+                    is TeacherSetupViewModel.Event.SchoolAdded -> schoolList.adapter?.notifyItemInserted(
+                        viewModel.schoolsList.size
+                    )
+                    is TeacherSetupViewModel.Event.SchoolRemoved -> schoolList.adapter?.notifyItemRemoved(
+                        event.index
+                    )
+                    is TeacherSetupViewModel.Event.SchoolEdited -> schoolList.adapter?.notifyItemChanged(
+                        event.index
+                    )
+                    is TeacherSetupViewModel.Event.OpenSchoolDialog -> openSchoolDialog(event.isEdit)
+                    else -> return@observe
+                }
+                event.handled = true
+            }
+
+        }
         textFieldFirstName.doOnTextChanged { text, _, _, _ ->
             if (text.isNullOrEmpty()) {
                 viewModel.chosenFirstName = Unfilled
@@ -133,93 +150,81 @@ class TeacherPersonalInfoFragment(
         genderInit()
     }
 
-
-    private fun onAddSchoolButtonClick() {
+    private fun openSchoolDialog(isEdit: Boolean = false) {
+        val positiveString = if (isEdit) R.string.save else R.string.add
         val dialog = MaterialDialog(requireContext())
         dialog.cornerRadius(20f)
             .noAutoDismiss()
-            .positiveButton(R.string.add) {
-                validateSchoolInfo().let { result ->
-                    when (result) {
-                        is Success -> {
-                            viewModel.schoolsList.add(result.data)
-                            viewModel.chosenGradesPerSchool.clear()
-                            viewModel.chosenSchoolRegionPerSchool = Unfilled
-                            viewModel.chosenSchoolNamePerSchool = Unfilled
-                            schoolList.adapter!!.notifyItemInserted(viewModel.schoolsList.size)
-                            it.dismiss()
-                        }
-                        is Failure -> {
-                            missingDetailsDialog(requireContext(), result.msg)
-                        }
-                    }
+            .positiveButton(positiveString) {
+                val schoolViewModel: SchoolViewModel by viewModels {
+                    schoolViewModelFactory(schoolsName, regionsName)
                 }
+                if (isEdit)
+                    schoolViewModel.editSchool(viewModel.schoolsList, viewModel.selectedItemsList.first().tag.toString().toInt())
+                else
+                    schoolViewModel.createSchool(viewModel.schoolsList)
             }
             .negativeButton(R.string.cancel) { it.dismiss() }
             .customView(R.layout.fragment_add_school_dialog)
             .show {
-                initMaterialDialog(this)
-
+                initMaterialDialog(this, isEdit)
             }
     }
 
-    private fun validateSchoolInfo(): TeacherResult {
-        val school = when (val chosenSchool = viewModel.chosenSchoolNamePerSchool) {
-            is Unfilled -> return Failure(
-                resources.getString(R.string.user_setup_school_missing)
-            )
-            is Filled -> chosenSchool.text
+
+    private fun initMaterialDialog(materialDialog: MaterialDialog, isEdit: Boolean) {
+        val schoolViewModel: SchoolViewModel by viewModels {
+            schoolViewModelFactory(schoolsName, regionsName)
+        }
+        schoolViewModel.event.removeObservers(viewLifecycleOwner)
+        schoolViewModel.event.observe(viewLifecycleOwner) { event ->
+            if (!event.handled) {
+                when (event) {
+                    is SchoolViewModel.SchoolEvent.SchoolAdded -> {
+                        viewModel.addSchool(event.school)
+                        materialDialog.dismiss()
+                    }
+                    is SchoolViewModel.SchoolEvent.SchoolEdited -> {
+                        viewModel.editSchool(
+                            event.school,
+                            viewModel.selectedItemsList.first().tag.toString().toInt()
+                        )
+                        materialDialog.dismiss()
+                    }
+                    is SchoolViewModel.SchoolEvent.DisplayMissingInfoDialog -> missingDetailsDialog(
+                        requireContext(),
+                        getString(event.msgResId)
+                    )
+                    is SchoolViewModel.SchoolEvent.DisplayError -> Toast.makeText(
+                        requireContext(),
+                        event.msgResId,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                event.handled = true
+            }
         }
 
-        if (!schoolsName.contains(school))
-            return Failure(resources.getString(R.string.user_setup_school_missing))
-
-        val region = when (val chosenRegion = viewModel.chosenSchoolRegionPerSchool) {
-            is Unfilled -> return Failure(
-                resources.getString(R.string.user_setup_region_missing)
-            )
-            is Filled -> chosenRegion.text
-        }
-
-        if (!regionsName.contains(region))
-            return Failure(resources.getString(R.string.user_setup_region_missing))
-
-        if (!(schoolAndRegionMap.containsKey(school) && schoolAndRegionMap[school] == region)) {
-            return Failure(resources.getString(R.string.user_setup_wrong_school_and_region_combination))
-        }
-
-        if (viewModel.chosenGradesPerSchool.isEmpty()) {
-            return Failure(resources.getString(R.string.teacher_setup_grade_missing))
-        }
-        val schoolInfo = SchoolInfo(school, region, viewModel.chosenGradesPerSchool.toList())
-        if (viewModel.schoolsList.contains(schoolInfo))
-            return Failure(resources.getString(R.string.teacher_setup_school_already_exist))
-
-        return Success(schoolInfo)
-    }
-
-
-    private fun initMaterialDialog(materialDialog: MaterialDialog) {
         materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTenth)
             .setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked)
-                    viewModel.chosenGradesPerSchool.add(Grade.TENTH)
+                    schoolViewModel.chosenGradesPerSchool.add(Grade.TENTH)
                 else
-                    viewModel.chosenGradesPerSchool.remove(Grade.TENTH)
+                    schoolViewModel.chosenGradesPerSchool.remove(Grade.TENTH)
             }
         materialDialog.findViewById<MaterialCheckBox>(R.id.gradeEleventh)
             .setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked)
-                    viewModel.chosenGradesPerSchool.add(Grade.ELEVENTH)
+                    schoolViewModel.chosenGradesPerSchool.add(Grade.ELEVENTH)
                 else
-                    viewModel.chosenGradesPerSchool.remove(Grade.ELEVENTH)
+                    schoolViewModel.chosenGradesPerSchool.remove(Grade.ELEVENTH)
             }
         materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTwelfth)
             .setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked)
-                    viewModel.chosenGradesPerSchool.add(Grade.TWELFTH)
+                    schoolViewModel.chosenGradesPerSchool.add(Grade.TWELFTH)
                 else
-                    viewModel.chosenGradesPerSchool.remove(Grade.TWELFTH)
+                    schoolViewModel.chosenGradesPerSchool.remove(Grade.TWELFTH)
             }
         val schoolSpinner =
             materialDialog.findViewById<AutoCompleteTextView>(R.id.schoolListSpinner)
@@ -243,15 +248,16 @@ class TeacherPersonalInfoFragment(
         )
 
         schoolSpinner.setOnItemClickListener { _, view, _, _ ->
-            onSchoolSelectedListener(materialDialog, view)
+            schoolViewModel.onSchoolSelectedListener(materialDialog, view)
         }
 
         regionSpinner.setOnItemClickListener { _, view, _, _ ->
-            onRegionSelectedListener(materialDialog, view)
+            schoolViewModel.onRegionSelectedListener(materialDialog, view)
         }
 
+
         schoolSpinner.doOnTextChanged { text, _, _, _ ->
-            viewModel.chosenSchoolNamePerSchool = Filled(text.toString())
+            schoolViewModel.chosenSchoolNamePerSchool = Filled(text.toString())
         }
 
         regionSpinner.doOnTextChanged { text, _, _, _ ->
@@ -262,40 +268,31 @@ class TeacherPersonalInfoFragment(
                     schoolsName
                 )
             )
-            viewModel.chosenSchoolRegionPerSchool = Filled(text.toString())
+            schoolViewModel.chosenSchoolRegionPerSchool = Filled(text.toString())
         }
-    }
 
-    private fun onSchoolSelectedListener(
-        md: MaterialDialog,
-        v: View
-    ) {
-        val regionSpinner = md.findViewById<AutoCompleteTextView>(R.id.regionListSpinner)
-        val schoolName = (v as TextView).text.toString()
+        if (isEdit) {
+            val schoolInfo =
+                viewModel.schoolsList[viewModel.selectedItemsList.first().tag.toString()
+                    .toInt()]
+            schoolSpinner.text = SpannableStringBuilder(schoolInfo.schoolName)
+            schoolViewModel.chosenSchoolNamePerSchool = Filled(schoolSpinner.text.toString())
+            regionSpinner.text = SpannableStringBuilder(schoolInfo.schoolRegion)
+            schoolViewModel.chosenSchoolRegionPerSchool = Filled(regionSpinner.text.toString())
 
-        val region = schoolAndRegionMap[schoolName].toString()
-        viewModel.chosenSchoolNamePerSchool = Filled(schoolName)
-        viewModel.chosenSchoolRegionPerSchool = Filled(region)
-        regionSpinner.text = SpannableStringBuilder(region)
-    }
-
-    private fun onRegionSelectedListener(
-        md: MaterialDialog,
-        v: View
-    ) {
-        val schoolSpinner = md.findViewById<AutoCompleteTextView>(R.id.schoolListSpinner)
-        schoolSpinner.text = SpannableStringBuilder("")
-        val region = (v as TextView).text.toString()
-        val schoolList = schoolAndRegionMap.filter { it.value == region }.keys.toTypedArray()
-        viewModel.chosenSchoolNamePerSchool = Unfilled
-        viewModel.chosenSchoolRegionPerSchool = Filled(region)
-        schoolSpinner.setAdapter(
-            ArrayAdapter(
-                requireContext().applicationContext,
-                android.R.layout.simple_dropdown_item_1line,
-                schoolList
-            )
-        )
+            schoolInfo.grades.forEach {
+                when (it) {
+                    Grade.TENTH -> materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTenth).isChecked =
+                        true
+                    Grade.ELEVENTH -> materialDialog.findViewById<MaterialCheckBox>(R.id.gradeEleventh).isChecked =
+                        true
+                    Grade.TWELFTH -> materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTwelfth).isChecked =
+                        true
+                    else -> {
+                    }
+                }
+            }
+        }
     }
 
     private fun onButtonFemaleClickListener() {
@@ -387,10 +384,12 @@ class TeacherPersonalInfoFragment(
         }
     }
 
+    interface SchoolPressHandlers {
+        fun onLongPress(v: View): Boolean
+        fun onClick(v: View): Boolean
+    }
+
 }
 
-interface SchoolListItemLongCLick {
-    fun onLongClickListener(v: View): Boolean
-}
 
 
