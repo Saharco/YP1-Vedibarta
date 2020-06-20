@@ -7,20 +7,20 @@ import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesM
 import com.technion.vedibarta.utilities.resourcesManagement.TextResource
 
 object TeacherResources {
-    private lateinit var _schoolCharacteristics: BubblesWithTranslator
-    private lateinit var _subjects: BubblesWithTranslator
+    private lateinit var _schoolCharacteristics: CardWithTranslator
+    private lateinit var _subjects: CardWithTranslator
     private lateinit var _schools: TextResource
     private lateinit var _regions: TextResource
 
-    val schoolCharacteristics: BubblesWithTranslator by lazy { _schoolCharacteristics }
-    val subjects: BubblesWithTranslator by lazy { _subjects }
+    val schoolCharacteristics by lazy { _schoolCharacteristics }
+    val subjects: CardWithTranslator by lazy { _subjects }
     val schools: TextResource by lazy { _schools }
     val regions: TextResource by lazy { _regions }
 
     fun load(application: Application): Task<Unit> {
         val resourcesManager = RemoteTextResourcesManager(application)
 
-        val characteristicsTask = loadSchoolCharacterstics(application)
+        val characteristicsTask = loadSchoolCharacteristics(application)
         val subjectsTask = loadSubjects(application)
         val schoolsTask = resourcesManager.findResource("schools")
         val regionsTask = resourcesManager.findResource("regions")

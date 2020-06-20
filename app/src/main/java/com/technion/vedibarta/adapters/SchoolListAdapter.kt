@@ -13,9 +13,8 @@ import com.technion.vedibarta.data.viewModels.SchoolInfo
 
 class SchoolsAdapter(
     private val addButtonLambda: () -> Unit,
-    private val longPressLambda: (v: View) -> Boolean,
-    private val schoolPressLambda: (View) -> Boolean,
-    private val schoolsInfoList: MutableList<SchoolInfo>
+    private val longPressLambda: (v:View) -> Boolean,
+    private val schoolsInfoList: List<SchoolInfo>
 ) :
     RecyclerView.Adapter<SchoolsAdapter.SchoolsViewHolder>() {
 
@@ -28,7 +27,7 @@ class SchoolsAdapter(
         } else {
             val schoolCardView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.teacher_setup_school_card, parent, false)
-            SchoolsViewHolder.SchoolsCardViewHolder(schoolCardView, schoolPressLambda, longPressLambda)
+            SchoolsViewHolder.SchoolsCardViewHolder(schoolCardView, longPressLambda)
         }
 
     }
@@ -40,7 +39,7 @@ class SchoolsAdapter(
     override fun onBindViewHolder(holder: SchoolsViewHolder, position: Int) {
         when (holder) {
             is SchoolsViewHolder.AddSchoolsViewHolder -> holder.bind()
-            is SchoolsViewHolder.SchoolsCardViewHolder -> holder.bind(schoolsInfoList[position - 1], position-1)
+            is SchoolsViewHolder.SchoolsCardViewHolder -> holder.bind(schoolsInfoList[position - 1])
         }
     }
 
@@ -61,17 +60,12 @@ class SchoolsAdapter(
 
         class SchoolsCardViewHolder(
             itemView: View,
-            private val schoolPressLambda: (v: View) -> Boolean,
             private val longPressLambda: (v: View) -> Boolean
         ) : SchoolsViewHolder(itemView) {
-            fun bind(schoolInfo: SchoolInfo, index: Int) {
+            fun bind(schoolInfo: SchoolInfo) {
                 val schoolName = schoolInfo.schoolName.substringBeforeLast(" -")
-                itemView.tag = index
                 itemView.findViewById<TextView>(R.id.schoolNameAndRegion).text =
                     "$schoolName - ${schoolInfo.schoolRegion}"
-                itemView.findViewById<MaterialCheckBox>(R.id.gradeTenth).isChecked = false
-                itemView.findViewById<MaterialCheckBox>(R.id.gradeEleventh).isChecked = false
-                itemView.findViewById<MaterialCheckBox>(R.id.gradeTwelfth).isChecked = false
                 schoolInfo.grades.forEach {
                     when (it) {
                         Grade.TENTH -> itemView.findViewById<MaterialCheckBox>(R.id.gradeTenth).isChecked =
@@ -84,12 +78,11 @@ class SchoolsAdapter(
                         }
                     }
                 }
-                itemView.setOnClickListener {
-                    schoolPressLambda(it)
-                }
-                itemView.setOnLongClickListener {
+                itemView.findViewById<MaterialCardView>(R.id.teacherCardViewSchool)
+                    .setOnLongClickListener {
                         longPressLambda(it)
                     }
+                //TODO add on click listener that will make the card selected if there is another card selected already
             }
         }
     }

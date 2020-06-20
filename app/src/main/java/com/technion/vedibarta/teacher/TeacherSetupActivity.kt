@@ -1,5 +1,6 @@
 package com.technion.vedibarta.teacher
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -8,66 +9,92 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayoutMediator
-import com.technion.vedibarta.POJOs.Error
-import com.technion.vedibarta.POJOs.LoadableData
-import com.technion.vedibarta.POJOs.Loaded
-import com.technion.vedibarta.POJOs.SlowLoadingEvent
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
-import com.technion.vedibarta.data.viewModels.SchoolInfo
-import com.technion.vedibarta.data.viewModels.TeacherSetupResources
 import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel
-import com.technion.vedibarta.data.viewModels.teacherSetupViewModelFactory
+import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel.*
+import com.technion.vedibarta.fragments.SchoolListItemLongCLick
 import com.technion.vedibarta.fragments.TeacherPersonalInfoFragment
-import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.fragments.TeacherSetupCharacteristicsSelectionFragment
+import com.technion.vedibarta.fragments.TeacherSetupSubjectsSelectionFragment
+import com.technion.vedibarta.utilities.missingDetailsDialog
 import kotlinx.android.synthetic.main.activity_teacher_setup.*
-import kotlinx.android.synthetic.main.activity_teacher_setup.toolbar
-import kotlinx.android.synthetic.main.activity_teacher_setup.toolbarLayout
+import kotlinx.android.synthetic.main.activity_teacher_setup.backButton
+import kotlinx.android.synthetic.main.activity_teacher_setup.doneButton
+import kotlinx.android.synthetic.main.activity_teacher_setup.editTabs
+import kotlinx.android.synthetic.main.activity_teacher_setup.nextButton
+import kotlinx.android.synthetic.main.activity_teacher_setup.userSetupContainer
 
-const val SCHOOL_CHARACTERISTICS = "school characteristics"
-const val TEACHER_SUBJECTS = "teacher subjects"
+class TeacherSetupActivity : AppCompatActivity(), SchoolListItemLongCLick {
 
-class TeacherSetupActivity : AppCompatActivity(), TeacherPersonalInfoFragment.SchoolPressHandlers {
-
-    private val viewModel: TeacherSetupViewModel by viewModels {
-        teacherSetupViewModelFactory(applicationContext)
-    }
-
-    private var loadedHandled = false
+    private val viewModel: TeacherSetupViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_setup)
-        viewModel.teacherSetupResources.observe(this, Observer {
-            observerHandler(viewModel.teacherSetupResources)
-        })
-        viewModel.event.observe(this){event ->
-            if (!event.handled) {
-                when (event) {
-                    is TeacherSetupViewModel.Event.ToggleActionBar -> toggleCustomToolbar()
-                    is TeacherSetupViewModel.Event.UpdateTitle -> updateSelectedTitle()
-                    is TeacherSetupViewModel.Event.DisplayError -> Toast.makeText(
-                        this,
-                        event.msgResId,
-                        Toast.LENGTH_LONG
-                    ).show()
-                    else -> return@observe
+
+        setupViewPager()
+
+        viewModel.doneButtonVisibility.observe(this) {
+            doneButton.visibility = it
+        }
+
+        viewModel.backButtonVisibility.observe(this) {
+            backButton.visibility = it
+        }
+
+        viewModel.nextButtonState.observe(this) {
+            when (it) {
+                is NextButtonState.Gone -> nextButton.visibility = View.GONE
+                is NextButtonState.Visible -> {
+                    nextButton.visibility = View.VISIBLE
                 }
-                event.handled = true
             }
         }
+
+        viewModel.currentScreenIdx.observe(this) {
+            userSetupContainer.currentItem = it
+        }
+
+        viewModel.event.observe(this) {
+            if (it.handled)
+                return@observe
+
+            when (it) {
+                is Event.Finish -> {
+                    startActivity(Intent(this, TeacherMainActivity::class.java))
+                    finish()
+                }
+                is Event.DisplayError -> Toast.makeText(this, it.msgResId, Toast.LENGTH_LONG)
+                    .show()
+                is Event.DisplayMissingInfoDialog -> missingDetailsDialog(this, getString(it.msgResId))
+            }
+
+            it.handled = true
+        }
+
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_clear_white)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        initButtons()
+    }
+
+    private fun initButtons() {
+        doneButton.bringToFront()
+        doneButton.setOnClickListener { viewModel.donePressed() }
+
+        nextButton.setOnClickListener { viewModel.nextPressed() }
+
+        backButton.bringToFront()
+        backButton.setOnClickListener { onBackPressed() }
+    }
+
+    override fun onBackPressed() {
+        viewModel.backPressed()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -76,135 +103,74 @@ class TeacherSetupActivity : AppCompatActivity(), TeacherPersonalInfoFragment.Sc
         return true
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+            }
+            R.id.edit -> {
             }
             R.id.delete -> {
-                viewModel.removeSelectedSchool()
             }
-            R.id.edit -> viewModel.openSchoolDialog(true)
         }
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
-        if (!viewModel.handleOnBackPress())
-            super.onBackPressed()
-    }
-
-    private fun toggleCustomToolbar() {
-        if (viewModel.itemActionBarEnabled) {
-            toolbarLayout.visibility = View.VISIBLE
-            toolbar.menu.clear()
-            menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
-            supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_clear_white)
-            supportActionBar?.setDisplayShowHomeEnabled(true)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            toolbar.setBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    android.R.color.black
-                )
-            )
-            VedibartaActivity.changeStatusBarColor(
-                this,
-                ContextCompat.getColor(this, android.R.color.black)
-            )
-        } else {
-            toolbarLayout.visibility = View.GONE
-            toolbar.setBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.colorPrimary
-                )
-            )
-        }
-    }
-
-    private fun updateSelectedTitle() {
-        if (viewModel.selectedItems == 1) {
-            toolbar.menu.clear()
-            menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
-            supportActionBar?.title =
-                "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
-        } else {
-            toolbar.menu.removeItem(R.id.edit)
-            supportActionBar?.title =
-                "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
-        }
-    }
-
-    private fun observerHandler(liveData: LiveData<LoadableData<TeacherSetupResources>>) {
-        when (val value = liveData.value) {
-            is Loaded -> {
-                if (!loadedHandled) {
-                    loading.visibility = View.GONE
-                    setupViewPager(userSetupContainer, value.data)
-                    loadedHandled = true
-                }
-            }
-            is Error -> Toast.makeText(this, value.reason, Toast.LENGTH_LONG).show()
-            is SlowLoadingEvent -> {
-                if (!value.handled)
-                    Toast.makeText(
-                        this,
-                        resources.getString(R.string.net_error),
-                        Toast.LENGTH_SHORT
-                    ).show()
-            }
-        }
-    }
-
-    private fun setupViewPager(
-        viewPager: ViewPager2,
-        data: TeacherSetupResources
-    ) {
+    private fun setupViewPager() {
         val adapter = FragmentListStateAdapter(
             this,
             mutableListOf({
-                TeacherPersonalInfoFragment.newInstance(
-                    data.schoolsName.getAll().toTypedArray(),
-                    data.regionsName.getAll().toTypedArray()
-                ) }, {
-                TeacherCharacteristicsFragment.newInstance(SCHOOL_CHARACTERISTICS)
+                TeacherPersonalInfoFragment()
             }, {
-                TeacherCharacteristicsFragment.newInstance(TEACHER_SUBJECTS)
+                TeacherSetupCharacteristicsSelectionFragment()
+            }, {
+                TeacherSetupSubjectsSelectionFragment()
             }, {
                 TeacherScheduleFragment()
             }))
-        nextButton.setOnClickListener {
-            viewPager.currentItem += 1
-        }
-        viewPager.isUserInputEnabled = false
-        viewPager.adapter = adapter
+
+        userSetupContainer.adapter = adapter
+        userSetupContainer.isUserInputEnabled = false
+
         TabLayoutMediator(editTabs, userSetupContainer) { tab, position ->
             tab.text = "${(position + 1)}"
         }.attach()
+
         editTabs.touchables.forEach { it.isEnabled = false }
     }
 
-    override fun onLongPress(v: View): Boolean {
-        viewModel.beginSchoolExtraActions(v as MaterialCardView)
-        return true
+    override fun onLongClickListener(v: View): Boolean {
+//        viewModel.selectedItems++
+//        viewModel.selectedItemsList.add(v as MaterialCardView)
+//        if (viewModel.selectedItems > 1) {
+//            toolbar.menu.removeItem(R.id.edit)
+//            supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
+//
+//        }
+//        else{
+//            supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
+//        }
+//        v.isLongClickable = false
+//        v.isChecked = true
+//        v.setOnClickListener {
+//            viewModel.selectedItems--
+//            viewModel.selectedItemsList.remove(it)
+//            if (viewModel.selectedItems == 0) {
+//                toolbarLayout.visibility = View.GONE
+//            }
+//            if (viewModel.selectedItems == 1) {
+//                toolbar.menu.clear()
+//                menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
+//                supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
+//            }
+//            else{
+//                supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
+//            }
+//            v.isChecked = false
+//            v.isLongClickable = true
+//            v.setOnClickListener { }
+//        }
+//        toolbarLayout.visibility = View.VISIBLE
+//        return true
+        return false
     }
-
-    override fun onClick(v: View): Boolean {
-        if (viewModel.itemActionBarEnabled) {
-            if ((v as MaterialCardView).isChecked) {
-                viewModel.unSelectSchool(v)
-            } else {
-                viewModel.selectSchool(v)
-            }
-        }
-        return true
-    }
-
-
 }
-
-sealed class TeacherResult
-data class Success(val data: SchoolInfo) : TeacherResult()
-data class Failure(val msg: String) : TeacherResult()
