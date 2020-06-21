@@ -7,7 +7,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 import java.lang.IllegalArgumentException
 
 class BubblesSelectionViewModelFactory(
-    private val translator: LiveData<MultilingualTextResource>,
+    private val translator: LiveData<out MultilingualTextResource>,
     private val title: String,
     private val bubbles: List<Bubble>,
     private val selectedInitially: Set<String> = emptySet()
@@ -21,7 +21,7 @@ class BubblesSelectionViewModelFactory(
 }
 
 class BubblesSelectionViewModel(
-    translator: LiveData<MultilingualTextResource>,
+    translator: LiveData<out MultilingualTextResource>,
     title: String,
     bubbles: List<Bubble>,
     selectedInitially: Set<String> = emptySet()

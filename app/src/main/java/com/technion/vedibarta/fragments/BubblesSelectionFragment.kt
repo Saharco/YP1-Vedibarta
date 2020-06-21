@@ -34,7 +34,7 @@ import com.technion.vedibarta.utilities.resourcesManagement.MultilingualTextReso
  */
 abstract class BubblesSelectionFragment : VedibartaFragment() {
 
-    protected abstract val translator: LiveData<MultilingualTextResource>
+    protected abstract val translator: LiveData<out MultilingualTextResource>
     protected abstract val categoryCard: CategoryCard
     protected abstract val chosenInitially: Set<String>
 
