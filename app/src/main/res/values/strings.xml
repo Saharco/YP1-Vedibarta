@@ -239,6 +239,10 @@
     <string name="teacher_setup_grade_tenth">כיתה י</string>
     <string name="teacher_setup_grade_eleventh">כיתה יא</string>
     <string name="teacher_setup_grade_twelfth">כיתה יב</string>
+    <string name="teacher_setup_no_schools_entered">אנא הכנס לפחות בית ספר אחד</string>
+    <string name="teacher_setup_characteristics_missing">יש לבחור מאפייני בית ספר</string>
+    <string name="teacher_setup_subjects_missing">יש לבחור מקצועות לימוד</string>
+    <string name="teacher_setup_schedule_missing">יש לבחור שעות לימוד</string>
 
     <!-- TeacherSchedule Attributes -->
     <string name="teacher_my_schedule_is">המערכת שלי היא…</string>

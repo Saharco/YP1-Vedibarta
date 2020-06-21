@@ -5,13 +5,19 @@ import android.view.View
 import androidx.lifecycle.*
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.TeacherResources
+import com.technion.vedibarta.database.DatabaseVersioning
+import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.VedibartaActivity.Companion.userId
 
 class TeacherSetupViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _doneButtonVisibility = MutableLiveData(View.GONE)
     private val _currentScreenIdx = MutableLiveData(0)
     private val _event = MutableLiveData<Event>()
+
+    private val schedule = mutableTimetableOf()
 
     val gender = MutableLiveData(Gender.NONE)
     var firstName: String? = null
@@ -40,8 +46,71 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    fun schedulePressed(dayIdx: Int, hourIdx: Int, isPressed: Boolean) {
+        val dayHour = DayHour(Day.fromInt(dayIdx)!!, Hour.fromInt(hourIdx)!!)
+        if (isPressed)
+            schedule.add(dayHour)
+        else
+            schedule.remove(dayHour)
+    }
+
     fun donePressed() {
-        TODO()
+        if (gender.value == Gender.NONE) {
+            _event.value = Event.DisplayMissingInfoDialog(R.string.user_setup_gender_missing)
+            return
+        }
+
+        if (firstName == null) {
+            _event.value = Event.DisplayMissingInfoDialog(R.string.user_setup_first_name_missing)
+            return
+        }
+
+        if (lastName == null) {
+            _event.value = Event.DisplayMissingInfoDialog(R.string.user_setup_last_name_missing)
+            return
+        }
+
+        if (schoolsInfo.isEmpty()) {
+            _event.value = Event.DisplayMissingInfoDialog(R.string.teacher_setup_no_schools_entered)
+            return
+        }
+
+        if (selectedCharacteristics.isEmpty()) {
+            _event.value = Event.DisplayMissingInfoDialog(R.string.teacher_setup_characteristics_missing)
+            return
+        }
+
+        if (selectedSubjects.isEmpty()) {
+            _event.value = Event.DisplayMissingInfoDialog(R.string.teacher_setup_subjects_missing)
+            return
+        }
+
+        if (schedule.isEmpty()) {
+            _event.value = Event.DisplayMissingInfoDialog(R.string.teacher_setup_schedule_missing)
+            return
+        }
+
+        val teacher = Teacher(
+            "$firstName $lastName",
+            null,
+            gender.value!!,
+            userId!!,
+            schoolsInfo.map { it.schoolRegion },
+            schoolsInfo.map { it.schoolName },
+            selectedCharacteristics.map { it to true }.toMap().toMutableMap(),
+            Teacher.Grades(*schoolsInfo.flatMap { it.grades }.toTypedArray()),
+            selectedSubjects.map { it to true }.toMap().toMutableMap(),
+            schedule
+        )
+
+        DatabaseVersioning.currentVersion.instance.collection("teachers").document(userId!!).set(teacher)
+            .addOnSuccessListener {
+                // TODO: cache current user
+                _event.value = Event.Finish()
+            }
+            .addOnFailureListener {
+                _event.value = Event.DisplayError(R.string.something_went_wrong)
+            }
     }
 
     fun nextPressed() {

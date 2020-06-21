@@ -1,13 +1,13 @@
 package com.technion.vedibarta.POJOs
 
 enum class Day(val int: Int) {
-    SUNDAY      (1),
-    MONDAY      (2),
-    TUESDAY     (3),
-    WEDNESDAY   (4),
-    THURSDAY    (5),
-    FRIDAY      (6),
-    SATURDAY    (7);
+    SUNDAY      (0),
+    MONDAY      (1),
+    TUESDAY     (2),
+    WEDNESDAY   (3),
+    THURSDAY    (4),
+    FRIDAY      (5),
+    SATURDAY    (6);
 
     companion object {
         private val reverseInt = values().associateBy { it.int }
@@ -16,16 +16,16 @@ enum class Day(val int: Int) {
 }
 
 enum class Hour(val int: Int) {
-    FIRST   (1),
-    SECOND  (2),
-    THIRD   (3),
-    FOURTH  (4),
-    FIFTH   (5),
-    SIXTH   (6),
-    SEVENTH (7),
-    EIGHTH  (8),
-    NINTH   (9),
-    TENTH   (10);
+    FIRST   (0),
+    SECOND  (1),
+    THIRD   (2),
+    FOURTH  (3),
+    FIFTH   (4),
+    SIXTH   (5),
+    SEVENTH (6),
+    EIGHTH  (7),
+    NINTH   (8),
+    TENTH   (9);
 
     companion object {
         private val reverseInt = values().associateBy { it.int }
@@ -63,11 +63,14 @@ interface Timetable {
     fun toMap(): Map<DayHour, Boolean> = iterator().map { it to (it in this) }.toMap()
 
     fun toStringMap(): Map<String, Boolean> = toMap().mapKeys { it.key.toString() }
+
+    fun isEmpty(): Boolean
 }
 
 class MutableTimetable
 internal constructor(private val set: MutableSet<DayHour>) : Timetable {
     override fun contains(dayHour: DayHour): Boolean = set.contains(dayHour)
+    override fun isEmpty() = set.isEmpty()
 
     fun add(dayHour: DayHour) = set.add(dayHour)
 

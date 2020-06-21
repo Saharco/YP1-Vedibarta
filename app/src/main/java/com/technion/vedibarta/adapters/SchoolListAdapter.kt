@@ -15,8 +15,7 @@ class SchoolsAdapter(
     private val addButtonLambda: () -> Unit,
     private val longPressLambda: (v:View) -> Boolean,
     private val schoolsInfoList: List<SchoolInfo>
-) :
-    RecyclerView.Adapter<SchoolsAdapter.SchoolsViewHolder>() {
+) : RecyclerView.Adapter<SchoolsAdapter.SchoolsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SchoolsViewHolder {
         return if (viewType == 0) {
