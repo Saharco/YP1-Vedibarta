@@ -32,13 +32,6 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
 
     val doneButtonVisibility: LiveData<Int> = _doneButtonVisibility
 
-    var backButtonVisibility = Transformations.map(_currentScreenIdx) { idx ->
-        if (idx == 0)
-            View.GONE
-        else
-            View.VISIBLE
-    }
-
     val nextButtonState = Transformations.switchMap<Int, NextButtonState>(_currentScreenIdx) { idx ->
         when (idx) {
             3 -> MutableLiveData(NextButtonState.Gone)
@@ -120,7 +113,10 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun backPressed() {
-        if (_currentScreenIdx.value == 0) return
+        if (_currentScreenIdx.value == 0) {
+            _event.value = Event.Back()
+            return
+        }
 
         _currentScreenIdx.value = _currentScreenIdx.value!! - 1
     }
@@ -194,6 +190,7 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
         var handled = false
 
         class Finish : Event()
+        class Back : Event()
         data class DisplayMissingInfoDialog(val msgResId: Int) : Event()
         data class DisplayError(val msgResId: Int): Event()
     }

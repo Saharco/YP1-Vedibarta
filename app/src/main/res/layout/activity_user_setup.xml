@@ -35,8 +35,7 @@
             app:layout_constraintBottom_toBottomOf="@id/editTabs"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/editTabs"
-            app:srcCompat="@drawable/ic_arrow_back_accent"
-            tools:visibility="visible"/>
+            app:srcCompat="@drawable/ic_arrow_back_accent"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/editTabs"

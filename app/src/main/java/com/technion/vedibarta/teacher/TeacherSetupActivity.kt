@@ -19,6 +19,7 @@ import com.technion.vedibarta.fragments.SchoolListItemLongCLick
 import com.technion.vedibarta.fragments.TeacherPersonalInfoFragment
 import com.technion.vedibarta.fragments.TeacherSetupCharacteristicsSelectionFragment
 import com.technion.vedibarta.fragments.TeacherSetupSubjectsSelectionFragment
+import com.technion.vedibarta.utilities.extensions.exhaustive
 import com.technion.vedibarta.utilities.missingDetailsDialog
 import kotlinx.android.synthetic.main.activity_teacher_setup.*
 import kotlinx.android.synthetic.main.activity_teacher_setup.backButton
@@ -39,10 +40,6 @@ class TeacherSetupActivity : AppCompatActivity(), SchoolListItemLongCLick {
 
         viewModel.doneButtonVisibility.observe(this) {
             doneButton.visibility = it
-        }
-
-        viewModel.backButtonVisibility.observe(this) {
-            backButton.visibility = it
         }
 
         viewModel.nextButtonState.observe(this) {
@@ -70,7 +67,8 @@ class TeacherSetupActivity : AppCompatActivity(), SchoolListItemLongCLick {
                 is Event.DisplayError -> Toast.makeText(this, it.msgResId, Toast.LENGTH_LONG)
                     .show()
                 is Event.DisplayMissingInfoDialog -> missingDetailsDialog(this, getString(it.msgResId))
-            }
+                is Event.Back -> super.onBackPressed()
+            }.exhaustive
 
             it.handled = true
         }

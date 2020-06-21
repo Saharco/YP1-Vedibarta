@@ -25,6 +25,7 @@ import com.technion.vedibarta.fragments.UserSetupCharacteristicsSelectionFragmen
 import com.technion.vedibarta.fragments.UserSetupHobbiesSelectionFragment
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.extensions.exhaustive
 import kotlinx.android.synthetic.main.activity_user_setup.*
 
 class UserSetupActivity : VedibartaActivity() {
@@ -42,10 +43,6 @@ class UserSetupActivity : VedibartaActivity() {
 
         viewModel.doneButtonVisibility.observe(this) {
             doneButton.visibility = it
-        }
-
-        viewModel.backButtonVisibility.observe(this) {
-            backButton.visibility = it
         }
 
         viewModel.nextButtonState.observe(this) {
@@ -74,7 +71,8 @@ class UserSetupActivity : VedibartaActivity() {
                 is Event.DisplayError -> Toast.makeText(this, it.msgResId, Toast.LENGTH_LONG)
                     .show()
                 is Event.DisplayMissingInfoDialog -> missingDetailsDialog(getString(it.msgResId))
-            }
+                is Event.Back -> super.onBackPressed()
+            }.exhaustive
 
             it.handled = true
         }
