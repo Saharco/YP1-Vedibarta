@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Grade
@@ -54,15 +55,20 @@ class TeacherPersonalInfoFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_teacher_personal_info, container, false)
 
         view.findViewById<NestedScrollView>(R.id.teacherPersonalInfoScrollView).isNestedScrollingEnabled = false
+
         val schoolList = view.findViewById<RecyclerView>(R.id.schoolList)
         schoolList.isNestedScrollingEnabled = false
         schoolList.layoutManager = LinearLayoutManager(activity)
         val adapter = SchoolsAdapter(
-            { onAddSchoolButtonClick() },
             { v: View -> schoolListItemLongCLick.onLongClickListener(v) },
             viewModel.schoolsInfo
         )
         schoolList.adapter = adapter
+
+        val addSchoolButton = view.findViewById<TextView>(R.id.addSchoolButton)
+        addSchoolButton.setOnClickListener {
+            onAddSchoolButtonClick()
+        }
 
         return view
     }
@@ -267,7 +273,20 @@ class TeacherPersonalInfoFragment : Fragment() {
                         )
                     )
                 }
-                Gender.NONE -> {}
+                Gender.NONE -> {
+                    textOptionMale.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.textPrimaryOnDarkSurface
+                        )
+                    )
+                    textOptionFemale.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.textPrimaryOnDarkSurface
+                        )
+                    )
+                }
             }
         }
     }
