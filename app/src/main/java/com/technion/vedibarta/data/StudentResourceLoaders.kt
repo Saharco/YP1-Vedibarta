@@ -37,12 +37,12 @@ fun loadCharacteristicsCards(
         val categories = categoriesResource.getAllBase()
 
         Tasks.whenAllSuccess<CategoryCard>(categories.map { category ->
-            textManager.findMultilingualResource("characteristics/category-$category").continueWith { categoryResourceTask ->
+            textManager.findResource("characteristics/category-$category").continueWith { categoryResourceTask ->
                 val categoryResource = categoryResourceTask.result!!
 
                 CategoryCard(
                     category,
-                    categoryResource.getAllBase().map { Bubble(it) },
+                    categoryResource.getAll().map { Bubble(it) },
                     showBackgrounds = false,
                     isToggleable = true
                 )
@@ -70,12 +70,12 @@ fun loadCharacteristicsCardsWithTranslator(
         val categories = categoriesResource.getAllBase()
 
         Tasks.whenAllSuccess(categories.map { category ->
-            textManager.findMultilingualResource("characteristics/category-$category").continueWith { categoryResourceTask ->
+            textManager.findResource("characteristics/category-$category").continueWith { categoryResourceTask ->
                 val categoryResource = categoryResourceTask.result!!
 
                 CategoryCard(
                     category,
-                    categoryResource.getAllBase().map { Bubble(it) },
+                    categoryResource.getAll().map { Bubble(it) },
                     showBackgrounds = false,
                     isToggleable = true
                 )
@@ -98,12 +98,12 @@ fun loadHobbiesCardsWithTranslator(
     val categoriesTask = textManager.findMultilingualResource("hobbies/categories")
     val imagesTask = fileManager.getAllInDirectory("images/hobbies")
 
-    val categoryResourcesTask = categoriesTask.continueWithTask<List<Pair<String, MultilingualTextResource>>> {
+    val categoryResourcesTask = categoriesTask.continueWithTask<List<Pair<String, TextResource>>> {
         val categoriesResource = categoriesTask.result!!
         val categories = categoriesResource.getAllBase()
 
         Tasks.whenAllSuccess(categories.map { category ->
-            textManager.findMultilingualResource("hobbies/category-$category").continueWith {
+            textManager.findResource("hobbies/category-$category").continueWith {
                 Pair(category, it.result!!)
             }
         })
@@ -116,7 +116,7 @@ fun loadHobbiesCardsWithTranslator(
         categoryResources.map { (category, resource) ->
             CategoryCard(
                 category,
-                resource.getAllBase().map {
+                resource.getAll().map {
                     Bubble(it, imagesMap["$it.jpg"])
                 },
                 showBackgrounds = true,
