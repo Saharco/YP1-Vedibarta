@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.technion.vedibarta.R
+import com.technion.vedibarta.teacher.TeacherReportMessageDialog
+import kotlinx.android.synthetic.main.fragment_teacher_reports_list.*
 
 /**
  * A simple [Fragment] subclass.
@@ -21,4 +23,9 @@ class TeacherReportsListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_teacher_reports_list, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        testButton.setOnClickListener {
+            TeacherReportMessageDialog().show(parentFragmentManager, "TeacherReportMessageDialog")
+        }
+    }
 }

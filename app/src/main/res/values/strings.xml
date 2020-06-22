@@ -103,12 +103,14 @@
 
     <!--    ChatRoom attribute   -->
     <string name="chat_room_abuse_dialog_title">דיווח</string>
-    <string name="chat_room_abuse_dialog_message">יש לסמן את הסיבות לדיווח</string>
+    <string name="chat_room_abuse_dialog_hint">כתבו כאן את הסיבות לדיווח</string>
     <string name="chat_room_abuse_dialog_option1">אלימות מילולית</string>
     <string name="chat_room_abuse_dialog_option2">הטרדה מינית</string>
     <string name="chat_room_abuse_dialog_option3">תוכן פוגעני</string>
     <string name="chat_room_abuse_dialog_report_button_m">דווח</string>
     <string name="chat_room_abuse_dialog_report_button_f">דווחי</string>
+    <string name="choose_teacher_to_report_hint">בחרו מורה אליו אתם רוצים לדווח</string>
+    <string name="reasons_for_report_title">סיבות לדיווח:</string>
     <string name="chat_room_abuse_dialog_back_button">ביטול</string>
     <string name="chat_room_question_generator_title">מחולל השאלות</string>
     <string name="chat_room_question_generator_question_title">מתקשה למצוא נושא לשיחה?\nבחר אחד מהנושאים הבאים:</string>
@@ -267,4 +269,5 @@
     <!-- Teacher General -->
     <string name="schools_characteristics_title">מאפייני בית ספר</string>
     <string name="teaching_subjects_title">מקצועות לימוד</string>
+    <string name="a_reported_b">דיווח/ה על</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.technion.vedibarta.chatRoom
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -45,24 +46,23 @@ class ChatRoomAbuseReportDialog: DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        abuse1.setOnClickListener{
-            listener.onAbuseTypeClick(this)
-            Toast.makeText(context, "abuse1", Toast.LENGTH_SHORT).show()
-        }
-
-        abuse2.setOnClickListener{
-            listener.onAbuseTypeClick(this)
-            Toast.makeText(context, "abuse2", Toast.LENGTH_SHORT).show()
-        }
-
-        abuse3.setOnClickListener{
-            listener.onAbuseTypeClick(this)
-            Toast.makeText(context, "abuse3", Toast.LENGTH_SHORT).show()
-        }
+        reportButton.text = "הבא"
 
         reportButton.setOnClickListener{
-            Toast.makeText(context, "Report", Toast.LENGTH_SHORT).show()
-            dismiss()
+            if (reportViewFlipper.displayedChild == 0) {
+                reportViewFlipper.showNext()
+                reportButton.text = "דווח"
+                reportBackButton.visibility = View.VISIBLE
+            } else {
+                Toast.makeText(context, "Report", Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
+        }
+
+        reportBackButton.setOnClickListener {
+            reportViewFlipper.showPrevious()
+            reportBackButton.visibility = View.GONE
+            reportButton.text = "הבא"
         }
 
         reportAbuseDismissButton.setOnClickListener {

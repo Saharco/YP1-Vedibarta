@@ -221,10 +221,10 @@ class ChatRoomActivity : VedibartaActivity(),
                 R.id.reportAbuse      ->
                 {
                     //TODO Implement report abuse
-                    Toast.makeText(this,
-                                   "This functionality isn't supported yet",
-                                   Toast.LENGTH_LONG).show()
-                    //                  ChatRoomAbuseReportDialog().show( supportFragmentManager, "ReportAbuseDialog")
+//                    Toast.makeText(this,
+//                                   "This functionality isn't supported yet",
+//                                   Toast.LENGTH_LONG).show()
+                                      ChatRoomAbuseReportDialog().show( supportFragmentManager, "ReportAbuseDialog")
                 }
             }
 
