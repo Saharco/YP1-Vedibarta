@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.NonNull
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -19,6 +20,7 @@ import com.bumptech.glide.request.target.Target
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
+import com.technion.vedibarta.fragments.ChatListFragmentDirections
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.other_user_profile_dialog.*
@@ -84,8 +86,8 @@ class OtherUserProfilePopUp : DialogFragment() {
         }
 
         view.setOnClickListener {
-            val intent = Intent()
-            
+            val action = ChatListFragmentDirections.actionChatsToUserProfileActivity(chatMetadata.partnerId)
+            findNavController().navigate(action)
         }
     }
 
@@ -98,7 +100,7 @@ class OtherUserProfilePopUp : DialogFragment() {
     }
 
     companion object {
-        private const val TAG = "TakeCare/ProfileFrag"
+        private const val TAG = "Vedibarta/ProfileFrag"
         private const val CHAT_METADATA_KEY = "CHAT_METADATA_KEY"
 
         @JvmStatic

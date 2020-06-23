@@ -51,20 +51,6 @@
         app:layout_constraintTop_toBottomOf="@+id/titlePicture"
         app:srcCompat="@drawable/ic_photo_default_profile_man" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/changeProfilePictureButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:layoutDirection="ltr"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/profilePicture"
-        app:layout_constraintEnd_toEndOf="@+id/profilePicture"
-        app:layout_constraintStart_toEndOf="@+id/profilePicturePB"
-        app:srcCompat="@drawable/ic_camera_plus_white" />
-
     <ProgressBar
         android:id="@+id/profilePicturePB"
         style="?android:attr/progressBarStyle"

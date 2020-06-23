@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_chats_to_chatSearchActivity"
             app:destination="@id/chatSearchActivity" />
+        <action
+            android:id="@+id/action_chats_to_userProfileActivity"
+            app:destination="@id/userProfileActivity" />
     </fragment>
     <fragment
         android:id="@+id/user_profile"
@@ -44,4 +47,13 @@
         android:name="com.technion.vedibarta.chatSearch.ChatSearchActivity"
         android:label="activity_chat_search"
         tools:layout="@layout/activity_chat_search" />
+    <activity
+        android:id="@+id/userProfileActivity"
+        android:name="com.technion.vedibarta.userProfile.UserProfileActivity"
+        android:label="user_profile_activity"
+        tools:layout="@layout/activity_user_profile" >
+        <argument
+            android:name="userId"
+            app:argType="string" />
+    </activity>
 </navigation>

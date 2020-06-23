@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -46,7 +47,10 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.chatCandidates.ChatCandidatesActivityArgs
+import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.login.LoginActivity
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.utilities.RotateBitmap
@@ -59,37 +63,35 @@ import java.io.File
 import java.io.IOException
 
 
-class UserProfileActivity : VedibartaActivity(),
-    ProfilePictureUploadDialog.ProfilePictureUploadDialogListener {
+class UserProfileActivity : VedibartaActivity() {
 
     private val TAG = "user-profile"
-
-    private val APP_PERMISSION_REQUEST_CAMERA = 100
-    private val REQUEST_CAMERA = 1
-    private val SELECT_IMAGE = 2
-    private val EDIT_PROFILE = 3
-
-    private var selectedImageFile: File? = null
-    private var selectedImage: Uri? = null
+    val args: UserProfileActivityArgs by navArgs()
 
     //TODO: fetch this information from User class!!! change this to null later
-    private var userPhotoURL: String? = student!!.photo
-
+    private lateinit var student: Student
     private var mCurrentAnimator: Animator? = null
     private var mShortAnimationDuration: Long? = null
     private var isImageFullscreen = false
 
     private var minimizer: View.OnClickListener? = null
 
-    private lateinit var characteristicsTask : Task<MultilingualTextResource>
+    private lateinit var characteristicsTask: Task<MultilingualTextResource>
     private lateinit var hobbiesTask: Task<MultilingualTextResource>
     private lateinit var hobbiesImagesTask: Task<Map<String, File>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
+        DatabaseVersioning.currentVersion.instance.collection("students")
+            .whereEqualTo("uid", args.userId).get()
+            .addOnSuccessListener {
+                student = it.documents.first().toObject(Student::class.java)!!
+                initWidgets()
+                resetTables()
+                loadUserData()
+            }
         Log.d(TAG, "created UserProfileActivity")
-        initWidgets()
         characteristicsTask = RemoteTextResourcesManager(this)
             .findMultilingualResource("characteristics/all")
         hobbiesTask = RemoteTextResourcesManager(this)
@@ -98,40 +100,17 @@ class UserProfileActivity : VedibartaActivity(),
             .getAllInDirectory("images/hobbies")
     }
 
-    override fun onStart() {
-        super.onStart()
-        resetTables()
-        loadUserData()
-    }
-
     private fun resetTables() {
         bubblesRecycleView.removeAllViews()
         hobbiesTable.removeAllViews()
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.user_profile_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected started")
         when (item.itemId) {
             android.R.id.home ->
-                if (isImageFullscreen) {
-                    Log.d(TAG, "onOptionsItemSelected: fake toolbar clicked")
-                    if (!minimizeFullscreenImage()) {
-                        startActivity(Intent(this, MainActivity::class.java))
-                    }
-                } else {
-                    Log.d(TAG, "onOptionsItemSelected: real toolbar clicked")
-                    startActivity(Intent(this, MainActivity::class.java))
-                }
-            R.id.actionEditProfile ->
-                startActivityForResult(Intent(this, ProfileEditActivity::class.java), EDIT_PROFILE)
-            R.id.actionLogOut ->
-                onLogoutClick()
+                onBackPressed()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -149,64 +128,14 @@ class UserProfileActivity : VedibartaActivity(),
         }
     }
 
-    private fun onLogoutClick() {
-        val title = TextView(this)
-        title.setText(R.string.dialog_logout_title)
-        title.textSize = 20f
-        title.setTypeface(null, Typeface.BOLD)
-        title.setTextColor(ContextCompat.getColor(this, R.color.textPrimary))
-        title.gravity = Gravity.CENTER
-        title.setPadding(10, 40, 10, 24)
-
-        var msg = R.string.dialog_logout_message_m
-        if (student!!.gender == Gender.FEMALE)
-            msg = R.string.dialog_logout_message_f
-
-        val builder = AlertDialog.Builder(this)
-        builder.setCustomTitle(title)
-            .setMessage(msg)
-            .setPositiveButton(R.string.yes) { _, _ ->
-                performLogout()
-            }
-            .setNegativeButton(R.string.no) { _, _ -> }
-            .show()
-        builder.create()
-    }
-
-    private fun performLogout() {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            if (!it.isSuccessful) {
-                Log.d(TAG, "logout failed")
-                return@addOnCompleteListener
-            }
-            val token = it.result?.token
-            Log.d(TAG, "token is: $token")
-            database.students().userId().build().update("tokens", FieldValue.arrayRemove(token))
-
-            FirebaseAuth.getInstance().signOut()
-            LoginManager.getInstance().logOut()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        }
-    }
 
     private fun initWidgets() {
         setToolbar(toolbar)
-        enlargedToolbar.title = student!!.name
+        enlargedToolbar.title = student.name
         enlargedToolbar.setTitleTextColor(ContextCompat.getColor(this, android.R.color.white))
 
         titlePicture.bringToFront()
         profilePicture.bringToFront()
-        changeProfilePictureButton.bringToFront()
-
-        changeProfilePictureButton.setOnClickListener {
-            ProfilePictureUploadDialog.newInstance(student!!.name, student!!.gender).show(
-                supportFragmentManager,
-                "UploadProfilePictureFragment"
-            )
-        }
 
         profilePicture.setOnClickListener {
             Log.d(TAG, "clicked profile picture")
@@ -220,7 +149,8 @@ class UserProfileActivity : VedibartaActivity(),
     private fun loadUserData() {
         Tasks.whenAll(hobbiesTask, characteristicsTask, hobbiesImagesTask)
             .addOnSuccessListener(this) {
-                val studentCharacteristics = characteristicsTask.result!!.toCurrentLanguage(student!!.characteristics.keys.toTypedArray())
+                val studentCharacteristics =
+                    characteristicsTask.result!!.toCurrentLanguage(student.characteristics.keys.toTypedArray())
 
                 VedibartaFragment.populateCharacteristicsTable(
                     this,
@@ -229,9 +159,14 @@ class UserProfileActivity : VedibartaActivity(),
                     student!!.characteristics.keys.toMutableList(),
                     characteristicsTask.result!!
                 )
-                bubblesRecycleView.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+                bubblesRecycleView.forEach { view ->
+                    (view as TableRow).forEach { v ->
+                        v.isClickable = false
+                    }
+                }
 
-                val hobbies = hobbiesTask.result!!.toCurrentLanguage(student!!.hobbies.toTypedArray())
+                val hobbies =
+                    hobbiesTask.result!!.toCurrentLanguage(student.hobbies.toTypedArray())
 
                 VedibartaFragment.populateHobbiesTable(
                     this,
@@ -241,31 +176,35 @@ class UserProfileActivity : VedibartaActivity(),
                     hobbiesTask.result!!,
                     hobbiesImagesTask.result!!
                 )
-                hobbiesTable.forEach { view -> (view as TableRow).forEach { v -> v.isClickable = false } }
+                hobbiesTable.forEach { view ->
+                    (view as TableRow).forEach { v ->
+                        v.isClickable = false
+                    }
+                }
             }
 
-            populateProfilePicture()
-            populateUsername()
-            populateUserRegion()
+        populateProfilePicture()
+        populateUsername()
+        populateUserRegion()
     }
 
     private fun populateUserRegion() {
-        userName.text = student!!.name
+        userName.text = student.name
     }
 
     private fun populateUsername() {
-        userDescription.text = student!!.region
+        userDescription.text = student.region
     }
 
     private fun populateProfilePicture() {
-        if (student!!.photo == null) {
+        if (student.photo == null) {
             loadDefaultUserProfilePicture()
             return
         }
 
         Glide.with(applicationContext)
             .asBitmap()
-            .load(userPhotoURL)
+            .load(student.photo)
             .into(object : SimpleTarget<Bitmap>() {
                 override fun onResourceReady(
                     resource: Bitmap,
@@ -278,7 +217,7 @@ class UserProfileActivity : VedibartaActivity(),
 
         Glide.with(applicationContext)
             .asBitmap()
-            .load(userPhotoURL)
+            .load(student.photo)
             .apply(RequestOptions.circleCropTransform())
             .listener(object : RequestListener<Bitmap> {
                 override fun onLoadFailed(
@@ -308,12 +247,11 @@ class UserProfileActivity : VedibartaActivity(),
 
     private fun displayUserProfilePicture() {
         profilePicture.visibility = View.VISIBLE
-        changeProfilePictureButton.visibility = View.VISIBLE
         profilePicturePB.visibility = View.GONE
     }
 
     private fun loadDefaultUserProfilePicture() {
-        if (student!!.gender == Gender.MALE)
+        if (student.gender == Gender.MALE)
             profilePicture.setImageResource(R.drawable.ic_photo_default_profile_man)
         else
             profilePicture.setImageResource(R.drawable.ic_photo_default_profile_girl)
@@ -342,7 +280,7 @@ class UserProfileActivity : VedibartaActivity(),
             enlargedToolbar.visibility = View.VISIBLE
             setToolbar(enlargedToolbar)
             supportActionBar?.setDisplayShowTitleEnabled(true)
-            supportActionBar?.title = student!!.name
+            supportActionBar?.title = student.name
             changeStatusBarColor(ContextCompat.getColor(this, android.R.color.black))
         }
     }
@@ -354,7 +292,7 @@ class UserProfileActivity : VedibartaActivity(),
     private fun zoomImageFromThumb(thumbView: View) {
         Log.d(TAG, "zoomImageFromThumb: Starting")
 
-        if (userPhotoURL == null) {
+        if (student.photo == null) {
             return
         }
 
@@ -370,7 +308,7 @@ class UserProfileActivity : VedibartaActivity(),
 
         Glide.with(applicationContext)
             .asBitmap()
-            .load(userPhotoURL)
+            .load(student.photo)
             .into(object : SimpleTarget<Bitmap>() {
                 override fun onResourceReady(
                     resource: Bitmap,
@@ -546,7 +484,6 @@ class UserProfileActivity : VedibartaActivity(),
         userName.visibility = View.VISIBLE
         userDescription.visibility = View.VISIBLE
         divider1.visibility = View.VISIBLE
-        changeProfilePictureButton.visibility = View.VISIBLE
 
         root.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
         scrollViewLayout.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white))
@@ -566,7 +503,6 @@ class UserProfileActivity : VedibartaActivity(),
         userName.visibility = View.GONE
         userDescription.visibility = View.GONE
         divider1.visibility = View.GONE
-        changeProfilePictureButton.visibility = View.GONE
     }
 
     private fun minimizeFullscreenImage(): Boolean {
@@ -577,207 +513,5 @@ class UserProfileActivity : VedibartaActivity(),
         fullscreenImage.resetZoom()
         minimizer?.onClick(fullscreenImage)
         return true
-    }
-
-    override fun onCameraUploadClicked(dialog: DialogFragment) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                APP_PERMISSION_REQUEST_CAMERA
-            )
-        } else {
-            startCameraActivity()
-        }
-    }
-
-    private fun startCameraActivity() {
-        Log.d(TAG, "entered startCameraActivity")
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        selectedImageFile = File(
-            externalCacheDir,
-            System.currentTimeMillis().toString() + ".jpg"
-        )
-        Log.d(TAG, "fetched image file: $selectedImageFile")
-        selectedImage = FileProvider.getUriForFile(
-            this,
-            "$packageName.provider", selectedImageFile!!
-        )
-
-        Log.d(TAG, "fetched selected image: $selectedImage")
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImage)
-        Log.d(TAG, "Activating camera")
-        startActivityForResult(intent, REQUEST_CAMERA)
-    }
-
-    override fun onGalleryUploadClicked(dialog: DialogFragment) {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.type = "image/*"
-        startActivityForResult(intent, SELECT_IMAGE)
-    }
-
-    private fun checkImageAndUpload(image: Uri?) {
-        if (image != null) {
-            if (!validateImage(image)) {
-                Toast.makeText(this, R.string.image_not_allowed_message, Toast.LENGTH_LONG).show()
-            } else if (!textValidate(image)) {
-                Toast.makeText(this, R.string.texts_not_allowed_message, Toast.LENGTH_LONG).show()
-            } else {
-                uploadPhoto(image)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "got result from upload activity")
-
-        if (resultCode == Activity.RESULT_OK) {
-
-            when (requestCode) {
-                REQUEST_CAMERA -> checkImageAndUpload(selectedImage)
-                SELECT_IMAGE -> checkImageAndUpload(data!!.data)
-                EDIT_PROFILE -> {
-                    val snackbar = Snackbar.make(
-                        toolbar,
-                        resources.getString(R.string.edit_changes_saved_successfully),
-                        Snackbar.LENGTH_LONG
-                    )
-                        .setBackgroundTint(ContextCompat.getColor(this, R.color.colorAccentDark))
-                    snackbar.view.layoutDirection = View.LAYOUT_DIRECTION_RTL
-                    snackbar.show()
-                }
-            }
-        }
-    }
-
-    private fun validateImage(imageUriForVision : Uri) : Boolean {
-        try
-        {
-            val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
-            val labeler = FirebaseVision.getInstance().onDeviceImageLabeler.processImage(image)
-
-            while (!labeler.isComplete){}
-            Log.d(TAG,"${labeler.result?.toString()}")
-            if (labeler.isSuccessful){
-                val labels = labeler.result!!.map { it.text }
-                val res = labels.intersect(listOf("Skin", "Swimwear")).isEmpty()
-                Log.d("wtf", "Image validation result: $res")
-                return res
-            }
-        }
-        catch (e: Exception)
-        {
-            Log.d(TAG, "validateImage ${e.message}, cause: ${e.cause?.message}")
-        }
-
-        return false
-    }
-
-    private fun textValidate(imageUriForVision: Uri) : Boolean{
-        val image = FirebaseVisionImage.fromFilePath(this.applicationContext,imageUriForVision)
-        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer.processImage(image)
-
-        while (!detector.isComplete){}
-        if (detector.isSuccessful){
-            Log.d("wtf", "Text Detector result: ${detector.result!!.text.isEmpty()}")
-            return detector.result!!.text.isEmpty()
-        }
-        return false
-    }
-
-    private fun uploadPhoto(imagePath: Uri) {
-        val resize = ImageCompressTask()
-        resize.execute(imagePath)
-    }
-
-    /**
-     * Updates the user profile picture *IN THE DATABASE!*,
-     * updates the local Student class after the server update
-     * TODO: move to database abstraction if possible
-     */
-    private fun updateServerUserProfilePic(bytes: ByteArray) {
-        val storageRef = storage.students().userId().pictures().fileName("profile_pic")
-        startLoadingPictureChange()
-        storageRef.putBytes(bytes)
-            .addOnSuccessListener {
-                storageRef.downloadUrl
-                    .addOnSuccessListener {
-                        userPhotoURL = it.toString()
-                        database.students().userId().build()
-                            .set(mapOf(Pair("photo", userPhotoURL)), SetOptions.merge())
-                            .addOnSuccessListener {
-                                Log.d(TAG, "successfully updated user profile picture")
-                                student!!.photo = userPhotoURL
-                                populateProfilePicture()
-                            }
-                            .addOnFailureListener {
-                                Log.d(TAG, "failed to update user profile picture")
-                                finishLoadingPictureChange()
-                            }
-                    }
-                    .addOnFailureListener {
-                        Log.d(TAG, "failed to update user profile picture")
-                        finishLoadingPictureChange()
-                    }
-            }
-            .addOnFailureListener {
-                Log.d(TAG, "failed to update user profile picture")
-                finishLoadingPictureChange()
-            }
-    }
-
-    private fun finishLoadingPictureChange() {
-        profilePicturePB.visibility = View.GONE
-        profilePicture.visibility = View.VISIBLE
-        changeProfilePictureButton.visibility = View.VISIBLE
-    }
-
-    private fun startLoadingPictureChange() {
-        profilePicturePB.visibility = View.VISIBLE
-        profilePicture.visibility = View.INVISIBLE
-        changeProfilePictureButton.visibility = View.GONE
-    }
-
-    private inner class ImageCompressTask : AsyncTask<Uri, Int, ByteArray>() {
-
-        override fun onPreExecute() {
-            startLoadingPictureChange()
-        }
-
-        override fun doInBackground(vararg uris: Uri): ByteArray? {
-            try {
-                val rotateBitmap = RotateBitmap()
-                val bitmap =
-                    rotateBitmap.handleSamplingAndRotationBitmap(this@UserProfileActivity, uris[0])
-                Log.d(
-                    TAG,
-                    "doInBackground: MBs before compression: " + bitmap!!.byteCount.toDouble() / 1e6
-                )
-                val bytes = getBytesFromBitmap(bitmap, IMAGE_COMPRESSION_QUALITY_IN_PERCENTS)
-                Log.d(
-                    TAG,
-                    "doInBackground: MBs after compression: " + bytes.size.toDouble() / 1e6
-                )
-                return bytes
-            } catch (e: IOException) {
-                Log.d(TAG, "doInBackground: exception: $e")
-                return null
-            }
-
-        }
-
-        override fun onPostExecute(bytes: ByteArray) {
-            super.onPostExecute(bytes)
-            updateServerUserProfilePic(bytes)
-        }
-
-        private fun getBytesFromBitmap(bitmap: Bitmap, quality: Int): ByteArray {
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
-            return stream.toByteArray()
-        }
     }
 }
