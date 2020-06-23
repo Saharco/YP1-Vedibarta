@@ -37,6 +37,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.facebook.login.LoginManager
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
@@ -56,14 +57,13 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 
-class UserProfileFragment : Fragment(), MainActivity.OnBackPressed{
+class UserProfileFragment : Fragment(), MainActivity.OnBackPressed {
     private val TAG = "user-profile"
 
     private val REQUEST_CAMERA = 1
     private val SELECT_IMAGE = 2
     private val EDIT_PROFILE = 3
 
-    //TODO: fetch this information from User class!!! change this to null later
     private var userPhotoURL: String? = VedibartaActivity.student!!.photo
 
     private var mCurrentAnimator: Animator? = null
@@ -179,7 +179,12 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed{
 
     private fun initWidgets() {
         enlargedToolbar.title = VedibartaActivity.student!!.name
-        enlargedToolbar.setTitleTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+        enlargedToolbar.setTitleTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                android.R.color.white
+            )
+        )
         titlePicture.bringToFront()
         profilePicture.bringToFront()
         changeProfilePictureButton.bringToFront()
@@ -188,7 +193,8 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed{
             ProfilePictureUploadDialog.newInstance(
                 VedibartaActivity.student!!.name,
                 VedibartaActivity.student!!.gender
-            ).show(parentFragmentManager,
+            ).show(
+                parentFragmentManager,
                 "UploadProfilePictureFragment"
             )
         }
@@ -552,6 +558,8 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed{
         userDescription.visibility = View.VISIBLE
         divider1.visibility = View.VISIBLE
         changeProfilePictureButton.visibility = View.VISIBLE
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility =
+            View.VISIBLE
 
         root.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.white))
         scrollViewLayout.setBackgroundColor(
@@ -582,6 +590,8 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed{
         userDescription.visibility = View.GONE
         divider1.visibility = View.GONE
         changeProfilePictureButton.visibility = View.GONE
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility =
+            View.GONE
     }
 
     private fun minimizeFullscreenImage(): Boolean {

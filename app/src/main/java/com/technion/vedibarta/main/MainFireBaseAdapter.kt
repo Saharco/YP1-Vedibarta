@@ -53,7 +53,7 @@ class MainFireBaseAdapter(val userId: String?,
     {
         val userNameView =
             LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-        return ViewHolder(userNameView, userId!!, applicationContext)
+        return ViewHolder(userNameView, userId!!, parent.context)
     }
 
     override fun getItemCount(): Int
