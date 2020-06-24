@@ -2,13 +2,12 @@
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/teacherCardViewSchool"
     style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="16dp"
+    android:layout_margin="8dp"
     android:animateLayoutChanges="true"
     android:layoutDirection="rtl"
     app:cardCornerRadius="10dp"
@@ -21,7 +20,7 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -31,32 +30,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="@string/user_setup_school_info_title"
                 android:textColor="@color/textPrimary"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/edit_school"
+                android:layout_centerVertical="true"
+                tools:text="שם בית ספר" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/edit_school"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
                 android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_baseline_edit_24"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:padding="8dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/ic_baseline_edit_24" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
 
         <View
             android:id="@+id/divider1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_margin="8dp"
             android:background="@color/background"
-            app:elevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userDescription" />
@@ -76,7 +74,7 @@
                 android:id="@+id/gradeTenth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:padding="4dp"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:focusable="false"
@@ -87,7 +85,7 @@
                 android:id="@+id/gradeEleventh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:padding="4dp"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:focusable="false"
@@ -98,7 +96,7 @@
                 android:id="@+id/gradeTwelfth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:padding="4dp"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:focusable="false"
