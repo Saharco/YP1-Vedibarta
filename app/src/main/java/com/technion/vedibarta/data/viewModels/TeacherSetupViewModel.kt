@@ -9,7 +9,6 @@ import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.TeacherMeta
 import com.technion.vedibarta.data.TeacherResources
 import com.technion.vedibarta.database.DatabaseVersioning
-import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.userId
 
 class TeacherSetupViewModel(application: Application) : AndroidViewModel(application) {
@@ -122,7 +121,7 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
         _currentScreenIdx.value = _currentScreenIdx.value!! - 1
     }
 
-    inner class AddSchoolDialogViewModel {
+    open inner class SchoolDialogViewModel(protected val position: Int) {
         var school: String? = null
         var region: String? = null
         val grades = mutableSetOf<Grade>()
@@ -131,7 +130,7 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
         val allRegions = TeacherResources.regions.getAll()
         val schoolAndRegionMap = allSchools.zip(allRegions).toMap()
 
-        fun addPressed(): AddResult {
+        fun save(): AddResult {
             val selectedSchool = school
             val selectedRegion = region
 
@@ -167,15 +166,39 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
 
             val schoolInfo = SchoolInfo(selectedSchool, selectedRegion, grades)
 
-            if (schoolsInfo.any { it.isSameSchoolAs(schoolInfo) }) {
+            val filteredSchools =  if (position < schoolsInfo.size)
+                schoolsInfo.toMutableList().apply { removeAt(position) }
+            else
+                schoolsInfo
+
+            if (filteredSchools.any { it.isSameSchoolAs(schoolInfo) }) {
                 _event.value = Event.DisplayMissingInfoDialog(R.string.teacher_setup_school_already_exist)
                 return AddResult.Failure
             }
 
-            schoolsInfo += schoolInfo
-            return AddResult.Success(schoolsInfo.size - 1)
+            if (position < schoolsInfo.size)
+                schoolsInfo[position] = schoolInfo
+            else
+                schoolsInfo += schoolInfo
+            return AddResult.Success(position)
         }
     }
+
+    inner class EditableSchoolDialogViewModel(position: Int) : SchoolDialogViewModel(position) {
+        init {
+            val schoolInfo = schoolsInfo[position]
+            school = schoolInfo.schoolName
+            region = schoolInfo.schoolRegion
+            grades.addAll(schoolInfo.grades)
+        }
+
+        fun remove() {
+            schoolsInfo.removeAt(position)
+        }
+    }
+
+    fun getAddSchoolDialogViewModel() = SchoolDialogViewModel(schoolsInfo.size)
+    fun getEditSchoolDialogViewModel(position: Int) = EditableSchoolDialogViewModel(position)
 
     sealed class AddResult {
         data class Success(val insertPos: Int) : AddResult()

@@ -228,6 +228,8 @@
     <string name="class_name_hint">שם הכיתה</string>
     <string name="subject_hint">תיאור</string>
     <string name="accept_text">אישור</string>
+    <string name="teacher_edit_school_save_changes">שמור</string>
+    <string name="teacher_edit_school_delete">מחק</string>
     <string name="teacher_profile_title">פרופיל מורה</string>
     <string name="enter_family_name_hint">שם משפחה</string>
     <string name="grade_10_radio_text">כיתה י</string>

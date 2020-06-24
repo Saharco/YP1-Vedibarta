@@ -1,6 +1,5 @@
 package com.technion.vedibarta.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.bumptech.glide.Glide
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Grade
@@ -41,12 +39,6 @@ private const val BORDER_WIDTH = 10
 class TeacherPersonalInfoFragment : Fragment() {
 
     val viewModel: TeacherSetupViewModel by activityViewModels()
-    private lateinit var schoolListItemLongCLick: SchoolListItemLongCLick
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        schoolListItemLongCLick = context as SchoolListItemLongCLick
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,10 +51,7 @@ class TeacherPersonalInfoFragment : Fragment() {
         val schoolList = view.findViewById<RecyclerView>(R.id.schoolList)
         schoolList.isNestedScrollingEnabled = false
         schoolList.layoutManager = LinearLayoutManager(activity)
-        val adapter = SchoolsAdapter(
-            { v: View -> schoolListItemLongCLick.onLongClickListener(v) },
-            viewModel.schoolsInfo
-        )
+        val adapter = SchoolsAdapter(viewModel.schoolsInfo, ::onEditSchoolButtonClick)
         schoolList.adapter = adapter
 
         val addSchoolButton = view.findViewById<TextView>(R.id.addSchoolButton)
@@ -106,20 +95,46 @@ class TeacherPersonalInfoFragment : Fragment() {
     }
 
     private fun onAddSchoolButtonClick() {
-        val viewModel = viewModel.AddSchoolDialogViewModel()
+        val viewModel = viewModel.getAddSchoolDialogViewModel()
 
         val dialog = MaterialDialog(requireContext())
         dialog.cornerRadius(20f)
             .noAutoDismiss()
             .positiveButton(R.string.add) {
-                viewModel.addPressed().also { result ->
+                viewModel.save().also { result ->
                     if (result is AddResult.Success) {
                         schoolList.adapter!!.notifyItemInserted(result.insertPos)
                         it.dismiss()
                     }
                 }
             }
-            .negativeButton(R.string.cancel) { it.dismiss() }
+            .neutralButton(R.string.cancel) { it.dismiss() }
+            .customView(R.layout.fragment_add_school_dialog)
+            .show {
+                initMaterialDialog(this, viewModel)
+            }
+    }
+
+    private fun onEditSchoolButtonClick(position: Int) {
+        val viewModel = viewModel.getEditSchoolDialogViewModel(position)
+
+        val dialog = MaterialDialog(requireContext())
+        dialog.cornerRadius(20f)
+            .noAutoDismiss()
+            .positiveButton(R.string.teacher_edit_school_save_changes) {
+                viewModel.save().also { result ->
+                    if (result is AddResult.Success) {
+                        schoolList.adapter!!.notifyItemChanged(result.insertPos)
+                        it.dismiss()
+                    }
+                }
+            }
+            .neutralButton(R.string.cancel) { it.dismiss() }
+            .negativeButton(R.string.teacher_edit_school_delete) {
+                viewModel.remove()
+                schoolList.adapter!!.notifyItemRemoved(position)
+                it.dismiss()
+            }
             .customView(R.layout.fragment_add_school_dialog)
             .show {
                 initMaterialDialog(this, viewModel)
@@ -128,9 +143,10 @@ class TeacherPersonalInfoFragment : Fragment() {
 
     private fun initMaterialDialog(
         materialDialog: MaterialDialog,
-        viewModel: AddSchoolDialogViewModel
+        viewModel: SchoolDialogViewModel
     ) {
         materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTenth)
+            .apply { isChecked = Grade.TENTH in viewModel.grades }
             .setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked)
                     viewModel.grades.add(Grade.TENTH)
@@ -139,6 +155,7 @@ class TeacherPersonalInfoFragment : Fragment() {
             }
 
         materialDialog.findViewById<MaterialCheckBox>(R.id.gradeEleventh)
+            .apply { isChecked = Grade.ELEVENTH in viewModel.grades }
             .setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked)
                     viewModel.grades.add(Grade.ELEVENTH)
@@ -147,6 +164,7 @@ class TeacherPersonalInfoFragment : Fragment() {
             }
 
         materialDialog.findViewById<MaterialCheckBox>(R.id.gradeTwelfth)
+            .apply { isChecked = Grade.TWELFTH in viewModel.grades }
             .setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked)
                     viewModel.grades.add(Grade.TWELFTH)
@@ -156,6 +174,9 @@ class TeacherPersonalInfoFragment : Fragment() {
 
         val schoolSpinner = materialDialog.findViewById<AutoCompleteTextView>(R.id.schoolListSpinner)
         val regionSpinner = materialDialog.findViewById<AutoCompleteTextView>(R.id.regionListSpinner)
+
+        schoolSpinner.setText(viewModel.school)
+        regionSpinner.setText(viewModel.region)
 
         schoolSpinner.setAdapter(
             ArrayAdapter(
@@ -200,7 +221,7 @@ class TeacherPersonalInfoFragment : Fragment() {
     private fun onSchoolSelectedListener(
         md: MaterialDialog,
         v: TextView,
-        viewModel: AddSchoolDialogViewModel
+        viewModel: SchoolDialogViewModel
     ) {
         val regionSpinner = md.findViewById<AutoCompleteTextView>(R.id.regionListSpinner)
         val schoolName = v.text.toString()
@@ -214,7 +235,7 @@ class TeacherPersonalInfoFragment : Fragment() {
     private fun onRegionSelectedListener(
         md: MaterialDialog,
         v: TextView,
-        viewModel: AddSchoolDialogViewModel
+        viewModel: SchoolDialogViewModel
     ) {
         val schoolSpinner = md.findViewById<AutoCompleteTextView>(R.id.schoolListSpinner)
         schoolSpinner.text = SpannableStringBuilder("")
@@ -291,9 +312,3 @@ class TeacherPersonalInfoFragment : Fragment() {
         }
     }
 }
-
-interface SchoolListItemLongCLick {
-    fun onLongClickListener(v: View): Boolean
-}
-
-

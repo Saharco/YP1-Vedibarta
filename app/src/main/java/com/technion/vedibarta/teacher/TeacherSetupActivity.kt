@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -15,7 +14,6 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.FragmentListStateAdapter
 import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel
 import com.technion.vedibarta.data.viewModels.TeacherSetupViewModel.*
-import com.technion.vedibarta.fragments.SchoolListItemLongCLick
 import com.technion.vedibarta.fragments.TeacherPersonalInfoFragment
 import com.technion.vedibarta.fragments.TeacherSetupCharacteristicsSelectionFragment
 import com.technion.vedibarta.fragments.TeacherSetupSubjectsSelectionFragment
@@ -28,7 +26,7 @@ import kotlinx.android.synthetic.main.activity_teacher_setup.editTabs
 import kotlinx.android.synthetic.main.activity_teacher_setup.nextButton
 import kotlinx.android.synthetic.main.activity_teacher_setup.userSetupContainer
 
-class TeacherSetupActivity : AppCompatActivity(), SchoolListItemLongCLick {
+class TeacherSetupActivity : AppCompatActivity() {
 
     private val viewModel: TeacherSetupViewModel by viewModels()
 
@@ -95,24 +93,6 @@ class TeacherSetupActivity : AppCompatActivity(), SchoolListItemLongCLick {
         viewModel.backPressed()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.item_actions_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-            }
-            R.id.edit -> {
-            }
-            R.id.delete -> {
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun setupViewPager() {
         val adapter = FragmentListStateAdapter(
             this,
@@ -134,41 +114,5 @@ class TeacherSetupActivity : AppCompatActivity(), SchoolListItemLongCLick {
         }.attach()
 
         editTabs.touchables.forEach { it.isEnabled = false }
-    }
-
-    override fun onLongClickListener(v: View): Boolean {
-//        viewModel.selectedItems++
-//        viewModel.selectedItemsList.add(v as MaterialCardView)
-//        if (viewModel.selectedItems > 1) {
-//            toolbar.menu.removeItem(R.id.edit)
-//            supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
-//
-//        }
-//        else{
-//            supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
-//        }
-//        v.isLongClickable = false
-//        v.isChecked = true
-//        v.setOnClickListener {
-//            viewModel.selectedItems--
-//            viewModel.selectedItemsList.remove(it)
-//            if (viewModel.selectedItems == 0) {
-//                toolbarLayout.visibility = View.GONE
-//            }
-//            if (viewModel.selectedItems == 1) {
-//                toolbar.menu.clear()
-//                menuInflater.inflate(R.menu.item_actions_menu, toolbar.menu)
-//                supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.single_item_selected)}"
-//            }
-//            else{
-//                supportActionBar?.title = "${viewModel.selectedItems} ${getString(R.string.multi_item_selected)}"
-//            }
-//            v.isChecked = false
-//            v.isLongClickable = true
-//            v.setOnClickListener { }
-//        }
-//        toolbarLayout.visibility = View.VISIBLE
-//        return true
-        return false
     }
 }
