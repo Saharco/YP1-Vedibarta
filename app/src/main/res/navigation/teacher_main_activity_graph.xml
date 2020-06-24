@@ -20,10 +20,19 @@
     <fragment
         android:id="@+id/profile"
         android:name="com.technion.vedibarta.teacher.TeacherProfileFragment"
-        android:label="TeacherProfileFragment" />
+        android:label="TeacherProfileFragment" >
+        <action
+            android:id="@+id/action_teacher_profile_to_loginActivity"
+            app:destination="@id/loginActivity" />
+    </fragment>
     <fragment
         android:id="@+id/reports"
         android:name="com.technion.vedibarta.fragments.TeacherReportsListFragment"
         android:label="fragment_teacher_reports_list"
         tools:layout="@layout/fragment_teacher_reports_list" />
+
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.technion.vedibarta.login.LoginActivity"
+        android:label="LoginActivity" />
 </navigation>

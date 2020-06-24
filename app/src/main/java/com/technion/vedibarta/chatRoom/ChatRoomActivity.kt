@@ -27,6 +27,7 @@ import com.google.firebase.firestore.Query
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.R
+import com.technion.vedibarta.utilities.ImageLoader
 import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorFactory
 import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorManager
 
@@ -41,6 +42,7 @@ class ChatRoomActivity : VedibartaActivity(),
     lateinit var chatId: String
     lateinit var partnerId: String
     private var numMessages = 0
+    private var partnerName = ""
     private var photoUrl: String? = null
     private var otherGender: Gender? = null
     private var partnerHobbies: Array<String> = emptyArray()
@@ -65,7 +67,7 @@ class ChatRoomActivity : VedibartaActivity(),
 
         val chatMetaData = intent.getSerializableExtra("chatData") as ChatMetadata
 
-        val partnerName = chatMetaData.partnerName
+        partnerName = chatMetaData.partnerName
         chatId = chatMetaData.chatId
         partnerId = chatMetaData.partnerId
         numMessages = chatMetaData.numMessages
@@ -74,8 +76,6 @@ class ChatRoomActivity : VedibartaActivity(),
         partnerHobbies = chatMetaData.partnerHobbies
 
         chatPartnerId = partnerId // used by cloud functions
-        photoUrl ?: displayDefaultProfilePicture()
-
         questionGenerator = QuestionGeneratorFactory(this, student!!.hobbies.toList(), partnerHobbies.toList()).getGenerator()
 
         setToolbar(chatToolbar)
@@ -88,21 +88,7 @@ class ChatRoomActivity : VedibartaActivity(),
             chatBox.hint = SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
 
         toolbarUserName.text = partnerName
-        Glide.with(applicationContext).asBitmap().load(photoUrl)
-            .into(object : SimpleTarget<Bitmap>()
-                  {
-                      override fun onResourceReady(resource: Bitmap,
-                                                   transition: Transition<in Bitmap>?)
-                      {
-                          toolbarProfileImage.setImageBitmap(resource)
-                      }
-
-                      override fun onLoadFailed(errorDrawable: Drawable?)
-                      {
-                          displayDefaultProfilePicture()
-                      }
-                  })
-
+        ImageLoader().loadProfileImage(photoUrl, otherGender!!, toolbarProfileImage, applicationContext)
     }
 
     override fun onStart()
@@ -149,20 +135,9 @@ class ChatRoomActivity : VedibartaActivity(),
         chatBox.setText("")
     }
 
-    private fun displayDefaultProfilePicture()
-    {
-        when (otherGender)
-        {
-            null          -> return
-            Gender.MALE   -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_man)
-            Gender.FEMALE -> toolbarProfileImage.setImageResource(R.drawable.ic_photo_default_profile_girl)
-            else          -> Log.d(TAG, "other student is neither male nor female??")
-        }
-    }
-
     private fun configureAdapter()
     {
-        val query = database.chats().chatId(chatId).messages().build()
+        val query = database.chats().chat(chatId).messages().build()
             .orderBy("timestamp", Query.Direction.DESCENDING)
 
         val options =
@@ -220,11 +195,7 @@ class ChatRoomActivity : VedibartaActivity(),
 
                 R.id.reportAbuse      ->
                 {
-                    //TODO Implement report abuse
-                    Toast.makeText(this,
-                                   "This functionality isn't supported yet",
-                                   Toast.LENGTH_LONG).show()
-                    //                  ChatRoomAbuseReportDialog().show( supportFragmentManager, "ReportAbuseDialog")
+                    ChatRoomAbuseReportDialog(partnerId, partnerName, photoUrl, otherGender!!).show( supportFragmentManager, "ReportAbuseDialog")
                 }
             }
 

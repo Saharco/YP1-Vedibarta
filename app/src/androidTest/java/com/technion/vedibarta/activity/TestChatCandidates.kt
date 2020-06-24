@@ -36,7 +36,7 @@ class TestChatCandidates
     {
         registry.register(splashScreen)
         waitForActivity<MainActivity>()
-        onView(withId(R.id.extendedFloatingActionButton)).perform(click())
+//        onView(withId(R.id.extendedFloatingActionButton)).perform(click())
         waitForActivity<ChatSearchActivity>()
     }
 
@@ -67,7 +67,7 @@ class TestChatCandidates
     fun can_search_chat_partner_by_only_characteristics()
     {
         val table = TableLayoutHandler()
-        table.bindTable(R.id.searchCharacteristics)
+//        table.bindTable(R.id.searchCharacteristics)
         for (i in 0 until 3)
             table.performAtPositionInTable(i, i, click())
         onView(withId(R.id.actionChatSearch)).perform(click())
@@ -80,7 +80,7 @@ class TestChatCandidates
     {
         //chooses characteristics
         val table = TableLayoutHandler()
-        table.bindTable(R.id.searchCharacteristics)
+//        table.bindTable(R.id.searchCharacteristics)
         for (i in 0 until 3)
             table.performAtPositionInTable(i, i, click())
 

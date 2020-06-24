@@ -77,7 +77,7 @@ class TestEditProfile
 
         for (i in 0 until numCategories)
         {
-            onView(withId(R.id.hobbyTitlesList)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(i, table.bindTableInsideRecyclerView(R.id.hobbiesTables)))
+//            onView(withId(R.id.hobbyTitlesList)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(i, table.bindTableInsideRecyclerView(R.id.hobbiesTables)))
             table.forTable(partialyHiddenViewClick(50)).forTable(partialyHiddenViewClick(50))
             sleep(0.5)
         }
@@ -98,7 +98,7 @@ class TestEditProfile
         onView(withId(R.id.editProfileContainer)).perform(swipeLeft())
         sleep(1)
 
-        onView(withId(R.id.hobbyTitlesList)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, table.bindTableInsideRecyclerView(R.id.hobbiesTables)))
+//        onView(withId(R.id.hobbyTitlesList)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, table.bindTableInsideRecyclerView(R.id.hobbiesTables)))
         table.forTable(click())
         sleep(1)
 

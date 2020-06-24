@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
@@ -29,6 +30,7 @@ import com.technion.vedibarta.data.viewModels.UserSetupViewModel
 import com.technion.vedibarta.databinding.FragmentTeacherProfileBinding
 import com.technion.vedibarta.userProfile.ProfileEditActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
+import com.technion.vedibarta.utilities.logout
 import kotlinx.android.synthetic.main.fragment_teacher_profile.*
 import kotlinx.android.synthetic.main.fragment_teacher_search_extra_options.view.*
 
@@ -98,12 +100,26 @@ class TeacherProfileFragment : Fragment() {
         builder.setCustomTitle(title)
             .setMessage(msg)
             .setPositiveButton(R.string.yes) { _, _ ->
-                //TODO: Add logout logic
-                //performLogout()
+                performLogout()
             }
             .setNegativeButton(R.string.no) { _, _ -> }
             .show()
         builder.create()
+    }
+
+    private fun performLogout() {
+        logout().addOnCompleteListener(requireActivity()) {
+            if (it.result!!) {
+                findNavController().navigate(R.id.action_teacher_profile_to_loginActivity)
+                requireActivity().finish()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.something_went_wrong,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     private fun populateRecyclerView(recyclerView: RecyclerView, dataList: List<String>) {val bubblesViewModels = dataList.map {

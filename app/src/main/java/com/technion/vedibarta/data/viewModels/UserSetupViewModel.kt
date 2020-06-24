@@ -136,7 +136,7 @@ class UserSetupViewModel(context: Application) : AndroidViewModel(context) {
             hobbies = selectedHobbies.toList()
         )
 
-        VedibartaActivity.database.students().userId().build().set(student)
+        VedibartaActivity.database.students().user().build().set(student)
             .addOnSuccessListener {
                 VedibartaActivity.student = student
                 _event.value = Event.Finish()

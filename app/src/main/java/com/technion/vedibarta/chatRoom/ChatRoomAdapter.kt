@@ -14,7 +14,7 @@ import java.util.*
 
 /***
  * base class adapter for adapters which are used by the RecyclerView of message history
- * all adapter used in ChatRoomActivity should extend this
+ * every adapter that is used in ChatRoomActivity should extend this
  */
 abstract class ChatRoomAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
@@ -58,7 +58,6 @@ abstract class ChatRoomAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         }
     }
 
-    // used only by the 3 different classes for MessageHolders below
     private fun dateToTime(date: Date): String = SimpleDateFormat("HH:mma", Locale.getDefault()).format(date)
 
     inner class SentMessageViewHolder(view: View) : RecyclerView.ViewHolder(view)

@@ -22,55 +22,94 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/alertDescription"
+    <ImageButton
+        android:id="@+id/reportBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="cursive"
-        android:gravity="start"
-        android:text="@string/chat_room_abuse_dialog_message"
-        android:textColor="@color/textSecondary"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_arrow_back_accent"
+        android:contentDescription="@string/back"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="@id/alertTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alertTitle" />
+        android:layout_marginStart="8dp"
+        android:visibility="gone"/>
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/abuse1"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="@string/chat_room_abuse_dialog_option1"
-        android:textColor="@color/textPrimary"
-        android:textSize="16sp"
-        android:button="@null"
-        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+    <ViewFlipper
+        android:id="@+id/reportViewFlipper"
+        android:layout_width="0dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="8dp"
+        android:animateLayoutChanges="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alertDescription" />
+        app:layout_constraintTop_toBottomOf="@id/alertTitle" >
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/abuse2"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="@string/chat_room_abuse_dialog_option2"
-        android:textColor="@color/textPrimary"
-        android:textSize="16sp"
-        android:button="@null"
-        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/abuse1" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/abuse3"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="@string/chat_room_abuse_dialog_option3"
-        android:textColor="@color/textPrimary"
-        android:textSize="16sp"
-        android:button="@null"
-        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/abuse2"/>
+            <TextView
+                android:id="@+id/hintTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/choose_teacher_to_report_hint" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/teachersForReportList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/hintTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ScrollView
+                android:id="@+id/reportTextScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/text_frame_rectangle" >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <EditText
+                        android:id="@+id/reportText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:background="@android:color/transparent"
+                        android:textDirection="rtl"
+                        android:textSize="16sp"
+                        android:singleLine="false"
+                        android:hint="@string/chat_room_abuse_dialog_hint"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </ScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ViewFlipper>
 
     <View
         android:id="@+id/divider1"
@@ -80,7 +119,7 @@
         android:background="@color/colorDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/abuse3" />
+        app:layout_constraintTop_toBottomOf="@+id/reportViewFlipper" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

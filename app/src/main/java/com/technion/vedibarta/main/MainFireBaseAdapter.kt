@@ -14,12 +14,14 @@ import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
-import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 /***
- * adapter wrapping for the FireBaseAdapter to be used by the RecyclerView of MainActivity
+ * Adapter wrapping for the [FirestoreRecyclerAdapter] to be used by the [RecyclerView] of [MainActivity].
+ * When the [FirestoreRecyclerAdapter] notices a change in the message collection it updates its message list
+ * and then the list is passed to the wrapping adapter.
+ * The wrapper sorts them by the time of the last message and then updates the [RecyclerView]
  */
 class MainFireBaseAdapter(val userId: String?,
                           private val applicationContext: Context,
@@ -72,7 +74,7 @@ class MainFireBaseAdapter(val userId: String?,
                 var partner: Student? = null
                 database
                     .students()
-                    .otherUserId(chat.getPartnerId(userId!!))
+                    .otherUser(chat.getPartnerId(userId!!))
                     .build()
                     .get()
                     .addOnSuccessListener {
@@ -166,9 +168,9 @@ class MainFireBaseAdapter(val userId: String?,
             {
             } //do nothing
 
-            /***
-             * assumes the lists have identical order and returns the first chat and its index that
-             * is in l1 but not in l2
+            /**
+             * Returns the first chat and its index that is in l1 but not in l2.
+             * Important: function assumes that the lists have identical order.
              */
             private fun firstMissingChatIndex(l1: List<Chat>, l2: List<Chat>): Int?
             {

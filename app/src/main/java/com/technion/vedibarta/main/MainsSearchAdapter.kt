@@ -14,8 +14,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.HashMap
 
 /***
- * base class adapter for adapters which are used to filter the RecyclerView of chat history
- * all adapter used to filter in MainActivity should extend this
+ * base class adapter for adapters which are used to filter the [RecyclerView] of chat history
+ * every adapter that is used to filter in [MainActivity] should extend this
  */
 abstract class MainsSearchAdapter<in T>(recycler: RecyclerView): MainAdapter(recycler)
 {

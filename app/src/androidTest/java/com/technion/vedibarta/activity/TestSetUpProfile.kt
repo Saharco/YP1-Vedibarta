@@ -89,7 +89,7 @@ class TestSetUpProfile
         //try to finish on choose_characteristics
         val table = Utillities.Companion.TableLayoutHandler()
         sleep(0.5)
-        table.bindTable(R.id.searchCharacteristics).performAtPositionInTable(0,0, click())
+//        table.bindTable(R.id.searchCharacteristics).performAtPositionInTable(0,0, click())
         failedFinishClick()
 
         //next screen
@@ -97,7 +97,7 @@ class TestSetUpProfile
 
         //try to finish on choose_hobbies
         sleep(0.5)
-        onView(withId(R.id.hobbyTitlesList)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(0, table.bindTableInsideRecyclerView(R.id.hobbiesTables)))
+//        onView(withId(R.id.hobbyTitlesList)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(0, table.bindTableInsideRecyclerView(R.id.hobbiesTables)))
         table.performAtPositionInTable(0,0, click())
         sleep(0.3)
 

@@ -46,7 +46,7 @@ class ProfileEditViewModel(context: Application): AndroidViewModel(context) {
         student?.characteristics = selectedCharacteristics.map { it to true }.toMap()
         student?.hobbies = selectedHobbies.toList()
 
-        VedibartaActivity.database.students().userId().build().set(student!!).addOnSuccessListener {
+        VedibartaActivity.database.students().user().build().set(student!!).addOnSuccessListener {
             _event.value = Event.Finish.Success()
         }.addOnFailureListener {
             student?.characteristics = initialCharacteristics.map { it to true }.toMap()

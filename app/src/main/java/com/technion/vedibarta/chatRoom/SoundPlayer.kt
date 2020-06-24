@@ -38,7 +38,7 @@ class SoundPlayer(private val activity: Activity, private var numMessages: Int) 
             try {
                 res = tryToPlaySound(type, count)
             } catch (e: Exception) {
-                com.technion.vedibarta.utilities.error(e, "tryToPlaySound")
+                com.technion.vedibarta.database.error(e, "tryToPlaySound")
             }
         }
         return res

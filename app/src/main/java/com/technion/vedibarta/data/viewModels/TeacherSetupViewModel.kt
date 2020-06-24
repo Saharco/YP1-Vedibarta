@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.data.StudentResources
+import com.technion.vedibarta.data.TeacherMeta
 import com.technion.vedibarta.data.TeacherResources
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -98,7 +99,7 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
 
         DatabaseVersioning.currentVersion.instance.collection("teachers").document(userId!!).set(teacher)
             .addOnSuccessListener {
-                // TODO: cache current user
+                TeacherMeta.teacher = teacher
                 _event.value = Event.Finish()
             }
             .addOnFailureListener {

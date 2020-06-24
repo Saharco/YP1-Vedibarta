@@ -3,6 +3,8 @@ package com.technion.vedibarta.utilities.extensions
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.CancellableTask
 import com.technion.vedibarta.POJOs.Error
 import com.technion.vedibarta.POJOs.LoadableData
@@ -78,3 +80,9 @@ fun <T> Task<*>.handleTimeout(data: MutableLiveData<LoadableData<T>>) =
     this.executeAfterTimeoutInMillis {
         data.postValue(SlowLoadingEvent())
     }
+
+inline fun <reified S> Task<List<DocumentSnapshot>>.resultToListOf() =
+    this.result?.map { it.toObject(S::class.java)!! } ?: emptyList()
+
+inline fun <reified S> Task<QuerySnapshot>.queryToListOf() =
+    this.result?.map { it.toObject(S::class.java)!! } ?: emptyList()

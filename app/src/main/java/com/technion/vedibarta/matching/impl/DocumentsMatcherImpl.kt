@@ -31,6 +31,12 @@ constructor(private val query: Query) : DocumentsMatcher {
         }
     )
 
+    override fun whereFiledEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher = DocumentsMatchersMerger(
+        values.map {
+            DocumentsMatcherImpl(query.whereEqualTo(field, it))
+        }.toList()
+    )
+
     override fun whereArrayFieldContains(field: Pair<String, Any>): DocumentsMatcher = DocumentsMatcherImpl(
         query.whereArrayContains(field.first, field.second)
     )
@@ -57,6 +63,9 @@ private class DocumentsMatchersMerger(private val documentsMatchers: List<Docume
 
     override fun whereArrayFieldContains(field: Pair<String, Any>): DocumentsMatcher =
         DocumentsMatchersMerger(documentsMatchers.map { it.whereArrayFieldContains(field) })
+
+    override fun whereFiledEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher =
+        DocumentsMatchersMerger(documentsMatchers.map { it.whereFiledEqualsToOneOf(field, values) })
 
     override fun match(randomField: String?, limit: Long): Task<List<DocumentSnapshot>> =
         Tasks.whenAllSuccess<Set<DocumentSnapshot>>(documentsMatchers.map { it.match(randomField, limit) })

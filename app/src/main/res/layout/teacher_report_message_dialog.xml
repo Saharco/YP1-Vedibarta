@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="320dp"
+    android:paddingVertical="12dp">
+
+    <TextView
+        android:id="@+id/reporterName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:maxLines="1"
+        android:text="ישראל ישראלי"
+        android:textColor="@color/textPrimary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/reporterImage"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="ישראל ישראלי" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/reporterImage"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_photo_default_profile_man"
+        app:layout_constraintBottom_toBottomOf="@id/reporterName"
+        app:layout_constraintEnd_toStartOf="@id/reporterName"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/reporterName"
+        tools:src="@drawable/ic_photo_default_profile_man" />
+
+    <TextView
+        android:id="@+id/reportedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="cursive"
+        android:gravity="start"
+        android:text="@string/a_reported_b"
+        android:textColor="@color/textSecondary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reporterName" />
+
+    <TextView
+        android:id="@+id/reportedName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:maxLines="1"
+        android:text="ישראלה ישראלי"
+        android:textColor="@color/textPrimary"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/reportedImage"
+        app:layout_constraintTop_toBottomOf="@id/reportedText"
+        tools:text="ישראלה ישראלי" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/reportedImage"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_photo_default_profile_girl"
+        app:layout_constraintBottom_toBottomOf="@id/reportedName"
+        app:layout_constraintEnd_toStartOf="@id/reportedName"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/reportedName"
+        tools:src="@drawable/ic_photo_default_profile_girl" />
+
+    <TextView
+        android:id="@+id/reportReasonsHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/reasons_for_report_title"
+        android:textColor="@color/textPrimary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/reportTextScrollView"
+        app:layout_constraintTop_toBottomOf="@id/reportedName" />
+
+    <ScrollView
+        android:id="@+id/reportTextScrollView"
+        android:layout_width="0dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="12dp"
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reportReasonsHeader"
+        android:background="@drawable/text_frame_rectangle" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/reportContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                android:minLines="10"
+                android:textSize="16sp"
+                android:textColor="@color/textPrimary"
+                android:textDirection="rtl"
+                tools:text="היא קראה לי בשמות גנאי גזעניים" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

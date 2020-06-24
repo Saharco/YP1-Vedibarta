@@ -13,7 +13,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /***
- * adapter wrapping for the FireBaseAdapter to be used by the RecyclerView of ChatRoomActivity
+ * Adapter wrapping for the [FirestoreRecyclerAdapter] to be used by the [RecyclerView] of [ChatRoomActivity].
+ * When the [FirestoreRecyclerAdapter] notices a change in the message collection it updates its message list
+ * and then the list is passed to the wrapping adapter and it updates the [RecyclerView]
  */
 class ChatRoomFireBaseAdapter(
     options: FirestoreRecyclerOptions<Message>,
@@ -91,7 +93,6 @@ class ChatRoomFireBaseAdapter(
                 else if (newMessageListSize == oldMessageListSize)
                 {
                     mainAdapter.notifyDataSetChanged()
-                    //mainAdapter.notifyDataSetChanged()
                 }
             }
 

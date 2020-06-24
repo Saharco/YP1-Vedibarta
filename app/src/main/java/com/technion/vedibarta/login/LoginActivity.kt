@@ -26,7 +26,9 @@ import com.technion.vedibarta.POJOs.Teacher
 import com.technion.vedibarta.POJOs.User
 import com.technion.vedibarta.R
 import com.technion.vedibarta.data.StudentResources
+import com.technion.vedibarta.data.TeacherMeta
 import com.technion.vedibarta.data.TeacherResources
+import com.technion.vedibarta.database.DataBase
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.teacher.TeacherMainActivity
@@ -314,6 +316,7 @@ class LoginActivity : AppCompatActivity(),
                 putGender(teacher.gender)
                 putLanguage(Locale.getDefault().language).apply()
             }
+            TeacherMeta.teacher = teacher
             startActivity(Intent(this, TeacherMainActivity::class.java))
             finish()
         }
@@ -345,8 +348,8 @@ class LoginActivity : AppCompatActivity(),
                 viewFlipper.showNext()
                 showSplash(this, getString(R.string.default_loading_message))
             }
-            database.userId = user.uid
 
+            database = DataBase(user.uid)
             firebaseUserToAppUser(user).continueWithTask {
                 when (val appUser = it.result) {
                     is Student -> redirectStudent(appUser)

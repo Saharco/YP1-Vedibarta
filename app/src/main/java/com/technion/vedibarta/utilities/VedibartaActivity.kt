@@ -27,6 +27,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.skyfishjy.library.RippleBackground
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
+import com.technion.vedibarta.database.DataBase
+import com.technion.vedibarta.database.Storage
 import com.technion.vedibarta.login.LoginActivity
 
 /**
@@ -77,8 +79,9 @@ open class VedibartaActivity : AppCompatActivity() {
         var student: Student? = null
         var chatPartnerId: String? = null
         var isActivityRunning = false
-        val database = DataBase()
+        lateinit var database: DataBase
         val userId by lazy { FirebaseAuth.getInstance().currentUser?.uid }
+
         const val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS = 90
         const val EXTRA_CHANGE_ACTIVITY = "EXTRA_CHANGE_ACTIVITY"
 

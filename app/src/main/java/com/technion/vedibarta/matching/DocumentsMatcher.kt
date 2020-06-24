@@ -62,6 +62,11 @@ interface DocumentsMatcher {
     fun whereArrayFieldContains(field: Pair<String, Any>): DocumentsMatcher
 
     /**
+     * Applies [Query.whereEqualTo] with the given [field] for each value in [values].
+     */
+    fun whereFiledEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher
+
+    /**
      * Applies all the queries that were aggregated during the creation of the object.
      *
      * @param randomField if not null, randomly cycle using [randomField]

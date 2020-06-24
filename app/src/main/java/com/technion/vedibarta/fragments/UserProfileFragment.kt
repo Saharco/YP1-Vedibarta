@@ -51,6 +51,7 @@ import com.technion.vedibarta.userProfile.ProfilePictureUploadDialog
 import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
+import com.technion.vedibarta.utilities.logout
 import com.technion.vedibarta.utilities.resourcesManagement.*
 import kotlinx.android.synthetic.main.fragment_user_profile.*
 import java.io.ByteArrayOutputStream
@@ -151,20 +152,17 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed {
     }
 
     private fun performLogout() {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            if (!it.isSuccessful) {
-                Log.d(MainActivity.TAG, "logout failed")
-                return@addOnCompleteListener
+        logout().addOnCompleteListener(requireActivity()) {
+            if (it.result!!) {
+                findNavController().navigate(R.id.action_user_profile_to_loginActivity)
+                requireActivity().finish()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.something_went_wrong,
+                    Toast.LENGTH_LONG
+                ).show()
             }
-            val token = it.result?.token
-            Log.d(MainActivity.TAG, "token is: $token")
-            VedibartaActivity.database.students().userId().build()
-                .update("tokens", FieldValue.arrayRemove(token))
-
-            FirebaseAuth.getInstance().signOut()
-            LoginManager.getInstance().logOut()
-            findNavController().navigate(R.id.action_user_profile_to_loginActivity)
-            requireActivity().finish()
         }
     }
 
@@ -707,7 +705,7 @@ class UserProfileFragment : Fragment(), MainActivity.OnBackPressed {
                 storageRef.downloadUrl
                     .addOnSuccessListener {
                         userPhotoURL = it.toString()
-                        VedibartaActivity.database.students().userId().build()
+                        VedibartaActivity.database.students().user().build()
                             .set(mapOf(Pair("photo", userPhotoURL)), SetOptions.merge())
                             .addOnSuccessListener {
                                 Log.d(TAG, "successfully updated user profile picture")

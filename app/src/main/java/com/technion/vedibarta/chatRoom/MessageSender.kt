@@ -19,34 +19,44 @@ class MessageSender(
 {
     private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
 
+    /**
+     * sends user message and optionally a message with the current date
+     */
     fun sendMessage(text: String, isSystemMessage: Boolean)
     {
         sendDateMessageIfNeeded()
         write(text, isSystemMessage)
     }
 
+    /**
+     * adds a message document to firebase
+     */
     private fun write(text: String, isSystemMessage: Boolean)
     {
         val sender = if (isSystemMessage) systemSenderId else userId
         database
             .chats()
-            .chatId(chatId)
+            .chat(chatId)
             .messages()
             .build()
             .add(Message(sender, partnerId, text))
             .addOnFailureListener { errorCallback(it) }
     }
 
+    /**
+     * sends a message with the current date if more then a day had passed since the last message
+     * or if there has been no messages yet
+     */
     private fun sendDateMessageIfNeeded()
     {
         val lastMessage = adapter.getFirstMessageOrNull()
         if (lastMessage == null)
-            write(dateFormatter.format(database.getCurrentDate()), true)
+            write(dateFormatter.format(database.clock.getCurrentDate()), true)
         else
         {
             val lastMessageDate = lastMessage.timestamp ?: return
-            if (database.hasMoreThenADayPassed(lastMessageDate))
-                write(dateFormatter.format(database.getCurrentDate()), true)
+            if (database.clock.hasMoreThenADayPassed(lastMessageDate))
+                write(dateFormatter.format(database.clock.getCurrentDate()), true)
         }
     }
 
