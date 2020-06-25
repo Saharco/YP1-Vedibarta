@@ -1,10 +1,18 @@
 package com.technion.vedibarta.adapters
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.card.MaterialCardView
 import com.technion.vedibarta.POJOs.Class
 import com.technion.vedibarta.R
@@ -25,8 +33,10 @@ class ClassesListAdapter(
             ClassesViewHolder.AddClassViewHolder(schoolAddButtonView, parent, addButtonLambda)
 
         } else {
-            val schoolCardView = LayoutInflater.from(parent.context).inflate(R.layout.class_card, parent, false)
+            val schoolCardView =
+                LayoutInflater.from(parent.context).inflate(R.layout.class_card, parent, false)
             ClassesViewHolder.ClassesCardViewHolder(
+                parent.context,
                 schoolCardView,
                 classPressLambda,
                 longPressLambda
@@ -64,6 +74,7 @@ class ClassesListAdapter(
         }
 
         class ClassesCardViewHolder(
+            private val context: Context,
             itemView: View,
             private val classPressLambda: (v: View) -> Boolean,
             private val longPressLambda: (v: View) -> Boolean
@@ -79,6 +90,15 @@ class ClassesListAdapter(
                 itemView.setOnClickListener {
                     classPressLambda(it)
                 }
+                if (cls.photo == null)
+                    itemView.findViewById<AppCompatImageView>(R.id.classPhoto)
+                        .setImageResource(R.drawable.ic_class_default_photo)
+                else
+                    Glide.with(context.applicationContext)
+                        .asBitmap()
+                        .load(cls.photo)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(itemView.findViewById<AppCompatImageView>(R.id.classPhoto))
             }
         }
     }
