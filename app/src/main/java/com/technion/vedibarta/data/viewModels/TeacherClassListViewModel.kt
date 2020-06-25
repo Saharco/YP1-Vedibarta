@@ -1,28 +1,16 @@
 package com.technion.vedibarta.data.viewModels
 
-import android.content.Context
-import android.view.View
-import android.widget.TextView
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.storage.FirebaseStorage
 import com.technion.vedibarta.POJOs.Class
-import com.technion.vedibarta.POJOs.Filled
-import com.technion.vedibarta.POJOs.TextContainer
-import com.technion.vedibarta.POJOs.Unfilled
 import com.technion.vedibarta.R
-import com.technion.vedibarta.adapters.ClassMembersListAdapter
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.utilities.VedibartaActivity
-import com.technion.vedibarta.utilities.missingDetailsDialog
-import kotlinx.android.synthetic.main.fragment_teacher_classes_list.*
+import java.nio.charset.Charset
+
 
 class TeacherClassListViewModel : ViewModel() {
 
@@ -52,12 +40,46 @@ class TeacherClassListViewModel : ViewModel() {
             }
     }
 
-    fun handleOnBackPress(): Boolean {
-        if (itemActionBarEnabled) {
-            clearSelectedClasses()
-            return true
-        }
-        return false
+
+    private fun editWithClassPhoto(
+        classToEdit: Class,
+        clazzMap: Map<String, String?>,
+        bytes: ByteArray,
+        editIndex: Int
+    ) {
+        val storageRef =
+            FirebaseStorage.getInstance().reference.child("classes/${classToEdit.id}/photo")
+        storageRef.putBytes(bytes)
+            .addOnSuccessListener {
+                storageRef.downloadUrl
+                    .addOnSuccessListener {
+                        DatabaseVersioning.currentVersion.instance.collection("classes")
+                            .document(classToEdit.id)
+                            .update(clazzMap).addOnSuccessListener {
+                                _event.value = Event.ClassEdited(editIndex + 1)
+                                unSelectClass(selectedItemsList.first())
+                            }
+                            .addOnFailureListener {
+                                _event.value = Event.DisplayError(R.string.something_went_wrong)
+                            }
+                    }
+            }
+    }
+
+    private fun editWithoutClassPhoto(
+        classToEdit: Class,
+        clazzMap: Map<String, String?>,
+        editIndex: Int
+    ) {
+        DatabaseVersioning.currentVersion.instance.collection("classes")
+            .document(classToEdit.id)
+            .update(clazzMap).addOnSuccessListener {
+                _event.value = Event.ClassEdited(editIndex + 1)
+                unSelectClass(selectedItemsList.first())
+            }
+            .addOnFailureListener {
+                _event.value = Event.DisplayError(R.string.something_went_wrong)
+            }
     }
 
     private fun clearSelectedClasses() {
@@ -69,6 +91,14 @@ class TeacherClassListViewModel : ViewModel() {
         }
         selectedItemsList.clear()
         _event.value = Event.ToggleActionBar()
+    }
+
+    fun handleOnBackPress(): Boolean {
+        if (itemActionBarEnabled) {
+            clearSelectedClasses()
+            return true
+        }
+        return false
     }
 
     fun unSelectClass(v: MaterialCardView) {
@@ -104,11 +134,15 @@ class TeacherClassListViewModel : ViewModel() {
             val id = it.tag
             val classToRemove: Class = classesList.first { it.id == id }
             val removeIndex = classesList.indexOf(classToRemove)
-            DatabaseVersioning.currentVersion.instance.collection("classes").document(id.toString())
+            DatabaseVersioning.currentVersion.instance.collection("classes")
+                .document(id.toString())
                 .delete()
                 .addOnSuccessListener {
-                    _event.value = Event.ClassRemoved(removeIndex + 1)
                     classesList.remove(classToRemove)
+                    if (classToRemove.photo != null) {
+                        FirebaseStorage.getInstance().reference.child("classes/${classToRemove.id}/photo")
+                    }
+                    _event.value = Event.ClassRemoved(removeIndex + 1)
                 }
                 .addOnFailureListener {
                     _event.value = Event.DisplayError(R.string.something_went_wrong)
@@ -128,15 +162,15 @@ class TeacherClassListViewModel : ViewModel() {
         classesList[editIndex].name = clazzMap["name"]!!
         classesList[editIndex].description = clazzMap["description"]!!
         classesList[editIndex].photo = clazzMap["photo"]
-        DatabaseVersioning.currentVersion.instance.collection("classes").document(classToEdit.id)
-            .update(clazzMap).addOnSuccessListener {
-                _event.value = Event.ClassEdited(editIndex+1)
-                unSelectClass(selectedItemsList.first())
-            }
-            .addOnFailureListener {
-                _event.value = Event.DisplayError(R.string.something_went_wrong)
-            }
+        val bytes = clazzMap.getValue("photoBytes")!!.toByteArray(Charset.defaultCharset())
+        val map = clazzMap.toMutableMap()
+        map.remove("photoBytes")
+        if (classesList[editIndex].photo != null)
+            editWithClassPhoto(classToEdit, map, bytes, editIndex)
+        else
+            editWithoutClassPhoto(classToEdit, map, editIndex)
     }
+
 
     sealed class Event {
         var handled = false
@@ -148,5 +182,4 @@ class TeacherClassListViewModel : ViewModel() {
         class ClassAdded : Event()
         data class DisplayError(val msgResId: Int) : Event()
     }
-
 }

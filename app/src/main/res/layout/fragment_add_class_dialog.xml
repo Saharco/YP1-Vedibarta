@@ -79,12 +79,23 @@
         android:id="@+id/classPhoto"
         android:layout_width="144dp"
         android:layout_height="144dp"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/formWrapper"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/ic_photo_default_profile_man" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/formWrapper" />
+
+    <ProgressBar
+        android:id="@+id/classPhotoPB"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/formWrapper" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addPhotoFab"
