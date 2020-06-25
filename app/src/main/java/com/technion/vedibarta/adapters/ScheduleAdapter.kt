@@ -11,8 +11,7 @@ import com.technion.vedibarta.POJOs.DayHour
 import com.technion.vedibarta.POJOs.Hour
 import com.technion.vedibarta.R
 import com.technion.vedibarta.databinding.ScheduleButtonBinding
-import com.technion.vedibarta.databinding.ScheduleDayTitleBinding
-import com.technion.vedibarta.databinding.SchedulePeriodTitleBinding
+import com.technion.vedibarta.databinding.ScheduleHeaderBinding
 import com.technion.vedibarta.utilities.extensions.exhaustive
 
 class ScheduleAdapter(
@@ -56,13 +55,13 @@ class ScheduleAdapter(
         }
 
         if (viewType <= DAYS_RESOURCES.size) {
-            val binding = ScheduleDayTitleBinding.inflate(inflater, parent, false)
-            return ViewHolder.DayTitle(binding)
+            val binding = ScheduleHeaderBinding.inflate(inflater, parent, false)
+            return ViewHolder.DayHeader(binding)
         }
 
         if (viewType % (DAYS_RESOURCES.size + 1) == 0) {
-            val binding = SchedulePeriodTitleBinding.inflate(inflater, parent, false)
-            return ViewHolder.PeriodTitle(binding)
+            val binding = ScheduleHeaderBinding.inflate(inflater, parent, false)
+            return ViewHolder.PeriodHeader(binding)
         }
 
         val binding = ScheduleButtonBinding.inflate(inflater, parent, false)
@@ -72,10 +71,10 @@ class ScheduleAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is ViewHolder.Blank -> holder.bind()
-            is ViewHolder.DayTitle -> holder.bind(
+            is ViewHolder.DayHeader -> holder.bind(
                 context.getString(DAYS_RESOURCES[position - 1])
             )
-            is ViewHolder.PeriodTitle -> holder.bind(
+            is ViewHolder.PeriodHeader -> holder.bind(
                 context.getString(PERIODS_RESOURCES[position / (DAYS_RESOURCES.size + 1) - 1])
             )
             is ViewHolder.Button -> holder.bind { onTimeChanged(
@@ -93,14 +92,14 @@ class ScheduleAdapter(
             fun bind() {}
         }
 
-        class DayTitle(private val binding: ScheduleDayTitleBinding) : ViewHolder(binding.root) {
+        class DayHeader(private val binding: ScheduleHeaderBinding) : ViewHolder(binding.root) {
             fun bind(text: String) {
                 binding.text = text
                 binding.executePendingBindings()
             }
         }
 
-        class PeriodTitle(private val binding: SchedulePeriodTitleBinding) : ViewHolder(binding.root) {
+        class PeriodHeader(private val binding: ScheduleHeaderBinding) : ViewHolder(binding.root) {
             fun bind(text: String) {
                 binding.text = text
                 binding.executePendingBindings()

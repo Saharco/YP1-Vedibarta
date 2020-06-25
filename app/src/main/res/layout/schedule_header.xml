@@ -9,18 +9,24 @@
             type="String" />
     </data>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="1dp">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="8dp"
             android:text="@{text}"
-            android:textSize="12sp"
-            app:backgroundTint="@color/colorAccentDark"
+            android:background="@color/colorAccentDark"
+            android:textColor="@color/textPrimaryOnDarkSurface"
+            android:gravity="center"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             tools:text="@string/firstPeriod"/>
 
-    </FrameLayout>
+    </RelativeLayout>
 </layout>
