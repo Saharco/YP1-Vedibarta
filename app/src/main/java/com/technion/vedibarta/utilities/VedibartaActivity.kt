@@ -80,7 +80,7 @@ open class VedibartaActivity : AppCompatActivity() {
         var chatPartnerId: String? = null
         var isActivityRunning = false
         lateinit var database: DataBase
-        val userId by lazy { FirebaseAuth.getInstance().currentUser?.uid }
+        val userId get() = FirebaseAuth.getInstance().currentUser?.uid
 
         const val IMAGE_COMPRESSION_QUALITY_IN_PERCENTS = 90
         const val EXTRA_CHANGE_ACTIVITY = "EXTRA_CHANGE_ACTIVITY"
