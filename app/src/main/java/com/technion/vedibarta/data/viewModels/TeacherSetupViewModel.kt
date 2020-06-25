@@ -39,12 +39,11 @@ class TeacherSetupViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun schedulePressed(dayIdx: Int, hourIdx: Int, isPressed: Boolean) {
-        val dayHour = DayHour(Day.fromInt(dayIdx)!!, Hour.fromInt(hourIdx)!!)
+    fun scheduleTimeChanged(time: DayHour, isPressed: Boolean) {
         if (isPressed)
-            schedule.add(dayHour)
+            schedule.add(time)
         else
-            schedule.remove(dayHour)
+            schedule.remove(time)
     }
 
     fun donePressed() {

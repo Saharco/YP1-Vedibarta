@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Space
 import androidx.recyclerview.widget.RecyclerView
+import com.technion.vedibarta.POJOs.Day
+import com.technion.vedibarta.POJOs.DayHour
+import com.technion.vedibarta.POJOs.Hour
 import com.technion.vedibarta.R
 import com.technion.vedibarta.databinding.ScheduleButtonBinding
 import com.technion.vedibarta.databinding.ScheduleDayTitleBinding
@@ -14,7 +17,7 @@ import com.technion.vedibarta.utilities.extensions.exhaustive
 
 class ScheduleAdapter(
     private val context: Context,
-    private val onClick: (Int, Int, Boolean) -> Unit
+    private val onTimeChanged: (time: DayHour, Boolean) -> Unit
 ) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
 
     companion object {
@@ -75,9 +78,11 @@ class ScheduleAdapter(
             is ViewHolder.PeriodTitle -> holder.bind(
                 context.getString(PERIODS_RESOURCES[position / (DAYS_RESOURCES.size + 1) - 1])
             )
-            is ViewHolder.Button -> holder.bind { onClick(
-                position % (DAYS_RESOURCES.size + 1) - 1,
-                position / (DAYS_RESOURCES.size + 1) - 1,
+            is ViewHolder.Button -> holder.bind { onTimeChanged(
+                DayHour(
+                    Day.fromInt(position % (DAYS_RESOURCES.size + 1) - 1)!!,
+                    Hour.fromInt(position / (DAYS_RESOURCES.size + 1) - 1)!!
+                ),
                 it
             ) }
         }.exhaustive

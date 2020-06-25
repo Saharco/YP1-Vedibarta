@@ -2,8 +2,6 @@ package com.technion.vedibarta.teacher
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -103,7 +101,7 @@ class TeacherSetupActivity : AppCompatActivity() {
             }, {
                 TeacherSetupSubjectsSelectionFragment()
             }, {
-                TeacherScheduleFragment()
+                TeacherSetupScheduleFragment()
             }))
 
         userSetupContainer.adapter = adapter
