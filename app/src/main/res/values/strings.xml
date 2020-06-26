@@ -273,6 +273,10 @@
     <string name="eighthPeriod">15:00 – 16:00</string>
     <string name="search_teacher_fab">חיפוש מורה</string>
 
+    <!-- TeacherChatSearchExtraOptions -->
+    <string name="filter_by_schedule_text">חיפוש לפי מערכת שעות</string>
+    <string name="teacher_search_no_characteristics_chosen_message">יש לבחור מאפיין בית ספר אחד לפחות</string>
+
     <!-- Teacher General -->
     <string name="schools_characteristics_title">מאפייני בית ספר</string>
     <string name="teaching_subjects_title">מקצועות לימוד</string>

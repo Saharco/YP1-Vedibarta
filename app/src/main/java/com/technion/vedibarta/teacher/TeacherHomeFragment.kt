@@ -1,18 +1,14 @@
 package com.technion.vedibarta.teacher
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.navigation.Navigation
 import com.technion.vedibarta.R
-import com.technion.vedibarta.chatSearch.ChatSearchActivity
 import com.technion.vedibarta.databinding.FragmentTeacherHomeBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val TITLE = "ודיברת"
 
 /**
@@ -38,23 +34,14 @@ class TeacherHomeFragment : Fragment() {
         // Inflate the layout for this fragment
         val binding = FragmentTeacherHomeBinding.inflate(inflater, container, false)
         binding.toolbarTitle.text = title
-        binding.extendedFloatingActionButton.setOnClickListener {
-            startActivity(Intent(context, TeacherSearchActivity::class.java))
-        }
+        binding.extendedFloatingActionButton.setOnClickListener(
+            Navigation.createNavigateOnClickListener(R.id.action_global_teacherSearchMatchFragment)
+        )
 
         return binding.root
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TeacherHomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(title: String) =
             TeacherHomeFragment().apply {

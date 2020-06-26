@@ -1,6 +1,7 @@
 package com.technion.vedibarta.teacher
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -21,6 +22,16 @@ class TeacherMainActivity : VedibartaActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teacher_main)
         bottomNavigation.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.chat, R.id.classes, R.id.reports, R.id.profile -> {
+                    bottomNavigation.visibility = View.VISIBLE
+                }
+                R.id.teacherSearchMatchFragment -> {
+                    bottomNavigation.visibility = View.GONE
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {

@@ -14,10 +14,6 @@
         android:name="com.technion.vedibarta.fragments.TeacherClassesListFragment"
         android:label="TeacherClassesListFragment" />
     <fragment
-        android:id="@+id/search"
-        android:name="com.technion.vedibarta.teacher.TeacherSearchExtraOptionsFragment"
-        android:label="TeacherSearchExtraOptionsFragment" />
-    <fragment
         android:id="@+id/profile"
         android:name="com.technion.vedibarta.teacher.TeacherProfileFragment"
         android:label="TeacherProfileFragment" >
@@ -35,4 +31,11 @@
         android:id="@+id/loginActivity"
         android:name="com.technion.vedibarta.login.LoginActivity"
         android:label="LoginActivity" />
+    <fragment
+        android:id="@+id/teacherSearchMatchFragment"
+        android:name="com.technion.vedibarta.fragments.TeacherSearchMatchFragment"
+        android:label="TeacherSearchMatchFragment" />
+    <action
+        android:id="@+id/action_global_teacherSearchMatchFragment"
+        app:destination="@id/teacherSearchMatchFragment"/>
 </navigation>

@@ -4,12 +4,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class FragmentListStateAdapter(
-    fragmentActivity: FragmentActivity,
-    list: List<() -> Fragment> = emptyList()
-) : FragmentStateAdapter(fragmentActivity) {
+class FragmentListStateAdapter : FragmentStateAdapter {
 
-    private val fragmentList = list.toMutableList()
+    constructor(
+        fragmentActivity: FragmentActivity,
+        list: List<() -> Fragment> = emptyList()
+    ): super(fragmentActivity) {
+        fragmentList = list.toMutableList()
+    }
+
+    constructor(
+        fragment: Fragment,
+        list: List<() -> Fragment> = emptyList()
+    ): super(fragment) {
+        fragmentList = list.toMutableList()
+    }
+
+    private val fragmentList: MutableList<() -> Fragment>
 
     override fun getItemCount(): Int = fragmentList.size
 
