@@ -34,8 +34,20 @@
     <fragment
         android:id="@+id/teacherSearchMatchFragment"
         android:name="com.technion.vedibarta.fragments.TeacherSearchMatchFragment"
-        android:label="TeacherSearchMatchFragment" />
+        android:label="TeacherSearchMatchFragment" >
+        <action
+            android:id="@+id/action_teacherSearchMatchFragment_to_teacherCandidatesActivity"
+            app:destination="@id/teacherCandidatesActivity" />
+    </fragment>
     <action
         android:id="@+id/action_global_teacherSearchMatchFragment"
         app:destination="@id/teacherSearchMatchFragment"/>
+    <activity
+        android:id="@+id/teacherCandidatesActivity"
+        android:name="com.technion.vedibarta.chatCandidates.TeacherCandidatesActivity"
+        android:label="TeacherCandidatesActivity" >
+        <argument
+            android:name="teachers"
+            app:argType="com.technion.vedibarta.POJOs.Teacher[]" />
+    </activity>
 </navigation>

@@ -93,7 +93,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".chatCandidates.ChatCandidatesActivity"
+            android:name=".chatCandidates.StudentCandidatesActivity"
+            android:label="@string/chat_candidates_title"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".chatCandidates.TeacherCandidatesActivity"
             android:label="@string/chat_candidates_title"
             android:theme="@style/FullscreenTheme">
             <intent-filter>

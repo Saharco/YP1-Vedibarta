@@ -173,7 +173,7 @@ class ChatSearchFragment : Fragment(), ChatSearchActivity.OnBackPressed {
         }
 
         viewFlipper.showNext()
-        showSplash(requireActivity(), getString(R.string.chat_search_loading_message))
+        showSplash(requireActivity(), getString(R.string.students_search_loading_message))
     }
 
     private fun getSearchAttributes(): SearchAttributes {

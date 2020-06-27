@@ -27,7 +27,7 @@ class TeachersMatcher(teachersCollection: CollectionReference = DEFAULT_TEACHERS
         if (region != null) matcher = matcher.whereFieldsMatch("region" to region)
         if (school != null) matcher = matcher.whereFieldsMatch("school" to school)
 
-        matcher = matcher.whereFieldsMatch(characteristics.map { "characteristics.$it" to true }.toMap())
+        matcher = matcher.whereFieldsMatch(characteristics.map { "schoolCharacteristics.$it" to true }.toMap())
 
         if (grades != null)
             matcher = matcher.whereFieldsMatch(grades.toList().map { "grades.$it" to true }.toMap())

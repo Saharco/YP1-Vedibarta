@@ -176,7 +176,7 @@
     <string name="dialog_timeout_body">العملية تستغرق وقت طويا!\nيجب فحص الاتصال بالانترنت والمحاولة مرة اخرى</string>
 
     <!--  Splash  -->
-    <string name="chat_search_loading_message">فتش عن اصدقاء</string>
+    <string name="students_search_loading_message">فتش عن اصدقاء</string>
     <string name="default_loading_message">نلتقي بالآخر بالصف</string>
 
     <!-- TODO: Remove or change this placeholder text -->

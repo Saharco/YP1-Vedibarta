@@ -8,15 +8,14 @@ import androidx.navigation.navArgs
 import com.technion.vedibarta.POJOs.Chat
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.R
-import com.technion.vedibarta.adapters.CarouselAdapter
+import com.technion.vedibarta.adapters.StudentCandidatesAdapter
 import com.technion.vedibarta.POJOs.Student
-import com.technion.vedibarta.adapters.ItemViewHolder
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_candidates.*
 
-class ChatCandidatesActivity : VedibartaActivity() {
+class StudentCandidatesActivity : VedibartaActivity() {
 
     companion object {
         const val TAG = "Vedibarta/candidates"
@@ -25,10 +24,11 @@ class ChatCandidatesActivity : VedibartaActivity() {
     private val lambda: (Int, Student) -> Unit = { position: Int, _: Student ->
         carousel.smoothScrollToPosition(position)
     }
-    val args: ChatCandidatesActivityArgs by navArgs()
 
-    private val carouselAdapter: CarouselAdapter = object : CarouselAdapter(this, lambda) {
-        override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+    private val args: StudentCandidatesActivityArgs by navArgs()
+
+    private val carouselAdapter = object : StudentCandidatesAdapter(this@StudentCandidatesActivity, lambda) {
+        override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
             super.onBindViewHolder(holder, position)
 
             holder.button.setOnClickListener {
@@ -41,7 +41,7 @@ class ChatCandidatesActivity : VedibartaActivity() {
                 docRef.set(chat)
                     .addOnSuccessListener {
                         val intent =
-                            Intent(this@ChatCandidatesActivity, ChatRoomActivity::class.java)
+                            Intent(this@StudentCandidatesActivity, ChatRoomActivity::class.java)
 
                         val chatMetadata = ChatMetadata(
                             chat.chat!!,

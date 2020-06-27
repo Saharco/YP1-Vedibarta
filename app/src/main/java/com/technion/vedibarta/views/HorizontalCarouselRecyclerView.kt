@@ -15,15 +15,20 @@ import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.CarouselLinearLayoutManager
 import kotlin.math.pow
 
-
 /**
  * A horizontal recycler view which visually acts as a carousel.
  * Uses a gaussian curve to scale the list items' sizes upon scrolling
  */
-class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
-    RecyclerView(context, attrs) {
+class HorizontalCarouselRecyclerView(
+    context: Context,
+    attrs: AttributeSet
+) : RecyclerView(context, attrs) {
 
-    private val TAG = "carousel"
+    companion object {
+        private const val TAG = "carousel"
+        private const val scrollSpeedRatio = 0.125f
+        private const val listFreezeDuration = 200L
+    }
 
     private val activeColor = ContextCompat.getColor(context, R.color.colorPrimary)
     private val inactiveColor = ContextCompat.getColor(context, R.color.colorAccent)
@@ -31,9 +36,6 @@ class HorizontalCarouselRecyclerView(context: Context, attrs: AttributeSet) :
 
     var position = 0
     var scrollingPosition = 0
-
-    private val scrollSpeedRatio = 0.125f
-    private val listFreezeDuration = 200L
 
     fun <T : ViewHolder> initialize(newAdapter: Adapter<T>) {
         layoutManager = CarouselLinearLayoutManager(context, HORIZONTAL, false)

@@ -215,7 +215,8 @@
     <string name="dialog_timeout_body">התהליך לוקח יותר מדי זמן! \nיש לבדוק את חיבור האינטרנט ולנסות שוב</string>
 
     <!--  Splash  -->
-    <string name="chat_search_loading_message">מחפשים חברים!</string>
+    <string name="students_search_loading_message">מחפשים חברים!</string>
+    <string name="teachers_search_loading_message">מחפשים חברים!</string>
     <string name="default_loading_message">מכניסים את האחר לכיתה</string>
 
     <!-- TeacherClassList Attributes -->
@@ -276,6 +277,7 @@
     <!-- TeacherChatSearchExtraOptions -->
     <string name="filter_by_schedule_text">חיפוש לפי מערכת שעות</string>
     <string name="teacher_search_no_characteristics_chosen_message">יש לבחור מאפיין בית ספר אחד לפחות</string>
+    <string name="no_matching_teachers">לא נימצאו מורים</string>
 
     <!-- Teacher General -->
     <string name="schools_characteristics_title">מאפייני בית ספר</string>

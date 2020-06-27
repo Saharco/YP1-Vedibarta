@@ -1,32 +1,20 @@
 package com.technion.vedibarta.userProfile
 
-import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.Rect
-import android.graphics.Typeface
-import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.view.forEach
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -36,31 +24,17 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.facebook.login.LoginManager
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.technion.vedibarta.POJOs.Gender
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
-import com.technion.vedibarta.chatCandidates.ChatCandidatesActivityArgs
 import com.technion.vedibarta.database.DatabaseVersioning
-import com.technion.vedibarta.login.LoginActivity
-import com.technion.vedibarta.main.MainActivity
-import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaFragment
 import com.technion.vedibarta.utilities.resourcesManagement.*
 import kotlinx.android.synthetic.main.activity_user_profile.*
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
 
 
 class UserProfileActivity : VedibartaActivity() {

@@ -15,7 +15,7 @@
     </fragment>
     <activity
         android:id="@+id/chatCandidatesActivity"
-        android:name="com.technion.vedibarta.chatCandidates.ChatCandidatesActivity"
+        android:name="com.technion.vedibarta.chatCandidates.StudentCandidatesActivity"
         android:label="activity_chat_candidates"
         tools:layout="@layout/activity_chat_candidates" >
         <argument

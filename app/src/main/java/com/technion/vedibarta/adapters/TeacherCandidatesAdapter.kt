@@ -4,14 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.ColorFilter
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,29 +19,29 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.technion.vedibarta.POJOs.Gender
-import com.technion.vedibarta.POJOs.Student
+import com.technion.vedibarta.POJOs.Teacher
 import com.technion.vedibarta.R
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.dpToPx
 import com.technion.vedibarta.utilities.resourcesManagement.RemoteTextResourcesManager
 import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
 
-open class CarouselAdapter(
+open class TeacherCandidatesAdapter(
     val context: Context,
-    val itemClick: (position: Int, carouselAdapterItem: Student) -> Unit
-) :
-    RecyclerView.Adapter<ItemViewHolder>() {
+    val itemClick: (position: Int, carouselAdapterItem: Teacher) -> Unit
+) : RecyclerView.Adapter<TeacherCandidatesAdapter.TeacherViewHolder>() {
 
-    private val TAG = "carouselAdapter"
+    companion object {
+        private const val TAG = "carouselAdapter"
+        private const val BUBBLE_WIDTH = 38
+    }
 
-    protected var carouselAdapterItems: List<Student> = listOf()
+    protected var carouselAdapterItems: List<Teacher> = listOf()
     private val selectedPos = RecyclerView.NO_POSITION
 
-    private val BUBBLE_WIDTH = 38
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TeacherViewHolder {
         val orientation = context.resources.configuration.orientation
         return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            ItemViewHolder(
+            TeacherViewHolder(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.carousel_item_horizontal,
                     parent,
@@ -51,7 +49,7 @@ open class CarouselAdapter(
                 )
             )
         } else {
-            ItemViewHolder(
+            TeacherViewHolder(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.carousel_item,
                     parent,
@@ -61,31 +59,19 @@ open class CarouselAdapter(
         }
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TeacherViewHolder, position: Int) {
         holder.bind(carouselAdapterItems[holder.adapterPosition])
-        holder.itemView.setOnClickListener {
-            itemClick(holder.adapterPosition, carouselAdapterItems[holder.adapterPosition])
-        }
-        holder.itemView.isSelected = holder.adapterPosition == selectedPos
-
-        val student = carouselAdapterItems[holder.adapterPosition]
-        loadProfilePicture(holder.profilePicture, student)
-        holder.name.text = student.name
-        holder.description.text = "${student.school}, ${student.region}"
-        if (student.gender != Gender.FEMALE)
-            holder.button.text = context.resources.getString(R.string.chat_candidate_accept_button_m)
-        populateTable(holder.table, student)
     }
 
-    private fun loadProfilePicture(profilePicture: ImageView, student: Student) {
-        if (student.photo == null) {
-            loadDefaultUserProfilePicture(profilePicture, student)
+    private fun loadProfilePicture(profilePicture: ImageView, teacher: Teacher) {
+        if (teacher.photo == null) {
+            loadDefaultUserProfilePicture(profilePicture, teacher)
             return
         }
 
         Glide.with(context)
             .asBitmap()
-            .load(student.photo)
+            .load(teacher.photo)
             .apply(RequestOptions.circleCropTransform())
             .listener(object : RequestListener<Bitmap> {
                 override fun onLoadFailed(
@@ -94,7 +80,7 @@ open class CarouselAdapter(
                     target: Target<Bitmap>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    loadDefaultUserProfilePicture(profilePicture, student)
+                    loadDefaultUserProfilePicture(profilePicture, teacher)
                     return false
                 }
 
@@ -113,8 +99,8 @@ open class CarouselAdapter(
             .into(profilePicture)
     }
 
-    private fun loadDefaultUserProfilePicture(profilePicture: ImageView, student: Student) {
-        if (student.gender == Gender.MALE)
+    private fun loadDefaultUserProfilePicture(profilePicture: ImageView, teacher: Teacher) {
+        if (teacher.gender == Gender.MALE)
             profilePicture.setImageResource(R.drawable.ic_photo_default_profile_man)
         else
             profilePicture.setImageResource(R.drawable.ic_photo_default_profile_girl)
@@ -122,11 +108,7 @@ open class CarouselAdapter(
     }
 
     @SuppressLint("InflateParams")
-    private fun populateTable(table: TableLayout, student: Student) {
-//        if (student.characteristics.isEmpty()) {
-//            handleNoCharacteristics()
-//            return
-//        }
+    private fun populateTable(table: TableLayout, teacher: Teacher) {
         table.doOnPreDraw {
 
             table.removeAllViews()
@@ -151,8 +133,8 @@ open class CarouselAdapter(
             Log.d(TAG, "Amount of rows: $rowsAmount")
             Log.d(TAG, "Amount of bubbles in a row: $colsAmount")
 
-            val studentsCharacteristics = student.characteristics.filter { it.value }.keys.toList()
-            (studentsCharacteristics.indices step colsAmount).forEach { i ->
+            val teacherCharacteristics = teacher.schoolCharacteristics.filter { it.value }.keys.toList()
+            (teacherCharacteristics.indices step colsAmount).forEach { i ->
 
                 if (i <= maxBubblesIndex) {
 
@@ -161,7 +143,7 @@ open class CarouselAdapter(
                     tableRow.gravity = Gravity.CENTER_HORIZONTAL
 
                     for (j in 0 until colsAmount) {
-                        if (i + j >= studentsCharacteristics.size)
+                        if (i + j >= teacherCharacteristics.size)
                             break
 
                         if (i + j == maxBubblesIndex) {
@@ -181,8 +163,8 @@ open class CarouselAdapter(
 
                         val bubble = bubbleFrame.findViewById(R.id.invisibleBubble) as TextView
                         val loading = bubbleFrame.findViewById(R.id.loading) as ProgressBar
-                        RemoteTextResourcesManager(context).findMultilingualResource("characteristics/all", student.gender)
-                            .addOnSuccessListener { bubble.text = it.toCurrentLanguage(studentsCharacteristics[i+j]); loading.visibility = View.GONE}
+                        RemoteTextResourcesManager(context).findMultilingualResource("school_characteristics", teacher.gender)
+                            .addOnSuccessListener { bubble.text = it.toCurrentLanguage(teacherCharacteristics[i+j]); loading.visibility = View.GONE}
 
                         bubbleFrame.layoutParams = bubbleParams
                         tableRow.addView(bubbleFrame)
@@ -201,21 +183,32 @@ open class CarouselAdapter(
 
     override fun getItemCount() = carouselAdapterItems.size
 
-    fun setItems(newCarouselAdapterItems: List<Student>) {
+    fun setItems(newCarouselAdapterItems: List<Teacher>) {
         carouselAdapterItems = newCarouselAdapterItems
         notifyDataSetChanged()
     }
-}
 
-class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class TeacherViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    val profilePicture: ImageView = view.findViewById(R.id.candidateProfilePicture)
-    val name: TextView = view.findViewById(R.id.candidateName)
-    val description: TextView = view.findViewById(R.id.candidateDescription)
-    val table: TableLayout = view.findViewById(R.id.candidateTable)
-    val button: Button = view.findViewById(R.id.confirmCandidateButton)
+        val profilePicture: ImageView = view.findViewById(R.id.candidateProfilePicture)
+        val name: TextView = view.findViewById(R.id.candidateName)
+        val description: TextView = view.findViewById(R.id.candidateDescription)
+        val table: TableLayout = view.findViewById(R.id.candidateTable)
+        val button: Button = view.findViewById(R.id.confirmCandidateButton)
 
-    fun bind(carouselAdapterItem: Student) {
+        fun bind(carouselAdapterItem: Teacher) {
+            itemView.setOnClickListener {
+                itemClick(adapterPosition, carouselAdapterItems[adapterPosition])
+            }
+            itemView.isSelected = adapterPosition == selectedPos
 
+            val teacher = carouselAdapterItems[adapterPosition]
+            loadProfilePicture(profilePicture, teacher)
+            name.text = teacher.name
+            description.text = "${teacher.schools[0]}, ${teacher.regions[0]}"
+            if (teacher.gender != Gender.FEMALE)
+                button.text = context.resources.getString(R.string.chat_candidate_accept_button_m)
+            populateTable(table, teacher)
+        }
     }
 }
