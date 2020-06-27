@@ -95,11 +95,6 @@ class TeacherHomeFragment : Fragment() {
         mainAdapter!!.startListening()
     }
 
-    override fun onStop()
-    {
-        super.onStop()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         mainAdapter!!.stopListening()
@@ -123,7 +118,8 @@ class TeacherHomeFragment : Fragment() {
         return object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                teacherChatHistory.visibility = View.VISIBLE
+                if (teacherChatHistory != null)
+                    teacherChatHistory.visibility = View.VISIBLE
             }
         }
     }

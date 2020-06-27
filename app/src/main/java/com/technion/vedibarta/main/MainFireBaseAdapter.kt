@@ -133,7 +133,7 @@ class MainFireBaseAdapter(val userId: String?,
                         chatsList.addAll(newList)
                         mainAdapter.notifyItemInserted(0)
                     }
-                    newList.size < chatsList.size        ->
+                    (newList.size - chatsList.size) == -1        ->
                     {
                         val removedPosition = firstMissingChatIndex(chatsList, newList) ?: return
                         chatsList.removeAt(removedPosition)
