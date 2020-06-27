@@ -1,5 +1,6 @@
 package com.technion.vedibarta.main
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -26,7 +27,7 @@ import kotlin.collections.ArrayList
 class MainFireBaseAdapter(val userId: String?,
                           private val applicationContext: Context,
                           private val chatPartnersMap: HashMap<String, ChatMetadata>,
-                          private val mainActivity: MainActivity,
+                          private val mainActivity: Activity,
                           recyclerView: RecyclerView,
                           options: FirestoreRecyclerOptions<Chat>) :
     MainAdapter(recyclerView)
@@ -174,8 +175,11 @@ class MainFireBaseAdapter(val userId: String?,
              */
             private fun firstMissingChatIndex(l1: List<Chat>, l2: List<Chat>): Int?
             {
+                if (l1.isEmpty() || l2.isEmpty())
+                    return 0
+
                 l1.forEachIndexed { i, chat ->
-                    if (chat != l2[i]) return i
+                    if (chat != l2.getOrNull(i)) return i
                 }
                 return null
             }

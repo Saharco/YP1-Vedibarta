@@ -1,5 +1,6 @@
 package com.technion.vedibarta.main
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.R
 import com.technion.vedibarta.chatRoom.ChatRoomActivity
+import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.HashMap
 
@@ -17,10 +19,9 @@ import java.util.HashMap
  */
 class MainSearchByNameAdapter(private val applicationContext: Context,
                               private val chatPartnersMap: HashMap<String, ChatMetadata>,
-                              private val mainActivity: MainActivity,
+                              private val mainActivity: Activity,
                               recyclerView: RecyclerView
-)
-    : MainsSearchAdapter<String>(recyclerView)
+) : MainsSearchAdapter<String>(recyclerView)
 {
     private var filteredList = listOf<ChatMetadata>()
 
@@ -38,7 +39,7 @@ class MainSearchByNameAdapter(private val applicationContext: Context,
     {
         val userNameView =
             LayoutInflater.from(parent.context).inflate(R.layout.chat_card, parent, false)
-        return ViewHolder(userNameView, mainActivity.userId!!, applicationContext)
+        return ViewHolder(userNameView, VedibartaActivity.userId!!, applicationContext)
     }
 
     override fun getItemCount(): Int
