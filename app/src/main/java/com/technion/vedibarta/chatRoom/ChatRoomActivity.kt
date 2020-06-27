@@ -1,8 +1,6 @@
 package com.technion.vedibarta.chatRoom
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.util.Log
@@ -16,9 +14,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.technion.vedibarta.POJOs.Message
 import com.technion.vedibarta.utilities.VedibartaActivity
 import kotlinx.android.synthetic.main.activity_chat_room.*
@@ -26,7 +21,9 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.technion.vedibarta.POJOs.ChatMetadata
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.UserType
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.TeacherMeta.Companion.teacher
 import com.technion.vedibarta.utilities.ImageLoader
 import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorFactory
 import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorManager
@@ -35,7 +32,7 @@ import com.technion.vedibarta.utilities.questionGenerator.QuestionGeneratorManag
  * specific chat screen, contains the messages history between 2 users
  */
 class ChatRoomActivity : VedibartaActivity(),
-    ChatRoomAbuseReportDialog.AbuseReportDialogListener
+                         ChatRoomAbuseReportDialog.AbuseReportDialogListener
 {
     private lateinit var adapter: ChatRoomAdapter
     private lateinit var messageSender: MessageSender
@@ -44,11 +41,12 @@ class ChatRoomActivity : VedibartaActivity(),
     private var numMessages = 0
     private var partnerName = ""
     private var photoUrl: String? = null
-    private var otherGender: Gender? = null
+    private var partnerGender: Gender? = null
     private var partnerHobbies: Array<String> = emptyArray()
     private var firstVisibleMessagePosition = 0
     private val systemSenderId = "-1"
-    private lateinit var questionGenerator : QuestionGeneratorManager
+    private lateinit var questionGenerator: QuestionGeneratorManager
+
     companion object
     {
         private const val TAG = "Vedibarta/chat"
@@ -71,12 +69,26 @@ class ChatRoomActivity : VedibartaActivity(),
         chatId = chatMetaData.chatId
         partnerId = chatMetaData.partnerId
         numMessages = chatMetaData.numMessages
-        otherGender = chatMetaData.partnerGender
+        partnerGender = chatMetaData.partnerGender
         photoUrl = chatMetaData.partnerPhotoUrl
         partnerHobbies = chatMetaData.partnerHobbies
-
         chatPartnerId = partnerId // used by cloud functions
-        questionGenerator = QuestionGeneratorFactory(this, student!!.hobbies.toList(), partnerHobbies.toList()).getGenerator()
+
+        val userGender: Gender
+        val userHobbies: List<String>
+        if (userType == UserType.Student)
+        {
+            userGender = student!!.gender
+            userHobbies = student!!.hobbies.toList()
+        }
+        else
+        {
+            userGender = teacher.gender
+            userHobbies = emptyList()
+            popupMenu.visibility = View.GONE
+        }
+        questionGenerator =
+                QuestionGeneratorFactory(this, userHobbies, partnerHobbies.toList()).getGenerator()
 
         setToolbar(chatToolbar)
         configureAdapter()
@@ -84,11 +96,15 @@ class ChatRoomActivity : VedibartaActivity(),
         buttonChatBoxSend.setOnClickListener { sendMessageFromChatBox(it) }
         popupMenu.setOnClickListener { showPopup(it) }
 
-        if (student!!.gender == Gender.FEMALE)
-            chatBox.hint = SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
+        if (userGender == Gender.FEMALE)
+            chatBox.hint =
+                    SpannableStringBuilder(resources.getString(R.string.chat_room_enter_message_f))
 
         toolbarUserName.text = partnerName
-        ImageLoader().loadProfileImage(photoUrl, otherGender!!, toolbarProfileImage, applicationContext)
+        ImageLoader().loadProfileImage(photoUrl,
+                                       partnerGender!!,
+                                       toolbarProfileImage,
+                                       applicationContext)
     }
 
     override fun onStart()
@@ -138,10 +154,11 @@ class ChatRoomActivity : VedibartaActivity(),
     private fun configureAdapter()
     {
         val query = database.chats().chat(chatId).messages().build()
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
 
         val options =
-            FirestoreRecyclerOptions.Builder<Message>().setQuery(query, Message::class.java).build()
+                FirestoreRecyclerOptions.Builder<Message>().setQuery(query, Message::class.java)
+                        .build()
 
         val soundPlayer = SoundPlayer(this, numMessages)
         adapter = ChatRoomFireBaseAdapter(options, userId!!, systemSenderId, soundPlayer)
@@ -190,12 +207,16 @@ class ChatRoomActivity : VedibartaActivity(),
                 R.id.generateQuestion ->
                 {
                     ChatRoomQuestionGeneratorDialog.newInstance(questionGenerator, this)
-                        .show(supportFragmentManager, "QuestionGeneratorFragment")
+                            .show(supportFragmentManager, "QuestionGeneratorFragment")
                 }
 
                 R.id.reportAbuse      ->
                 {
-                    ChatRoomAbuseReportDialog(partnerId, partnerName, photoUrl, otherGender!!).show( supportFragmentManager, "ReportAbuseDialog")
+                    ChatRoomAbuseReportDialog(partnerId,
+                                              partnerName,
+                                              photoUrl,
+                                              partnerGender!!).show(supportFragmentManager,
+                                                                    "ReportAbuseDialog")
                 }
             }
 
@@ -212,7 +233,7 @@ class ChatRoomActivity : VedibartaActivity(),
             {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) firstVisibleMessagePosition =
-                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                        (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                 Log.d("wtf", "firstvisible = $firstVisibleMessagePosition")
             }
         }
@@ -226,7 +247,7 @@ class ChatRoomActivity : VedibartaActivity(),
             {
                 super.onItemRangeInserted(positionStart, itemCount)
                 val firstVisiblePosition =
-                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                        (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                 if (firstVisiblePosition <= 1) chatView.scrollToPosition(0)
                 else
                 {
@@ -238,7 +259,7 @@ class ChatRoomActivity : VedibartaActivity(),
             {
                 super.onChanged()
                 val firstVisiblePosition =
-                    (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                        (chatView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                 chatView.scrollToPosition(firstVisiblePosition)
             }
         }
