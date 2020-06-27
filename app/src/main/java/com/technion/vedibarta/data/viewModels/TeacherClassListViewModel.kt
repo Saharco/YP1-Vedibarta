@@ -1,11 +1,19 @@
 package com.technion.vedibarta.data.viewModels
 
+import android.net.Uri
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.card.MaterialCardView
+import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.dynamiclinks.ktx.androidParameters
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.technion.vedibarta.POJOs.Class
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.database.DatabaseVersioning
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -171,6 +179,45 @@ class TeacherClassListViewModel : ViewModel() {
             editWithoutClassPhoto(classToEdit, map, editIndex)
     }
 
+    fun getClassMembers(selectedClass: View){
+        DatabaseVersioning.currentVersion.instance.collection("classes")
+            .document(selectedClass.tag.toString())
+            .get()
+            .addOnSuccessListener {
+                val clazz = it.toObject(Class::class.java)
+                if (clazz!!.studentsIDs.isNotEmpty())
+                    DatabaseVersioning.currentVersion.instance.collection("students")
+                        .whereIn("uid", clazz.studentsIDs)
+                        .get()
+                        .addOnSuccessListener {
+                            val members =
+                                it.documents.map { it.toObject(Student::class.java)!! }.toList()
+                            _event.value = Event.ClassMembersLoaded(members)
+                        }
+                        .addOnFailureListener {
+                            _event.value = Event.DisplayError(R.string.something_went_wrong)
+                        }
+                else{
+                    _event.value = Event.ClassMembersLoaded(emptyList())
+                }
+            }
+            .addOnFailureListener {
+                _event.value = Event.DisplayError(R.string.something_went_wrong)
+            }
+    }
+
+    fun createClassInvite(v: View){
+        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT){
+            link = Uri.parse("https://vedibarta.page.link/?classID=${v.tag}")
+            domainUriPrefix = "https://vedibarta.page.link"
+            androidParameters {  }
+            this.buildShortDynamicLink()
+        }
+            .addOnSuccessListener {
+                _event.value = Event.ClassInviteCreated(it.shortLink!!)
+            }
+    }
+
 
     sealed class Event {
         var handled = false
@@ -180,6 +227,8 @@ class TeacherClassListViewModel : ViewModel() {
         data class ClassRemoved(val index: Int) : Event()
         data class ClassEdited(val index: Int) : Event()
         class ClassAdded : Event()
+        data class ClassInviteCreated(val link:Uri): Event()
+        data class ClassMembersLoaded(val members: List<Student>) : Event()
         data class DisplayError(val msgResId: Int) : Event()
     }
 }

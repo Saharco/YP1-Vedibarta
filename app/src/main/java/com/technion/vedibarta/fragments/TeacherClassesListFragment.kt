@@ -2,10 +2,12 @@ package com.technion.vedibarta.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.InputType
 import android.text.SpannableStringBuilder
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -32,9 +34,12 @@ import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Unfilled
 import androidx.lifecycle.observe
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.technion.vedibarta.POJOs.Gender
+import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.ClassMembersListAdapter
 import com.technion.vedibarta.adapters.ClassesListAdapter
@@ -80,6 +85,7 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
             { onAddClassButtonClick() },
             { itemView: View -> onClassLongPress(itemView) },
             { itemView: View -> onClassClick(itemView) },
+            { itemView: View -> viewModel.createClassInvite(itemView) },
             viewModel.classesList
         )
         return v
@@ -110,12 +116,14 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                         event.msgResId,
                         Toast.LENGTH_LONG
                     ).show()
+                    is TeacherClassListViewModel.Event.ClassMembersLoaded -> loadClassMembers(event.members)
+                    is TeacherClassListViewModel.Event.ClassInviteCreated -> showLinkDialog(event.link)
                 }
                 event.handled = true
             }
-
         }
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -165,6 +173,24 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                 ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark)
             )
         }
+    }
+
+    private fun showLinkDialog(link: Uri) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, link.toString())
+
+        startActivity(Intent.createChooser(intent, "Share Link"))
+//        MaterialDialog(requireContext()).show {
+//            input(inputType = InputType.TYPE_NULL, prefill = link.toString()) { dialog, text ->
+//            }
+//            positiveButton(R.string.copy) {
+//                val clipboard: ClipboardManager =
+//                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//                val data = ClipData.newUri(context.contentResolver, getString(R.string.class_invite_text), link)
+//                clipboard.setPrimaryClip(data)
+//            }
+//        }
     }
 
     private fun onClassEditClick() {
@@ -304,7 +330,8 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
     private fun finishLoadingClassPicture(materialDialog: MaterialDialog) {
         materialDialog.findViewById<ProgressBar>(R.id.classPhotoPB).visibility = View.GONE
         materialDialog.findViewById<CircleImageView>(R.id.classPhoto).visibility = View.VISIBLE
-        materialDialog.findViewById<FloatingActionButton>(R.id.addPhotoFab).visibility = View.VISIBLE
+        materialDialog.findViewById<FloatingActionButton>(R.id.addPhotoFab).visibility =
+            View.VISIBLE
         materialDialog.findViewById<CircleImageView>(R.id.classPhoto)
             .setImageURI(classAddViewModel.chosenClassPicture)
     }
@@ -417,13 +444,13 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                 viewModel.selectClass(v)
             }
         } else {
-            loadClassMembers(v)
+            viewModel.getClassMembers(v)
         }
 
         return true
     }
 
-    private fun loadClassMembers(selectedClass: View) {
+    private fun loadClassMembers(studentList: List<Student>) {
         val dialog = MaterialDialog(requireContext())
         dialog.cornerRadius(20f)
             .noAutoDismiss()
@@ -432,8 +459,7 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
                 val recyclerView = this.findViewById<RecyclerView>(R.id.membersList)
                 recyclerView.isNestedScrollingEnabled = false
                 recyclerView.layoutManager = LinearLayoutManager(context)
-                //TODO Change adapter to load members from database
-                recyclerView.adapter = ClassMembersListAdapter()
+                recyclerView.adapter = ClassMembersListAdapter(TeacherMeta.teacher, studentList)
             }
     }
 

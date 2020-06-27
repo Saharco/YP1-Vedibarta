@@ -18,6 +18,7 @@
     <string name="edit">עריכה</string>
     <string name="save">שמירה</string>
     <string name="delete">הסרה</string>
+    <string name="copy">העתקה</string>
     <string name="net_error">קיימת בעיה בחיבור לאינטרנט</string>
     <string name="single_item_selected">נבחר</string>
     <string name="multi_item_selected">נבחרו</string>
@@ -283,6 +284,7 @@
     <string name="schools_characteristics_title">מאפייני בית ספר</string>
     <string name="teaching_subjects_title">מקצועות לימוד</string>
     <string name="a_reported_b">דיווח/ה על</string>
+    <string name="class_invite_text">הזמנה לכיתה</string>
     <string name="class_choose_picture_title_m">בחר תמונה לכיתה</string>
     <string name="class_choose_picture_title_f">בחרי תמונה לכיתה</string>
 </resources>

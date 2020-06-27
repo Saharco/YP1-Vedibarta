@@ -57,15 +57,14 @@
             android:text="@string/empty_class_list_message_m"
             android:textColor="@color/textSecondary"
             android:textSize="32sp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/chat_history"
+            android:id="@+id/classList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:visibility="gone"
-            android:paddingBottom="60dp" />
+            android:paddingBottom="60dp"/>
 
     </LinearLayout>
 

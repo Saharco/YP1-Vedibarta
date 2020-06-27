@@ -15,7 +15,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/classPhoto"
+            android:id="@+id/memberPhoto"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_margin="8dp"
@@ -34,8 +34,8 @@
             android:textColor="@android:color/black"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/classPhoto"
-            app:layout_constraintTop_toTopOf="@id/classPhoto" />
+            app:layout_constraintStart_toEndOf="@id/memberPhoto"
+            app:layout_constraintTop_toTopOf="@id/memberPhoto" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/rank"
@@ -46,7 +46,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_star" />
+            app:srcCompat="@drawable/ic_teacher_m" />
 
         <View
             android:id="@+id/divider"

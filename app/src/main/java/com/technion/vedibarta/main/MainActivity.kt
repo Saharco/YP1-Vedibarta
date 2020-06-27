@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -15,7 +16,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.ktx.Firebase
 import com.technion.vedibarta.R
+import com.technion.vedibarta.data.viewModels.StudentClassViewModel
 import com.technion.vedibarta.fragments.UserProfileFragment
 import com.technion.vedibarta.userProfile.ProfilePictureUploadDialog
 import com.technion.vedibarta.utilities.VedibartaActivity
@@ -42,7 +46,21 @@ class MainActivity : VedibartaActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Firebase.dynamicLinks
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) {pendingDynamicLinkData ->
+                var deepLink: Uri? = null
+                if (pendingDynamicLinkData != null) {
+                    deepLink = pendingDynamicLinkData.link
+                }
+                if (user != null &&
+                    deepLink != null &&
+                    deepLink.getBooleanQueryParameter("classID", false)) {
+                    val classId = deepLink.getQueryParameter("classID")
+                    val viewModel by viewModels<StudentClassViewModel>()
+                    viewModel.addStudentToClass(classId)
+                }
+            }
         setContentView(R.layout.activity_main)
         bottomNavigation.setupWithNavController(navController)
 

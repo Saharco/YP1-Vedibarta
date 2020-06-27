@@ -4,8 +4,8 @@
     android:id="@+id/classRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
     android:layout_marginBottom="4dp"
+    android:background="?attr/selectableItemBackground"
     android:checkable="true"
     android:clickable="true"
     android:focusable="true">
@@ -48,15 +48,15 @@
             app:layout_constraintTop_toTopOf="@id/classPhoto" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:adjustViewBounds="true"
             android:id="@+id/shareGroupButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="24dp"
-            app:srcCompat="@drawable/ic_share"
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:srcCompat="@drawable/ic_share" />
 
         <View
             android:id="@+id/divider"

@@ -72,7 +72,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.firebaseui:firebase-ui-firestore:6.1.0'
     implementation 'com.google.firebase:firebase-functions:19.0.1'
-    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation 'com.google.firebase:firebase-messaging:20.2.1'
 
     implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
     implementation 'com.google.firebase:firebase-ml-vision-image-label-model:19.0.0'
@@ -112,6 +112,10 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.0.0'
 
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.2.1'
+    implementation 'com.afollestad.material-dialogs:input:3.3.0'
+
+    implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx:17.4.3'
 }
 
 apply plugin: 'com.google.gms.google-services'
