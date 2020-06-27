@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.skyfishjy.library.RippleBackground
 import com.technion.vedibarta.POJOs.Student
+import com.technion.vedibarta.POJOs.UserType
 import com.technion.vedibarta.R
 import com.technion.vedibarta.database.DataBase
 import com.technion.vedibarta.database.Storage
@@ -77,6 +78,7 @@ open class VedibartaActivity : AppCompatActivity() {
 
     companion object {
         var student: Student? = null
+        lateinit var userType: UserType
         var chatPartnerId: String? = null
         var isActivityRunning = false
         lateinit var database: DataBase

@@ -24,6 +24,7 @@ import com.google.firebase.auth.*
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.POJOs.Teacher
 import com.technion.vedibarta.POJOs.User
+import com.technion.vedibarta.POJOs.UserType
 import com.technion.vedibarta.R
 import com.technion.vedibarta.data.StudentResources
 import com.technion.vedibarta.data.TeacherMeta
@@ -306,6 +307,7 @@ class LoginActivity : AppCompatActivity(),
                 putLanguage(Locale.getDefault().language).apply()
             }
             VedibartaActivity.student = student
+            VedibartaActivity.userType = UserType.Student
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -317,6 +319,7 @@ class LoginActivity : AppCompatActivity(),
                 putLanguage(Locale.getDefault().language).apply()
             }
             TeacherMeta.teacher = teacher
+            VedibartaActivity.userType = UserType.Teacher
             startActivity(Intent(this, TeacherMainActivity::class.java))
             finish()
         }

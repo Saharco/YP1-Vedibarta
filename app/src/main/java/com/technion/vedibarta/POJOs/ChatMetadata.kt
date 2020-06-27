@@ -3,41 +3,54 @@ package com.technion.vedibarta.POJOs
 import java.io.Serializable
 import java.util.*
 
-data class ChatMetadata(val chatId: String = "",
-                        val partnerId: String = "",
-                        val partnerName: String = "",
-                        val numMessages: Int = 0,
-                        val lastMessage: String = "",
-                        val lastMessageTimestamp: Date? = Date(),
-                        val partnerGender: Gender = Gender.MALE,
-                        val partnerPhotoUrl: String? = null,
-                        val partnerHobbies: Array<String> = emptyArray()) : Serializable
+data class ChatMetadata(
+    val chatId: String = "",
+    val partnerId: String = "",
+    val partnerName: String = "",
+    val numMessages: Int = 0,
+    val lastMessage: String = "",
+    val lastMessageTimestamp: Date? = Date(),
+    val partnerGender: Gender = Gender.MALE,
+    val partnerPhotoUrl: String? = null,
+    val partnerHobbies: Array<String> = emptyArray()
+) : Serializable
 {
     companion object
     {
-        fun create(chat: Chat, userId: String, partner: Student?): ChatMetadata
+        fun create(chat: Chat, userId: String, partner: User?): ChatMetadata
         {
             val partnerId = chat.getPartnerId(userId)
             if (partner == null)
             {
-                return ChatMetadata(chat.chat!!,
-                                    partnerId,
-                                    chat.getName(partnerId),
-                                    chat.numMessages,
-                                    chat.lastMessage,
-                                    chat.lastMessageTimestamp)
+                return ChatMetadata(
+                    chat.chat!!,
+                    partnerId,
+                    chat.getName(partnerId),
+                    chat.numMessages,
+                    chat.lastMessage,
+                    chat.lastMessageTimestamp
+                )
             }
             else
             {
-                return ChatMetadata(chat.chat!!,
-                                    partnerId,
-                                    chat.getName(partnerId),
-                                    chat.numMessages,
-                                    chat.lastMessage,
-                                    chat.lastMessageTimestamp,
-                                    partner.gender,
-                                    partner.photo,
-                                    partner.hobbies.toTypedArray())
+                val hobbies =
+                        when (partner)
+                        {
+                            is Student -> partner.hobbies.toTypedArray()
+                            else       -> emptyArray()
+                        }
+
+                return ChatMetadata(
+                    chat.chat!!,
+                    partnerId,
+                    chat.getName(partnerId),
+                    chat.numMessages,
+                    chat.lastMessage,
+                    chat.lastMessageTimestamp,
+                    partner.gender,
+                    partner.photo,
+                    hobbies
+                )
             }
         }
     }
