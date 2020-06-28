@@ -169,6 +169,11 @@
     <string name="user_profile_action_title">פרופיל</string>
     <string name="reports_action_title">דיווחים</string>
     <string name="app_label">Vedibarta</string>
+    <string name="class_invite">הזמנה לכיתה</string>
+    <string name="successfully_joined_class">הצטרפת לכיתה בהצלחה</string>
+    <string name="already_in_class_m">אתה כבר נמצא בכיתה</string>
+    <string name="already_in_class_f">את כבר נמצא בכיתה</string>
+
 
     <string-array name="menuitems">
         <item>Menu Item 0</item>
@@ -284,7 +289,6 @@
     <string name="schools_characteristics_title">מאפייני בית ספר</string>
     <string name="teaching_subjects_title">מקצועות לימוד</string>
     <string name="a_reported_b">דיווח/ה על</string>
-    <string name="class_invite_text">הזמנה לכיתה</string>
     <string name="class_choose_picture_title_m">בחר תמונה לכיתה</string>
     <string name="class_choose_picture_title_f">בחרי תמונה לכיתה</string>
 </resources>
