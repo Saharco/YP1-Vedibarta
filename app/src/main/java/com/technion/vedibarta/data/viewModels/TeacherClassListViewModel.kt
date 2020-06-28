@@ -48,6 +48,13 @@ class TeacherClassListViewModel : ViewModel() {
             }
     }
 
+    fun handleOnBackPress(): Boolean {
+        if (itemActionBarEnabled) {
+            clearSelectedClasses()
+            return false
+        }
+        return true
+    }
 
     private fun editWithClassPhoto(
         classToEdit: Class,

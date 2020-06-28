@@ -65,7 +65,11 @@ interface Timetable {
     fun toStringMap(): Map<String, Boolean> = toMap().mapKeys { it.key.toString() }
 
     fun isEmpty(): Boolean
+
+    fun isEqualsTo(other: Timetable): Boolean = toMap() == other.toMap()
 }
+
+fun Timetable.toMutableTimetable() = MutableTimetable(iterator().toMutableSet())
 
 class MutableTimetable
 internal constructor(private val set: MutableSet<DayHour>) : Timetable {

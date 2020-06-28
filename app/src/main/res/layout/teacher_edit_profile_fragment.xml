@@ -4,13 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/background"
-    tools:context=".teacher.TeacherEditProfileActivity">
+    android:background="@drawable/bg_onboarding"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolBarLayout"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -25,6 +23,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <ImageView
+                android:id="@+id/checkButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="end|center_vertical"
+                app:srcCompat="@drawable/ic_check_white" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -41,23 +47,15 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             app:tabIndicatorColor="@color/colorAccent"
-            app:tabSelectedTextColor="@android:color/white">
-        </com.google.android.material.tabs.TabLayout>
+            app:tabSelectedTextColor="@android:color/white"/>
 
     </com.google.android.material.appbar.AppBarLayout>
-    <ProgressBar
-        android:id="@+id/loading"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:visibility="visible"/>
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/editProfileContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

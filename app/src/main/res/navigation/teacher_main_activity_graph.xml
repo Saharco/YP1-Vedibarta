@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_teacher_profile_to_loginActivity"
             app:destination="@id/loginActivity" />
+        <action
+            android:id="@+id/action_profile_to_teacherProfileEditFragment"
+            app:destination="@id/teacherProfileEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/reports"
@@ -50,4 +53,8 @@
             android:name="teachers"
             app:argType="com.technion.vedibarta.POJOs.Teacher[]" />
     </activity>
+    <fragment
+        android:id="@+id/teacherProfileEditFragment"
+        android:name="com.technion.vedibarta.fragments.TeacherProfileEditFragment"
+        android:label="TeacherProfileEditFragment" />
 </navigation>

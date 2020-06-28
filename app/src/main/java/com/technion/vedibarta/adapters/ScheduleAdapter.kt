@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Space
 import androidx.recyclerview.widget.RecyclerView
-import com.technion.vedibarta.POJOs.Day
-import com.technion.vedibarta.POJOs.DayHour
-import com.technion.vedibarta.POJOs.Hour
+import com.technion.vedibarta.POJOs.*
 import com.technion.vedibarta.R
 import com.technion.vedibarta.databinding.ScheduleButtonBinding
 import com.technion.vedibarta.databinding.ScheduleHeaderBinding
@@ -16,7 +14,8 @@ import com.technion.vedibarta.utilities.extensions.exhaustive
 
 class ScheduleAdapter(
     private val context: Context,
-    private val onTimeChanged: (time: DayHour, Boolean) -> Unit
+    private val onTimeChanged: (time: DayHour, Boolean) -> Unit,
+    private val initialSchedule: Timetable = emptyTimetable()
 ) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
 
     companion object {
@@ -65,6 +64,11 @@ class ScheduleAdapter(
         }
 
         val binding = ScheduleButtonBinding.inflate(inflater, parent, false)
+        val time = DayHour(
+            Day.fromInt(viewType % (DAYS_RESOURCES.size + 1) - 1)!!,
+            Hour.fromInt(viewType / (DAYS_RESOURCES.size + 1) - 1)!!
+        )
+        binding.button.isChecked = time in initialSchedule
         return ViewHolder.Button(binding)
     }
 
@@ -77,13 +81,15 @@ class ScheduleAdapter(
             is ViewHolder.PeriodHeader -> holder.bind(
                 context.getString(PERIODS_RESOURCES[position / (DAYS_RESOURCES.size + 1) - 1])
             )
-            is ViewHolder.Button -> holder.bind { onTimeChanged(
-                DayHour(
-                    Day.fromInt(position % (DAYS_RESOURCES.size + 1) - 1)!!,
-                    Hour.fromInt(position / (DAYS_RESOURCES.size + 1) - 1)!!
-                ),
-                it
-            ) }
+            is ViewHolder.Button -> holder.bind {
+                onTimeChanged(
+                    DayHour(
+                        Day.fromInt(position % (DAYS_RESOURCES.size + 1) - 1)!!,
+                        Hour.fromInt(position / (DAYS_RESOURCES.size + 1) - 1)!!
+                    ),
+                    it
+                )
+            }
         }.exhaustive
     }
 
@@ -108,6 +114,7 @@ class ScheduleAdapter(
 
         class Button(private val binding: ScheduleButtonBinding) : ViewHolder(binding.root) {
             fun bind(onClick: (Boolean) -> Unit) {
+                binding.button.alpha = if (binding.button.isChecked) 1f else 0.4f
                 binding.button.setOnCheckedChangeListener { button, isChecked ->
                     button.alpha = if (isChecked) 1f else 0.4f
                     onClick(isChecked)

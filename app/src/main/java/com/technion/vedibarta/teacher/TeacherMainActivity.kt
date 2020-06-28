@@ -27,24 +27,11 @@ class TeacherMainActivity : VedibartaActivity() {
                 R.id.chat, R.id.classes, R.id.reports, R.id.profile -> {
                     bottomNavigation.visibility = View.VISIBLE
                 }
-                R.id.teacherSearchMatchFragment -> {
+                R.id.teacherSearchMatchFragment, R.id.teacherProfileEditFragment -> {
                     bottomNavigation.visibility = View.GONE
                 }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.main_content)
-        val fragment = navHostFragment!!.childFragmentManager.fragments[0]
-        (fragment as? OnBackPressed)?.onBackPressed()?.not()?.let {
-            if (it)
-                super.onBackPressed()
-        }
-    }
-    interface OnBackPressed {
-        fun onBackPressed(): Boolean
     }
 }
 

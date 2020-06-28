@@ -22,9 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".teacher.TeacherEditProfileActivity" />
-        <activity android:name=".teacher.TeacherSetupActivity"></activity>
-        <activity android:name=".login.ChooseRoleActivity"></activity>
+        <activity android:name=".teacher.TeacherSetupActivity"> </activity>
+        <activity android:name=".login.ChooseRoleActivity"> </activity>
+        <activity android:name=".teacherTesting.TeacherActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

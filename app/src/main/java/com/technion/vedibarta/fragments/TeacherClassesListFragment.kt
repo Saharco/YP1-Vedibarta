@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.InputType
 import android.text.SpannableStringBuilder
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -18,17 +17,21 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
@@ -50,13 +53,13 @@ import com.technion.vedibarta.teacher.TeacherMainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.changeStatusBarColor
 import com.technion.vedibarta.utilities.missingDetailsDialog
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.fragment_teacher_classes_list.toolbar
+import kotlinx.android.synthetic.main.fragment_teacher_classes_list.*
 import java.io.File
 
 /**
  * A simple [Fragment] subclass.
  */
-class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed {
+class TeacherClassesListFragment : Fragment() {
 
     private val viewModel: TeacherClassListViewModel by viewModels()
     private val classAddViewModel: ClassAddViewModel by viewModels()
@@ -75,7 +78,9 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            onBackPressed()
+        }
         val v = inflater.inflate(R.layout.fragment_teacher_classes_list, container, false)
         setHasOptionsMenu(true)
         val classList = v.findViewById<RecyclerView>(R.id.classList)
@@ -123,7 +128,6 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
             }
         }
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -463,10 +467,10 @@ class TeacherClassesListFragment : Fragment(), TeacherMainActivity.OnBackPressed
             }
     }
 
-    override fun onBackPressed(): Boolean {
-        return viewModel.handleOnBackPress()
+    fun onBackPressed() {
+        if (viewModel.handleOnBackPress())
+            findNavController().navigateUp()
     }
-
 }
 
 

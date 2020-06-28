@@ -1,6 +1,5 @@
 package com.technion.vedibarta.teacher
 
-import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
@@ -66,7 +65,7 @@ class TeacherProfileFragment : Fragment() {
             onLogoutClick()
         }
         binding.actionEditProfile.setOnClickListener {
-            startActivity(Intent(context, TeacherEditProfileActivity::class.java))
+            findNavController().navigate(R.id.action_profile_to_teacherProfileEditFragment)
         }
 
         return binding.root
