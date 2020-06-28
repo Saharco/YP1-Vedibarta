@@ -18,22 +18,10 @@ class StudentClassViewModel : ViewModel() {
 
     val classesList = mutableListOf<Class>()
     val event: LiveData<Event> = _event
+    var reloadNeeded = true
 
     init {
-        DatabaseVersioning.currentVersion.instance.collection("classes")
-            .whereArrayContains("studentsIDs", VedibartaActivity.userId.toString()).get()
-            .addOnSuccessListener {
-                if (it.documents.isNotEmpty()) {
-                    classesList.addAll(it.documents.map { it.toObject(Class::class.java)!! }
-                        .toList())
-                    _event.value = Event.ClassAdded()
-                } else {
-                    _event.value = Event.HaveNoClasses()
-                }
-            }
-            .addOnFailureListener {
-                _event.value = Event.DisplayError(R.string.something_went_wrong)
-            }
+        reloadClasses()
     }
 
     fun getClassMembers(selectedClass: View) {
@@ -83,7 +71,28 @@ class StudentClassViewModel : ViewModel() {
                 } else {
                     _event.value = Event.AlreadyInClass()
                 }
+                reloadNeeded = false
             }
+    }
+
+    fun reloadClasses() {
+        if (reloadNeeded) {
+            DatabaseVersioning.currentVersion.instance.collection("classes")
+                .whereArrayContains("studentsIDs", VedibartaActivity.userId.toString()).get()
+                .addOnSuccessListener {
+                    if (it.documents.isNotEmpty()) {
+                        classesList.addAll(it.documents.map { it.toObject(Class::class.java)!! }
+                            .toList())
+                        _event.value = Event.ClassAdded()
+                    } else {
+                        _event.value = Event.HaveNoClasses()
+                    }
+                }
+                .addOnFailureListener {
+                    _event.value = Event.DisplayError(R.string.something_went_wrong)
+                }
+            reloadNeeded = false
+        }
     }
 
     sealed class Event {

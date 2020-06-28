@@ -65,20 +65,25 @@ class ClassesListFragment : Fragment(), MainActivity.OnBackPressed {
                         event.msgResId,
                         Toast.LENGTH_LONG
                     ).show()
-                    is StudentClassViewModel.Event.ClassMembersLoaded -> loadClassMembers(event.teacher, event.members)
-                    is StudentClassViewModel.Event.ClassAddedFromInvite -> {
-                        classList.adapter?.notifyItemInserted(
-                            viewModel.classesList.size
-                        )
-                        //TODO Alert Dialog for Joining
-                    }
-                    is StudentClassViewModel.Event.AlreadyInClass -> {
-                        //TODO Alert Dialog Already in Class
-                    }
+                    is StudentClassViewModel.Event.ClassMembersLoaded -> loadClassMembers(
+                        event.teacher,
+                        event.members
+                    )
+
                 }
                 event.handled = true
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.reloadNeeded = true
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.reloadClasses()
     }
 
     private fun loadClassMembers(

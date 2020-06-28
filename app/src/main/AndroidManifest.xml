@@ -24,9 +24,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".teacher.TeacherSearchActivity"></activity>
         <activity android:name=".teacher.TeacherEditProfileActivity" />
-        <activity android:name=".teacher.TeacherSetupActivity"> </activity>
-        <activity android:name=".login.ChooseRoleActivity"> </activity>
-        <activity android:name=".teacherTesting.TeacherActivity" />
+        <activity android:name=".teacher.TeacherSetupActivity"></activity>
+        <activity android:name=".login.ChooseRoleActivity"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -68,6 +67,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="vedibarta.page.link"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".login.UserSetupActivity"
@@ -83,12 +92,14 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="vedibarta.page.link"
-                    android:scheme="https"/>
+                    android:scheme="https" />
             </intent-filter>
 
             <meta-data
@@ -133,7 +144,18 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".teacher.TeacherMainActivity"> </activity>
+        <activity android:name=".teacher.TeacherMainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="vedibarta.page.link"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
