@@ -44,6 +44,7 @@ import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.POJOs.Teacher
 import com.technion.vedibarta.R
 import com.technion.vedibarta.adapters.BubblesSelectionAdapter
+import com.technion.vedibarta.adapters.ScheduleAdapter
 import com.technion.vedibarta.data.TeacherMeta
 import com.technion.vedibarta.data.TeacherResources
 import com.technion.vedibarta.data.viewModels.BubbleViewModel
@@ -54,6 +55,7 @@ import com.technion.vedibarta.utilities.RotateBitmap
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.logout
 import com.technion.vedibarta.utilities.resourcesManagement.toCurrentLanguage
+import kotlinx.android.synthetic.main.fragment_teacher_schedule.*
 import kotlinx.android.synthetic.main.fragment_user_profile.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -185,6 +187,18 @@ class TeacherProfileFragment : Fragment() {
             TeacherResources.subjects.translator.toCurrentLanguage(TeacherMeta.teacher.teachingSubjects.keys)
                 .toList()
         )
+
+        binding.schedule.adapter = ScheduleAdapter(
+            requireContext(),
+            initialSchedule = TeacherMeta.teacher.getSchedule(),
+            isEditable = false
+        )
+        val layoutManager = GridLayoutManager(requireContext(), 1 * 7 + 6 * 4)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int) = if (position % 7 == 0) 7 else 4
+        }
+        binding.schedule.layoutManager = layoutManager
+        binding.schedule.layoutDirection = View.LAYOUT_DIRECTION_RTL
     }
 
 

@@ -14,8 +14,9 @@ import com.technion.vedibarta.utilities.extensions.exhaustive
 
 class ScheduleAdapter(
     private val context: Context,
-    private val onTimeChanged: (time: DayHour, Boolean) -> Unit,
-    private val initialSchedule: Timetable = emptyTimetable()
+    private val onTimeChanged: ((DayHour, Boolean) -> Unit)? = null,
+    private val initialSchedule: Timetable = emptyTimetable(),
+    private val isEditable: Boolean = true
 ) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
 
     companion object {
@@ -69,6 +70,10 @@ class ScheduleAdapter(
             Hour.fromInt(viewType / (DAYS_RESOURCES.size + 1) - 1)!!
         )
         binding.button.isChecked = time in initialSchedule
+
+        if (!isEditable) {
+            binding.button.isEnabled = false
+        }
         return ViewHolder.Button(binding)
     }
 
@@ -82,7 +87,7 @@ class ScheduleAdapter(
                 context.getString(PERIODS_RESOURCES[position / (DAYS_RESOURCES.size + 1) - 1])
             )
             is ViewHolder.Button -> holder.bind {
-                onTimeChanged(
+                onTimeChanged?.invoke(
                     DayHour(
                         Day.fromInt(position % (DAYS_RESOURCES.size + 1) - 1)!!,
                         Hour.fromInt(position / (DAYS_RESOURCES.size + 1) - 1)!!
