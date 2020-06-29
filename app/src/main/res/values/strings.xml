@@ -292,4 +292,11 @@
     <string name="class_choose_picture_title_m">בחר תמונה לכיתה</string>
     <string name="class_choose_picture_title_f">בחרי תמונה לכיתה</string>
     <string name="schedule">מערכת שעות</string>
+    <string name="tenth">י</string>
+    <string name="eleventh">יא</string>
+    <string name="twelfth">יב</string>
+    <string name="grades_text_suffix_m">מלמד כיתות: </string>
+    <string name="grades_text_suffix_f">מלמדת כיתות: </string>
+
+
 </resources>

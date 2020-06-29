@@ -31,7 +31,7 @@ data class Student(
 data class Teacher
 internal constructor(
     override val name: String = "",
-    override val photo: String? = null,
+    override var photo: String? = null,
     override val gender: Gender = Gender.NONE,
     override val uid: String = "",
     val regions: List<String> = emptyList(),

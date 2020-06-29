@@ -69,7 +69,6 @@
         android:clickable="true"
         android:focusable="true"
         android:layoutDirection="ltr"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/profilePicture"
         app:layout_constraintEnd_toEndOf="@+id/profilePicture"
         app:layout_constraintStart_toEndOf="@+id/profilePicturePB"

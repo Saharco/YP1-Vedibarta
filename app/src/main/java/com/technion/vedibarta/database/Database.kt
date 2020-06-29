@@ -25,6 +25,11 @@ class Storage(private val userId: String?)
         return this
     }
 
+    fun teachers(): Storage{
+        path+="teachers/"
+        return this
+    }
+
     fun userId(): Storage
     {
         path += "$userId/"
