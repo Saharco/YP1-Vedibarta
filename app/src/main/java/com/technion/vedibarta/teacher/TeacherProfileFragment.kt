@@ -187,7 +187,7 @@ class TeacherProfileFragment : Fragment() {
             TeacherResources.subjects.translator.toCurrentLanguage(TeacherMeta.teacher.teachingSubjects.keys)
                 .toList()
         )
-
+        binding.schedule.isNestedScrollingEnabled = false
         binding.schedule.adapter = ScheduleAdapter(
             requireContext(),
             initialSchedule = TeacherMeta.teacher.getSchedule(),

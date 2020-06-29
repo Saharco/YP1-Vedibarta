@@ -116,6 +116,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.0'
     implementation 'com.google.firebase:firebase-analytics-ktx:17.4.3'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

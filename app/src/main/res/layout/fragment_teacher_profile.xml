@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_exit_white_24dp"
+        app:srcCompat="@drawable/ic_exit_white_24dp"
         android:padding="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -36,7 +36,7 @@
         android:id="@+id/actionEditProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_edit_white"
+        app:srcCompat="@drawable/ic_edit_white"
         app:layout_constraintEnd_toStartOf="@id/actionLogOut"
         app:layout_constraintTop_toTopOf="@id/actionLogOut"
         android:padding="8dp"
@@ -115,16 +115,15 @@
 
     <ScrollView
         android:id="@+id/scrollViewLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userDescription"
-        android:layout_marginBottom="16dp">
+        app:layout_constraintTop_toBottomOf="@id/userDescription">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -133,11 +132,15 @@
             android:paddingBottom="12dp">
 
             <TextView
+                android:id="@+id/schoolCharacteristicsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="זהות בית הספר" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/teacher_profile_characteristics_text" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/characteristicsRecyclerView"
@@ -146,6 +149,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 tools:itemCount="3"
+                app:layout_constraintTop_toBottomOf="@id/schoolCharacteristicsText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:listitem="@layout/bubble_without_background"
                 tools:spanCount="3" />
@@ -154,15 +160,22 @@
                 android:id="@+id/divider2"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/characteristicsRecyclerView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="16dp"
                 android:background="@color/colorDivider" />
 
             <TextView
+                android:id="@+id/subjectText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="24dp"
-                android:text="המקצועות שלי" />
+                app:layout_constraintTop_toBottomOf="@id/divider2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/teacher_profile_subject_text" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/subjectsRecyclerView"
@@ -172,6 +185,9 @@
                 android:layout_gravity="center_horizontal"
                 tools:listitem="@layout/bubble_without_background"
                 tools:itemCount="3"
+                app:layout_constraintTop_toBottomOf="@id/subjectText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 tools:spanCount="3"/>
 
@@ -179,27 +195,35 @@
                 android:id="@+id/divider3"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
+                app:layout_constraintTop_toBottomOf="@id/subjectsRecyclerView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="16dp"
                 android:background="@color/colorDivider" />
 
             <TextView
+                android:id="@+id/scheduleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="24dp"
-                android:text="מערכת השעות שלי" />
+                app:layout_constraintTop_toBottomOf="@id/divider3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/teacher_profile_schedule_text" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/schedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/scheduleText"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginHorizontal="16dp"
-                app:layout_constraintTop_toBottomOf="@id/userDescription"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
