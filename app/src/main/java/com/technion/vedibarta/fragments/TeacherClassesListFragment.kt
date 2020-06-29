@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -36,9 +35,6 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
 import com.technion.vedibarta.POJOs.Filled
 import com.technion.vedibarta.POJOs.Unfilled
-import androidx.lifecycle.observe
-import com.afollestad.materialdialogs.input.getInputField
-import com.afollestad.materialdialogs.input.input
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.technion.vedibarta.POJOs.Gender
@@ -49,7 +45,6 @@ import com.technion.vedibarta.adapters.ClassesListAdapter
 import com.technion.vedibarta.data.TeacherMeta
 import com.technion.vedibarta.data.viewModels.ClassAddViewModel
 import com.technion.vedibarta.data.viewModels.TeacherClassListViewModel
-import com.technion.vedibarta.teacher.TeacherMainActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.changeStatusBarColor
 import com.technion.vedibarta.utilities.missingDetailsDialog
 import de.hdodenhof.circleimageview.CircleImageView

@@ -108,14 +108,6 @@ class TeacherClassListViewModel : ViewModel() {
         _event.value = Event.ToggleActionBar()
     }
 
-    fun handleOnBackPress(): Boolean {
-        if (itemActionBarEnabled) {
-            clearSelectedClasses()
-            return true
-        }
-        return false
-    }
-
     fun unSelectClass(v: MaterialCardView) {
         selectedItems--
         selectedItemsList.remove(v)
