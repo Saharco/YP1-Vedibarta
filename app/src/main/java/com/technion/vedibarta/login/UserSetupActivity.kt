@@ -23,6 +23,7 @@ import com.technion.vedibarta.data.viewModels.UserSetupViewModel
 import com.technion.vedibarta.data.viewModels.UserSetupViewModel.*
 import com.technion.vedibarta.fragments.UserSetupCharacteristicsSelectionFragment
 import com.technion.vedibarta.fragments.UserSetupHobbiesSelectionFragment
+import com.technion.vedibarta.main.MainActivity
 import com.technion.vedibarta.userProfile.UserProfileActivity
 import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.extensions.exhaustive
@@ -65,7 +66,7 @@ class UserSetupActivity : VedibartaActivity() {
 
             when (it) {
                 is Event.Finish -> {
-                    startActivity(Intent(this, UserProfileActivity::class.java))
+                    startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
                 is Event.DisplayError -> Toast.makeText(this, it.msgResId, Toast.LENGTH_LONG)
