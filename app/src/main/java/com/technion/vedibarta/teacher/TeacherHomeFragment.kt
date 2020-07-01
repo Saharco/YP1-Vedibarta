@@ -86,8 +86,7 @@ class TeacherHomeFragment : Fragment() {
         updateUserToken()
     }
 
-    override fun onStart()
-    {
+    override fun onStart() {
         super.onStart()
         if (mainAdapter?.itemCount == 0)
             teacherChatHistory.visibility = View.GONE
@@ -95,8 +94,8 @@ class TeacherHomeFragment : Fragment() {
         mainAdapter!!.startListening()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         mainAdapter!!.stopListening()
     }
 
