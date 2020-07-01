@@ -64,7 +64,7 @@ interface DocumentsMatcher {
     /**
      * Applies [Query.whereEqualTo] with the given [field] for each value in [values].
      */
-    fun whereFiledEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher
+    fun whereFieldEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher
 
     /**
      * Applies all the queries that were aggregated during the creation of the object.
@@ -75,5 +75,5 @@ interface DocumentsMatcher {
     fun match(randomField: String? = null, limit: Long = 10): Task<List<DocumentSnapshot>>
 }
 
-fun DocumentsMatcher.whereFieldsMatch(vararg fields: Pair<String, String>) =
+fun DocumentsMatcher.whereFieldsMatch(vararg fields: Pair<String, Any>) =
     whereFieldsMatch(fields.toMap())

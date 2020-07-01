@@ -5,6 +5,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.technion.vedibarta.matching.DocumentsMatcher
+import com.technion.vedibarta.matching.whereFieldsMatch
 import com.technion.vedibarta.utilities.extensions.getAsList
 import com.technion.vedibarta.utilities.extensions.randomCycling
 
@@ -19,19 +20,18 @@ constructor(private val query: Query) : DocumentsMatcher {
     )
 
     override fun whereAtLeastOneFieldMatch(fields: Map<String, Any>): DocumentsMatcher = DocumentsMatchersMerger(
-        listOf(whereFieldsMatch(fields)) +
-                fields.map { (key, _) ->
-                    whereFieldsMatch(fields.toMutableMap().apply { remove(key) })
-                }
+        fields.map { (key, value) ->
+            whereFieldsMatch(key to value)
+        }
     )
 
     override fun whereAtMostOneFieldNotMatch(fields: Map<String, Any>): DocumentsMatcher = DocumentsMatchersMerger(
-        fields.map { (key, _) ->
+        listOf(whereFieldsMatch(fields)) + fields.map { (key, _) ->
             whereFieldsMatch(fields.toMutableMap().apply { remove(key) })
         }
     )
 
-    override fun whereFiledEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher = DocumentsMatchersMerger(
+    override fun whereFieldEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher = DocumentsMatchersMerger(
         values.map {
             DocumentsMatcherImpl(query.whereEqualTo(field, it))
         }.toList()
@@ -64,8 +64,8 @@ private class DocumentsMatchersMerger(private val documentsMatchers: List<Docume
     override fun whereArrayFieldContains(field: Pair<String, Any>): DocumentsMatcher =
         DocumentsMatchersMerger(documentsMatchers.map { it.whereArrayFieldContains(field) })
 
-    override fun whereFiledEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher =
-        DocumentsMatchersMerger(documentsMatchers.map { it.whereFiledEqualsToOneOf(field, values) })
+    override fun whereFieldEqualsToOneOf(field: String, values: Iterable<Any>): DocumentsMatcher =
+        DocumentsMatchersMerger(documentsMatchers.map { it.whereFieldEqualsToOneOf(field, values) })
 
     override fun match(randomField: String?, limit: Long): Task<List<DocumentSnapshot>> =
         Tasks.whenAllSuccess<Set<DocumentSnapshot>>(documentsMatchers.map { it.match(randomField, limit) })

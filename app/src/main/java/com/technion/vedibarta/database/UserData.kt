@@ -6,7 +6,6 @@ import com.technion.vedibarta.POJOs.Class
 import com.technion.vedibarta.POJOs.Student
 import com.technion.vedibarta.POJOs.Teacher
 import com.technion.vedibarta.matching.impl.DocumentsMatcherImpl
-import com.technion.vedibarta.utilities.VedibartaActivity
 import com.technion.vedibarta.utilities.VedibartaActivity.Companion.database
 import com.technion.vedibarta.utilities.extensions.queryToListOf
 import com.technion.vedibarta.utilities.extensions.resultToListOf
@@ -57,7 +56,7 @@ class StudentData(private val s: Student) : UserData
             return getTeacherIds()
                 .continueWithTask { ids ->
                     DocumentsMatcherImpl(database.teachers().build())
-                        .whereFiledEqualsToOneOf("uid", ids.result!!)
+                        .whereFieldEqualsToOneOf("uid", ids.result!!)
                         .match()
                 }.continueWith {task ->
                     task.resultToListOf<Teacher>()

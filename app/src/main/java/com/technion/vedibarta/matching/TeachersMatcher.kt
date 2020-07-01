@@ -2,9 +2,11 @@ package com.technion.vedibarta.matching
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
+import com.technion.vedibarta.POJOs.Grade
 import com.technion.vedibarta.POJOs.Teacher
 import com.technion.vedibarta.POJOs.Timetable
 import com.technion.vedibarta.database.DatabaseVersioning
+import java.util.*
 
 const val TEACHERS_LIMIT = 10L
 val DEFAULT_TEACHERS_COLLECTION: CollectionReference = DatabaseVersioning.currentVersion.instance.collection("teachers")
@@ -15,7 +17,7 @@ class TeachersMatcher(teachersCollection: CollectionReference = DEFAULT_TEACHERS
 
     fun match(
         characteristics: Set<String>,
-        grades: Teacher.Grades? = null,
+        grade: Grade? = null,
         subjects: Set<String>? = null,
         schedule: Timetable? = null,
         region: String? = null,
@@ -24,13 +26,15 @@ class TeachersMatcher(teachersCollection: CollectionReference = DEFAULT_TEACHERS
     ): Task<List<Teacher>> {
         var matcher = matcher
 
-        if (region != null) matcher = matcher.whereFieldsMatch("region" to region)
-        if (school != null) matcher = matcher.whereFieldsMatch("school" to school)
+        if (region != null && school == null)
+            matcher = matcher.whereArrayFieldContains("regions" to region)
+        if (school != null)
+            matcher = matcher.whereArrayFieldContains("schools" to school)
 
         matcher = matcher.whereFieldsMatch(characteristics.map { "schoolCharacteristics.$it" to true }.toMap())
 
-        if (grades != null)
-            matcher = matcher.whereFieldsMatch(grades.toList().map { "grades.$it" to true }.toMap())
+        if (grade != null)
+            matcher = matcher.whereFieldsMatch("grades.${grade.toString().toLowerCase(Locale.ROOT)}" to true)
 
         if (subjects != null)
             matcher = matcher.whereFieldsMatch(subjects.map { "teachingSubjects.$it" to true }.toMap())

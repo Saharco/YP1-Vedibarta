@@ -129,7 +129,7 @@ class TeacherSearchMatchExtraOptionsFragment : Fragment() {
 
     private fun gradeOnCheckChanged(isChecked: Boolean){
         gradeRadioGroup.clearCheck()
-        viewModel.grade = Grade.NONE
+        viewModel.grade = null
         if (isChecked)
             gradeRadioGroup.visibility = View.VISIBLE
         else

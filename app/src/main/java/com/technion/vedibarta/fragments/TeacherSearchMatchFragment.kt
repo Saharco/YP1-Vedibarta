@@ -68,14 +68,13 @@ class TeacherSearchMatchFragment : Fragment() {
     }
 
     private fun searchMatch() {
-        val grades = viewModel.grade
-
         TeachersMatcher().match(
             viewModel.characteristics,
-            grades?.let { Teacher.Grades(grades) },
+            viewModel.grade,
             viewModel.subjects,
             if (viewModel.searchBySchedule) TeacherMeta.teacher.getSchedule() else null,
-            viewModel.region
+            viewModel.region,
+            viewModel.school
         ).addOnSuccessListener(requireActivity()) { teachers ->
             val filteredTeachers = teachers.filter { it.uid != TeacherMeta.teacher.uid }
             if (filteredTeachers.isNotEmpty()) {
