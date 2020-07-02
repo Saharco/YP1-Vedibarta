@@ -57,7 +57,10 @@ class TeacherSetupActivity : AppCompatActivity() {
 
             when (it) {
                 is Event.Finish -> {
-                    startActivity(Intent(this, TeacherMainActivity::class.java))
+                    val intent = Intent(this, TeacherMainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    startActivity(intent)
                     finish()
                 }
                 is Event.DisplayError -> Toast.makeText(this, it.msgResId, Toast.LENGTH_LONG)

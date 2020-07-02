@@ -66,7 +66,10 @@ class UserSetupActivity : VedibartaActivity() {
 
             when (it) {
                 is Event.Finish -> {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    val intent = Intent(this, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    startActivity(intent)
                     finish()
                 }
                 is Event.DisplayError -> Toast.makeText(this, it.msgResId, Toast.LENGTH_LONG)
