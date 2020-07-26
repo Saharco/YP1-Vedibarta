@@ -362,7 +362,9 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_twelfth" />
+                            android:text="@string/user_setup_grade_twelfth"
+                            android:maxWidth="70dp"
+                            android:singleLine="false"/>
 
                         <RadioButton
                             android:id="@+id/gradeEleventh"
@@ -370,7 +372,9 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_eleventh" />
+                            android:text="@string/user_setup_grade_eleventh"
+                            android:maxWidth="70dp"
+                            android:singleLine="false"/>
 
                         <RadioButton
                             android:id="@+id/gradeTenth"
@@ -378,7 +382,9 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:onClick="onRadioButtonClicked"
-                            android:text="@string/user_setup_grade_tenth" />
+                            android:text="@string/user_setup_grade_tenth"
+                            android:maxWidth="70dp"
+                            android:singleLine="false"/>
 
                     </RadioGroup>
 
