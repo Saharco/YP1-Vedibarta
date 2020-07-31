@@ -4,8 +4,6 @@
     <!--    General shared attributes   -->
     <string name="back">ارجع</string>
     <string name="or">او</string>
-    <string name="allowed_letters_regex">[چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ]+</string>
-    <string name="allowed_letters">چڢڤڥڨگپئڜژىئؤابتثجحخدذرزسشصضطظعغفقكلمنهوءيآ</string>
     <string name="yes">نعم</string>
     <string name="no">لا</string>
     <string name="ok">حسنا</string>
