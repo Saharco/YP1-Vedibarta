@@ -303,8 +303,9 @@ class LoginActivity : AppCompatActivity(),
         StudentResources.load(application).continueWith {
             StudentResources.gender.value = student.gender
             PreferenceManager.getDefaultSharedPreferences(this).edit {
+                clear()
                 putGender(student.gender)
-                putLanguage(Locale.getDefault().language).apply()
+                putLanguage(Locale.getDefault().language)
             }
             VedibartaActivity.student = student
             VedibartaActivity.userType = UserType.Student
@@ -315,8 +316,9 @@ class LoginActivity : AppCompatActivity(),
     private fun redirectTeacher(teacher: Teacher) =
         TeacherResources.load(application).continueWith {
             PreferenceManager.getDefaultSharedPreferences(this).edit {
+                clear()
                 putGender(teacher.gender)
-                putLanguage(Locale.getDefault().language).apply()
+                putLanguage(Locale.getDefault().language)
             }
             TeacherMeta.teacher = teacher
             VedibartaActivity.userType = UserType.Teacher
@@ -324,14 +326,19 @@ class LoginActivity : AppCompatActivity(),
             finish()
         }
 
-    private fun redirectNewUser(): Task<Unit> =
-        Tasks.whenAll(
+    private fun redirectNewUser(): Task<Unit> {
+        PreferenceManager.getDefaultSharedPreferences(this).edit {
+            clear()
+            putLanguage(Locale.getDefault().language)
+        }
+        return Tasks.whenAll(
             StudentResources.load(application),
             TeacherResources.load(application)
         ).continueWith {
             startActivity(Intent(this, ChooseRoleActivity::class.java))
             finish()
         }
+    }
 
     /**
      * Redirect the current user to its desired activity.
