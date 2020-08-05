@@ -37,8 +37,8 @@ class ProfilePictureUploadDialog private constructor() : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userName = arguments!!.getString("name")!!
-        gender = arguments!!.getSerializable("gender")!! as Gender
+        userName = requireArguments().getString("name")!!
+        gender = requireArguments().getSerializable("gender")!! as Gender
 
     }
 

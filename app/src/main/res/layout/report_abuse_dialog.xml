@@ -26,7 +26,7 @@
         android:id="@+id/reportBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_back_accent"
+        app:srcCompat="@drawable/ic_arrow_back_accent"
         android:contentDescription="@string/back"
         android:background="@android:color/transparent"
         app:layout_constraintTop_toTopOf="@id/alertTitle"

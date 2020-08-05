@@ -47,7 +47,7 @@ class ChatRoomQuestionGeneratorDialog : DialogFragment()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        questionGenerator = arguments!!.getSerializable("generator")!! as QuestionGeneratorManager
+        questionGenerator = requireArguments().getSerializable("generator")!! as QuestionGeneratorManager
     }
 
     override fun onCreateView(

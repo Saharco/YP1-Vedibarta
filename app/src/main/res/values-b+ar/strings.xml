@@ -44,6 +44,7 @@
     <string name="chat_search_title">البحث</string>
     <string name="filter_by_school_text">فلتر المدارس</string>
     <string name="filter_by_region_text">فلتر منطقة السكن</string>
+    <string name="filter_by_grade_text">التصفية حسب الطبقة</string>
     <string name="chat_search_button">البحث</string>
     <string name="chat_search_wrong_details_title">خطأ بالتفاصيل</string>
     <string name="chat_search_wrong_region_message">عليك إختيار مكان السكن من القائمة</string>
@@ -94,7 +95,6 @@
 
     <!--    LoginScreen attribute   -->
     <string name="facebook_app_id">3227815763959885</string>
-    <string name="fb_login_protocol_scheme">fb3227815763959885</string>
     <string name="continue_with_facebook_hebrew">الدخول بواسطة فيسبوك</string>
     <string name="sign_out_from_facebook_hebrew">الخروج من حساب الفيسبوك</string>
     <string name="sign_in_with_google_hebrew">الدخول بواسطة جوجل</string>
